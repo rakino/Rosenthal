@@ -29,3 +29,23 @@
           #~(modify-phases #$phases
               ;; FIXME
               (delete 'check))))))))
+
+(define-public wayland-protocols-1.30
+  (let ((base wayland-protocols))
+    (package
+      (inherit base)
+      (name "wayland-protocols")
+      (version "1.30")
+      (source (origin
+                (method url-fetch)
+                (uri (string-append
+                      "https://gitlab.freedesktop.org/wayland/wayland-protocols"
+                      "/-/releases/" version "/downloads/"
+                      "wayland-protocols-" version ".tar.xz"))
+                (sha256
+                 (base32
+                  "0q5w66472j548pdabnycn9byjsjy477qfzkd6yq80azxcpxrh51w"))))
+      (native-inputs
+       (modify-inputs (package-native-inputs base)
+         (replace "wayland" wayland-1.21.0)))
+      (inputs (list wayland-1.21.0)))))
