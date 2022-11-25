@@ -61,3 +61,21 @@
          (replace "wayland" wayland-1.21.0)
          (replace "wayland-protocols" wayland-protocols-1.30)))
       (native-inputs (list `(,hwdata "pnp") pkg-config)))))
+
+(define-public wlroots-dev
+  (let ((base wlroots-0.16.0)
+        (revision "86")
+        (commit "060df4c6c0f92e3989ce6fa13e5862bb3bee7dae"))
+    (package
+      (inherit base)
+      (name "wlroots-dev")
+      (version (git-version "0.16.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://gitlab.freedesktop.org/wlroots/wlroots.git")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0d8pisxza8fwcvz5kl04svaffzka3nfcl8pnyiky0ihf59p45pik")))))))
