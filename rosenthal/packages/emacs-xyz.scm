@@ -26,3 +26,24 @@
                 (sha256
                  (base32
                   "17w9irn5aaxadsm5smz5cm1dxy0xb1hh0dnhwqclq3y5llrb21lx")))))))
+
+(define-public emacs-doom-modeline-dev
+  (let ((base emacs-doom-modeline)
+        (revision "26")
+        (commit "440fd160b4dff530465938bed40094a0d413fc11"))
+    (package
+      (inherit base)
+      (name "emacs-doom-modeline-dev")
+      (version (git-version "3.3.2" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/seagle0128/doom-modeline")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0ablv6fyqb6mzzk7iyx24nj5xmmmhw7kqmi2xldjv0a7aplmxbqr"))))
+      (propagated-inputs
+       (modify-inputs (package-propagated-inputs base)
+         (delete "emacs-all-the-icons" "emacs-dash"))))))
