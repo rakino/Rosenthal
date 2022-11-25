@@ -169,3 +169,49 @@ customization, and more.")
       (synopsis "Hyprland version of Grimshot")
       (description "A Hyprland version of Grimshot.")
       (license license:expat))))
+
+(define-public waylock
+  (package
+    (name "waylock")
+    (version "0.4.2")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/ifreund/waylock"
+                                  "/releases/download/v" version
+                                  "/waylock-" version".tar.gz"))
+              (sha256
+               (base32
+                "0nvzsi2mbmjvnw475srr2iwqpy3p32sgfkdkm0hsr7c0i2v82f3i"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list #:tests? #f                  ;no tests
+           #:make-flags
+           #~(list "-Dcpu=baseline" "-Dpie" "-Drelease-safe")
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'configure)
+               (add-after 'unpack 'set-zig-env
+                 (lambda _
+                   (setenv "CC" #$(cc-for-target))
+                   (setenv "XDG_CACHE_HOME" "no-thanks")))
+               (replace 'build
+                 (lambda* (#:key (make-flags '()) #:allow-other-keys)
+                   (apply invoke "zig" "build" `(,@make-flags))))
+               (replace 'install
+                 (lambda _
+                   (copy-recursively "zig-out" #$output))))))
+    (native-inputs (list pkg-config scdoc zig))
+    (inputs
+     (list libxkbcommon-minimal
+           linux-pam
+           wayland-1.21.0
+           wayland-protocols-1.30))
+    (home-page "https://github.com/ifreund/waylock")
+    (synopsis "Small screenlocker for Wayland compositors")
+    (description
+     "Waylock is a small screenlocker for Wayland compositors implementing
+@code{ext-session-lock-v1}.  The @code{ext-session-lock-v1} protocol is
+significantly more robust than previous client-side Wayland screen locking
+approaches.  Importantly, the screenlocker crashing does not cause the session
+to be unlocked.")
+    (license license:isc)))
