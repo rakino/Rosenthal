@@ -1,0 +1,12 @@
+diff --git a/linux-libre-deblob-check b/linux-libre-deblob-check
+index 3de0900..e4c7591 100644
+--- a/linux-libre-deblob-check
++++ b/linux-libre-deblob-check
+@@ -7974,6 +7974,6 @@ $eormatch /^[;][/][*]end .*[*][/][;]$eornl$/ {
+ 	    for (i = nfilenames; --i > 0;)
+ 		print filenames[i] " within";
+ 	    print filenames[0];
+-	    exit (1);
++	    exit (0);
+ 	}
+     }

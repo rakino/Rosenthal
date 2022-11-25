@@ -30,8 +30,27 @@
 (define computed-origin-method
   (@@ (guix packages) computed-origin-method))
 
+(define deblob-scripts
+  (@@ (gnu packages linux) deblob-scripts-6.0))
+
+(define make-linux-libre-source
+  (@@ (gnu packages linux) make-linux-libre-source))
+
 (define %upstream-linux-source
   (@@ (gnu packages linux) %upstream-linux-source))
+
+(define linux-rosenthal-deblob-scripts
+  (match deblob-scripts
+    ((deblob-version (? origin? deblob) (? origin? deblob-check))
+     (list deblob-version
+           (origin
+             (inherit deblob)
+             (file-name "linux-libre-deblob")
+             (patches (list (local-file "patches/linux-libre-deblob-keep-needed.patch"))))
+           (origin
+             (inherit deblob-check)
+             (file-name "linux-libre-deblob-check")
+             (patches (list (local-file "patches/linux-libre-deblob-check-omit-error.patch"))))))))
 
 (define %cflags
   (string-append
@@ -83,6 +102,12 @@
               "6.0"
               (base32 "13kqh7yhifwz5dmd3ky0b3mzbh9r0nmjfp5mxy42drcdafjl692w")))
     (patches (list linux-xanmod-patch))))
+
+(define linux-rosenthal-source
+  (make-linux-libre-source
+   %xanmod-version
+   linux-xanmod-source
+   linux-rosenthal-deblob-scripts))
 
 (define-public linux-xanmod
   (let ((base linux-libre))
@@ -140,3 +165,20 @@
        "General-purpose Linux kernel distribution with custom settings and new
 features.  Built to provide a stable, responsive and smooth desktop
 experience."))))
+
+(define-public linux-rosenthal
+  (let ((base linux-xanmod))
+    (package
+      (inherit base)
+      (name "linux-rosenthal")
+      (source linux-rosenthal-source)
+      (native-inputs
+       (modify-inputs (package-native-inputs base)
+         (replace "kconfig"
+           (local-file "aux-files/config.zen3-dorphine"))))
+      (home-page "https://github.com/rakino/rosenthal/")
+      (synopsis "Custom Linux kernel")
+      (description
+       "Linux-Rosenthal is a custom Linux kernel based on @code{linux-xanmod}.
+This kernel is partially deblobed, with some files necessary to drive specific
+hardwares kept."))))
