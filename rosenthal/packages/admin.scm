@@ -19,3 +19,15 @@
           #~(append #$configure-flags
                     (list "-Dlibseat-logind=disabled")))))
       (propagated-inputs '()))))
+
+(define-public seatd-sans-logind
+  (let ((base seatd))
+    (package
+      (inherit base)
+      (name "seatd-sans-logind")
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:configure-flags configure-flags)
+          #~(append #$configure-flags
+                    (list "-Dlibseat-logind=disabled")))))
+      (propagated-inputs '()))))
