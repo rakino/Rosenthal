@@ -81,3 +81,20 @@
                 (sha256
                  (base32
                   "0dykvwcvg8n24z3fkx6rv3l1mhzmca4cxj0gsvvqsg9wp0az1fc7")))))))
+
+(define-public emacs-rime-dev
+  (let ((revision "10")
+        (commit "74f3dff40e66c65388a9471eecbc1d9aca5612f7"))
+    (package
+      (inherit emacs-rime)
+      (name "emacs-rime-dev")
+      (version (git-version "1.0.5" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/DogLooksGood/emacs-rime")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1bqhn6pvsgs1x882q7y5p372aify2jmyfmgmx99nzakxbfkb0yqp")))))))
