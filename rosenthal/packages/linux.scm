@@ -182,3 +182,21 @@ experience."))))
        "Linux-Rosenthal is a custom Linux kernel based on @code{linux-xanmod}.
 This kernel is partially deblobed, with some files necessary to drive specific
 hardwares kept."))))
+
+(define-public kconfig-hardened-check-dev
+  (let* ((base kconfig-hardened-check)
+         (revision "119")
+         (commit "03908fad72799c786f9f01fd5b01b2468c47fea3"))
+    (package
+      (inherit base)
+      (name "kconfig-hardened-check-dev")
+      (version (git-version "0.5.17" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/a13xp0p0v/kconfig-hardened-check")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1y108qd0xp5wkdd4wz5hxw36x7b9raqy9vjmv4fi8c2g039czib7")))))))
