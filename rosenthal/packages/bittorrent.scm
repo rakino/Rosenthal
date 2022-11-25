@@ -51,3 +51,17 @@ the following features:
 @item Auto Ban BitTorrent Media Player Peer Option (Default: OFF)
 @item Peer whitelist/blacklist
 @end itemize\n"))))
+
+(define-public qbittorrent-enhanced-edition-nox
+  (let ((base qbittorrent-enhanced-edition))
+    (package
+      (inherit base)
+      (name "qbittorrent-enhanced-edition-nox")
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:configure-flags configure-flags)
+          #~(append #$configure-flags
+                    (list "-DGUI=OFF")))))
+      (inputs
+       (modify-inputs (package-inputs base)
+         (delete "qtsvg-5"))))))
