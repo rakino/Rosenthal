@@ -129,3 +129,29 @@
        "@code{wakatime-mode} is an Emacs plugin for automatic time tracking
 and metrics generated from your programming activity.")
       (license license:gpl3+))))
+
+;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59555
+(define-public emacs-org-rainbow-tags
+  ;; Upstream didn't tag version.
+  (let ((commit "c6040d228c5e8c5c6d33c7f81fc09d935ad1bcbd"))
+    (package
+      (name "emacs-org-rainbow-tags")
+      (version "0.1-pre")
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/KaratasFurkan/org-rainbow-tags")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "006nx01sby8k0fc9lf63ldf0sl94ihldyrvqr9r18fb1gpzvivl6"))))
+      (build-system emacs-build-system)
+      (home-page "https://github.com/KaratasFurkan/org-rainbow-tags")
+      (synopsis
+       "Colorize org tags automatically to make them visually distinguishable")
+      (description
+       "This package adds random colors to your org tags.  In order to make
+colors random but consistent between same tags, colors are generated from the
+hash of the tag names.")
+      (license license:gpl3))))
