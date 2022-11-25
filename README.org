@@ -1,0 +1,65 @@
+#+TITLE: Rosenthal - A certain Guix channel.
+
+** About
+For packages sumbitted to Guix but not merged yet, a comment for the
+corresponding debbugs link is given (And those packages would be removed once
+merged).
+
+For packages already exist in Guix, however with a newer version or not
+available in master branch at the moment, a version suffix is added to their
+variable names, e.g. =foo-1.14.514= (while the package name is still =foo=),
+these packages would be removed once they are available in Guix's master
+branch.
+
+For packages sourced on a not-released-yet checkout, a "dev" suffix is added
+to both their variable and package names, e.g. both variable name and package
+name are =bar-dev=.  For revisions, the result of =git describe --tags= is
+generally used.  If upstream didn't tag version, tag it first, otherwise when
+no version could be found, start the revision from "0".
+
+For packages with special features, a suffix to both variable and package name
+is added.
+e.g. =hello/static= (while with package name =hello-static=), =test-minimal=,
+=halo-nox= (without X), =nya-sans-whatever= (with whatever features disabled).
+
+** Usage
+1. Clone the repository.
+   #+begin_src shell
+  git clone https://github.com/rakino/rosenthal.git rosenthal
+  cd rosenthal
+  #+end_src
+
+2. Prefix guix commands with the =pre-inst-env= script.
+   #+begin_src shell
+  ./pre-inst-env guix <whatever>
+  #+end_src
+
+Alternatively, a Guix channel is also available:
+#+begin_src scheme
+  (channel
+   (name 'rosenthal)
+   (url "https://github.com/rakino/rosenthal")
+   (branch "trunk")
+   (introduction
+    (make-channel-introduction
+     "7677db76330121a901604dfbad19077893865f35"
+     (openpgp-fingerprint
+      "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
+#+end_src
+
+To use that, write the above definition to =~/.config/guix/channels.scm=, for
+example:
+#+begin_src scheme
+  ;; ~/.config/guix/channels.scm
+  (cons* (channel
+	  (name 'rosenthal)
+	  (url "https://github.com/rakino/rosenthal")
+	  (branch "trunk")
+	  (introduction
+	   (make-channel-introduction
+	    "7677db76330121a901604dfbad19077893865f35"
+	    (openpgp-fingerprint
+	     "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
+	 %default-channels)
+  ;; channels.scm ends here.
+#+end_src
