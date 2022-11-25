@@ -64,3 +64,20 @@
                 (sha256
                  (base32
                   "0h1kfvr4zahk8ihvri1r16b2nkg3dg3524ic64c6w0jing2gr37c")))))))
+
+(define-public emacs-macrostep-geiser-dev
+  (let ((revision "3")
+        (commit "f6a2d5bb96ade4f23df557649af87ebd0cc45125"))
+    (package
+      (inherit emacs-macrostep-geiser)
+      (name "emacs-macrostep-geiser-dev")
+      (version (git-version "0.2.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/nbfalcon/macrostep-geiser")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0dykvwcvg8n24z3fkx6rv3l1mhzmca4cxj0gsvvqsg9wp0az1fc7")))))))
