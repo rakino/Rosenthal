@@ -155,3 +155,20 @@ and metrics generated from your programming activity.")
 colors random but consistent between same tags, colors are generated from the
 hash of the tag names.")
       (license license:gpl3))))
+
+(define-public emacs-org-rainbow-tags-dev
+  (let ((revision "11")
+        (commit "6001ec9345bea4e60b2178940ef197c055d5a5d8"))
+    (package
+      (inherit emacs-org-rainbow-tags)
+      (name "emacs-org-rainbow-tags-dev")
+      (version (git-version "0.1-pre" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/KaratasFurkan/org-rainbow-tags")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1qlpszfvi1zngfi377pxkb9byhw0x8h4wsc70jn2slddq0jryjad")))))))
