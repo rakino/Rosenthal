@@ -79,3 +79,52 @@
                 (sha256
                  (base32
                   "0d8pisxza8fwcvz5kl04svaffzka3nfcl8pnyiky0ihf59p45pik")))))))
+
+(define hyprland-unbundle-wlroots-patch
+  (origin
+    (method url-fetch)
+    (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
+                        "8bd7234d7256d494794741f973f470458a1ad904" "/nix/"
+                        "meson-build.patch"))
+    (file-name "hyprland-unbundle-wlroots.patch")
+    (sha256
+     (base32 "1lh4gfm8x3pqfl2bkw2iy9b6ckgkhjfgnyyg45iyj0x2sh66lrng"))))
+
+(define-public hyprland
+  (package
+    (name "hyprland")
+    (version "0.18.0beta")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/hyprwm/Hyprland")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (patches (list hyprland-unbundle-wlroots-patch))
+              (modules '((guix build utils)))
+              (snippet '(substitute* "meson.build"
+                          (("git") "true")))
+              (sha256
+               (base32
+                "1sbf12mqvgqpjfw4bni4p2gk2djnh49fwzki4dnsyq4ykcp7x6hb"))))
+    (build-system meson-build-system)
+    (arguments
+     (list #:build-type "release"
+           #:configure-flags
+           #~(list "-Dxwayland=disabled")
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'unpack 'fix-default-wallpaper-path
+                 (lambda _
+                   (substitute* "src/render/OpenGL.cpp"
+                     (("/usr") #$output)))))))
+    (native-inputs (list gcc-12 pkg-config))
+    (inputs (list pango-next pixman-0.42.2 wlroots-0.16.0))
+    (home-page "https://hyprland.org")
+    (synopsis "Dynamic tiling Wayland compositor based on wlroots")
+    (description
+     "@code{Hyprland} is a dynamic tiling Wayland compositor based on
+@code{wlroots} that doesn't sacrifice on its looks.  It supports multiple
+layouts, fancy effects, has a very flexible IPC model allowing for a lot of
+customization, and more.")
+    (license license:bsd-3)))
