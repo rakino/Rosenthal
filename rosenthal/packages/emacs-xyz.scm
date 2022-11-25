@@ -47,3 +47,20 @@
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (delete "emacs-all-the-icons" "emacs-dash"))))))
+
+(define-public emacs-god-mode-dev
+  (let ((revision "16")
+        (commit "49c1a1753188e5b2788b8c1f1f9fbd1264460bab"))
+    (package
+      (inherit emacs-god-mode)
+      (name "emacs-god-mode-dev")
+      (version (git-version "2.17.3" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/emacsorphanage/god-mode")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0h1kfvr4zahk8ihvri1r16b2nkg3dg3524ic64c6w0jing2gr37c")))))))
