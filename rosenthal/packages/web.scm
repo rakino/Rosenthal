@@ -52,3 +52,20 @@
      "This package provides a @code{rofi} frontend for @code{buku} bookmark
 manager.")
     (license license:gpl3)))
+
+(define-public buku-run-dev
+  (let ((revision "23")
+        (commit "54fcdd77fc1e8e657b785b7d4ca8dc915e5f336b"))
+    (package
+      (inherit buku-run)
+      (name "buku-run-dev")
+      (version (git-version "0.1.1" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/carnager/buku_run")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "079ygn39px71bypa54jn4z55iq24lxxcy7jv3ijy08iinqbfvldc")))))))
