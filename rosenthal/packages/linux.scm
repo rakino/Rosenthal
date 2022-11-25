@@ -125,6 +125,8 @@
        (substitute-keyword-arguments (package-arguments base)
          ((#:phases phases)
           #~(modify-phases #$phases
+              (delete 'build-doc)
+              (delete 'install-doc)
               (add-before 'configure 'setenv
                 (lambda _
                   (setenv "LLVM" "1")
