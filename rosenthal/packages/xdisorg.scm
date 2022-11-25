@@ -24,3 +24,17 @@
                 (sha256
                  (base32
                   "09nhk3jx3qzggl5vyii3yh4zm0npjqsbxhzvxrg2xla77a2cyj9h")))))))
+
+(define-public libxkbcommon-1.4.1
+  (package
+    (inherit libxkbcommon)
+    (name "libxkbcommon")
+    (version "1.4.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://xkbcommon.org/download/libxkbcommon-"
+                    version ".tar.xz"))
+              (sha256
+               (base32
+                "0fbb2dyjvf71p42y2jmwdcylsvj03w52f5rb23c2d00rwahhfg4l"))))))
