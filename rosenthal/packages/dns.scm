@@ -5,10 +5,12 @@
 (define-module (rosenthal packages dns)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix build-system copy)
+  #:use-module (guix build-system gnu)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
-  #:use-module (guix utils))
+  #:use-module (guix utils)
+  #:use-module (gnu packages tls))
 
 (define-public dnsmasq-china-list
   ;; No version.
@@ -60,3 +62,35 @@ time.
 @item Block ISP ads on NXDOMAIN result (like 114so).
 @end itemize\n")
       (license license:wtfpl2))))
+
+(define-public smartdns
+  (package
+    (name "smartdns")
+    (version "38.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/pymumu/smartdns")
+                    (commit (string-append "Release" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0arni7nsxw57dy2rxz0xz94i0910hpcqq2ilrgjq12v35n919wig"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list #:tests? #f                  ;no tests
+           #:make-flags
+           #~(list (string-append "CC=" #$(cc-for-target))
+                   (string-append "PREFIX=" #$output)
+                   "SYSCONFDIR=no-thanks" "SYSTEMDSYSTEMUNITDIR=no-thanks")
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'configure))))
+    (inputs (list openssl))
+    (home-page "https://github.com/pymumu/smartdns")
+    (synopsis "Local DNS server")
+    (description
+     "SmartDNS accepts DNS query requests from local clients, obtains DNS
+query results from multiple upstream DNS servers, and returns the fastest
+access results to clients.")
+    (license license:gpl3)))
