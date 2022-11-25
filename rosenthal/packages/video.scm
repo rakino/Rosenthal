@@ -23,3 +23,17 @@
               (sha256
                (base32
                 "070aj9nw681a4m7f5xb662hhyib0w9q0i0s9v8vplh9cvfhaqpqi"))))))
+
+(define-public libva-nox
+  (let ((base libva-2.16.0))
+    (package
+      (inherit base)
+      (name "libva-nox")
+      (arguments
+       (substitute-keyword-arguments (package-arguments base)
+         ((#:configure-flags configure-flags)
+          #~(append #$configure-flags (list "--disable-glx")))
+         ((#:phases _) #~%standard-phases)))
+      (inputs
+       (modify-inputs (package-inputs base)
+         (delete "libx11" "libxext" "libxfixes"))))))
