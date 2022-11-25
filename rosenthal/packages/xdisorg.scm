@@ -38,3 +38,19 @@
               (sha256
                (base32
                 "0fbb2dyjvf71p42y2jmwdcylsvj03w52f5rb23c2d00rwahhfg4l"))))))
+
+(define-public libxkbcommon-minimal
+  (let ((base libxkbcommon-1.4.1))
+    (package
+      (inherit base)
+      (name "libxkbcommon-minimal")
+      (arguments
+       (list #:configure-flags
+             #~(list "-Denable-x11=false"
+                     "-Denable-wayland=false"
+                     (string-append "-Dxkb-config-root="
+                                    (search-input-directory
+                                     %build-inputs "/share/X11/xkb")))))
+      (inputs
+       (modify-inputs (package-inputs base)
+         (delete "libx11" "libxcb" "wayland" "wayland-protocols"))))))
