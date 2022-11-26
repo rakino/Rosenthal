@@ -1,4 +1,6 @@
 #+TITLE: Rosenthal - A certain Guix channel.
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frakino%2FRosenthal.svg?type=shield)](https://app.fossa.com/projects/git%2Bgithub.com%2Frakino%2FRosenthal?ref=badge_shield)
+
 
 ** About
 For packages sumbitted to Guix but not merged yet, a comment for the
@@ -63,3 +65,7 @@ example:
 	 %default-channels)
   ;; channels.scm ends here.
 #+end_src
+
+
+## License
+[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Frakino%2FRosenthal.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Frakino%2FRosenthal?ref=badge_large)
