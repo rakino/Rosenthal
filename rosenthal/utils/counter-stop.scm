@@ -115,7 +115,6 @@
                          zstd))
         (to-remove (list bash-completion
                          info-reader
-                         less
                          mg
                          nano
                          nvi
