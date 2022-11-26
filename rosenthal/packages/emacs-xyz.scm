@@ -29,8 +29,8 @@
 
 (define-public emacs-doom-modeline-dev
   (let ((base emacs-doom-modeline)
-        (revision "26")
-        (commit "440fd160b4dff530465938bed40094a0d413fc11"))
+        (revision "29")
+        (commit "986e9e0ab14aaab2e3f3dc82d4c76f2def6c099f"))
     (package
       (inherit base)
       (name "emacs-doom-modeline-dev")
@@ -43,7 +43,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0ablv6fyqb6mzzk7iyx24nj5xmmmhw7kqmi2xldjv0a7aplmxbqr"))))
+                  "1bcxflixd7rdbplmvgizq06w8hdxcdi6vmnxvh6yqmz1w6xqmsbv"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (delete "emacs-all-the-icons" "emacs-dash"))))))
