@@ -8,9 +8,11 @@
   #:use-module (guix gexp)
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
+  #:use-module (gnu packages admin)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
   #:use-module (gnu services shepherd)
+  #:use-module (gnu system shadow)
   #:use-module (rosenthal utils home-services-utils)
   #:export (cloudflare-tunnel-configuration
             cloudflare-tunnel-service-type))
@@ -47,6 +49,16 @@
   (extra-options cloudflare-tunnel-configuration-extra-options ;list of string
                  (default '())))
 
+(define %cloudflare-tunnel-accounts
+  (list (user-group (name "cloudflared") (system? #t))
+        (user-account
+         (name "cloudflared")
+         (group "cloudflared")
+         (system? #t)
+         (comment "Cloudflare Tunnel user")
+         (home-directory "/var/empty")
+         (shell (file-append shadow "/sbin/nologin")))))
+
 (define cloudflare-tunnel-shepherd-service
   (match-lambda
     (($ <cloudflare-tunnel-configuration> cloudflared metrics
@@ -69,8 +81,8 @@
                                      '("--post-quantum")
                                      '())
                               #$@extra-options)
-                        #:user "nobody"
-                        #:group "nogroup"
+                        #:user "cloudflared"
+                        #:group "cloudflared"
                         #:log-file #$log-file))
               (stop #~(make-kill-destructor))))))))
 
@@ -79,6 +91,8 @@
    (name 'cloudflare-tunnel)
    (extensions
     (list (service-extension shepherd-root-service-type
-                             cloudflare-tunnel-shepherd-service)))
+                             cloudflare-tunnel-shepherd-service)
+          (service-extension account-service-type
+                             (const %cloudflare-tunnel-accounts))))
    (default-value (cloudflare-tunnel-configuration))
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
