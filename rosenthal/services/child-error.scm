@@ -58,7 +58,7 @@
        (list (shepherd-service
               (documentation "Run cloudflared.")
               (provision '(cloudflare-tunnel))
-              (requirement '(loopback networking user-processes))
+              (requirement '(networking))
               (start #~(make-forkexec-constructor
                         (list #$cloudflared "tunnel" #$@tunnel-options "run"
                               "--token" #$token
