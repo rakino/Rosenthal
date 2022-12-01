@@ -80,27 +80,31 @@ headers.  This can expose sensitive information in your logs.")
                                           extra-tunnel-options
                                           token http2-origin? post-quantum?
                                           extra-options)
-     (let ((tunnel-options
-            (list "--no-autoupdate" "--metrics" metrics "--loglevel" log-level)))
-       (list (shepherd-service
-              (documentation "Run cloudflared.")
-              (provision '(cloudflare-tunnel))
-              (requirement '(networking))
-              (start #~(make-forkexec-constructor
-                        (list #$cloudflared "tunnel" #$@tunnel-options
-                              #$@extra-tunnel-options
-                              "run" "--token" #$token
-                              #$@(if http2-origin?
-                                     '("--http2-origin")
-                                     '())
-                              #$@(if post-quantum?
-                                     '("--post-quantum")
-                                     '())
-                              #$@extra-options)
-                        #:user "cloudflared"
-                        #:group "cloudflared"
-                        #:log-file #$log-file))
-              (stop #~(make-kill-destructor))))))))
+     (list (shepherd-service
+            (documentation "Run cloudflared.")
+            (provision '(cloudflare-tunnel))
+            (requirement '(networking))
+            (start #~(make-forkexec-constructor
+                      (list #$cloudflared
+                            "tunnel"
+                            "--no-autoupdate"
+                            "--metrics" #$metrics
+                            "--loglevel" #$log-level
+                            #$@extra-tunnel-options
+
+                            "run"
+                            "--token" #$token
+                            #$@(if http2-origin?
+                                   '("--http2-origin")
+                                   '())
+                            #$@(if post-quantum?
+                                   '("--post-quantum")
+                                   '())
+                            #$@extra-options)
+                      #:user "cloudflared"
+                      #:group "cloudflared"
+                      #:log-file #$log-file))
+            (stop #~(make-kill-destructor)))))))
 
 (define cloudflare-tunnel-service-type
   (service-type
