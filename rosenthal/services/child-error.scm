@@ -27,27 +27,38 @@
 ;;
 
 
-(define-record-type* <cloudflare-tunnel-configuration>
-  cloudflare-tunnel-configuration make-cloudflare-tunnel-configuration
-  cloudflare-tunnel-configuration?
-  (cloudflared   cloudflare-tunnel-configuration-cloudflared   ;string
-                 (default "/bin/cloudflared"))
-  ;; Tunnel command options
-  (metrics       cloudflare-tunnel-configuration-metrics       ;string
-                 (default "localhost:"))
-  (log-level     cloudflare-tunnel-configuration-log-level     ;string
-                 (default "info"))
-  (log-file      cloudflare-tunnel-configuration-log-file      ;string
-                 (default "/var/log/cloudflared.log"))
+(define-configuration/no-serialization cloudflare-tunnel-configuration
+  (cloudflared
+   (string "/bin/cloudflared")
+   "The cloudflared executable.")
+
+  ;; Tunnel options
+  (metrics
+   (string "localhost:")
+   "Listen address for metrics reporting.")
+  (log-level
+   (string "info")
+   "Application logging level (@code{debug}, @code{info}, @code{warn},
+@code{error}, @code{fatal}).  At debug level cloudflared will log request URL,
+method, protocol, content length, as well as, all request and response
+headers.  This can expose sensitive information in your logs.")
+  (log-file
+   (string "/var/log/cloudflared.log")
+   "File path to store logs.")
+
   ;; Subcommand options
-  (token         cloudflare-tunnel-configuration-token         ;string
-                 (default #f))
-  (http2-origin? cloudflare-tunnel-configuration-http2-origin? ;boolean
-                 (default #f))
-  (post-quantum? cloudflare-tunnel-configuration-post-quantum? ;boolean
-                 (default #f))
-  (extra-options cloudflare-tunnel-configuration-extra-options ;list of string
-                 (default '())))
+  (token
+   (string "")
+   "The Tunnel token.")
+  (http2-origin?
+   (boolean #f)
+   "Enable HTTP/2 origin servers.")
+  (post-quantum?
+   (boolean #f)
+   "Create an experimental post-quantum secure tunnel.")
+  (extra-options
+   (list-of-strings '())
+   "List of extra options."))
 
 (define %cloudflare-tunnel-accounts
   (list (user-group (name "cloudflared") (system? #t))
