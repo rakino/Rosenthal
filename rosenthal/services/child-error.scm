@@ -45,6 +45,9 @@ headers.  This can expose sensitive information in your logs.")
   (log-file
    (string "/var/log/cloudflared.log")
    "File path to store logs.")
+  (extra-tunnel-options
+   (list-of-strings '())
+   "List of extra tunnel options.")
 
   ;; Subcommand options
   (token
@@ -74,6 +77,7 @@ headers.  This can expose sensitive information in your logs.")
   (match-lambda
     (($ <cloudflare-tunnel-configuration> cloudflared metrics
                                           log-level log-file
+                                          extra-tunnel-options
                                           token http2-origin? post-quantum?
                                           extra-options)
      (let ((tunnel-options
@@ -83,8 +87,9 @@ headers.  This can expose sensitive information in your logs.")
               (provision '(cloudflare-tunnel))
               (requirement '(networking))
               (start #~(make-forkexec-constructor
-                        (list #$cloudflared "tunnel" #$@tunnel-options "run"
-                              "--token" #$token
+                        (list #$cloudflared "tunnel" #$@tunnel-options
+                              #$@extra-tunnel-options
+                              "run" "--token" #$token
                               #$@(if http2-origin?
                                      '("--http2-origin")
                                      '())
