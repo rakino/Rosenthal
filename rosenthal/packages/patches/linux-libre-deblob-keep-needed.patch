@@ -5,7 +5,7 @@ index bdee4b5..7ac458b 100644
 @@ -826,68 +826,6 @@ clean_blob drivers/gpu/drm/display/drm_hdcp_helper.c
  clean_kconfig drivers/gpu/drm/display/Kconfig DRM_DISPLAY_HDCP_HELPER
  clean_mk CONFIG_DRM_DISPLAY_HDCP_HELPER drivers/gpu/drm/display/Makefile
-
+ 
 -announce DRM_AMDGPU - "AMD GPU"
 -reject_firmware drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
 -clean_blob drivers/gpu/drm/amd/amdgpu/amdgpu_uvd.c
@@ -74,7 +74,7 @@ index bdee4b5..7ac458b 100644
 @@ -2145,16 +2083,6 @@ clean_blob drivers/net/wireless/intel/iwlegacy/4965.c
  clean_kconfig drivers/net/wireless/intel/iwlegacy/Kconfig IWL4965
  clean_mk CONFIG_IWL4965 drivers/net/wireless/intel/iwlegacy/Makefile
-
+ 
 -announce IWLWIFI - "Intel Wireless WiFi Next Gen AGN"
 -reject_firmware drivers/net/wireless/intel/iwlwifi/iwl-nvm-parse.c
 -reject_firmware drivers/net/wireless/intel/iwlwifi/iwl-drv.c
@@ -91,7 +91,7 @@ index bdee4b5..7ac458b 100644
 @@ -2163,14 +2091,6 @@ clean_blob drivers/net/wireless/intel/iwlwifi/cfg/6000.c
  clean_kconfig drivers/net/wireless/intel/iwlwifi/Kconfig IWLDVM
  clean_mk CONFIG_IWLMVM drivers/net/wireless/intel/iwlwifi/Makefile
-
+ 
 -announce IWLMVM - "Intel Wireless WiFi MVM Firmware support"
 -clean_blob drivers/net/wireless/intel/iwlwifi/cfg/7000.c
 -clean_blob drivers/net/wireless/intel/iwlwifi/cfg/8000.c

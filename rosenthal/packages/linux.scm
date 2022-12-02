@@ -33,6 +33,9 @@
 (define deblob-scripts
   (@@ (gnu packages linux) deblob-scripts-6.0))
 
+(define doc-supported?
+  (@@ (gnu packages linux) doc-supported?))
+
 (define make-linux-libre-source
   (@@ (gnu packages linux) make-linux-libre-source))
 
@@ -61,7 +64,7 @@
 
 (define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
 
-(define %xanmod-version "6.0.9")
+(define %xanmod-version "6.0.10")
 (define %xanmod-revision "xanmod1")
 
 (define (extract-xanmod-patch version hash)
@@ -94,14 +97,18 @@
 (define linux-xanmod-patch
   (extract-xanmod-patch
    (string-append %xanmod-version "-" %xanmod-revision)
-   "0ar9k5bj75s4ac2a1xlm6l5x96jd6v2azpab19cx19hmgg3c3wh2"))
+   "0ypvr7lp9bhlja3zp97vmfxa80144z1kplsrzqdj301xwrmiki37"))
 
 (define linux-xanmod-source
   (origin
     (inherit (%upstream-linux-source
               "6.0"
               (base32 "13kqh7yhifwz5dmd3ky0b3mzbh9r0nmjfp5mxy42drcdafjl692w")))
-    (patches (list linux-xanmod-patch))))
+    (patches
+     (append (list linux-xanmod-patch)
+             (if (doc-supported? %xanmod-version)
+                 (search-patches "linux-libre-infodocs-target.patch")
+                 '())))))
 
 (define linux-rosenthal-source
   (make-linux-libre-source
@@ -125,8 +132,6 @@
        (substitute-keyword-arguments (package-arguments base)
          ((#:phases phases)
           #~(modify-phases #$phases
-              (delete 'build-doc)
-              (delete 'install-doc)
               (add-before 'configure 'setenv
                 (lambda _
                   (setenv "LLVM" "1")
