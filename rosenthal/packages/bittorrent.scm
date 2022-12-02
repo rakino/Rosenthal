@@ -48,7 +48,10 @@ the following features:
        (substitute-keyword-arguments (package-arguments base)
          ((#:configure-flags configure-flags)
           #~(append #$configure-flags
-                    (list "--disable-gui")))))
+                    (list "--disable-gui")))
+         ((#:phases phases)
+          #~(modify-phases #$phases
+              (delete 'wrap-qt)))))
       (inputs
        (modify-inputs (package-inputs base)
          (delete "qtsvg-5"))))))
