@@ -3,30 +3,18 @@
 ;; SPDX-License-Identifier: BSD-3-Clause
 
 (define-module (rosenthal services networking)
-  #:use-module (ice-9 ftw)
   #:use-module (ice-9 match)
-
-  #:use-module (srfi srfi-1)
-  #:use-module (srfi srfi-26)
-
   #:use-module (guix gexp)
-  #:use-module (guix store)
-  #:use-module (guix monads)
-  #:use-module (guix records)
-  #:use-module (guix packages)
   #:use-module (guix import utils)
-
+  #:use-module (guix packages)
   #:use-module (gnu packages dns)
   #:use-module (gnu packages base)
-  #:use-module (gnu packages connman)
   #:use-module (gnu packages networking)
-
   #:use-module (gnu services)
   #:use-module (gnu services dbus)
   #:use-module (gnu services base)
   #:use-module (gnu services shepherd)
   #:use-module (gnu services configuration)
-
   #:use-module ((rosenthal utils home-services-utils)
                 #:select (ini-config?
                           maybe-object->string
@@ -53,36 +41,40 @@
                                 #:fields config))
 
 (define-configuration/no-serialization iwd-configuration
-  (package (package iwd) "")
-  (config (ini-config '()) ""))
+  (iwd
+   (package iwd)
+   "The iwd package.")
+  (config
+   (ini-config '())
+   "Association list of iwd configurations."))
 
-(define (iwd-shepherd-service config)
-  (match-record config <iwd-configuration>
-    (package)
-    (let ((environment #~(list (string-append
-                                "PATH="
-                                (string-append #$openresolv "/sbin")
-                                ":"
-                                (string-append #$coreutils "/bin")))))
-      (list (shepherd-service
-             (documentation "Run iwd")
-             (provision '(iwd networking))
-             (requirement '(user-processes dbus-system loopback))
-             (start #~(make-forkexec-constructor
-                       (list (string-append #$package "/libexec/iwd"))
-                       #:log-file "/var/log/iwd.log"
-                       #:environment-variables #$environment))
-             (stop #~(make-kill-destructor)))))))
+(define iwd-shepherd-service
+  (match-lambda
+    (($ <iwd-configuration> iwd _)
+     (let ((environment #~(list (string-append
+                                 "PATH="
+                                 (string-append #$openresolv "/sbin")
+                                 ":"
+                                 (string-append #$coreutils "/bin")))))
+       (list (shepherd-service
+              (documentation "Run iwd")
+              (provision '(iwd networking))
+              (requirement '(user-processes dbus-system loopback))
+              (start #~(make-forkexec-constructor
+                        (list (string-append #$iwd "/libexec/iwd"))
+                        #:log-file "/var/log/iwd.log"
+                        #:environment-variables #$environment))
+              (stop #~(make-kill-destructor))))))))
 
-(define (iwd-etc-service config)
-  (match-record config <iwd-configuration>
-    (config)
-    `(("iwd/main.conf"
-       ,(apply mixed-text-file
-               "main.conf"
-               (serialize-ini-config config))))))
+(define iwd-etc-service
+  (match-lambda
+    (($ <iwd-configuration> _ config)
+     `(("iwd/main.conf"
+        ,(apply mixed-text-file
+                "main.conf"
+                (serialize-ini-config config)))))))
 
-(define add-iwd-package (compose list iwd-configuration-package))
+(define add-iwd-package (compose list iwd-configuration-iwd))
 
 (define iwd-service-type
   (service-type
@@ -97,4 +89,4 @@
           (service-extension profile-service-type
                              add-iwd-package)))
    (default-value (iwd-configuration))
-   (description "")))
+   (description "Run iwd, the Internet Wireless Daemon.")))
