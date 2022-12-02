@@ -26,19 +26,6 @@
                 (sha256
                  (base32
                   "0n1cidcricy5crzxy69z11ngvb0hy2x14nrhj100110knlq48hny"))))
-      ;; REVIEW: QT6 option only added to CMake rules at the moment.
-      (build-system cmake-build-system)
-      (arguments
-       (list #:tests? #f                ;no tests
-             #:configure-flags
-             #~(list "-DQT6=ON")))
-      (native-inputs
-       (modify-inputs (package-native-inputs base)
-         (replace "qttools" qttools)))
-      (inputs
-       (modify-inputs (package-inputs base)
-         (replace "qtbase" qtbase)
-         (replace "qtsvg-5" qtsvg)))
       (home-page "https://github.com/c0re100/qBittorrent-Enhanced-Edition")
       (description
        "qBittorrent Enhanced is a bittorrent client based on qBittorrent with
@@ -61,7 +48,7 @@ the following features:
        (substitute-keyword-arguments (package-arguments base)
          ((#:configure-flags configure-flags)
           #~(append #$configure-flags
-                    (list "-DGUI=OFF")))))
+                    (list "--disable-gui")))))
       (inputs
        (modify-inputs (package-inputs base)
          (delete "qtsvg-5"))))))
