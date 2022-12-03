@@ -11,6 +11,7 @@
   #:use-module (gnu packages admin)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
+  #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
   #:use-module (gnu system shadow)
   #:use-module (rosenthal utils home-services-utils)
@@ -19,6 +20,9 @@
 
             cloudflare-tunnel-configuration
             cloudflare-tunnel-service-type
+
+            miniflux-configuration
+            miniflux-service-type
 
             home-wakapi-configuration
             home-wakapi-service-type))
@@ -191,6 +195,71 @@ headers.  This can expose sensitive information in your logs.")
                              (const %cloudflare-tunnel-accounts))))
    (default-value (cloudflare-tunnel-configuration))
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
+
+
+;;
+;; Miniflux
+;;
+
+(define-configuration/no-serialization miniflux-configuration
+  (miniflux
+   (string "/bin/miniflux")
+   "The miniflux executable.")
+  (log-file
+   (string "/var/log/miniflux.log")
+   "Where the logs go.")
+  (config
+   (alist '())
+   "Association list of miniflux configurations."))
+
+(define %miniflux-accounts
+  (list (user-group (name "miniflux") (system? #t))
+        (user-account
+         (name "miniflux")
+         (group "miniflux")
+         (system? #t)
+         (home-directory "/var/empty")
+         (shell (file-append shadow "/sbin/nologin")))))
+
+(define %miniflux-postgresql-role
+  (list (postgresql-role
+         (name "miniflux")
+         (create-database? #t))))
+
+(define miniflux-shepherd-service
+  (match-lambda
+    (($ <miniflux-configuration> miniflux log-file config)
+     (let ((config-file
+            (mixed-text-file
+             "miniflux.conf"
+             (apply string-append
+                    (map (lambda (alist)
+                           (string-append (car alist) "=" (cdr alist) "\n"))
+                         config)))))
+       (list (shepherd-service
+              (documentation "Run miniflux.")
+              (provision '(miniflux))
+              (requirement '(postgres user-processes))
+              (start #~(make-forkexec-constructor
+                        (list #$miniflux  "-config-file" #$config-file)
+                        #:user "miniflux"
+                        #:group "miniflux"
+                        #:log-file #$log-file))
+              (stop #~(make-kill-destructor))))))))
+
+(define miniflux-service-type
+  (service-type
+   (name 'miniflux)
+   (extensions
+    (list (service-extension account-service-type
+                             (const %miniflux-accounts))
+          (service-extension postgresql-role-service-type
+                             (const %miniflux-postgresql-role))
+          (service-extension shepherd-root-service-type
+                             miniflux-shepherd-service)))
+   (default-value (miniflux-configuration))
+   (description
+    "Run Miniflux, a minimalist and opinionated feed reader.")))
 
 
 ;;
