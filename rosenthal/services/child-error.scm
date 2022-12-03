@@ -18,7 +18,10 @@
             clash-service-type
 
             cloudflare-tunnel-configuration
-            cloudflare-tunnel-service-type))
+            cloudflare-tunnel-service-type
+
+            home-wakapi-configuration
+            home-wakapi-service-type))
 
 ;; Child-error: services for packages not available in Guix, currently this
 ;; means some Go and Rust apps I build locally but don't want to package.
@@ -188,3 +191,38 @@ headers.  This can expose sensitive information in your logs.")
                              (const %cloudflare-tunnel-accounts))))
    (default-value (cloudflare-tunnel-configuration))
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
+
+
+;;
+;; Wakapi
+;;
+
+
+(define-configuration/no-serialization home-wakapi-configuration
+  (wakapi
+   (string "/bin/wakapi")
+   "The wakapi executable.")
+  (config
+   (yaml-config '())
+   "Association list of Wakapi configurations."))
+
+(define home-wakapi-shepherd-service
+  (match-lambda
+    (($ <home-wakapi-configuration> wakapi config)
+     (let ((config-file (mixed-text-file
+                         "wakapi.yaml"
+                         #~(string-append #$@(serialize-yaml-config config) "\n"))))
+       (list (shepherd-service
+              (documentation "Run wakapi.")
+              (provision '(wakapi))
+              (start #~(make-forkexec-constructor
+                        (list #$wakapi "-config" #$config-file)))))))))
+
+(define home-wakapi-service-type
+  (service-type
+   (name 'home-wakapi)
+   (extensions
+    (list (service-extension home-shepherd-service-type
+                             home-wakapi-shepherd-service)))
+   (default-value (home-wakapi-configuration))
+   (description "Run Wakapi, a self-hosted WakaTime-compatible backend.")))
