@@ -14,11 +14,83 @@
   #:use-module (gnu services shepherd)
   #:use-module (gnu system shadow)
   #:use-module (rosenthal utils home-services-utils)
-  #:export (cloudflare-tunnel-configuration
+  #:export (clash-configuration
+            clash-service-type
+
+            cloudflare-tunnel-configuration
             cloudflare-tunnel-service-type))
 
 ;; Child-error: services for packages not available in Guix, currently this
 ;; means some Go and Rust apps I build locally but don't want to package.
+
+
+;;
+;; Clash
+;;
+
+
+(define-configuration/no-serialization clash-configuration
+  (clash
+   (string "/bin/clash")
+   "The clash executable.")
+  (log-file
+   (string "/var/log/clash.log")
+   "Where the logs go.")
+  (data-directory
+   (string "/var/lib/clash")
+   "Where to store data.")
+  (config
+   (file-like (plain-file "empty" ""))
+   "Clash configuration file."))
+
+(define %clash-accounts
+  (list (user-group (name "clash") (system? #t))
+        (user-account
+         (name "clash")
+         (group "clash")
+         (system? #t)
+         (home-directory "/var/empty")
+         (shell (file-append shadow "/sbin/nologin")))))
+
+(define clash-activation
+  (match-lambda
+    (($ <clash-configuration> clash log-file data-directory config)
+     #~(begin
+         (use-modules (guix build utils))
+         (let ((config-dest (string-append #$data-directory "/config.yaml"))
+               (user (getpwnam "clash")))
+           (mkdir-p #$data-directory)
+           (chown #$data-directory (passwd:uid user) (passwd:gid user))
+           (if (file-exists? config-dest)
+               (delete-file config-dest))
+           (symlink #$config config-dest))))))
+
+(define clash-shepherd-service
+  (match-lambda
+    (($ <clash-configuration> clash log-file data-directory config)
+     (list (shepherd-service
+            (documentation "Run clash.")
+            (provision '(clash))
+            (requirement '(loopback networking))
+            (start #~(make-forkexec-constructor
+                      (list #$clash "-d" #$data-directory)
+                      #:user "clash"
+                      #:group "clash"
+                      #:log-file #$log-file))
+            (stop #~(make-kill-destructor)))))))
+
+(define clash-service-type
+  (service-type
+   (name 'clash)
+   (extensions
+    (list (service-extension shepherd-root-service-type
+                             clash-shepherd-service)
+          (service-extension activation-service-type
+                             clash-activation)
+          (service-extension account-service-type
+                             (const %clash-accounts))))
+   (default-value (clash-configuration))
+   (description "Run Clash.")))
 
 
 
