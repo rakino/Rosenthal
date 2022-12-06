@@ -3,16 +3,12 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal bootloader u-boot)
+  #:use-module (ice-9 format)
+  #:use-module (guix gexp)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader u-boot)
-  #:use-module (guix gexp)
   #:use-module (rosenthal packages bootloaders)
   #:export (u-boot-rpi4-arm64-bootloader))
-
-;; Autoload Nonguix*, so we only have a soft dependency.
-;; * <https://gitlab.com/nonguix/nonguix>
-(module-autoload! (current-module)
-                  '(nongnu packages linux) '(raspberrypi-firmware))
 
 (define %rpi4-arm64-boot-config
   (plain-file "config.txt" (format #f "~
@@ -27,10 +23,15 @@ kernel=u-boot.bin
   #~(lambda (bootloader device mount-point)
       (let ((u-boot (string-append bootloader "/libexec/u-boot.bin"))
             (install-dir (string-append mount-point "/boot")))
+        ;; Autoload Nonguix*, so we only have a soft dependency.
+        ;; * <https://gitlab.com/nonguix/nonguix>
+        (module-autoload! (current-module)
+                          '(nongnu packages linux) '(raspberrypi-firmware))
+
         ;; Install raspberrypi-firmware
         (for-each (lambda (file)
                     (install-file
-                     (string-append #$raspberrypi-firmware "/" file) install-dir))
+                     (string-append raspberrypi-firmware "/" file) install-dir))
                   '(;; VideoCore firmwares
                     "start4.elf"        ;basic
                     "start4x.elf"       ;camera drivers and codec

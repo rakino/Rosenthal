@@ -4,7 +4,6 @@
 
 (define-module (rosenthal packages gnome-xyz)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (ice-9 string-fun)
   #:use-module (guix build-system gnu)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
