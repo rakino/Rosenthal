@@ -16,6 +16,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages nano)
   #:use-module (gnu packages nvi)
+  #:use-module (gnu packages ssh)
   #:use-module (gnu packages texinfo)
   #:use-module (gnu packages text-editors)
   #:use-module (gnu services)
@@ -110,6 +111,7 @@
 
 (define %rosenthal-base-packages
   (let ((to-add    (list curl
+                         mosh
                          nss-certs
                          unzip
                          zstd))
