@@ -66,7 +66,7 @@ time.
 (define-public smartdns
   (package
     (name "smartdns")
-    (version "38.1")
+    (version "39")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -75,7 +75,7 @@ time.
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0arni7nsxw57dy2rxz0xz94i0910hpcqq2ilrgjq12v35n919wig"))))
+                "1ih3qf0ncbwfin91fihgfli4s098mjn9l9f6xcg6pdn92cgj6zvi"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? #f                  ;no tests
