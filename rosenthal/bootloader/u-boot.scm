@@ -23,27 +23,22 @@ kernel=u-boot.bin
   #~(lambda (bootloader device mount-point)
       (let ((u-boot (string-append bootloader "/libexec/u-boot.bin"))
             (install-dir (string-append mount-point "/boot")))
-        ;; Autoload Nonguix*, so we only have a soft dependency.
-        ;; * <https://gitlab.com/nonguix/nonguix>
-        (module-autoload! (current-module)
-                          '(nongnu packages linux) '(raspberrypi-firmware))
-
         ;; Install raspberrypi-firmware
-        (for-each (lambda (file)
-                    (install-file
-                     (string-append raspberrypi-firmware "/" file) install-dir))
-                  '(;; VideoCore firmwares
-                    "start4.elf"        ;basic
-                    "start4x.elf"       ;camera drivers and codec
-                    "start4cd.elf"      ;cut-down
-                    "start4db.elf"      ;debug
-                    ;; Linker files
-                    "fixup4.dat"
-                    "fixup4x.dat"
-                    "fixup4cd.dat"
-                    "fixup4db.dat"
-                    ;; Device Tree Overlays (for Raspberry Pi's bootloader)
-                    "bcm2711-rpi-4-b.dtb"))
+        ;; (for-each (lambda (file)
+        ;;             (install-file
+        ;;              (string-append #$raspberrypi-firmware "/" file) install-dir))
+        ;;           '(;; VideoCore firmwares
+        ;;             "start4.elf"        ;basic
+        ;;             "start4x.elf"       ;camera drivers and codec
+        ;;             "start4cd.elf"      ;cut-down
+        ;;             "start4db.elf"      ;debug
+        ;;             ;; Linker files
+        ;;             "fixup4.dat"
+        ;;             "fixup4x.dat"
+        ;;             "fixup4cd.dat"
+        ;;             "fixup4db.dat"
+        ;;             ;; Device Tree Overlays (for Raspberry Pi's bootloader)
+        ;;             "bcm2711-rpi-4-b.dtb"))
         ;; Install u-boot
         (install-file u-boot install-dir)
         ;; Raspberry Pi's bootloader configuration
