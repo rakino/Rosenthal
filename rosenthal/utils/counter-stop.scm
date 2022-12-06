@@ -127,9 +127,13 @@
     (append to-add (lset-difference eqv? %base-packages to-remove))))
 
 (define %rosenthal-base-services
-  (cons* (service openssh-service-type
+  (cons* (service ntp-service-type)
+
+         (service openssh-service-type
                   (openssh-configuration
                    (permit-root-login 'prohibit-password)))
+
+         (rngd-service)
 
          (modify-services %base-services
            (sysctl-service-type
