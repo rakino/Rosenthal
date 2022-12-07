@@ -64,8 +64,8 @@
 
 (define-public wlroots-dev
   (let ((base wlroots-0.16.0)
-        (revision "114")
-        (commit "f103dc74d89c88a8e1865ce47843906b0aaa8380"))
+        (revision "169")
+        (commit "86fc2199f85ac0e1089bb7fd5a0b5cbc432bdb67"))
     (package
       (inherit base)
       (name "wlroots-dev")
@@ -78,7 +78,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1pdqzdc1xx84jp0g10irb8jznnpfp8k5din6xvgd39jspwp7yl03")))))))
+                  "04cd03pxwpxwrfh6w0d34hqmi1kp9qn1yp6xbwdgvqzw61xbh7j1")))))))
 
 (define hyprland-unbundle-wlroots-patch
   (origin
