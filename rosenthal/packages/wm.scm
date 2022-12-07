@@ -80,6 +80,36 @@
                  (base32
                   "04cd03pxwpxwrfh6w0d34hqmi1kp9qn1yp6xbwdgvqzw61xbh7j1")))))))
 
+(define-public hyprland-protocols
+  (let ((revision "0")
+        (commit "0dcff94fc10df2bbb66d3e1b5a1d6cfd3ada5515"))
+    (package
+      (name "hyprland-protocols")
+      (version (git-version "0.1" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/hyprwm/hyprland-protocols")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (modules '((guix build utils)))
+                (snippet
+                 '(substitute* "meson.build"
+                    (("pkgconfig_configuration.set\\('PACKAGE', 'hyprland-protocols'\\)") "")))
+                (sha256
+                 (base32
+                  "0n72ayjyqx4fbkpm3rdsvd4ydwvfcajv5sm1nlzd2r6mf1gaqv9f"))))
+      (build-system meson-build-system)
+      (home-page "https://hyprland.org")
+      (synopsis "Wayland protocol extensions for Hyprland")
+      (description
+       "This package provides Wayland protocol extensions for Hyprland and it
+exists in an effort to bridge the gap between Hyprland and KDE/Gnome's
+functionality.  Since @code{wlr-protocols} is closed for new submissions, and
+@code{wayland-protocols} is very slow with changes, this package will hold
+protocols used by Hyprland to bridge the aforementioned gap.")
+      (license license:bsd-3))))
+
 (define hyprland-unbundle-wlroots-patch
   (origin
     (method url-fetch)
