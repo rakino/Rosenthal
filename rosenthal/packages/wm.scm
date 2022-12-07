@@ -123,7 +123,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.18.0beta")
+    (version "0.19.0beta")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -136,7 +136,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                           (("git") "true")))
               (sha256
                (base32
-                "1sbf12mqvgqpjfw4bni4p2gk2djnh49fwzki4dnsyq4ykcp7x6hb"))))
+                "1j0kx5q7li6dcisb0apd94imb5g003db58adn1d4fjnrc6rgzqb6"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -149,7 +149,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                    (substitute* "src/render/OpenGL.cpp"
                      (("/usr") #$output)))))))
     (native-inputs (list gcc-12 pkg-config))
-    (inputs (list pango-next pixman-0.42.2 wlroots-0.16.0))
+    (inputs (list hyprland-protocols pango-next pixman-0.42.2 wlroots-dev))
     (home-page "https://hyprland.org")
     (synopsis "Dynamic tiling Wayland compositor based on wlroots")
     (description
