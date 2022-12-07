@@ -35,7 +35,7 @@
     (package
       (inherit base)
       (name "wayland-protocols")
-      (version "1.30")
+      (version "1.31")
       (source (origin
                 (method url-fetch)
                 (uri (string-append
@@ -44,7 +44,7 @@
                       "wayland-protocols-" version ".tar.xz"))
                 (sha256
                  (base32
-                  "0q5w66472j548pdabnycn9byjsjy477qfzkd6yq80azxcpxrh51w"))))
+                  "0f72359fzvh6jzri4fd79m34rwm2r55p2ryq4306wrw7xliafzx0"))))
       (native-inputs
        (modify-inputs (package-native-inputs base)
          (replace "wayland" wayland-1.21.0)))
