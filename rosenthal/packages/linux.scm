@@ -66,6 +66,7 @@
 
 (define %xanmod-version "6.0.10")
 (define %xanmod-revision "xanmod1")
+(define %hardened-revision "hardened1")
 
 (define (extract-xanmod-patch version hash)
   (let ((patch (string-append "linux-" version ".patch"))
@@ -74,7 +75,7 @@
                   (uri (string-append "https://github.com/xanmod/linux"
                                       "/releases/download/" version
                                       "/patch-" version ".xz"))
-                  (sha256 (base32 hash)))))
+                  (sha256 hash))))
     (origin
       (method computed-origin-method)
       (file-name patch)
@@ -97,7 +98,16 @@
 (define linux-xanmod-patch
   (extract-xanmod-patch
    (string-append %xanmod-version "-" %xanmod-revision)
-   "0ypvr7lp9bhlja3zp97vmfxa80144z1kplsrzqdj301xwrmiki37"))
+   (base32 "0ypvr7lp9bhlja3zp97vmfxa80144z1kplsrzqdj301xwrmiki37")))
+
+(define linux-hardened-patch-for-xanmod
+  (origin
+    (method url-fetch)
+    (uri (string-append "https://github.com/anthraxx/linux-hardened/releases/download/"
+                        %xanmod-version "-" %hardened-revision "/linux-hardened-"
+                        %xanmod-version "-" %hardened-revision ".patch"))
+    (patches (list (local-file "patches/linux-hardened-xanmod-adaption.patch")))
+    (sha256 (base32 "1zbhqwhbzjc2jsmbrqk6y4w62b9drhzh2kb1p5bwgi3nd17f43jj"))))
 
 (define linux-xanmod-source
   (origin
@@ -105,7 +115,8 @@
               "6.0"
               (base32 "13kqh7yhifwz5dmd3ky0b3mzbh9r0nmjfp5mxy42drcdafjl692w")))
     (patches
-     (append (list linux-xanmod-patch)
+     (append (list linux-xanmod-patch
+                   linux-hardened-patch-for-xanmod)
              (if (doc-supported? %xanmod-version)
                  (search-patches "linux-libre-infodocs-target.patch")
                  '())))))

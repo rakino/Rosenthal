@@ -1,0 +1,27 @@
+diff --git a/linux-hardened-6.0.10-hardened1.patch b/linux-hardened-6.0.10-hardened1.patch
+index 9cc8a0f..e7e71a7 100644
+--- a/linux-hardened-6.0.10-hardened1.patch
++++ b/linux-hardened-6.0.10-hardened1.patch
+@@ -1545,22 +1545,6 @@ index 205d605cacc5b..26c15bed8f7b4 100644
+  int proc_dointvec_jiffies(struct ctl_table *table, int write,
+  		    void *buffer, size_t *lenp, loff_t *ppos)
+  {
+-@@ -1649,6 +1687,15 @@ static struct ctl_table kern_table[] = {
+- 		.mode		= 0644,
+- 		.proc_handler	= proc_dointvec,
+- 	},
+-+#ifdef CONFIG_USER_NS
+-+	{
+-+		.procname	= "unprivileged_userns_clone",
+-+		.data		= &unprivileged_userns_clone,
+-+		.maxlen		= sizeof(int),
+-+		.mode		= 0644,
+-+		.proc_handler	= proc_dointvec,
+-+	},
+-+#endif
+- #ifdef CONFIG_PROC_SYSCTL
+- 	{
+- 		.procname	= "tainted",
+ @@ -2498,6 +2545,7 @@ EXPORT_SYMBOL(proc_douintvec);
+  EXPORT_SYMBOL(proc_dointvec_jiffies);
+  EXPORT_SYMBOL(proc_dointvec_minmax);
