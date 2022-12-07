@@ -106,8 +106,14 @@
   '("btrfs" "xxhash_generic"))
 
 (define %rosenthal-base-file-systems
-  (delete %debug-file-system
-          %base-file-systems))
+  (cons* (file-system
+           (device "none")
+           (mount-point "/tmp")
+           (type "tmpfs")
+           (check? #f))
+
+         (delete %debug-file-system
+                 %base-file-systems)))
 
 (define %rosenthal-base-packages
   (let ((to-add    (list curl
