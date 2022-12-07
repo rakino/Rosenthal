@@ -59,7 +59,7 @@
          (replace "libxkbcommon" libxkbcommon-minimal)
          (replace "pixman" pixman-0.42.2)
          (replace "wayland" wayland-1.21.0)
-         (replace "wayland-protocols" wayland-protocols-1.30)))
+         (replace "wayland-protocols" wayland-protocols-1.31)))
       (native-inputs (list `(,hwdata "pnp") pkg-config)))))
 
 (define-public wlroots-dev
@@ -235,7 +235,7 @@ customization, and more.")
      (list libxkbcommon-minimal
            linux-pam
            wayland-1.21.0
-           wayland-protocols-1.30))
+           wayland-protocols-1.31))
     (home-page "https://github.com/ifreund/waylock")
     (synopsis "Small screenlocker for Wayland compositors")
     (description

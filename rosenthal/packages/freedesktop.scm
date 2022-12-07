@@ -30,7 +30,7 @@
               ;; FIXME
               (delete 'check))))))))
 
-(define-public wayland-protocols-1.30
+(define-public wayland-protocols-1.31
   (let ((base wayland-protocols))
     (package
       (inherit base)
