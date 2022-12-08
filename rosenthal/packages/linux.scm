@@ -33,9 +33,6 @@
 (define deblob-scripts
   (@@ (gnu packages linux) deblob-scripts-6.0))
 
-(define doc-supported?
-  (@@ (gnu packages linux) doc-supported?))
-
 (define make-linux-libre-source
   (@@ (gnu packages linux) make-linux-libre-source))
 
@@ -64,9 +61,9 @@
 
 (define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
 
-(define %xanmod-version "6.0.10")
-(define %xanmod-revision "xanmod1")
-(define %hardened-revision "hardened1")
+(define %linux-version "6.0.10")
+(define %xanmod-version "xanmod1")
+(define %hardened-version "hardened1")
 
 (define (extract-xanmod-patch version hash)
   (let ((patch (string-append "linux-" version ".patch"))
@@ -97,43 +94,60 @@
 
 (define linux-xanmod-patch
   (extract-xanmod-patch
-   (string-append %xanmod-version "-" %xanmod-revision)
+   (string-append %linux-version "-" %xanmod-version)
    (base32 "0ypvr7lp9bhlja3zp97vmfxa80144z1kplsrzqdj301xwrmiki37")))
+
+(define linux-hardened-patch
+  (origin
+    (method url-fetch)
+    (uri (string-append
+          "https://github.com/anthraxx/linux-hardened/releases/download/"
+          %linux-version "-" %hardened-version "/linux-hardened-"
+          %linux-version "-" %hardened-version ".patch"))
+    (sha256
+     (base32 "1zbhqwhbzjc2jsmbrqk6y4w62b9drhzh2kb1p5bwgi3nd17f43jj"))))
 
 (define linux-hardened-patch-for-xanmod
   (origin
-    (method url-fetch)
-    (uri (string-append "https://github.com/anthraxx/linux-hardened/releases/download/"
-                        %xanmod-version "-" %hardened-revision "/linux-hardened-"
-                        %xanmod-version "-" %hardened-revision ".patch"))
-    (patches (list (local-file "patches/linux-hardened-xanmod-adaption.patch")))
-    (sha256 (base32 "1zbhqwhbzjc2jsmbrqk6y4w62b9drhzh2kb1p5bwgi3nd17f43jj"))))
+    (inherit linux-hardened-patch)
+    (patches
+     (list (local-file "patches/linux-hardened-xanmod-adaption.patch")))))
 
 (define linux-xanmod-source
   (origin
     (inherit (%upstream-linux-source
               "6.0"
               (base32 "13kqh7yhifwz5dmd3ky0b3mzbh9r0nmjfp5mxy42drcdafjl692w")))
-    (patches
-     (append (list linux-xanmod-patch
-                   linux-hardened-patch-for-xanmod)
-             (if (doc-supported? %xanmod-version)
-                 (search-patches "linux-libre-infodocs-target.patch")
-                 '())))))
+    (patches (list linux-xanmod-patch))))
+
+(define linux-hardened-source
+  (origin
+    (inherit (%upstream-linux-source
+              %linux-version
+              (base32 "1l0xak4w7c16cg8lhracy8r18zzdl0x5s654w6ivyw6dhk6pzr9r")))
+    (patches (list linux-hardened-patch))))
 
 (define linux-rosenthal-source
+  (origin
+    (inherit linux-xanmod-source)
+    (patches
+     (list linux-xanmod-patch
+           linux-hardened-patch-for-xanmod))))
+
+(define linux-rosenthal-source-deblobed
   (make-linux-libre-source
-   %xanmod-version
-   linux-xanmod-source
+   %linux-version
+   linux-rosenthal-source
    linux-rosenthal-deblob-scripts))
 
 (define-public linux-xanmod
-  (let ((base linux-libre))
+  (let ((base (customize-linux #:name "linux-xanmod"
+                               #:linux linux-libre
+                               #:source linux-xanmod-source
+                               #:extra-version %xanmod-version)))
     (package
       (inherit base)
-      (name "linux-xanmod")
-      (version %xanmod-version)
-      (source linux-xanmod-source)
+      (version %linux-version)
       (build-system
         (build-system-with-c-toolchain
          (package-build-system base)
@@ -157,17 +171,7 @@
 
                   ;; However, LD_PRELOAD addresses this....
                   (setenv "LD_PRELOAD"
-                          (string-append #$gcc:lib "/lib/libgcc_s.so.1"))))
-
-              ;; NOTE: As defined in `(make-linux-libre)`, `linux-libre` would
-              ;; apply a few kernel configuration here, to workaround this
-              ;; without defining `(make-linux-libre)` from scratch again,
-              ;; simply replace `.config` with ours.
-              (add-after 'configure 'replace-kconfig
-                (lambda* (#:key inputs #:allow-other-keys)
-                  (let ((config (assoc-ref inputs "kconfig")))
-                    (copy-file config ".config")
-                    (chmod ".config" #o666))))))))
+                          (string-append #$gcc:lib "/lib/libgcc_s.so.1"))))))))
       (native-inputs
        (modify-inputs (package-native-inputs base)
          (append clang-15
@@ -184,22 +188,36 @@
 features.  Built to provide a stable, responsive and smooth desktop
 experience."))))
 
-(define-public linux-rosenthal
-  (let ((base linux-xanmod))
+(define-public linux-hardened
+  (let ((base (customize-linux #:name "linux-hardened"
+                               #:linux linux-xanmod
+                               #:source linux-hardened-source
+                               #:extra-version %hardened-version)))
     (package
       (inherit base)
-      (name "linux-rosenthal")
-      (source linux-rosenthal-source)
-      (native-inputs
-       (modify-inputs (package-native-inputs base)
-         (replace "kconfig"
-           (local-file "aux-files/config.zen3-dorphine"))))
+      (home-page "https://github.com/anthraxx/linux-hardened")
+      (synopsis "The Security-Hardened Linux kernel and modules")
+      (description
+       "This package provides a Linux kernel with minimal supplement to
+upstream Kernel Self Protection Project changes.  Features already provided by
+SELinux + Yama and archs other than multiarch arm64 / x86_64 aren't in scope.
+"))))
+
+(define-public linux-rosenthal
+  (let ((base (customize-linux #:name "linux-rosenthal"
+                               #:linux linux-xanmod
+                               #:source linux-rosenthal-source-deblobed
+                               #:defconfig (local-file "aux-files/config.zen3-dorphine")
+                               #:extra-version "rosenthal")))
+    (package
+      (inherit base)
       (home-page "https://github.com/rakino/rosenthal/")
+      (supported-systems '("x86_64-linux"))
       (synopsis "Custom Linux kernel")
       (description
-       "Linux-Rosenthal is a custom Linux kernel based on @code{linux-xanmod}.
-This kernel is partially deblobed, with some files necessary to drive specific
-hardwares kept."))))
+       "Linux-Rosenthal is a custom Linux kernel based on @code{linux-xanmod}
+and @code{linux-hardened}.  This kernel is partially deblobed, with some files
+necessary to drive specific hardwares kept."))))
 
 (define-public kconfig-hardened-check-dev
   (let* ((base kconfig-hardened-check)
