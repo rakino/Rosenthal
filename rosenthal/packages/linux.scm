@@ -61,7 +61,7 @@
 
 (define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
 
-(define %linux-version "6.0.10")
+(define %linux-version "6.0.11")
 (define %xanmod-version "xanmod1")
 (define %hardened-version "hardened1")
 
@@ -95,7 +95,7 @@
 (define linux-xanmod-patch
   (extract-xanmod-patch
    (string-append %linux-version "-" %xanmod-version)
-   (base32 "0ypvr7lp9bhlja3zp97vmfxa80144z1kplsrzqdj301xwrmiki37")))
+   (base32 "0kfjy8g00dw4x9absdr5i0bx54h012a40h23cvlq1pxvsxga17m0")))
 
 (define linux-hardened-patch
   (origin
@@ -105,11 +105,12 @@
           %linux-version "-" %hardened-version "/linux-hardened-"
           %linux-version "-" %hardened-version ".patch"))
     (sha256
-     (base32 "1zbhqwhbzjc2jsmbrqk6y4w62b9drhzh2kb1p5bwgi3nd17f43jj"))))
+     (base32 "0y48mj6sj43s1d58gds0v8dbyiavsvl5n0a8iqjs0fb8f6wbld0r"))))
 
 (define linux-hardened-patch-for-xanmod
   (origin
     (inherit linux-hardened-patch)
+    (file-name "linux-hardened.patch")
     (patches
      (list (local-file "patches/linux-hardened-xanmod-adaption.patch")))))
 
@@ -124,7 +125,7 @@
   (origin
     (inherit (%upstream-linux-source
               %linux-version
-              (base32 "1l0xak4w7c16cg8lhracy8r18zzdl0x5s654w6ivyw6dhk6pzr9r")))
+              (base32 "0qn7m74wfixqk832j2yvgf2lq4vi55agm5gk9ziy2wa9wqqn3bib")))
     (patches (list linux-hardened-patch))))
 
 (define linux-rosenthal-source

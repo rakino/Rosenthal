@@ -1,7 +1,7 @@
-diff --git a/linux-hardened-6.0.10-hardened1.patch b/linux-hardened-6.0.10-hardened1.patch
-index 9cc8a0f..e7e71a7 100644
---- a/linux-hardened-6.0.10-hardened1.patch
-+++ b/linux-hardened-6.0.10-hardened1.patch
+diff --git a/linux-hardened.patch b/linux-hardened.patch
+index 9e4c6a0..e5e0c5a 100644
+--- a/linux-hardened.patch
++++ b/linux-hardened.patch
 @@ -1545,22 +1545,6 @@ index 205d605cacc5b..26c15bed8f7b4 100644
   int proc_dointvec_jiffies(struct ctl_table *table, int write,
   		    void *buffer, size_t *lenp, loff_t *ppos)
