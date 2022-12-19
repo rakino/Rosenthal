@@ -146,3 +146,30 @@ and metrics generated from your programming activity.")
                 (sha256
                  (base32
                   "1qlpszfvi1zngfi377pxkb9byhw0x8h4wsc70jn2slddq0jryjad")))))))
+
+;; https://issues.guix.gnu.org/44165
+(define-public emacs-xonsh-mode
+  ;; There is no tagged release yet.
+  (let ((commit "7fa581524533a9b6b770426e4445e571a69e469d")
+        (revision "0"))
+    (package
+      (name "emacs-xonsh-mode")
+      (version (git-version "0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/seanfarley/xonsh-mode")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0lfi2372clkkzi4a940fwparsfhxxzb7bmysfd50n1myakgldri5"))))
+      (build-system emacs-build-system)
+      (home-page "https://github.com/seanfarley/xonsh-mode")
+      (synopsis "Emacs major mode for editing @code{xonshrc} files")
+      (description
+       "This package implements a major mode for xonsh scripts.  The basic
+functionality includes syntax highlight for xonsh operators.  Files with the
+@file{.xonshrc} or @file{.xsh} extension are automatically opened with this
+mode.")
+      (license license:gpl3+))))
