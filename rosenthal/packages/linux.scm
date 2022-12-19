@@ -165,12 +165,10 @@
                   (setenv "CXXFLAGS" #$%cflags)
                   (setenv "LDFLAGS" #$%ldflags)
 
-                  ;; FIXME: For some unknown reason, the build would fail when
-                  ;; calling `pthread_cancel()` at SORTTAB stage, together
-                  ;; with a "missing libgcc_s.so.1" error, no matter whether
-                  ;; it's present in LIBRARY_PATH.
-
-                  ;; However, LD_PRELOAD addresses this....
+                  ;; FIXME:
+                  ;; libgcc_s.so.1 must be installed for pthread_cancel to work
+                  ;; scripts/link-vmlinux.sh: line 189: 22065 Aborted                 (core dumped) ${objtree}/scripts/sorttable ${1}
+                  ;; Failed to sort kernel tables
                   (setenv "LD_PRELOAD"
                           (string-append #$gcc:lib "/lib/libgcc_s.so.1"))))))))
       (native-inputs
@@ -182,6 +180,7 @@
                  zstd)
          (delete "gmp" "mpc" "mpfr")))
       (home-page "https://xanmod.org/")
+      (supported-systems '("x86_64-linux"))
       (synopsis
        "Linux kernel distribution with custom settings and new features")
       (description
@@ -197,6 +196,7 @@ experience."))))
     (package
       (inherit base)
       (home-page "https://github.com/anthraxx/linux-hardened")
+      (supported-systems '("aarch64-linux" "x86_64-linux"))
       (synopsis "The Security-Hardened Linux kernel and modules")
       (description
        "This package provides a Linux kernel with minimal supplement to
