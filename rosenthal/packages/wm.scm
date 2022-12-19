@@ -81,8 +81,8 @@
                   "04cd03pxwpxwrfh6w0d34hqmi1kp9qn1yp6xbwdgvqzw61xbh7j1")))))))
 
 (define-public hyprland-protocols
-  (let ((revision "0")
-        (commit "0dcff94fc10df2bbb66d3e1b5a1d6cfd3ada5515"))
+  (let ((revision "1")
+        (commit "301733ae466b229066ba15a53e6d8b91c5dcef5b"))
     (package
       (name "hyprland-protocols")
       (version (git-version "0.1" revision commit))
@@ -98,7 +98,7 @@
                     (("pkgconfig_configuration.set\\('PACKAGE', 'hyprland-protocols'\\)") "")))
                 (sha256
                  (base32
-                  "0n72ayjyqx4fbkpm3rdsvd4ydwvfcajv5sm1nlzd2r6mf1gaqv9f"))))
+                  "1q54lvpiilc75z19m2i0zc3pg0nxp4667741d5p8zlci4bjid9g0"))))
       (build-system meson-build-system)
       (home-page "https://hyprland.org")
       (synopsis "Wayland protocol extensions for Hyprland")
