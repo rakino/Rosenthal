@@ -156,9 +156,9 @@
             config => (guix-configuration
                        (inherit config)
                        (substitute-urls
-                        (cons* "https://nonguix.org"
-                               "https://guix.tobias.gr"
-                               %default-substitute-urls))
+                        (append %default-substitute-urls
+                                '("https://nonguix.org"
+                                  "https://guix.tobias.gr")))
                        (authorized-keys
                         (cons* %guix-authorized-key-nonguix
                                %guix-authorized-key-tobias
