@@ -142,16 +142,6 @@ headers.  This can expose sensitive information in your logs.")
    (list-of-strings '())
    "List of extra options."))
 
-(define %cloudflare-tunnel-accounts
-  (list (user-group (name "cloudflared") (system? #t))
-        (user-account
-         (name "cloudflared")
-         (group "cloudflared")
-         (system? #t)
-         (comment "Cloudflare Tunnel user")
-         (home-directory "/var/empty")
-         (shell (file-append shadow "/sbin/nologin")))))
-
 (define cloudflare-tunnel-shepherd-service
   (match-lambda
     (($ <cloudflare-tunnel-configuration> cloudflared metrics
@@ -162,7 +152,7 @@ headers.  This can expose sensitive information in your logs.")
      (list (shepherd-service
             (documentation "Run cloudflared.")
             (provision '(cloudflare-tunnel))
-            (requirement '(networking))
+            (requirement '(loopback networking))
             (start #~(make-forkexec-constructor
                       (list #$cloudflared
                             "tunnel"
@@ -180,8 +170,8 @@ headers.  This can expose sensitive information in your logs.")
                                    '("--post-quantum")
                                    '())
                             #$@extra-options)
-                      #:user "cloudflared"
-                      #:group "cloudflared"
+                      #:user "nobody"
+                      #:group "nogroup"
                       #:log-file #$log-file))
             (stop #~(make-kill-destructor)))))))
 
@@ -190,9 +180,7 @@ headers.  This can expose sensitive information in your logs.")
    (name 'cloudflare-tunnel)
    (extensions
     (list (service-extension shepherd-root-service-type
-                             cloudflare-tunnel-shepherd-service)
-          (service-extension account-service-type
-                             (const %cloudflare-tunnel-accounts))))
+                             cloudflare-tunnel-shepherd-service)))
    (default-value (cloudflare-tunnel-configuration))
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
 
@@ -213,10 +201,9 @@ headers.  This can expose sensitive information in your logs.")
    "Association list of miniflux configurations."))
 
 (define %miniflux-accounts
-  (list (user-group (name "miniflux") (system? #t))
-        (user-account
+  (list (user-account
          (name "miniflux")
-         (group "miniflux")
+         (group "nogroup")
          (system? #t)
          (home-directory "/var/empty")
          (shell (file-append shadow "/sbin/nologin")))))
@@ -243,7 +230,7 @@ headers.  This can expose sensitive information in your logs.")
               (start #~(make-forkexec-constructor
                         (list #$miniflux  "-config-file" #$config-file)
                         #:user "miniflux"
-                        #:group "miniflux"
+                        #:group "nogroup"
                         #:log-file #$log-file))
               (stop #~(make-kill-destructor))))))))
 
