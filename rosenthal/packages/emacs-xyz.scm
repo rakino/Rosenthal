@@ -49,8 +49,8 @@
          (delete "emacs-all-the-icons" "emacs-dash"))))))
 
 (define-public emacs-god-mode-dev
-  (let ((revision "16")
-        (commit "49c1a1753188e5b2788b8c1f1f9fbd1264460bab"))
+  (let ((revision "18")
+        (commit "c2d655e0baeb7e90eadb0a9ffe09b2a87c1fe34d"))
     (package
       (inherit emacs-god-mode)
       (name "emacs-god-mode-dev")
@@ -63,7 +63,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0h1kfvr4zahk8ihvri1r16b2nkg3dg3524ic64c6w0jing2gr37c")))))))
+                  "14wjjdcvilix6ddaq6a1f3d27hh6w492qmpvyvgvw24d7xw935fh")))))))
 
 (define-public emacs-macrostep-geiser-dev
   (let ((revision "3")
