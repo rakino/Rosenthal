@@ -112,6 +112,20 @@
            (type "tmpfs")
            (check? #f))
 
+         (file-system
+           (device "none")
+           (mount-point "/run")
+           (type "tmpfs")
+           (needed-for-boot? #t)
+           (check? #f))
+
+         (file-system
+           (device "none")
+           (mount-point "/var/run")
+           (type "tmpfs")
+           (needed-for-boot? #t)
+           (check? #f))
+
          (delete %debug-file-system
                  %base-file-systems)))
 
