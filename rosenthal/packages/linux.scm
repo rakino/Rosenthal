@@ -222,8 +222,8 @@ necessary to drive specific hardwares kept."))))
 
 (define-public kconfig-hardened-check-dev
   (let* ((base kconfig-hardened-check)
-         (revision "135")
-         (commit "d361925ba8e7c1f712615e12d4eff678f1f4d59b"))
+         (revision "154")
+         (commit "6211b6852b6b35f6f5d18ec2f0e713d2afea5a87"))
     (package
       (inherit base)
       (name "kconfig-hardened-check-dev")
@@ -236,4 +236,4 @@ necessary to drive specific hardwares kept."))))
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0lkm4q3ndk5v58299sn4iclz0xf0z1hl63lkkmm05kgib0i4gbqk")))))))
+                  "1ynd4s0dm5aqhk6y858p9iwl1c0y5mp5rb2a4mdgkzc23v5aczyi")))))))
