@@ -66,7 +66,7 @@ time.
 (define-public smartdns
   (package
     (name "smartdns")
-    (version "39")
+    (version "40")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -75,14 +75,15 @@ time.
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1ih3qf0ncbwfin91fihgfli4s098mjn9l9f6xcg6pdn92cgj6zvi"))))
+                "0ibbj96s40xgk6q7dsgpx65rjkknl1pn7nca5fcbbhcm2m80nzjj"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? #f                  ;no tests
            #:make-flags
            #~(list (string-append "CC=" #$(cc-for-target))
-                   (string-append "PREFIX=" #$output)
-                   "SYSCONFDIR=no-thanks" "SYSTEMDSYSTEMUNITDIR=no-thanks")
+                   (string-append "DESTDIR=" #$output)
+                   "PREFIX=''"
+                   "SYSTEMDSYSTEMUNITDIR=no-thanks")
            #:phases
            #~(modify-phases %standard-phases
                (delete 'configure))))
