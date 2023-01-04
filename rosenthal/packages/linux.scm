@@ -42,7 +42,7 @@
 
 (define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
 
-(define %xanmod-version "6.0.12")
+(define %xanmod-version "6.1.2")
 (define %xanmod-revision "xanmod1")
 
 (define %hardened-version "6.0.16")
@@ -78,7 +78,7 @@
 (define linux-xanmod-patch
   (extract-xanmod-patch
    (string-append %xanmod-version "-" %xanmod-revision)
-   (base32 "05lm7prllbsgbfpw9v41idyd7a4xyypxry8ncsmpdzlak602rj7k")))
+   (base32 "1xcl1wr61c7cl6pvyzg2bj6jqf142y3cp3sq93ndi7qhml36bf1b")))
 
 (define linux-hardened-patch
   (origin
@@ -94,7 +94,7 @@
   (origin
     (inherit (%upstream-linux-source
               (version-major+minor %xanmod-version)
-              (base32 "13kqh7yhifwz5dmd3ky0b3mzbh9r0nmjfp5mxy42drcdafjl692w")))
+              (base32 "1ssxn81jfl0jf9brczfrrwd1f1vmf594jvhrs7zgcc54a5qg389c")))
     (patches (list linux-xanmod-patch))))
 
 (define linux-hardened-source
