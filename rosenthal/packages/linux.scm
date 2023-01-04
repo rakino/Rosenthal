@@ -42,9 +42,11 @@
 
 (define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
 
-(define %linux-version "6.0.12")
-(define %xanmod-version "xanmod1")
-(define %hardened-version "hardened1")
+(define %xanmod-version "6.0.12")
+(define %xanmod-revision "xanmod1")
+
+(define %hardened-version "6.0.12")
+(define %hardened-revision "hardened1")
 
 (define (extract-xanmod-patch version hash)
   (let ((patch (string-append "linux-" version ".patch"))
@@ -75,7 +77,7 @@
 
 (define linux-xanmod-patch
   (extract-xanmod-patch
-   (string-append %linux-version "-" %xanmod-version)
+   (string-append %xanmod-version "-" %xanmod-revision)
    (base32 "05lm7prllbsgbfpw9v41idyd7a4xyypxry8ncsmpdzlak602rj7k")))
 
 (define linux-hardened-patch
@@ -83,22 +85,22 @@
     (method url-fetch)
     (uri (string-append
           "https://github.com/anthraxx/linux-hardened/releases/download/"
-          %linux-version "-" %hardened-version "/linux-hardened-"
-          %linux-version "-" %hardened-version ".patch"))
+          %hardened-version "-" %hardened-revision "/linux-hardened-"
+          %hardened-version "-" %hardened-revision ".patch"))
     (sha256
      (base32 "1fhpx9hx2csz8d30l2nl43j865k6gzf5fim0943dhgpa3r9cy83w"))))
 
 (define linux-xanmod-source
   (origin
     (inherit (%upstream-linux-source
-              "6.0"
+              (version-major+minor %xanmod-version)
               (base32 "13kqh7yhifwz5dmd3ky0b3mzbh9r0nmjfp5mxy42drcdafjl692w")))
     (patches (list linux-xanmod-patch))))
 
 (define linux-hardened-source
   (origin
     (inherit (%upstream-linux-source
-              %linux-version
+              %hardened-version
               (base32 "00ag63lnxw2gijw3b6v29lhrlv480m12954q5zh4jawlz3nk1dw9")))
     (patches (list linux-hardened-patch))))
 
@@ -106,10 +108,10 @@
   (let ((base (customize-linux #:name "linux-xanmod"
                                #:linux linux-libre
                                #:source linux-xanmod-source
-                               #:extra-version %xanmod-version)))
+                               #:extra-version %xanmod-revision)))
     (package
       (inherit base)
-      (version %linux-version)
+      (version %xanmod-version)
       (build-system
         (build-system-with-c-toolchain
          (package-build-system base)
@@ -153,9 +155,10 @@ experience."))))
   (let ((base (customize-linux #:name "linux-hardened"
                                #:linux linux-xanmod
                                #:source linux-hardened-source
-                               #:extra-version %hardened-version)))
+                               #:extra-version %hardened-revision)))
     (package
       (inherit base)
+      (version %hardened-version)
       (home-page "https://github.com/anthraxx/linux-hardened")
       (supported-systems '("aarch64-linux" "x86_64-linux"))
       (synopsis "The Security-Hardened Linux kernel and modules")
