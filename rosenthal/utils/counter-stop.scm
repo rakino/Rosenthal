@@ -171,7 +171,7 @@
                        (inherit config)
                        (substitute-urls
                         (append %default-substitute-urls
-                                '("https://nonguix.org"
+                                '("https://substitutes.nonguix.org"
                                   "https://guix.tobias.gr")))
                        (authorized-keys
                         (cons* %guix-authorized-key-nonguix
