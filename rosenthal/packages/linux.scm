@@ -30,27 +30,8 @@
 (define computed-origin-method
   (@@ (guix packages) computed-origin-method))
 
-(define deblob-scripts
-  (@@ (gnu packages linux) deblob-scripts-6.0))
-
-(define make-linux-libre-source
-  (@@ (gnu packages linux) make-linux-libre-source))
-
 (define %upstream-linux-source
   (@@ (gnu packages linux) %upstream-linux-source))
-
-(define linux-rosenthal-deblob-scripts
-  (match deblob-scripts
-    ((deblob-version (? origin? deblob) (? origin? deblob-check))
-     (list deblob-version
-           (origin
-             (inherit deblob)
-             (file-name "linux-libre-deblob")
-             (patches (list (local-file "patches/linux-libre-deblob-keep-needed.patch"))))
-           (origin
-             (inherit deblob-check)
-             (file-name "linux-libre-deblob-check")
-             (patches (list (local-file "patches/linux-libre-deblob-check-omit-error.patch"))))))))
 
 (define %cflags
   (string-append
@@ -107,13 +88,6 @@
     (sha256
      (base32 "1fhpx9hx2csz8d30l2nl43j865k6gzf5fim0943dhgpa3r9cy83w"))))
 
-(define linux-hardened-patch-for-xanmod
-  (origin
-    (inherit linux-hardened-patch)
-    (file-name "linux-hardened.patch")
-    (patches
-     (list (local-file "patches/linux-hardened-xanmod-adaption.patch")))))
-
 (define linux-xanmod-source
   (origin
     (inherit (%upstream-linux-source
@@ -127,19 +101,6 @@
               %linux-version
               (base32 "00ag63lnxw2gijw3b6v29lhrlv480m12954q5zh4jawlz3nk1dw9")))
     (patches (list linux-hardened-patch))))
-
-(define linux-rosenthal-source
-  (origin
-    (inherit linux-xanmod-source)
-    (patches
-     (list linux-xanmod-patch
-           linux-hardened-patch-for-xanmod))))
-
-(define linux-rosenthal-source-deblobed
-  (make-linux-libre-source
-   %linux-version
-   linux-rosenthal-source
-   linux-rosenthal-deblob-scripts))
 
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
@@ -203,22 +164,6 @@ experience."))))
 upstream Kernel Self Protection Project changes.  Features already provided by
 SELinux + Yama and archs other than multiarch arm64 / x86_64 aren't in scope.
 "))))
-
-(define-public linux-rosenthal
-  (let ((base (customize-linux #:name "linux-rosenthal"
-                               #:linux linux-xanmod
-                               #:source linux-rosenthal-source-deblobed
-                               #:defconfig (local-file "aux-files/config.zen3-dorphine")
-                               #:extra-version "rosenthal")))
-    (package
-      (inherit base)
-      (home-page "https://github.com/rakino/rosenthal/")
-      (supported-systems '("x86_64-linux"))
-      (synopsis "Custom Linux kernel")
-      (description
-       "Linux-Rosenthal is a custom Linux kernel based on @code{linux-xanmod}
-and @code{linux-hardened}.  This kernel is partially deblobed, with some files
-necessary to drive specific hardwares kept."))))
 
 (define-public kconfig-hardened-check-dev
   (let* ((base kconfig-hardened-check)
