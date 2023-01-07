@@ -161,8 +161,8 @@ customization, and more.")
 
 ;; No releases yet.
 (define-public grimblast
-  (let ((revision "0")
-        (commit "5b21c74a3200ffdd48ed7764c7041d43c3cd5588"))
+  (let ((revision "1")
+        (commit "37c8121f98d76f57caa00dd7106877876e0d7483"))
     (package
       (name "grimblast")
       (version (git-version "0" revision commit))
@@ -174,7 +174,7 @@ customization, and more.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1wbpmf1dsf1syh7jbirglqkscsrn7l496j7afwxpbdjragagbhc0"))))
+                  "1jhjjblklqnz601ic58bl0x550d1rkyaqdmydhqzx3k2bc2mnjk7"))))
       (build-system gnu-build-system)
       (arguments
        (list #:tests? #f                ;no tests
