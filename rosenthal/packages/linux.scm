@@ -42,7 +42,7 @@
 
 (define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
 
-(define %xanmod-version "6.1.3")
+(define %xanmod-version "6.1.4")
 (define %xanmod-revision "xanmod1")
 
 (define %hardened-version "6.0.16")
@@ -78,7 +78,7 @@
 (define linux-xanmod-patch
   (extract-xanmod-patch
    (string-append %xanmod-version "-" %xanmod-revision)
-   (base32 "0rxg19mak580bcipa1nrsv5f6ch3q47ckkhnwp1db6ci3rw5mdwb")))
+   (base32 "15wk6hmsffk31f7yphj7x42y60wwc735bxffav2yf6rp0n3676l7")))
 
 (define linux-hardened-patch
   (origin
@@ -108,7 +108,7 @@
   (let ((base (customize-linux #:name "linux-xanmod"
                                #:linux linux-libre
                                #:source linux-xanmod-source
-                               #:extra-version %xanmod-revision)))
+                               #:extra-version %hardened-revision)))
     (package
       (inherit base)
       (version %xanmod-version)
@@ -121,6 +121,10 @@
        (substitute-keyword-arguments (package-arguments base)
          ((#:phases phases)
           #~(modify-phases #$phases
+              (add-after 'unpack 'remove-localversion
+                (lambda _
+                  (when (file-exists? "localversion")
+                    (delete-file "localversion"))))
               (add-before 'configure 'setenv
                 (lambda _
                   (setenv "LLVM" "1")
