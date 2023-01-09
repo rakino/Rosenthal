@@ -63,9 +63,9 @@
       (native-inputs (list `(,hwdata "pnp") pkg-config)))))
 
 (define-public wlroots-dev
-        (revision "169")
-        (commit "86fc2199f85ac0e1089bb7fd5a0b5cbc432bdb67"))
   (let ((base wlroots-0.16.1)
+        (revision "212")
+        (commit "5f264a7d6c8af27d41ff440c05262b022c055593"))
     (package
       (inherit base)
       (name "wlroots-dev")
@@ -78,7 +78,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "04cd03pxwpxwrfh6w0d34hqmi1kp9qn1yp6xbwdgvqzw61xbh7j1")))))))
+                  "1qgdpigisgzvhf5m48v0vp21hn4fpljkjgij9wlmlmkv7rk2idj9")))))))
 
 (define-public hyprland-protocols
   (let ((revision "1")
