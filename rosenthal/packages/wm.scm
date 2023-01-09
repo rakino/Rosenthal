@@ -27,12 +27,12 @@
   #:use-module (rosenthal packages freedesktop)
   #:use-module (rosenthal packages xdisorg))
 
-(define-public wlroots-0.16.0
+(define-public wlroots-0.16.1
   (let ((base wlroots))
     (package
       (inherit base)
       (name "wlroots")
-      (version "0.16.0")
+      (version "0.16.1")
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -41,7 +41,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "18rfr3wfm61dv9w8m4xjz4gzq2v3k5vx35ymbi1cggkgbk3lbc4k"))))
+                  "11kcica9waj1a1xgbi12gif9z5z0b4xzycbcgawbgdmj77pws8sk"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
@@ -63,9 +63,9 @@
       (native-inputs (list `(,hwdata "pnp") pkg-config)))))
 
 (define-public wlroots-dev
-  (let ((base wlroots-0.16.0)
         (revision "169")
         (commit "86fc2199f85ac0e1089bb7fd5a0b5cbc432bdb67"))
+  (let ((base wlroots-0.16.1)
     (package
       (inherit base)
       (name "wlroots-dev")
