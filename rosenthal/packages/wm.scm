@@ -55,7 +55,6 @@
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdrm-2.4.114)
-         (replace "libseat" libseat-sans-logind)
          (replace "libxkbcommon" libxkbcommon-minimal)
          (replace "pixman" pixman-0.42.2)
          (replace "wayland" wayland-1.21.0)
