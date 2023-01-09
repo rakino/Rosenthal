@@ -45,7 +45,7 @@
 (define %xanmod-version "6.1.4")
 (define %xanmod-revision "xanmod1")
 
-(define %hardened-version "6.0.16")
+(define %hardened-version "6.0.17")
 (define %hardened-revision "hardened1")
 
 (define (extract-xanmod-patch version hash)
@@ -88,7 +88,7 @@
           %hardened-version "-" %hardened-revision "/linux-hardened-"
           %hardened-version "-" %hardened-revision ".patch"))
     (sha256
-     (base32 "19rakmfdkkbvvzphsksccgad3wc2khlcynzdqx10d7spldj8nkp1"))))
+     (base32 "1sy4m64nfyhpdxq9r5ryj4d05icvb04j2brg7f8hafvnjadavskx"))))
 
 (define linux-xanmod-source
   (origin
@@ -101,7 +101,7 @@
   (origin
     (inherit (%upstream-linux-source
               %hardened-version
-              (base32 "1r2wf3hf7yxl7lxma7plyi8pk3dmlsrpm763rf0g1h8ilsy72844")))
+              (base32 "020xrv9449gd0jnfgi0sb69bgs2p9sd49dghmd3bnnal584r5vm7")))
     (patches (list linux-hardened-patch))))
 
 (define-public linux-xanmod
