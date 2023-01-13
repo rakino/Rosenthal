@@ -56,14 +56,6 @@
   (curve Ed25519)
   (q #C1FD53E5D4CE971933EC50C9F307AE2171A2D3B52C804642A7A35F84F3A4EA98#)))"))
 
-;; https://guix.tobias.gr/signing-key.pub
-(define %guix-authorized-key-tobias
-  (plain-file "tobias.pub" "
-(public-key
- (ecc
-  (curve Ed25519)
-  (q #E21911E159DB6D031A763509A255B054360A4A96F5668CBBAC48052E67D274D3#)))"))
-
 ;; Procedures
 (define (normalize-package pkg)
   (if (package? pkg)
@@ -95,8 +87,7 @@
 (define %rosenthal-default-kernel-arguments
   `(,@(delete "nosmt=force"
               %kicksecure-kernel-arguments)
-    "net.ifnames=0"
-    "nmi_watchdog=0"))
+    "net.ifnames=0"))
 
 (define %rosenthal-default-keyboard-layout
   (keyboard-layout "us" "dvorak"
@@ -130,11 +121,7 @@
                  %base-file-systems)))
 
 (define %rosenthal-base-packages
-  (let ((to-add    (list curl
-                         mosh
-                         nss-certs
-                         unzip
-                         zstd))
+  (let ((to-add (list nss-certs))
         (to-remove (list bash-completion
                          info-reader
                          mg
@@ -147,15 +134,7 @@
     (append to-add (lset-difference eqv? %base-packages to-remove))))
 
 (define %rosenthal-base-services
-  (cons* (service ntp-service-type)
-
-         (service openssh-service-type
-                  (openssh-configuration
-                   (permit-root-login 'prohibit-password)))
-
-         (rngd-service)
-
-         (modify-services %base-services
+  (cons* (modify-services %base-services
            (sysctl-service-type
             config => (sysctl-configuration
                        (inherit config)
@@ -171,9 +150,7 @@
                        (inherit config)
                        (substitute-urls
                         (append %default-substitute-urls
-                                '("https://substitutes.nonguix.org"
-                                  "https://guix.tobias.gr")))
+                                '("https://substitutes.nonguix.org")))
                        (authorized-keys
                         (cons* %guix-authorized-key-nonguix
-                               %guix-authorized-key-tobias
                                %default-authorized-guix-keys)))))))
