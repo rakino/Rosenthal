@@ -73,6 +73,8 @@
     (inherit (%upstream-linux-source
               (version-major+minor %xanmod-version)
               (base32 "1ssxn81jfl0jf9brczfrrwd1f1vmf594jvhrs7zgcc54a5qg389c")))
+    (file-name
+     (string-append "linux-" %xanmod-version "-" %xanmod-revision ".tar.xz"))
     (patches (list linux-xanmod-patch))))
 
 (define linux-hardened-source
@@ -80,6 +82,8 @@
     (inherit (%upstream-linux-source
               %hardened-version
               (base32 "1qsygnsn67j843ywpswy5724zin5sszb5mz8b8h3lw553mb8wk9y")))
+    (file-name
+     (string-append "linux-" %hardened-version "-" %hardened-revision ".tar.xz"))
     (patches (list linux-hardened-patch))))
 
 (define-public linux-xanmod
