@@ -40,7 +40,7 @@
 
 (define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
 
-(define %xanmod-version "6.1.5")
+(define %xanmod-version "6.1.7")
 (define %xanmod-revision "xanmod1")
 
 (define %hardened-version "6.1.6")
@@ -56,7 +56,7 @@
     (file-name
      (string-append "linux-" %xanmod-version "-" %xanmod-revision ".patch"))
     (sha256
-     (base32 "0d3382f3vzrmsw366hd5k2dpzl9a8zhc1dq3bwg5yq82gi9ydyvl"))))
+     (base32 "1k5n4cli7r2w66132yh46gw6n0fk10p7kxgknldf2ydfws1q8rs8"))))
 
 (define linux-hardened-patch
   (origin
