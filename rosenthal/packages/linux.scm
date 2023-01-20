@@ -25,10 +25,8 @@
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages rsync)
-  #:use-module (gnu packages tls))
-
-(define computed-origin-method
-  (@@ (guix packages) computed-origin-method))
+  #:use-module (gnu packages tls)
+  #:use-module (rosenthal utils download))
 
 (define %upstream-linux-source
   (@@ (gnu packages linux) %upstream-linux-source))
@@ -48,37 +46,17 @@
 (define %hardened-version "6.1.6")
 (define %hardened-revision "hardened2")
 
-(define (extract-xanmod-patch version hash)
-  (let ((patch (string-append "linux-" version ".patch"))
-        (source (origin
-                  (method url-fetch)
-                  (uri (string-append "https://github.com/xanmod/linux"
-                                      "/releases/download/" version
-                                      "/patch-" version ".xz"))
-                  (sha256 hash))))
-    (origin
-      (method computed-origin-method)
-      (file-name patch)
-      (sha256 #f)
-      (uri
-       (delay
-         (with-imported-modules '((guix build utils))
-           #~(begin (use-modules (guix build utils))
-                    (set-path-environment-variable
-                     "PATH" '("bin") (list #+xz))
-                    (setenv "XZ_OPT" (string-join (%xz-parallel-args)))
-                    (map (lambda (p)
-                           (begin
-                             (copy-file #+source p)
-                             (make-file-writable p)
-                             (invoke "xz" "--decompress" p)))
-                         (list (string-append #$patch ".xz")))
-                    (copy-file #$patch #$output))))))))
-
 (define linux-xanmod-patch
-  (extract-xanmod-patch
-   (string-append %xanmod-version "-" %xanmod-revision)
-   (base32 "0d3382f3vzrmsw366hd5k2dpzl9a8zhc1dq3bwg5yq82gi9ydyvl")))
+  (origin
+    (method url-fetch/xz-file)
+    (uri (string-append
+          "https://github.com/xanmod/linux/releases/download/"
+          %xanmod-version "-" %xanmod-revision "/patch-"
+          %xanmod-version "-" %xanmod-revision ".xz"))
+    (file-name
+     (string-append "linux-" %xanmod-version "-" %xanmod-revision ".patch"))
+    (sha256
+     (base32 "0d3382f3vzrmsw366hd5k2dpzl9a8zhc1dq3bwg5yq82gi9ydyvl"))))
 
 (define linux-hardened-patch
   (origin
