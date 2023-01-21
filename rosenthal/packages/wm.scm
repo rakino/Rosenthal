@@ -22,6 +22,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages xorg)
   #:use-module (gnu packages zig)
   #:use-module (rosenthal packages admin)
   #:use-module (rosenthal packages freedesktop)
@@ -78,6 +79,30 @@
                 (sha256
                  (base32
                   "1qgdpigisgzvhf5m48v0vp21hn4fpljkjgij9wlmlmkv7rk2idj9")))))))
+
+(define-public wlroots-dev-xwayland
+  (let ((base wlroots-dev))
+    (package
+      (inherit base)
+      (name "wlroots-dev-xwayland")
+      (build-system meson-build-system)
+      (arguments
+       (list #:build-type "release"
+             #:configure-flags
+             #~(list "-Dxwayland=enabled")
+             #:phases
+             #~(modify-phases %standard-phases
+                 (add-after 'unpack 'fix-hwdata-path
+                   (lambda* (#:key inputs #:allow-other-keys)
+                     (substitute* "backend/drm/meson.build"
+                       (("/usr/\\<(share/hwdata/pnp\\.ids)\\>" all path)
+                        (search-input-file inputs path))))))))
+      (propagated-inputs
+       (modify-inputs (package-propagated-inputs base)
+         (append libxcb)
+         (append xcb-util-renderutil)
+         (append xcb-util-wm)
+         (append xcb-util-errors))))))
 
 (define-public hyprland-protocols
   (let ((revision "1")
@@ -157,6 +182,24 @@ protocols used by Hyprland to bridge the aforementioned gap.")
 layouts, fancy effects, has a very flexible IPC model allowing for a lot of
 customization, and more.")
     (license license:bsd-3)))
+
+(define-public hyprland-xwayland
+  (let ((base hyprland))
+    (package
+      (inherit base)
+      (name "hyprland-xwayland")
+      (build-system meson-build-system)
+      (arguments
+       (list #:build-type "release"
+             #:phases
+             #~(modify-phases %standard-phases
+                 (add-after 'unpack 'fix-default-wallpaper-path
+                   (lambda _
+                     (substitute* "src/render/OpenGL.cpp"
+                       (("/usr") #$output)))))))
+      (inputs
+       (modify-inputs (package-inputs base)
+         (replace "wlroots-dev" wlroots-dev-xwayland))))))
 
 ;; No releases yet.
 (define-public grimblast
