@@ -22,6 +22,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages xorg)
   #:use-module (gnu packages zig)
   #:use-module (rosenthal packages admin)
   #:use-module (rosenthal packages freedesktop)
@@ -54,7 +55,7 @@
                         (search-input-file inputs path))))))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
-         (append libdrm-2.4.114)
+         (append libdrm-2.4.114 libxcb xcb-util-renderutil)
          (replace "libxkbcommon" libxkbcommon-minimal)
          (replace "pixman" pixman-0.42.2)
          (replace "wayland" wayland-1.21.0)
