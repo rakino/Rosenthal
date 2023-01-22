@@ -90,7 +90,7 @@
   (let ((base (customize-linux #:name "linux-xanmod"
                                #:linux linux-libre
                                #:source linux-xanmod-source
-                               #:extra-version %hardened-revision)))
+                               #:extra-version %xanmod-revision)))
     (package
       (inherit base)
       (version %xanmod-version)
