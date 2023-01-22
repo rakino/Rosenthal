@@ -140,8 +140,6 @@ protocols used by Hyprland to bridge the aforementioned gap.")
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
-           #:configure-flags
-           #~(list "-Dxwayland=disabled")
            #:phases
            #~(modify-phases %standard-phases
                (add-after 'unpack 'fix-default-wallpaper-path
