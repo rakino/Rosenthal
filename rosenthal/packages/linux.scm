@@ -17,6 +17,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpio)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages glib)
@@ -33,6 +34,12 @@
 
 (define source-with-patches
   (@@ (gnu packages linux) source-with-patches))
+
+(define %default-extra-linux-options
+  (@@ (gnu packages linux) %default-extra-linux-options))
+
+(define config->string
+  (@@ (gnu packages linux) config->string))
 
 (define %xanmod-version "6.1.7")
 (define %xanmod-revision "xanmod1")
@@ -79,6 +86,7 @@
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
                                #:source linux-xanmod-source
+                               #:defconfig "config_x86-64-v1"
                                #:extra-version %xanmod-revision)))
     (package
       (inherit base)
@@ -90,7 +98,31 @@
               (add-after 'unpack 'remove-localversion
                 (lambda _
                   (when (file-exists? "localversion")
-                    (delete-file "localversion"))))))))
+                    (delete-file "localversion"))))
+              (add-before 'configure 'add-defconfig
+                (lambda _
+                  (copy-file "CONFIGS/xanmod/gcc/config_x86-64-v1" ".config")
+
+                  ;; Adapted from `make-linux-libre*'.
+                  (chmod ".config" #o666)
+                  (let ((port (open-file ".config" "a"))
+                        (extra-configuration #$(config->string
+                                                ;; Guix kernels have NVMe
+                                                ;; support built-in.
+
+                                                ;; FIXME: There might be other
+                                                ;; support missing.
+                                                (cons* '("CONFIG_BLK_DEV_NVME" . #t)
+                                                       %default-extra-linux-options))))
+                    (display extra-configuration port)
+                    (close-port port))
+                  (invoke "make" "oldconfig")
+
+                  (rename-file ".config" "arch/x86/configs/config_x86-64-v1")))))))
+      (native-inputs
+       (modify-inputs (package-native-inputs base)
+         ;; cpio is needed for CONFIG_IKHEADERS.
+         (append cpio zstd)))
       (home-page "https://xanmod.org/")
       (supported-systems '("x86_64-linux"))
       (synopsis
