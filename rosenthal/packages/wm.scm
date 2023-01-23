@@ -243,3 +243,11 @@ significantly more robust than previous client-side Wayland screen locking
 approaches.  Importantly, the screenlocker crashing does not cause the session
 to be unlocked.")
     (license license:isc)))
+
+(define-public waybar-experimental
+  (let ((base waybar))
+    (package
+     (inherit base)
+     (name "waybar-experimental")
+     (arguments
+      (append (list #:configure-flags #~(list "-Dexperimental=true")))))))
