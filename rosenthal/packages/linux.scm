@@ -31,6 +31,9 @@
 (define %upstream-linux-source
   (@@ (gnu packages linux) %upstream-linux-source))
 
+(define source-with-patches
+  (@@ (gnu packages linux) source-with-patches))
+
 (define %xanmod-version "6.1.7")
 (define %xanmod-revision "xanmod1")
 
@@ -60,22 +63,18 @@
      (base32 "1hp3mbl8vfd2cwpxbhmqqy77nzyk265k1rcf1rz048ivnsppw4cx"))))
 
 (define linux-xanmod-source
-  (origin
-    (inherit (%upstream-linux-source
-              (version-major+minor %xanmod-version)
-              (base32 "1ssxn81jfl0jf9brczfrrwd1f1vmf594jvhrs7zgcc54a5qg389c")))
-    (file-name
-     (string-append "linux-" %xanmod-version "-" %xanmod-revision ".tar.xz"))
-    (patches (list linux-xanmod-patch))))
+  (source-with-patches (%upstream-linux-source
+                        (version-major+minor %xanmod-version)
+                        (base32
+                         "1ssxn81jfl0jf9brczfrrwd1f1vmf594jvhrs7zgcc54a5qg389c"))
+                       (list linux-xanmod-patch)))
 
 (define linux-hardened-source
-  (origin
-    (inherit (%upstream-linux-source
-              %hardened-version
-              (base32 "03v0pvg831qzbpc09ip1h0p4zz6js9das7vzh8xhsf77sax4ic2a")))
-    (file-name
-     (string-append "linux-" %hardened-version "-" %hardened-revision ".tar.xz"))
-    (patches (list linux-hardened-patch))))
+  (source-with-patches (%upstream-linux-source
+                        %hardened-version
+                        (base32
+                         "03v0pvg831qzbpc09ip1h0p4zz6js9das7vzh8xhsf77sax4ic2a"))
+                       (list linux-hardened-patch)))
 
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
