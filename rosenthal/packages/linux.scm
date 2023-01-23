@@ -31,15 +31,6 @@
 (define %upstream-linux-source
   (@@ (gnu packages linux) %upstream-linux-source))
 
-(define %cflags
-  (string-append
-   " -flto" " -fpic" " -fpie" " -fvisibility=hidden" " -fwrapv" " -pipe"
-   " -fsanitize=cfi" " -fstack-clash-protection" " -fstack-protector-strong"
-   " -enable-trivial-auto-var-init-zero-knowing-it-will-be-removed-from-clang"
-   " -ftrivial-auto-var-init=zero -D_FORTIFY_SOURCE=2 -D_GLIBCXX_ASSERTIONS"))
-
-(define %ldflags "-Wl,-z,defs -Wl,-z,now -Wl,-z,relro -Wl,-pie")
-
 (define %xanmod-version "6.1.7")
 (define %xanmod-revision "xanmod1")
 
@@ -88,17 +79,11 @@
 
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
-                               #:linux linux-libre
                                #:source linux-xanmod-source
                                #:extra-version %xanmod-revision)))
     (package
       (inherit base)
       (version %xanmod-version)
-      (build-system
-        (build-system-with-c-toolchain
-         (package-build-system base)
-         (modify-inputs (standard-packages)
-           (delete "binutils" "gcc" "ld-wrapper"))))
       (arguments
        (substitute-keyword-arguments (package-arguments base)
          ((#:phases phases)
@@ -106,28 +91,7 @@
               (add-after 'unpack 'remove-localversion
                 (lambda _
                   (when (file-exists? "localversion")
-                    (delete-file "localversion"))))
-              (add-before 'configure 'setenv
-                (lambda _
-                  (setenv "LLVM" "1")
-                  (setenv "CFLAGS" #$%cflags)
-                  (setenv "CXXFLAGS" #$%cflags)
-                  (setenv "LDFLAGS" #$%ldflags)
-
-                  ;; FIXME:
-                  ;; libgcc_s.so.1 must be installed for pthread_cancel to work
-                  ;; scripts/link-vmlinux.sh: line 189: 22065 Aborted                 (core dumped) ${objtree}/scripts/sorttable ${1}
-                  ;; Failed to sort kernel tables
-                  (setenv "LD_PRELOAD"
-                          (string-append #$gcc:lib "/lib/libgcc_s.so.1"))))))))
-      (native-inputs
-       (modify-inputs (package-native-inputs base)
-         (append clang-15
-                 llvm-15
-                 lld-as-ld-wrapper-15
-                 python-minimal-wrapper
-                 zstd)
-         (delete "gmp" "mpc" "mpfr")))
+                    (delete-file "localversion"))))))))
       (home-page "https://xanmod.org/")
       (supported-systems '("x86_64-linux"))
       (synopsis
@@ -139,7 +103,6 @@ experience."))))
 
 (define-public linux-hardened
   (let ((base (customize-linux #:name "linux-hardened"
-                               #:linux linux-xanmod
                                #:source linux-hardened-source
                                #:extra-version %hardened-revision)))
     (package
