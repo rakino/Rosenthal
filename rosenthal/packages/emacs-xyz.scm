@@ -11,8 +11,8 @@
   #:use-module (gnu packages emacs-xyz))
 
 (define-public emacs-company-dev
-  (let ((revision "364")
-        (commit "6884e3ad717419b4a64a5fab08c8cb9bd20a0b27"))
+  (let ((revision "367")
+        (commit "93b0284e5a6be8506d194aab00fb613be0f364fd"))
     (package
       (inherit emacs-company)
       (name "emacs-company-dev")
@@ -25,7 +25,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1g3l6l1dzgq8v12fz9wczaz7izqd414fmdag481qi0ifcldyhi57")))))))
+                  "002wp7q1fcjdavysbmil1d46v34rnkkgyhkm0wig8r1c9bk8qksp")))))))
 
 (define-public emacs-doom-modeline-dev
   (let ((base emacs-doom-modeline)
