@@ -73,6 +73,9 @@ time.
                     (url "https://github.com/pymumu/smartdns")
                     (commit (string-append "Release" version))))
               (file-name (git-file-name name version))
+              (modules '((guix build utils)))
+              (snippet '(substitute* "Makefile"
+                          ((".*SYSTEMDSYSTEMUNITDIR.*") "")))
               (sha256
                (base32
                 "0ibbj96s40xgk6q7dsgpx65rjkknl1pn7nca5fcbbhcm2m80nzjj"))))
@@ -82,8 +85,7 @@ time.
            #:make-flags
            #~(list (string-append "CC=" #$(cc-for-target))
                    (string-append "DESTDIR=" #$output)
-                   "PREFIX=''"
-                   "SYSTEMDSYSTEMUNITDIR=no-thanks")
+                   "PREFIX=''")
            #:phases
            #~(modify-phases %standard-phases
                (delete 'configure))))
@@ -94,4 +96,4 @@ time.
      "SmartDNS accepts DNS query requests from local clients, obtains DNS
 query results from multiple upstream DNS servers, and returns the fastest
 access results to clients.")
-    (license license:gpl3)))
+    (license license:gpl3+)))
