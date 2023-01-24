@@ -48,23 +48,6 @@
        (modify-inputs (package-propagated-inputs base)
          (delete "emacs-all-the-icons" "emacs-dash"))))))
 
-(define-public emacs-macrostep-geiser-dev
-  (let ((revision "3")
-        (commit "f6a2d5bb96ade4f23df557649af87ebd0cc45125"))
-    (package
-      (inherit emacs-macrostep-geiser)
-      (name "emacs-macrostep-geiser-dev")
-      (version (git-version "0.2.0" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/nbfalcon/macrostep-geiser")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "0dykvwcvg8n24z3fkx6rv3l1mhzmca4cxj0gsvvqsg9wp0az1fc7")))))))
-
 (define-public emacs-rime-dev
   (let ((revision "10")
         (commit "74f3dff40e66c65388a9471eecbc1d9aca5612f7"))
