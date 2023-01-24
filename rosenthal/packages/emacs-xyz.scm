@@ -49,8 +49,8 @@
          (delete "emacs-all-the-icons" "emacs-dash"))))))
 
 (define-public emacs-rime-dev
-  (let ((revision "10")
-        (commit "74f3dff40e66c65388a9471eecbc1d9aca5612f7"))
+  (let ((revision "12")
+        (commit "0a50c918d2de56aa401a68ba37394446c6fc9ed6"))
     (package
       (inherit emacs-rime)
       (name "emacs-rime-dev")
@@ -63,7 +63,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1bqhn6pvsgs1x882q7y5p372aify2jmyfmgmx99nzakxbfkb0yqp")))))))
+                  "15a15jz0rndkkayj384agfx5yd70nnvcr92la3ajh8a16fs8kk80")))))))
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59552
 (define-public emacs-wakatime-mode
