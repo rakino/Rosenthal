@@ -107,13 +107,12 @@
                   (chmod ".config" #o666)
                   (let ((port (open-file ".config" "a"))
                         (extra-configuration #$(config->string
-                                                ;; Guix kernels have NVMe
-                                                ;; support built-in.
-
                                                 ;; FIXME: There might be other
                                                 ;; support missing.
-                                                (cons* '("CONFIG_BLK_DEV_NVME" . #t)
-                                                       %default-extra-linux-options))))
+                                                (append '(("CONFIG_BLK_DEV_NVME" . #t)
+                                                          ("CONFIG_CRYPTO_XTS" . m)
+                                                          ("CONFIG_VIRTIO_CONSOLE" . m))
+                                                        %default-extra-linux-options))))
                     (display extra-configuration port)
                     (close-port port))
                   (invoke "make" "oldconfig")
