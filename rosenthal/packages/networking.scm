@@ -10,7 +10,41 @@
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages golang)
   #:use-module (rosenthal packages golang))
+
+(define-public cloudflared
+  (package
+    (name "cloudflared")
+    (version "2023.1.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/cloudflare/cloudflared")
+                    (commit version)))
+              (file-name (git-file-name name version))
+              ;; TODO: Unbundle vendored dependencies.
+              ;; (modules '((guix build utils)))
+              ;; (snippet '(delete-file-recursively "vendor"))
+              (sha256
+               (base32
+                "1gnq7ys4hbi1x3an0ch4r7ynrk20lnb9jv01cim94v57s7dw2xvs"))))
+    (build-system go-build-system)
+    (arguments
+     (list #:go go-1.19
+           #:install-source? #f
+           #:import-path "github.com/cloudflare/cloudflared/cmd/cloudflared"
+           #:unpack-path "github.com/cloudflare/cloudflared"))
+    (home-page "https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/")
+    (synopsis "Cloudflare Tunnel client")
+    (description
+     "This package provides the command-line client for Cloudflare Tunnel, a
+tunneling daemon that proxies traffic from the Cloudflare network to your
+origins.  This daemon sits between Cloudflare network and your origin (e.g. a
+webserver).  Cloudflare attracts client requests and sends them to you via
+this daemon, without requiring you to poke holes on your firewall --- your
+origin can remain as closed as possible.")
+    (license license:asl2.0)))
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=60509
 (define-public phantomsocks
