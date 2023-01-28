@@ -6,6 +6,7 @@
   #:use-module (ice-9 match)
   #:use-module (guix records)
   #:use-module (guix gexp)
+  #:use-module (guix packages)
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu packages admin)
@@ -14,6 +15,7 @@
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
   #:use-module (gnu system shadow)
+  #:use-module (rosenthal packages networking)
   #:use-module (rosenthal utils home-services-utils)
   #:export (clash-configuration
             clash-service-type
@@ -108,7 +110,7 @@
 
 (define-configuration/no-serialization cloudflare-tunnel-configuration
   (cloudflared
-   (string "/bin/cloudflared")
+   (package cloudflared)
    "The cloudflared executable.")
 
   ;; Tunnel options
@@ -154,7 +156,7 @@ headers.  This can expose sensitive information in your logs.")
             (provision '(cloudflare-tunnel))
             (requirement '(loopback networking))
             (start #~(make-forkexec-constructor
-                      (list #$cloudflared
+                      (list #$(file-append cloudflared "/bin/cloudflared")
                             "tunnel"
                             "--no-autoupdate"
                             "--metrics" #$metrics
