@@ -119,7 +119,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.20.1beta")
+    (version "0.21.0beta")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -132,7 +132,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                           (("git") "true")))
               (sha256
                (base32
-                "0qnfpj25kva92yjn24ayjzny914bjnslv89yysbnc1iv4159yizb"))))
+                "0ff4lpg82bmxzlx8kb11shb550fqq8arp5gycg702qc9yjzsqnqi"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
