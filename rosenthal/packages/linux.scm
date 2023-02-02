@@ -41,7 +41,7 @@
 (define config->string
   (@@ (gnu packages linux) config->string))
 
-(define %xanmod-version "6.1.8")
+(define %xanmod-version "6.1.9")
 (define %xanmod-revision "xanmod1")
 
 (define %hardened-version "6.1.8")
@@ -57,7 +57,7 @@
     (file-name
      (string-append "linux-" %xanmod-version "-" %xanmod-revision ".patch"))
     (sha256
-     (base32 "0br6z0xym3vwgjr4cxb8byq1f16y6cf0vaibfcgw6s0qhbn11pan"))))
+     (base32 "15rv2wshkjk40ylck001sskfwj5i6ffww895anr6b8ldqdwzyg2i"))))
 
 (define linux-hardened-patch
   (origin
