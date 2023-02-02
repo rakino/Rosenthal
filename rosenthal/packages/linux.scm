@@ -87,6 +87,9 @@
   (let ((base (customize-linux #:name "linux-xanmod"
                                #:source linux-xanmod-source
                                #:defconfig "config_x86-64-v1"
+                               ;; Extraversion is used instead.
+                               #:configs (config->string
+                                          '(("CONFIG_LOCALVERSION" . "")))
                                #:extra-version %xanmod-revision)))
     (package
       (inherit base)
