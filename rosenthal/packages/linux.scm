@@ -41,7 +41,7 @@
 (define config->string
   (@@ (gnu packages linux) config->string))
 
-(define %xanmod-version "6.1.10")
+(define %xanmod-version "6.1.11")
 (define %xanmod-revision "xanmod1")
 
 (define %hardened-version "6.1.10")
@@ -54,10 +54,8 @@
           "https://github.com/xanmod/linux/releases/download/"
           %xanmod-version "-" %xanmod-revision "/patch-"
           %xanmod-version "-" %xanmod-revision ".xz"))
-    (file-name
-     (string-append "linux-" %xanmod-version "-" %xanmod-revision ".patch"))
     (sha256
-     (base32 "0967cxpaa96m1xfqr3kl7ldb1kl5y09ck4165qqi0vlx26rvyc1f"))))
+     (base32 "0qb6cmf6pjp4k4yk1nbsd9klnynharhyma2lzpnk9imm6mx3dqap"))))
 
 (define linux-hardened-patch
   (origin
