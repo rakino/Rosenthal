@@ -8,8 +8,8 @@
   #:use-module (guix packages)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
+  #:use-module (gnu packages dns)
   #:use-module (gnu services shepherd)
-  #:use-module (rosenthal packages dns)
   #:export (smartdns-configuration
             smartdns-service-type))
 

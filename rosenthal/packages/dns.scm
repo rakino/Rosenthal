@@ -62,38 +62,3 @@ time.
 @item Block ISP ads on NXDOMAIN result (like 114so).
 @end itemize\n")
       (license license:wtfpl2))))
-
-(define-public smartdns
-  (package
-    (name "smartdns")
-    (version "40")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/pymumu/smartdns")
-                    (commit (string-append "Release" version))))
-              (file-name (git-file-name name version))
-              (modules '((guix build utils)))
-              (snippet '(substitute* "Makefile"
-                          ((".*SYSTEMDSYSTEMUNITDIR.*") "")))
-              (sha256
-               (base32
-                "0ibbj96s40xgk6q7dsgpx65rjkknl1pn7nca5fcbbhcm2m80nzjj"))))
-    (build-system gnu-build-system)
-    (arguments
-     (list #:tests? #f                  ;no tests
-           #:make-flags
-           #~(list (string-append "CC=" #$(cc-for-target))
-                   (string-append "DESTDIR=" #$output)
-                   "PREFIX=''")
-           #:phases
-           #~(modify-phases %standard-phases
-               (delete 'configure))))
-    (inputs (list openssl))
-    (home-page "https://github.com/pymumu/smartdns")
-    (synopsis "Local DNS server")
-    (description
-     "SmartDNS accepts DNS query requests from local clients, obtains DNS
-query results from multiple upstream DNS servers, and returns the fastest
-access results to clients.")
-    (license license:gpl3+)))
