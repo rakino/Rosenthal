@@ -34,7 +34,22 @@
      (list #:go go-1.19
            #:install-source? #f
            #:import-path "github.com/cloudflare/cloudflared/cmd/cloudflared"
-           #:unpack-path "github.com/cloudflare/cloudflared"))
+           #:unpack-path "github.com/cloudflare/cloudflared"
+           #:build-flags
+           #~(list (string-append
+                    "-ldflags="
+                    " -X main.Version=" #$version
+                    " -X github.com/cloudflare/cloudflared/cmd/cloudflared/updater.BuiltForPackageManager=Guix"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'install-documentation
+                 (lambda _
+                   (let ((src "src/github.com/cloudflare/cloudflared/cloudflared_man_template")
+                         (dst (string-append #$output "/share/man/man1/cloudflared.1")))
+                     (substitute* src
+                       (("\\$\\{VERSION\\}") #$version))
+                     (mkdir-p (dirname dst))
+                     (copy-file src dst)))))))
     (home-page "https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/")
     (synopsis "Cloudflare Tunnel client")
     (description
