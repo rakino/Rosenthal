@@ -65,6 +65,23 @@
                  (base32
                   "15a15jz0rndkkayj384agfx5yd70nnvcr92la3ajh8a16fs8kk80")))))))
 
+(define-public emacs-volatile-highlights-dev
+  (let ((commit "513c8b73cd3bc06cb9936a100468c227f649851c")
+        (revision "7"))
+    (package
+      (inherit emacs-volatile-highlights)
+      (name "emacs-volatile-highlights-dev")
+      (version (git-version "1.15" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/k-talo/volatile-highlights.el")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0a2r492plzxcl5sl2n75xqywk6yjkgj07xzbkcabvibj33bf1mz7")))))))
+
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59552
 (define-public emacs-wakatime-mode
   ;; No release since May 5, 2015.
