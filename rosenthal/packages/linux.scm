@@ -28,12 +28,6 @@
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages tls))
 
-(define %upstream-linux-source
-  (@@ (gnu packages linux) %upstream-linux-source))
-
-(define source-with-patches
-  (@@ (gnu packages linux) source-with-patches))
-
 (define %default-extra-linux-options
   (@@ (gnu packages linux) %default-extra-linux-options))
 
@@ -43,18 +37,8 @@
 (define %xanmod-version "6.1.13")
 (define %xanmod-revision "xanmod1")
 
-(define %hardened-version "6.1.12")
+(define %hardened-version "6.1.13")
 (define %hardened-revision "hardened1")
-
-(define linux-hardened-patch
-  (origin
-    (method url-fetch)
-    (uri (string-append
-          "https://github.com/anthraxx/linux-hardened/releases/download/"
-          %hardened-version "-" %hardened-revision "/linux-hardened-"
-          %hardened-version "-" %hardened-revision ".patch"))
-    (sha256
-     (base32 "0nz2gz7nx0z9am8fldza28vj0fgp7hdx3skpm1xvdhgy8d35p33l"))))
 
 (define linux-xanmod-source
   (origin
@@ -65,11 +49,12 @@
      (base32 "1nm5jkjb7fis7fz2faszjd254a26di002w7x1gwxgjx0v8ncxp9l"))))
 
 (define linux-hardened-source
-  (source-with-patches (%upstream-linux-source
-                        %hardened-version
-                        (base32
-                         "1spdl3i69qwn7cywzs6kql8nlisdnmnwk9za7v4xq1092xsscynl"))
-                       (list linux-hardened-patch)))
+  (origin
+    (method url-fetch)
+    (uri (string-append "https://github.com/anthraxx/linux-hardened/archive/"
+                        %hardened-version "-" %hardened-revision ".tar.gz"))
+    (sha256
+     (base32 "13lk5318zn4k6fs1fp9lbqcx027sdnzs18wx4zbpqlg1gzbk4hzd"))))
 
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
