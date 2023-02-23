@@ -122,21 +122,3 @@ experience."))))
 upstream Kernel Self Protection Project changes.  Features already provided by
 SELinux + Yama and archs other than multiarch arm64 / x86_64 aren't in scope.
 "))))
-
-(define-public kconfig-hardened-check-dev
-  (let* ((base kconfig-hardened-check)
-         (revision "154")
-         (commit "6211b6852b6b35f6f5d18ec2f0e713d2afea5a87"))
-    (package
-      (inherit base)
-      (name "kconfig-hardened-check-dev")
-      (version (git-version "0.5.17" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/a13xp0p0v/kconfig-hardened-check")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "1ynd4s0dm5aqhk6y858p9iwl1c0y5mp5rb2a4mdgkzc23v5aczyi")))))))
