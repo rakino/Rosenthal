@@ -26,8 +26,7 @@
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages rsync)
-  #:use-module (gnu packages tls)
-  #:use-module (rosenthal utils download))
+  #:use-module (gnu packages tls))
 
 (define %upstream-linux-source
   (@@ (gnu packages linux) %upstream-linux-source))
@@ -41,21 +40,11 @@
 (define config->string
   (@@ (gnu packages linux) config->string))
 
-(define %xanmod-version "6.1.12")
+(define %xanmod-version "6.1.13")
 (define %xanmod-revision "xanmod1")
 
 (define %hardened-version "6.1.12")
 (define %hardened-revision "hardened1")
-
-(define linux-xanmod-patch
-  (origin
-    (method url-fetch/xz-file)
-    (uri (string-append
-          "https://github.com/xanmod/linux/releases/download/"
-          %xanmod-version "-" %xanmod-revision "/patch-"
-          %xanmod-version "-" %xanmod-revision ".xz"))
-    (sha256
-     (base32 "1hk9gpjamn75wwgf5cphi7pd9wc4q8xvc8rzz0nidf7vv2dfv2rj"))))
 
 (define linux-hardened-patch
   (origin
@@ -68,11 +57,12 @@
      (base32 "0nz2gz7nx0z9am8fldza28vj0fgp7hdx3skpm1xvdhgy8d35p33l"))))
 
 (define linux-xanmod-source
-  (source-with-patches (%upstream-linux-source
-                        (version-major+minor %xanmod-version)
-                        (base32
-                         "1ssxn81jfl0jf9brczfrrwd1f1vmf594jvhrs7zgcc54a5qg389c"))
-                       (list linux-xanmod-patch)))
+  (origin
+    (method url-fetch)
+    (uri (string-append "https://github.com/xanmod/linux/archive/"
+                        %xanmod-version "-" %xanmod-revision ".tar.gz"))
+    (sha256
+     (base32 "1nm5jkjb7fis7fz2faszjd254a26di002w7x1gwxgjx0v8ncxp9l"))))
 
 (define linux-hardened-source
   (source-with-patches (%upstream-linux-source
