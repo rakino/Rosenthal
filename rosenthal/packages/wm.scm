@@ -55,7 +55,7 @@
                         (search-input-file inputs path))))))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
-         (append libdrm-2.4.114 libxcb xcb-util-renderutil)
+         (append libdrm-2.4.115 libxcb xcb-util-renderutil)
          (replace "libxkbcommon" libxkbcommon-minimal)
          (replace "pixman" pixman-0.42.2)
          (replace "wayland" wayland-1.21.0)

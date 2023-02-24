@@ -11,19 +11,19 @@
   #:use-module (guix utils)
   #:use-module (gnu packages xdisorg))
 
-(define-public libdrm-2.4.114
+(define-public libdrm-2.4.115
   (let ((base libdrm))
     (package
       (inherit base)
       (name "libdrm")
-      (version "2.4.114")
+      (version "2.4.115")
       (source (origin
                 (method url-fetch)
                 (uri (string-append "https://dri.freedesktop.org/libdrm/"
                                     "libdrm-" version ".tar.xz"))
                 (sha256
                  (base32
-                  "09nhk3jx3qzggl5vyii3yh4zm0npjqsbxhzvxrg2xla77a2cyj9h")))))))
+                  "1sv53x41c1hws8c65mavjlmjhgpwpfzhagjf3cwxpga20pzgnk2m")))))))
 
 (define-public libxkbcommon-1.4.1
   (package
