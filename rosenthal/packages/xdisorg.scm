@@ -25,11 +25,11 @@
                  (base32
                   "1sv53x41c1hws8c65mavjlmjhgpwpfzhagjf3cwxpga20pzgnk2m")))))))
 
-(define-public libxkbcommon-1.4.1
+(define-public libxkbcommon-1.5.0
   (package
     (inherit libxkbcommon)
     (name "libxkbcommon")
-    (version "1.4.1")
+    (version "1.5.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -37,10 +37,10 @@
                     version ".tar.xz"))
               (sha256
                (base32
-                "0fbb2dyjvf71p42y2jmwdcylsvj03w52f5rb23c2d00rwahhfg4l"))))))
+                "05z08rpa464x8myjxddhix7jp9jcmakd7xrybx4hz8dwpg2123sn"))))))
 
 (define-public libxkbcommon-minimal
-  (let ((base libxkbcommon-1.4.1))
+  (let ((base libxkbcommon-1.5.0))
     (package
       (inherit base)
       (name "libxkbcommon-minimal")
