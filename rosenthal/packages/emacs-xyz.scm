@@ -66,8 +66,8 @@
                   "0fyv92lfz7c98l79valrh9wr78b4303bhnqjgycbz33p9m2hply0")))))))
 
 (define-public emacs-volatile-highlights-dev
-  (let ((commit "513c8b73cd3bc06cb9936a100468c227f649851c")
-        (revision "7"))
+  (let ((commit "fcf6e2778454ce514c189a7d1fe70e03ad81c325")
+        (revision "9"))
     (package
       (inherit emacs-volatile-highlights)
       (name "emacs-volatile-highlights-dev")
@@ -80,7 +80,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0a2r492plzxcl5sl2n75xqywk6yjkgj07xzbkcabvibj33bf1mz7")))))))
+                  "13ag9p2k7snzrc8qllr7hb3mlfqfhwzprlwhykk110nglba1hjrd")))))))
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59552
 (define-public emacs-wakatime-mode
