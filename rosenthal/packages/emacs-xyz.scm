@@ -49,8 +49,8 @@
          (delete "emacs-all-the-icons" "emacs-dash"))))))
 
 (define-public emacs-rime-dev
-  (let ((revision "12")
-        (commit "0a50c918d2de56aa401a68ba37394446c6fc9ed6"))
+  (let ((revision "13")
+        (commit "6438abacace7d94f05fabc45b82d619677fc5fca"))
     (package
       (inherit emacs-rime)
       (name "emacs-rime-dev")
@@ -63,7 +63,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "15a15jz0rndkkayj384agfx5yd70nnvcr92la3ajh8a16fs8kk80")))))))
+                  "0fyv92lfz7c98l79valrh9wr78b4303bhnqjgycbz33p9m2hply0")))))))
 
 (define-public emacs-volatile-highlights-dev
   (let ((commit "513c8b73cd3bc06cb9936a100468c227f649851c")
