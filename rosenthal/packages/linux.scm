@@ -37,7 +37,7 @@
 (define %xanmod-version "6.2.9")
 (define %xanmod-revision "xanmod1")
 
-(define %hardened-version "6.1.19")
+(define %hardened-version "6.1.21")
 (define %hardened-revision "hardened1")
 
 (define linux-xanmod-source
@@ -54,7 +54,7 @@
     (uri (string-append "https://github.com/anthraxx/linux-hardened/archive/"
                         %hardened-version "-" %hardened-revision ".tar.gz"))
     (sha256
-     (base32 "09v34bgf3vvfx9mhj4bfavfr2xhxgh047z2l1fw3inrx80sm5hzr"))))
+     (base32 "0v93ng7c8sj75ywmqwwqv5b60xj3pwnic63i7j01bmivr3qffjvi"))))
 
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
