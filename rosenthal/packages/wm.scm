@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022-2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -21,21 +21,23 @@
   #:use-module (rosenthal packages freedesktop)
   #:use-module (rosenthal packages xdisorg))
 
-(define-public wlroots-0.16.1
-  (let ((base wlroots))
+(define wlroots-for-hyprland
+  (let ((base wlroots)
+        (revision "212")
+        (commit "5f264a7d6c8af27d41ff440c05262b022c055593"))
     (package
       (inherit base)
-      (name "wlroots")
-      (version "0.16.1")
+      (name "wlroots-for-hyprland")
+      (version (git-version "0.16.0" revision commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
                       (url "https://gitlab.freedesktop.org/wlroots/wlroots.git")
-                      (commit version)))
+                      (commit commit)))
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "11kcica9waj1a1xgbi12gif9z5z0b4xzycbcgawbgdmj77pws8sk"))))
+                  "1qgdpigisgzvhf5m48v0vp21hn4fpljkjgij9wlmlmkv7rk2idj9"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
@@ -54,24 +56,6 @@
          (replace "wayland" wayland-1.21.0)
          (replace "wayland-protocols" wayland-protocols-1.31)))
       (native-inputs (list `(,hwdata "pnp") pkg-config)))))
-
-(define-public wlroots-dev
-  (let ((base wlroots-0.16.1)
-        (revision "212")
-        (commit "5f264a7d6c8af27d41ff440c05262b022c055593"))
-    (package
-      (inherit base)
-      (name "wlroots-dev")
-      (version (git-version "0.16.0" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://gitlab.freedesktop.org/wlroots/wlroots.git")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "1qgdpigisgzvhf5m48v0vp21hn4fpljkjgij9wlmlmkv7rk2idj9")))))))
 
 (define-public hyprland-protocols
   (let ((revision "2")
@@ -136,7 +120,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                    (substitute* "src/render/OpenGL.cpp"
                      (("/usr") #$output)))))))
     (native-inputs (list gcc-12 jq pkg-config))
-    (inputs (list cairo hyprland-protocols pixman-0.42.2 wlroots-dev))
+    (inputs (list cairo hyprland-protocols pixman-0.42.2 wlroots-for-hyprland))
     (home-page "https://hyprland.org")
     (synopsis "Dynamic tiling Wayland compositor based on wlroots")
     (description
