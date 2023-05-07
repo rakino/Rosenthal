@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022-2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -37,7 +37,7 @@
 (define %xanmod-version "6.3.1")
 (define %xanmod-revision "xanmod1")
 
-(define %hardened-version "6.1.21")
+(define %hardened-version "6.1.27")
 (define %hardened-revision "hardened1")
 
 (define linux-xanmod-source
@@ -54,7 +54,7 @@
     (uri (string-append "https://github.com/anthraxx/linux-hardened/archive/"
                         %hardened-version "-" %hardened-revision ".tar.gz"))
     (sha256
-     (base32 "0v93ng7c8sj75ywmqwwqv5b60xj3pwnic63i7j01bmivr3qffjvi"))))
+     (base32 "1lcpbjg31vqa38wpd28x21lbl73svg3skcjly1f4wpzfxk8wkcgl"))))
 
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
