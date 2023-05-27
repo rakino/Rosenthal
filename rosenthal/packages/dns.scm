@@ -14,8 +14,8 @@
 
 (define-public dnsmasq-china-list
   ;; No version.
-  (let ((revision "10")
-        (commit "15da9b0e12cd4c9ae149f22d46b66ddbf14540b8"))
+  (let ((revision "11")
+        (commit "d545efec9bf18aaace2b539eef9091e9905aeff1"))
     (package
       (name "dnsmasq-china-list")
       (version (git-version "0" revision commit))
@@ -27,7 +27,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1dcxzwha0clgjx197yr653fdwylmdinss933qm7yhrn2ckcc3f1h"))))
+                  "16p79lmknpqhsbk69jg22rmcshwmccpf6frdkl9q6ach7k1x4lv5"))))
       (build-system copy-build-system)
       (arguments
        (list #:install-plan
