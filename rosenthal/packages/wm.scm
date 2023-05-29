@@ -18,6 +18,7 @@
   #:use-module (gnu packages man)
   #:use-module (gnu packages pciutils)
   #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
@@ -32,6 +33,27 @@
      (substitute-keyword-arguments (package-arguments hwdata)
        ((#:phases _) #~%standard-phases)))
     (outputs '("out"))))
+
+(define libdisplay-info-for-hyprland
+  (package
+    (name "libdisplay-info")
+    (version "0.1.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://gitlab.freedesktop.org/emersion/libdisplay-info")
+                    (commit version)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1ffq7w1ig1y44rrmkv1hvfjylzgq7f9nlnnsdgdv7pmcpfh45pgf"))))
+    (build-system meson-build-system)
+    (arguments '(#:tests? #f))          ;TODO
+    (native-inputs (list hwdata-for-hyprland pkg-config python-minimal-wrapper))
+    (home-page "https://emersion.pages.freedesktop.org/libdisplay-info/")
+    (synopsis "EDID and DisplayID library")
+    (description "This package provides an EDID and DisplayID library.")
+    (license license:expat)))
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
