@@ -9,27 +9,6 @@
   #:use-module (guix utils)
   #:use-module (gnu packages freedesktop))
 
-(define-public wayland-1.21.0
-  (let ((base wayland))
-    (package
-      (inherit base)
-      (name "wayland")
-      (version "1.21.0")
-      (source (origin
-                (method url-fetch)
-                (uri (string-append "https://gitlab.freedesktop.org/wayland/wayland"
-                                    "/-/releases/" version "/downloads/"
-                                    "wayland-" version ".tar.xz"))
-                (sha256
-                 (base32
-                  "1b0ixya9bfw5c9jx8mzlr7yqnlyvd3jv5z8wln9scdv8q5zlvikd"))))
-      (arguments
-       (substitute-keyword-arguments (package-arguments base)
-         ((#:phases phases)
-          #~(modify-phases #$phases
-              ;; FIXME
-              (delete 'check))))))))
-
 (define-public wayland-protocols-1.31
   (let ((base wayland-protocols))
     (package
@@ -44,8 +23,4 @@
                       "wayland-protocols-" version ".tar.xz"))
                 (sha256
                  (base32
-                  "0f72359fzvh6jzri4fd79m34rwm2r55p2ryq4306wrw7xliafzx0"))))
-      (native-inputs
-       (modify-inputs (package-native-inputs base)
-         (replace "wayland" wayland-1.21.0)))
-      (inputs (list wayland-1.21.0)))))
+                  "0f72359fzvh6jzri4fd79m34rwm2r55p2ryq4306wrw7xliafzx0")))))))

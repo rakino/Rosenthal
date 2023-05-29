@@ -57,7 +57,6 @@
          (append libdrm-2.4.115 libxcb xcb-util-renderutil)
          (replace "libxkbcommon" libxkbcommon-minimal)
          (replace "pixman" pixman-0.42.2)
-         (replace "wayland" wayland-1.21.0)
          (replace "wayland-protocols" wayland-protocols-1.31)))
       (native-inputs (list `(,hwdata "pnp") pkg-config)))))
 
