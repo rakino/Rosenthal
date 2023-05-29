@@ -188,46 +188,43 @@ layouts, fancy effects, has a very flexible IPC model allowing for a lot of
 customization, and more.")
       (license license:bsd-3))))
 
-;; No releases yet.
 (define-public grimblast
-  (let ((revision "1")
-        (commit "37c8121f98d76f57caa00dd7106877876e0d7483"))
-    (package
-      (name "grimblast")
-      (version (git-version "0" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/hyprwm/contrib")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "1jhjjblklqnz601ic58bl0x550d1rkyaqdmydhqzx3k2bc2mnjk7"))))
-      (build-system gnu-build-system)
-      (arguments
-       (list #:tests? #f                ;no tests
-             #:make-flags
-             #~(list (string-append "PREFIX=" #$output))
-             #:phases
-             #~(modify-phases %standard-phases
-                 (delete 'configure)
-                 (add-after 'unpack 'chdir
-                   (lambda _
-                     (chdir "grimblast")))
-                 (add-after 'install 'wrap
-                   (lambda* (#:key inputs #:allow-other-keys)
-                     (let ((grimblast (string-append #$output "/bin/grimblast")))
-                       (wrap-script grimblast
-                         `("PATH" suffix
-                           ,(map (lambda (program)
-                                   (dirname (search-input-file
-                                             inputs (string-append "/bin/" program))))
-                                 '("grim" "slurp" "hyprctl" "wl-copy" "jq"
-                                   "notify-send" "date"))))))))))
-      (native-inputs (list scdoc))
-      (inputs (list grim guile-3.0 jq libnotify slurp hyprland wl-clipboard))
-      (home-page "https://github.com/hyprwm/contrib")
-      (synopsis "Hyprland version of Grimshot")
-      (description "A Hyprland version of Grimshot.")
-      (license license:expat))))
+  (package
+    (name "grimblast")
+    (version "0.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/hyprwm/contrib")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0ld0sj7ahf9jf8cqzbqkhj3m2w60027ixic24ih26nwy90b5qjwx"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list #:tests? #f                ;no tests
+           #:make-flags
+           #~(list (string-append "PREFIX=" #$output))
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'configure)
+               (add-after 'unpack 'chdir
+                 (lambda _
+                   (chdir "grimblast")))
+               (add-after 'install 'wrap
+                 (lambda* (#:key inputs #:allow-other-keys)
+                   (let ((grimblast (string-append #$output "/bin/grimblast")))
+                     (wrap-script grimblast
+                       `("PATH" suffix
+                         ,(map (lambda (program)
+                                 (dirname (search-input-file
+                                           inputs (string-append "/bin/" program))))
+                               '("grim" "slurp" "hyprctl" "wl-copy" "jq"
+                                 "notify-send" "date"))))))))))
+    (native-inputs (list scdoc))
+    (inputs (list grim guile-3.0 jq libnotify slurp hyprland wl-clipboard))
+    (home-page "https://github.com/hyprwm/contrib")
+    (synopsis "Hyprland version of Grimshot")
+    (description "A Hyprland version of Grimshot.")
+    (license license:expat)))
