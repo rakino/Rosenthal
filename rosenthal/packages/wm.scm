@@ -15,6 +15,7 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gtk)
+  #:use-module (gnu packages guile)
   #:use-module (gnu packages image)
   #:use-module (gnu packages man)
   #:use-module (gnu packages pciutils)
@@ -214,15 +215,18 @@ customization, and more.")
                  (add-after 'unpack 'chdir
                    (lambda _
                      (chdir "grimblast")))
-                 (add-after 'chdir 'patch-script-dependencies
+                 (add-after 'install 'wrap
                    (lambda* (#:key inputs #:allow-other-keys)
-                     (substitute* "grimblast"
-                       (("\\b(date|grim|jq|notify-send|slurp|hyprctl|wl-copy)\\b"
-                         _ binary)
-                        (search-input-file
-                         inputs (string-append "bin/" binary)))))))))
+                     (let ((grimblast (string-append #$output "/bin/grimblast")))
+                       (wrap-script grimblast
+                         `("PATH" suffix
+                           ,(map (lambda (program)
+                                   (dirname (search-input-file
+                                             inputs (string-append "/bin/" program))))
+                                 '("grim" "slurp" "hyprctl" "wl-copy" "jq"
+                                   "notify-send" "date"))))))))))
       (native-inputs (list scdoc))
-      (inputs (list grim jq libnotify slurp hyprland wl-clipboard))
+      (inputs (list grim guile-3.0 jq libnotify slurp hyprland wl-clipboard))
       (home-page "https://github.com/hyprwm/contrib")
       (synopsis "Hyprland version of Grimshot")
       (description "A Hyprland version of Grimshot.")
