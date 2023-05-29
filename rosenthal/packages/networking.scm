@@ -10,8 +10,7 @@
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (gnu packages admin)
-  #:use-module (gnu packages golang)
-  #:use-module (rosenthal packages golang))
+  #:use-module (gnu packages golang))
 
 (define-public cloudflared
   (package
