@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022-2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -9,78 +9,6 @@
   #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (gnu packages emacs-xyz))
-
-(define-public emacs-company-dev
-  (let ((revision "377")
-        (commit "b3b9fa37ef9fd02471779130a0b53d87fa726ac1"))
-    (package
-      (inherit emacs-company)
-      (name "emacs-company-dev")
-      (version (git-version "0.9.13" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/company-mode/company-mode")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "0m24f22m4my3fk1c4h3mpar15k2zgn2n6x79kxh4qwczgll81skd")))))))
-
-(define-public emacs-doom-modeline-dev
-  (let ((base emacs-doom-modeline)
-        (revision "54")
-        (commit "236fa330c631228e9a513dea2f4598a29b7e8444"))
-    (package
-      (inherit base)
-      (name "emacs-doom-modeline-dev")
-      (version (git-version "3.3.2" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/seagle0128/doom-modeline")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "0ng90jbgvf19npkslz2jah4dvy387wfczm2xyv2ja1v9bqbaw78k"))))
-      (propagated-inputs
-       (modify-inputs (package-propagated-inputs base)
-         (delete "emacs-all-the-icons" "emacs-dash"))))))
-
-(define-public emacs-rime-dev
-  (let ((revision "13")
-        (commit "6438abacace7d94f05fabc45b82d619677fc5fca"))
-    (package
-      (inherit emacs-rime)
-      (name "emacs-rime-dev")
-      (version (git-version "1.0.5" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/DogLooksGood/emacs-rime")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "0fyv92lfz7c98l79valrh9wr78b4303bhnqjgycbz33p9m2hply0")))))))
-
-(define-public emacs-volatile-highlights-dev
-  (let ((commit "fcf6e2778454ce514c189a7d1fe70e03ad81c325")
-        (revision "9"))
-    (package
-      (inherit emacs-volatile-highlights)
-      (name "emacs-volatile-highlights-dev")
-      (version (git-version "1.15" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/k-talo/volatile-highlights.el")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "13ag9p2k7snzrc8qllr7hb3mlfqfhwzprlwhykk110nglba1hjrd")))))))
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59552
 (define-public emacs-wakatime-mode
@@ -112,20 +40,3 @@
        "@code{wakatime-mode} is an Emacs plugin for automatic time tracking
 and metrics generated from your programming activity.")
       (license license:gpl3+))))
-
-(define-public emacs-org-rainbow-tags-dev
-  (let ((revision "11")
-        (commit "6001ec9345bea4e60b2178940ef197c055d5a5d8"))
-    (package
-      (inherit emacs-org-rainbow-tags)
-      (name "emacs-org-rainbow-tags-dev")
-      (version (git-version "0.1-pre" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/KaratasFurkan/org-rainbow-tags")
-                      (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "1qlpszfvi1zngfi377pxkb9byhw0x8h4wsc70jn2slddq0jryjad")))))))
