@@ -11,6 +11,7 @@
   #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (guix utils)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gtk)
@@ -54,6 +55,31 @@
     (synopsis "EDID and DisplayID library")
     (description "This package provides an EDID and DisplayID library.")
     (license license:expat)))
+
+(define udis86-for-hyprland
+  (let ((revision "186")
+        (commit "5336633af70f3917760a6d441ff02d93477b0c86"))
+    (package
+      (name "udis86")
+      (version (git-version "1.7.2" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/canihavesomecoffee/udis86")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0y5z1169wff578jylpafsww4px4y6gickhcs885a9c660d8xs9qy"))))
+      (build-system gnu-build-system)
+      (native-inputs (list autoconf automake libtool python-minimal-wrapper))
+      (home-page "https://github.com/canihavesomecoffee/udis86")
+      (synopsis "Disassembler Library for x86 and x86-64")
+      (description
+       "Udis86 is a disassembler for the x86 and x86-64 class of instruction
+set architectures.  It consists of a C library called @code{libudis86} and a
+command line tool called @code{udcli} that incorporates the library.")
+      (license license:bsd-2))))
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
