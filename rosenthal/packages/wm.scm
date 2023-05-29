@@ -83,11 +83,11 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "212")
-        (commit "5f264a7d6c8af27d41ff440c05262b022c055593"))
+        (revision "368")
+        (commit "6830bfc17fd94709e2cdd4da0af989f102a26e59"))
     (package
       (inherit base)
-      (name "wlroots-for-hyprland")
+      (name "wlroots")
       (version (git-version "0.16.0" revision commit))
       (source (origin
                 (method git-fetch)
@@ -97,24 +97,15 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1qgdpigisgzvhf5m48v0vp21hn4fpljkjgij9wlmlmkv7rk2idj9"))))
-      (build-system meson-build-system)
-      (arguments
-       (list #:build-type "release"
-             #:phases
-             #~(modify-phases %standard-phases
-                 (add-after 'unpack 'fix-hwdata-path
-                   (lambda* (#:key inputs #:allow-other-keys)
-                     (substitute* "backend/drm/meson.build"
-                       (("/usr/\\<(share/hwdata/pnp\\.ids)\\>" all path)
-                        (search-input-file inputs path))))))))
+                  "13i83186hwpbghdflyqq1s762rqxzb75rj45c05vd6xx0f8j6q8q"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
-         (append libdrm-2.4.115 libxcb xcb-util-renderutil)
-         (replace "libxkbcommon" libxkbcommon-minimal)
+         (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
          (replace "pixman" pixman-0.42.2)
          (replace "wayland-protocols" wayland-protocols-1.31)))
-      (native-inputs (list `(,hwdata "pnp") pkg-config)))))
+      (native-inputs
+       (modify-inputs (package-native-inputs base)
+         (replace "hwdata" `(,hwdata-for-hyprland "out")))))))
 
 (define-public hyprland-protocols
   (package
@@ -144,48 +135,57 @@ protocols used by Hyprland to bridge the aforementioned gap.")
   (origin
     (method url-fetch)
     (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
-                        "2f6b37e1032fbacd506978e0098807e1b334aa5d" "/nix/"
+                        "72d2f33b34951b7f5be6cdbc302b1c6a33cbf60f" "/nix/"
                         "meson-build.patch"))
     (file-name "hyprland-unbundle-wlroots.patch")
     (sha256
-     (base32 "083r6a2pmnnrz1jz3g3ikx8dffs3ajdd49gawnh3skm59snanr2l"))))
+     (base32 "1wj0kwvkkk2r7k18m9i2hdp9i9z7n330dib27jlbc8mjr96976y5"))))
 
 (define-public hyprland
-  (package
-    (name "hyprland")
-    (version "0.21.0beta")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/hyprwm/Hyprland")
-                    (commit (string-append "v" version))))
-              (file-name (git-file-name name version))
-              (patches (list hyprland-unbundle-wlroots-patch))
-              (modules '((guix build utils)))
-              (snippet '(substitute* "meson.build"
-                          (("git") "true")))
-              (sha256
-               (base32
-                "0ff4lpg82bmxzlx8kb11shb550fqq8arp5gycg702qc9yjzsqnqi"))))
-    (build-system meson-build-system)
-    (arguments
-     (list #:build-type "release"
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'unpack 'fix-default-wallpaper-path
-                 (lambda _
-                   (substitute* "src/render/OpenGL.cpp"
-                     (("/usr") #$output)))))))
-    (native-inputs (list gcc-12 jq pkg-config))
-    (inputs (list cairo hyprland-protocols pixman-0.42.2 wlroots-for-hyprland))
-    (home-page "https://hyprland.org")
-    (synopsis "Dynamic tiling Wayland compositor based on wlroots")
-    (description
-     "@code{Hyprland} is a dynamic tiling Wayland compositor based on
+  (let ((commit "0432804b180dbdf7aed64a5bf71b912a937e2e04")
+        (revision "2"))
+    (package
+      (name "hyprland")
+      (version (git-version "0.25.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/hyprwm/Hyprland")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (patches (list hyprland-unbundle-wlroots-patch))
+                (sha256
+                 (base32
+                  "1whxqn69yxzl04zbh0yccqwgjqrpzm7bxglpkfil889039g8vhjb"))))
+      (build-system meson-build-system)
+      (arguments
+       (list #:build-type "release"
+             #:phases
+             #~(modify-phases %standard-phases
+                 (add-after 'unpack 'fix-default-wallpaper-path
+                   (lambda _
+                     (substitute* "src/render/OpenGL.cpp"
+                       (("/usr") #$output))))
+                 (add-after 'unpack 'substitute-meson-build
+                   (lambda _
+                     (substitute* "meson.build"
+                       (("git") "true")
+                       (("@GIT_DIRTY@") "")
+                       (("@GIT_COMMIT_HASH@") #$commit)))))))
+      (native-inputs (list gcc-12 jq pkg-config))
+      (inputs
+       (list hyprland-protocols
+             pango
+             udis86-for-hyprland
+             wlroots-for-hyprland))
+      (home-page "https://hyprland.org")
+      (synopsis "Dynamic tiling Wayland compositor based on wlroots")
+      (description
+       "@code{Hyprland} is a dynamic tiling Wayland compositor based on
 @code{wlroots} that doesn't sacrifice on its looks.  It supports multiple
 layouts, fancy effects, has a very flexible IPC model allowing for a lot of
 customization, and more.")
-    (license license:bsd-3)))
+      (license license:bsd-3))))
 
 ;; No releases yet.
 (define-public grimblast
