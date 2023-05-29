@@ -25,6 +25,14 @@
   #:use-module (rosenthal packages freedesktop)
   #:use-module (rosenthal packages xdisorg))
 
+(define hwdata-for-hyprland
+  (package
+    (inherit hwdata)
+    (arguments
+     (substitute-keyword-arguments (package-arguments hwdata)
+       ((#:phases _) #~%standard-phases)))
+    (outputs '("out"))))
+
 (define wlroots-for-hyprland
   (let ((base wlroots)
         (revision "212")
