@@ -1,10 +1,10 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022-2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages gnome-xyz)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix build-system gnu)
+  #:use-module (guix build-system copy)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
@@ -13,7 +13,7 @@
 (define-public qogir-icon-theme
   (package
     (name "qogir-icon-theme")
-    (version "2022.11.05")
+    (version "2023.02.23")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -25,25 +25,19 @@
                           (("gtk-update-icon-cache") "true")))
               (sha256
                (base32
-                "1wcqa0wla6qlyfv3g5zhailpl0lyfck8fybxih8ka9bd2fdws399"))))
-    (build-system gnu-build-system)
+                "1firj5yx38m2vp9bwkcinnz7swx75nr5pg59ld21gd4pz2dlfyn9"))))
+    (build-system copy-build-system)
     (arguments
-     (list #:tests? #f                  ;no tests
-           #:configure-flags
-           #~(list "--dest" (string-append #$output "/share/icons")
-                   "--theme" "all"
-                   "--color" "all")
-           #:phases
+     (list #:phases
            #~(modify-phases %standard-phases
-               (delete 'bootstrap)
-               (delete 'configure)
-               (delete 'build)
                (replace 'install
-                 (lambda* (#:key (configure-flags '()) #:allow-other-keys)
-                   (mkdir-p
-                    (cadr (or (member "--dest" configure-flags)
-                              (member "-d" configure-flags))))
-                   (apply invoke "sh" "install.sh" configure-flags))))))
+                 (lambda _
+                   (let* ((dest (string-append #$output "/share/icons"))
+                          (flags (list "--theme" "all"
+                                       "--color" "all"
+                                       "--dest" dest)))
+                     (mkdir-p dest)
+                     (apply invoke "sh" "install.sh" flags)))))))
     (home-page "https://www.pling.com/p/1296407/")
     (synopsis "Colorful design icon theme for linux desktops")
     (description "A flat colorful design icon theme for linux desktops.")
