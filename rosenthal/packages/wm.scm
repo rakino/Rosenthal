@@ -102,6 +102,7 @@ command line tool called @code{udcli} that incorporates the library.")
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
+         (replace "libinput-minimal" libinput-minimal-1.23.0)
          (replace "pixman" pixman-0.42.2)
          (replace "wayland-protocols" wayland-protocols-1.31)))
       (native-inputs
@@ -143,21 +144,21 @@ protocols used by Hyprland to bridge the aforementioned gap.")
      (base32 "1wj0kwvkkk2r7k18m9i2hdp9i9z7n330dib27jlbc8mjr96976y5"))))
 
 (define-public hyprland
-  (let ((commit "0432804b180dbdf7aed64a5bf71b912a937e2e04")
-        (revision "2"))
+  (let ((commit "51a930f802c71a0e67f05e7b176ded74e8e95f87")
+        (revision "0"))
     (package
       (name "hyprland")
-      (version (git-version "0.25.0" revision commit))
+      (version "0.26.0")
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
                       (url "https://github.com/hyprwm/Hyprland")
-                      (commit commit)))
+                      (commit (string-append "v" version))))
                 (file-name (git-file-name name version))
                 (patches (list hyprland-unbundle-wlroots-patch))
                 (sha256
                  (base32
-                  "1whxqn69yxzl04zbh0yccqwgjqrpzm7bxglpkfil889039g8vhjb"))))
+                  "18lg023b2ds9qvyqhm8a0ph9a2hqamj91gbimlpc59zz1z8s3y1c"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
