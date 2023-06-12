@@ -78,7 +78,7 @@
     (name "hyprland-share-picker")
     (build-system qt-build-system)
     (inputs (modify-inputs (package-inputs xdg-desktop-portal-hyprland)
-                           (append qtwayland-5)))
+                           (append qtwayland-5 slurp)))
     (native-inputs (modify-inputs (package-native-inputs xdg-desktop-portal-hyprland)
                                   (append qtwayland-5)))
     (arguments
