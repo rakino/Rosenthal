@@ -1,40 +1,22 @@
 #+TITLE: Rosenthal - A certain Guix channel.
 
-** About
-For packages sumbitted to Guix but not merged yet, a comment for the
-corresponding debbugs link is given (And those packages would be removed once
-merged).
+** About / 關於
+[[https://github.com/rakino/Rosenthal][Rosenthal]] is a [[https://guix.gnu.org/en/manual/devel/en/html_node/Channels.html][Guix channel]] maintained by [[https://ultrarare.space/][Hilton Chain]].
 
-For packages already exist in Guix, however with a newer version or not
-available in master branch at the moment, a version suffix is added to their
-variable names, e.g. =foo-1.14.514= (while the package name is still =foo=),
-these packages would be removed once they are available in Guix's master
-branch.
+This channel was created for experiments, it currently holds some packages not ready for upstreaming to [[https://guix.gnu.org/][GNU Guix]].
 
-For packages sourced on a not-released-yet checkout, a "dev" suffix is added
-to both their variable and package names, e.g. both variable name and package
-name are =bar-dev=.  For revisions, the result of =git describe --tags= is
-generally used.  If upstream didn't tag version, tag it first, otherwise when
-no version could be found, start the revision from "0".
+Search for packages in Rosenthal and other channels with the [[https://toys.whereis.みんな/][toys]] instance maintained by [[https://git.sr.ht/~whereiseveryone/][whereis.みんな]] community.
 
-For packages with special features, a suffix to both variable and package name
-is added.
-e.g. =hello/static= (while with package name =hello-static=), =test-minimal=,
-=halo-nox= (without X), =nya-sans-whatever= (with whatever features disabled).
+Unstable contents: packages not publicly exported, packages with a suffix like =-dev=, =-for-<some package>= or =-<full version>=, and all services are considered unstable.  They are subject to change and may be deleted at any time.
 
-** Usage
-1. Clone the repository.
-   #+begin_src shell
-  git clone https://github.com/rakino/rosenthal.git rosenthal
-  cd rosenthal
-  #+end_src
+[[https://github.com/rakino/Rosenthal][Rosenthal]] 是[[https://ultrarare.space/][左煉]]維護的 [[https://guix.gnu.org/en/manual/devel/zh-cn/html_node/Tong-Dao-.html][Guix 頻道]]。該頻道因試驗而起，如今存有一些還算有趣，但尚未準備好加入 [[https://guix.gnu.org/zh-CN/][GNU Guix]] 上游的軟件包。
 
-2. Prefix guix commands with the =pre-inst-env= script.
-   #+begin_src shell
-  ./pre-inst-env guix <whatever>
-  #+end_src
+[[https://git.sr.ht/~whereiseveryone/][whereis.みんな]]社區維護的 [[https://toys.whereis.みんな/][toys]] 實例，可用以檢索來自 Rosenthal 及其他 Guix 頻道的軟件包。
 
-Alternatively, a Guix channel is also available:
+頻道內所有 Guix 服務，及名稱以 =-dev= 、 =-for-<某軟件包>= 或 =-<版本號>= 結尾的軟件包，均無穩定保證，隨時可能刪改。
+
+** Usage / 用法
+To update Rosenthal along with Guix via =guix pull=, write the following definition to =~/.config/guix/channels.scm=,
 #+begin_src scheme
   (channel
    (name 'rosenthal)
@@ -47,19 +29,95 @@ Alternatively, a Guix channel is also available:
       "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
 #+end_src
 
-To use that, write the above definition to =~/.config/guix/channels.scm=, for
-example:
+for example:
 #+begin_src scheme
   ;; ~/.config/guix/channels.scm
   (cons* (channel
-	  (name 'rosenthal)
-	  (url "https://github.com/rakino/rosenthal")
-	  (branch "trunk")
-	  (introduction
-	   (make-channel-introduction
-	    "7677db76330121a901604dfbad19077893865f35"
-	    (openpgp-fingerprint
-	     "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
-	 %default-channels)
+          (name 'rosenthal)
+          (url "https://github.com/rakino/rosenthal")
+          (branch "trunk")
+          (introduction
+           (make-channel-introduction
+            "7677db76330121a901604dfbad19077893865f35"
+            (openpgp-fingerprint
+             "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
+         %default-channels)
   ;; channels.scm ends here.
 #+end_src
+
+If you are a [[https://guix.gnu.org/en/manual/devel/en/html_node/Home-Configuration.html][Guix Home]] user, check out the =home-channels-service-type=.
+
+Alternatively, Rosenthal can be used seperately with the following steps:
+
+Clone the repository.
+#+begin_src shell
+  git clone https://github.com/rakino/rosenthal.git rosenthal
+  cd rosenthal
+#+end_src
+
+Prefix guix commands with the =pre-inst-env= script.
+#+begin_src shell
+  ./pre-inst-env guix <command>
+#+end_src
+
+Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由 =guix pull= 接收更新。
+#+begin_src scheme
+  (channel
+   (name 'rosenthal)
+   (url "https://github.com/rakino/rosenthal")
+   (branch "trunk")
+   (introduction
+    (make-channel-introduction
+     "7677db76330121a901604dfbad19077893865f35"
+     (openpgp-fingerprint
+      "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
+#+end_src
+
+加入後 =channels.scm= 示例如下：
+#+begin_src scheme
+  ;; ~/.config/guix/channels.scm
+  (cons* (channel
+          (name 'rosenthal)
+          (url "https://github.com/rakino/rosenthal")
+          (branch "trunk")
+          (introduction
+           (make-channel-introduction
+            "7677db76330121a901604dfbad19077893865f35"
+            (openpgp-fingerprint
+             "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
+         %default-channels)
+  ;; channels.scm 在此結束。
+#+end_src
+
+[[https://guix.gnu.org/en/manual/devel/zh-cn/html_node/Home-Configuration.html][Guix Home]] 用戶亦參見服務 =home-channels-service-type= 。
+
+若想獨立於 =channels.scm= 使用頻道，可由如下步驟：
+
+首先克隆 git 倉庫
+#+begin_src shell
+  git clone https://github.com/rakino/rosenthal.git rosenthal
+  cd rosenthal
+#+end_src
+
+再由倉庫內 =pre-inst-env= 腳本執行 Guix 命令。
+#+begin_src shell
+  ./pre-inst-env guix <命令>
+#+end_src
+
+** Content / 內容
+*** Packages / 軟件包
++ cloudflared
++ dnsmasq-china-list
++ emacs-wakatime-mode
++ grimblast
++ hyprland
++ linux-xanmod
++ qogir-icon-theme
+
+*** Services / 服務
++ clash-service-type
++ cloudflare-tunnel-service-type
++ miniflux-service-type
++ qbittorrent-service-type
++ smartdns-service-type
++ home-wakapi-service-type
