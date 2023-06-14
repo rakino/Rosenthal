@@ -37,9 +37,6 @@
 (define %xanmod-version "6.3.5")
 (define %xanmod-revision "xanmod1")
 
-(define %hardened-version "6.1.27")
-(define %hardened-revision "hardened1")
-
 (define linux-xanmod-source
   (origin
     (method url-fetch)
@@ -47,14 +44,6 @@
                         %xanmod-version "-" %xanmod-revision ".tar.gz"))
     (sha256
      (base32 "02858lsjal8gf0sbn3rp866zqx8fj8wjcbdgkxqs8y8ziyqlrh8w"))))
-
-(define linux-hardened-source
-  (origin
-    (method url-fetch)
-    (uri (string-append "https://github.com/anthraxx/linux-hardened/archive/"
-                        %hardened-version "-" %hardened-revision ".tar.gz"))
-    (sha256
-     (base32 "1lcpbjg31vqa38wpd28x21lbl73svg3skcjly1f4wpzfxk8wkcgl"))))
 
 (define-public linux-xanmod
   (let ((base (customize-linux #:name "linux-xanmod"
@@ -106,19 +95,3 @@
        "General-purpose Linux kernel distribution with custom settings and new
 features.  Built to provide a stable, responsive and smooth desktop
 experience."))))
-
-(define-public linux-hardened
-  (let ((base (customize-linux #:name "linux-hardened"
-                               #:source linux-hardened-source
-                               #:extra-version %hardened-revision)))
-    (package
-      (inherit base)
-      (version %hardened-version)
-      (home-page "https://github.com/anthraxx/linux-hardened")
-      (supported-systems '("aarch64-linux" "x86_64-linux"))
-      (synopsis "The Security-Hardened Linux kernel and modules")
-      (description
-       "This package provides a Linux kernel with minimal supplement to
-upstream Kernel Self Protection Project changes.  Features already provided by
-SELinux + Yama and archs other than multiarch arm64 / x86_64 aren't in scope.
-"))))
