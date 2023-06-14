@@ -34,55 +34,65 @@
 (define config->string
   (@@ (gnu packages linux) config->string))
 
-(define %xanmod-version "6.3.5")
-(define %xanmod-revision "xanmod1")
+
+;;;
+;;; Linux-XanMod
+;;;
 
-(define linux-xanmod-source
+(define (make-linux-xanmod-source version xanmod-revision hash-string)
   (origin
     (method url-fetch)
-    (uri (string-append "https://github.com/xanmod/linux/archive/"
-                        %xanmod-version "-" %xanmod-revision ".tar.gz"))
-    (sha256
-     (base32 "02858lsjal8gf0sbn3rp866zqx8fj8wjcbdgkxqs8y8ziyqlrh8w"))))
+    (uri (string-append "https://gitlab.com/xanmod/linux/-/archive/"
+                        version "-" xanmod-revision ".tar.bz2"))
+    (sha256 hash-string)))
 
-(define-public linux-xanmod
-  (let ((base (customize-linux #:name "linux-xanmod"
-                               #:source linux-xanmod-source
-                               #:defconfig "config_x86-64-v1"
-                               ;; Extraversion is used instead.
+(define* (make-linux-xanmod version xanmod-revision source
+                            #:key
+                            (name "linux-xanmod")
+                            (xanmod-defconfig "config_x86-64-v1"))
+  (let ((defconfig xanmod-defconfig)    ;to be used in phases.
+        (base (customize-linux #:name name
+                               #:source source
+                               #:defconfig xanmod-defconfig
+                               ;; EXTRAVERSION is used instead.
                                #:configs (config->string
                                           '(("CONFIG_LOCALVERSION" . "")))
-                               #:extra-version %xanmod-revision)))
+                               #:extra-version xanmod-revision)))
     (package
       (inherit base)
-      (version %xanmod-version)
+      (version version)
       (arguments
        (substitute-keyword-arguments (package-arguments base)
          ((#:phases phases)
           #~(modify-phases #$phases
+              ;; EXTRAVERSION is used instead.
               (add-after 'unpack 'remove-localversion
                 (lambda _
                   (when (file-exists? "localversion")
                     (delete-file "localversion"))))
-              (add-before 'configure 'add-defconfig
+              (add-before 'configure 'add-xanmod-defconfig
                 (lambda _
-                  (copy-file "CONFIGS/xanmod/gcc/config_x86-64-v1" ".config")
+                  (rename-file
+                   (string-append "CONFIGS/xanmod/gcc/" #$defconfig)
+                   ".config")
 
                   ;; Adapted from `make-linux-libre*'.
                   (chmod ".config" #o666)
                   (let ((port (open-file ".config" "a"))
-                        (extra-configuration #$(config->string
-                                                ;; FIXME: There might be other
-                                                ;; support missing.
-                                                (append '(("CONFIG_BLK_DEV_NVME" . #t)
-                                                          ("CONFIG_CRYPTO_XTS" . m)
-                                                          ("CONFIG_VIRTIO_CONSOLE" . m))
-                                                        %default-extra-linux-options))))
+                        (extra-configuration
+                         #$(config->string
+                            ;; FIXME: There might be other support missing.
+                            (append '(("CONFIG_BLK_DEV_NVME" . #t)
+                                      ("CONFIG_CRYPTO_XTS" . m)
+                                      ("CONFIG_VIRTIO_CONSOLE" . m))
+                                    %default-extra-linux-options))))
                     (display extra-configuration port)
                     (close-port port))
                   (invoke "make" "oldconfig")
 
-                  (rename-file ".config" "arch/x86/configs/config_x86-64-v1")))))))
+                  (rename-file
+                   ".config"
+                   (string-append "arch/x86/configs/" #$defconfig))))))))
       (native-inputs
        (modify-inputs (package-native-inputs base)
          ;; cpio is needed for CONFIG_IKHEADERS.
@@ -92,6 +102,19 @@
       (synopsis
        "Linux kernel distribution with custom settings and new features")
       (description
-       "General-purpose Linux kernel distribution with custom settings and new
-features.  Built to provide a stable, responsive and smooth desktop
-experience."))))
+       "This package provides XanMod kernel, a general-purpose Linux kernel
+distribution with custom settings and new features.  It's built to provide a
+stable, responsive and smooth desktop experience."))))
+
+(define linux-xanmod-version "6.3.7")
+(define linux-xanmod-revision "xanmod1")
+(define linux-xanmod-source
+  (make-linux-xanmod-source
+   linux-xanmod-version
+   linux-xanmod-revision
+   (base32 "1q8w3w7hgh1dq2dbvsvnv0p8wigxzsqpch5fn439m8r33pzg6zy7")))
+
+(define-public linux-xanmod
+  (make-linux-xanmod linux-xanmod-version
+                     linux-xanmod-revision
+                     linux-xanmod-source))
