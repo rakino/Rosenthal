@@ -2,4 +2,5 @@
 (channel
  (version 0)
  (keyring-reference "keyring")
- (url "https://codeberg.org/hako/rosenthal.git"))
+ (url "https://codeberg.org/hako/rosenthal.git")
+ (news-file "NEWS"))

@@ -1,0 +1,17 @@
+;; -*- mode: scheme -*-
+;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
+;;
+;; SPDX-License-Identifier: GPL-3.0-or-later
+
+(channel-news
+ (version 0)
+
+ (entry                                 ;2023-06-17
+  (commit "c3ed521085962524d78f4c7007e7d77535ae085e")
+  (title (en "Channel moved to Codeberg")
+         (zh "頻道已移至 Codeberg"))
+  (body (en "Rosenthal has been moved to Codeberg and the GitHub repository
+will remain as a mirror.  Changing the URL in your @file{channels.scm} to
+@url{https://codeberg.org/hako/rosenthal.git} is recommended.")
+        (zh "Rosenthal 頻道已移至 Codeberg，先前的 GitHub 倉庫將用作鏡像。建議修改
+@file{channels.scm} 內 URL 爲 @url{https://codeberg.org/hako/rosenthal.git}。"))))
