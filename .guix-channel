@@ -2,4 +2,4 @@
 (channel
  (version 0)
  (keyring-reference "keyring")
- (url "https://github.com/rakino/rosenthal"))
+ (url "https://codeberg.org/hako/rosenthal.git"))
