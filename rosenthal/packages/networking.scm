@@ -15,7 +15,7 @@
 (define-public cloudflared
   (package
     (name "cloudflared")
-    (version "2023.5.1")
+    (version "2023.6.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -27,7 +27,7 @@
               ;; (snippet '(delete-file-recursively "vendor"))
               (sha256
                (base32
-                "09h7m145qrb64iz3wx468grf2md1rmrh356x6xqw67002g4f5pry"))))
+                "19hax7lmikgz55qz6f7ydzfy07q2wjgspgnq24xgq4fnkjvqia36"))))
     (build-system go-build-system)
     (arguments
      (list #:go go-1.19
