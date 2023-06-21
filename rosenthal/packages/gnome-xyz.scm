@@ -13,7 +13,7 @@
 (define-public qogir-icon-theme
   (package
     (name "qogir-icon-theme")
-    (version "2023.02.23")
+    (version "2023.06.05")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -25,7 +25,7 @@
                           (("gtk-update-icon-cache") "true")))
               (sha256
                (base32
-                "1firj5yx38m2vp9bwkcinnz7swx75nr5pg59ld21gd4pz2dlfyn9"))))
+                "1kn8b9zdamxbfbs7b9qpx53hmjw2l40sxpjw93axb1dqy81yc8da"))))
     (build-system copy-build-system)
     (arguments
      (list #:phases
@@ -41,4 +41,4 @@
     (home-page "https://www.pling.com/p/1296407/")
     (synopsis "Colorful design icon theme for linux desktops")
     (description "A flat colorful design icon theme for linux desktops.")
-    (license license:gpl3)))
+    (license license:gpl3+)))
