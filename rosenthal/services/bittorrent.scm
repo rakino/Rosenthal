@@ -3,9 +3,9 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services bittorrent)
-  #:use-module (ice-9 match)
   #:use-module (guix gexp)
   #:use-module (guix packages)
+  #:use-module (guix records)
   #:use-module (gnu packages admin)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
@@ -55,24 +55,23 @@
         (mkdir-p profile-directory)
         (chown profile-directory (passwd:uid user) (passwd:gid user)))))
 
-(define qbittorrent-shepherd-service
-  (match-lambda
-    (($ <qbittorrent-configuration> qbittorrent
-                                    log-file webui-port profile-directory
-                                    extra-options)
-     (list (shepherd-service
-            (documentation "Run qbittorrent.")
-            (provision '(qbittorrent))
-            (requirement '(loopback))
-            (start #~(make-forkexec-constructor
-                      (list #$(file-append qbittorrent "/bin/qbittorrent-nox")
-                            #$(string-append "--webui-port=" (number->string webui-port))
-                            #$(string-append "--profile=" profile-directory)
-                            #$@extra-options)
-                      #:user "qbittorrent"
-                      #:group "qbittorrent"
-                      #:log-file #$log-file))
-            (stop #~(make-kill-destructor #:grace-period 1800)))))))
+(define (qbittorrent-shepherd-service config)
+  (match-record config <qbittorrent-configuration>
+    (qbittorrent log-file webui-port profile-directory extra-options)
+    (list (shepherd-service
+           (documentation "Run qbittorrent.")
+           (provision '(qbittorrent))
+           (requirement '(loopback))
+           (start #~(make-forkexec-constructor
+                     (list #$(file-append qbittorrent "/bin/qbittorrent-nox")
+                           #$(string-append "--webui-port="
+                                            (number->string webui-port))
+                           #$(string-append "--profile=" profile-directory)
+                           #$@extra-options)
+                     #:user "qbittorrent"
+                     #:group "qbittorrent"
+                     #:log-file #$log-file))
+           (stop #~(make-kill-destructor #:grace-period 1800))))))
 
 (define qbittorrent-service-type
   (service-type
