@@ -71,9 +71,8 @@
                             #$@extra-options)
                       #:user "qbittorrent"
                       #:group "qbittorrent"
-                      #:log-file #$log-file
-                      #:environment-variables '("QBT_ACCEPTED=true")))
-            (stop #~(make-kill-destructor)))))))
+                      #:log-file #$log-file))
+            (stop #~(make-kill-destructor #:grace-period 1800)))))))
 
 (define qbittorrent-service-type
   (service-type
