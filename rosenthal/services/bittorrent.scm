@@ -7,11 +7,11 @@
   #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages bittorrent)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
   #:use-module (gnu services shepherd)
   #:use-module (gnu system shadow)
-  #:use-module (rosenthal packages bittorrent)
   #:export (qbittorrent-configuration
             qbittorrent-service-type))
 
@@ -22,7 +22,7 @@
 
 (define-configuration/no-serialization qbittorrent-configuration
   (qbittorrent
-   (package qbittorrent-enhanced-edition-nox)
+   (package qbittorrent-nox)
    "The qBittorrent package to use, we need @command{qbittorrent-nox}.")
   (log-file
    (string "/var/log/qbittorrent.log")
