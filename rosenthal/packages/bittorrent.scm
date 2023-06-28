@@ -11,11 +11,11 @@
   #:use-module (gnu packages bittorrent)
   #:use-module (gnu packages qt))
 
-(define-public qbittorrent-enhanced-edition
+(define-public qbittorrent-enhanced
   (let ((base qbittorrent))
     (package
       (inherit base)
-      (name "qbittorrent-enhanced-edition")
+      (name "qbittorrent-enhanced")
       (version "4.5.0.10")
       (source (origin
                 (method git-fetch)
@@ -39,11 +39,11 @@ the following features:
 @item Peer whitelist/blacklist
 @end itemize\n"))))
 
-(define-public qbittorrent-enhanced-edition-nox
-  (let ((base qbittorrent-enhanced-edition))
+(define-public qbittorrent-enhanced-nox
+  (let ((base qbittorrent-enhanced))
     (package
       (inherit base)
-      (name "qbittorrent-enhanced-edition-nox")
+      (name "qbittorrent-enhanced-nox")
       (arguments
        (substitute-keyword-arguments (package-arguments base)
          ((#:configure-flags configure-flags)
@@ -55,3 +55,9 @@ the following features:
       (inputs
        (modify-inputs (package-inputs base)
          (delete "qtsvg-5"))))))
+
+(define-public qbittorrent-enhanced-edition
+  (deprecated-package "qbittorrent-enhanced-edition" qbittorrent-enhanced))
+
+(define-public qbittorrent-enhanced-edition-nox
+  (deprecated-package "qbittorrent-enhanced-edition-nox" qbittorrent-enhanced-nox))
