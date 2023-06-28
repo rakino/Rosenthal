@@ -5,17 +5,15 @@
 (define-module (rosenthal packages dns)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix build-system copy)
-  #:use-module (guix build-system gnu)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
-  #:use-module (guix utils)
-  #:use-module (gnu packages tls))
+  #:use-module (guix utils))
 
 (define-public dnsmasq-china-list
   ;; No version.
-  (let ((revision "11")
-        (commit "d545efec9bf18aaace2b539eef9091e9905aeff1"))
+  (let ((revision "12")
+        (commit "04ff7d2337a4c06f591f630d4fafa8a1b156f817"))
     (package
       (name "dnsmasq-china-list")
       (version (git-version "0" revision commit))
@@ -27,7 +25,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "16p79lmknpqhsbk69jg22rmcshwmccpf6frdkl9q6ach7k1x4lv5"))))
+                  "1sp15h7qamxnqqrv43y9anl2fjsz290r3wan88ik1ry6ya56j3qf"))))
       (build-system copy-build-system)
       (arguments
        (list #:install-plan
