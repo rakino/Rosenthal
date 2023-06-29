@@ -106,13 +106,13 @@
 distribution with custom settings and new features.  It's built to provide a
 stable, responsive and smooth desktop experience."))))
 
-(define linux-xanmod-version "6.3.9")
+(define linux-xanmod-version "6.3.10")
 (define linux-xanmod-revision "xanmod1")
 (define linux-xanmod-source
   (make-linux-xanmod-source
    linux-xanmod-version
    linux-xanmod-revision
-   (base32 "054440lg7jxbd2shrsc5mnqsssgbmq8a2ydkjbmk6s6ay3blrd8c")))
+   (base32 "0gnbr37cxrhw4q6bydw8xza31sgj04hj0qxlva1gycw064p7fcxc")))
 
 (define-public linux-xanmod
   (make-linux-xanmod linux-xanmod-version
