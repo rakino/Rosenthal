@@ -61,7 +61,7 @@
     (list (shepherd-service
            (documentation "Run qbittorrent.")
            (provision '(qbittorrent))
-           (requirement '(loopback))
+           (requirement '(networking))
            (start #~(make-forkexec-constructor
                      (list #$(file-append qbittorrent "/bin/qbittorrent-nox")
                            #$(string-append "--webui-port="
