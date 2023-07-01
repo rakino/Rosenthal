@@ -111,7 +111,7 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + emacs-wakatime-mode
 + grimblast
 + hyprland
-+ linux-xanmod
++ qbittorrent-enhanced
 + qogir-icon-theme
 
 *** Services / 服務
