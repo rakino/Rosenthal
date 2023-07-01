@@ -6,6 +6,16 @@
 (channel-news
  (version 0)
 
+ (entry                                 ;2023-07-01
+  (commit "17106e7ed3d21544dfd80e77aa785e1e5781fb1c")
+  (title (en "@code{linux-xanmod} merged to Nonguix")
+         (zh "@code{linux-xanmod} 已合併至 Nonguix"))
+  (body (en "Package @code{linux-xanmod} has been merged to channel
+@url{https://gitlab.com/nonguix/nonguix, Nonguix}, it's not available in
+Rosenthal any more.")
+        (zh "@code{linux-xanmod} 已移出 Rosenthal，合併至
+@url{https://gitlab.com/nonguix/nonguix, Nonguix} 頻道。")))
+
  (entry                                 ;2023-06-17
   (commit "c3ed521085962524d78f4c7007e7d77535ae085e")
   (title (en "Channel moved to Codeberg")
