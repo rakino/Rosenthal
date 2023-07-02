@@ -39,25 +39,5 @@ the following features:
 @item Peer whitelist/blacklist
 @end itemize\n"))))
 
-(define-public qbittorrent-enhanced-nox
-  (let ((base qbittorrent-enhanced))
-    (package
-      (inherit base)
-      (name "qbittorrent-enhanced-nox")
-      (arguments
-       (substitute-keyword-arguments (package-arguments base)
-         ((#:configure-flags configure-flags)
-          #~(append #$configure-flags
-                    (list "--disable-gui")))
-         ((#:phases phases)
-          #~(modify-phases #$phases
-              (delete 'wrap-qt)))))
-      (inputs
-       (modify-inputs (package-inputs base)
-         (delete "qtsvg-5"))))))
-
 (define-public qbittorrent-enhanced-edition
   (deprecated-package "qbittorrent-enhanced-edition" qbittorrent-enhanced))
-
-(define-public qbittorrent-enhanced-edition-nox
-  (deprecated-package "qbittorrent-enhanced-edition-nox" qbittorrent-enhanced-nox))
