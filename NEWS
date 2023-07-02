@@ -7,6 +7,20 @@
  (version 0)
 
  (entry                                 ;2023-07-01
+  (commit "ed1058c688a2655521beeba3e6295db2c0c1f274")
+  (title (en "@code{qbittorrent-enhanced} upstreamed")
+         (zh "@code{qbittorrent-enhanced} 已合併至上游"))
+  (body (en "Packages @code{qbittorrent-enhanced} and
+@code{qbittorrent-enhanced-nox} are upstreamed to Guix, they are now available
+in module @code{(gnu packages bittorrent)}.  Previously deprecated packages
+@code{qbittorrent-enhanced-edition} and @code{qbittorrent-enhanced-edition-nox}
+are no longer available.")
+        (zh "@code{qbittorrent-enhanced} 與 @code{qbittorrent-enhanced-nox}
+已合併至 Guix 上游 @code{(gnu packages bittorrent)} 模塊。先前標記爲棄用的軟件包
+@code{qbittorrent-enhanced-edition} 及 @code{qbittorrent-enhanced-edition-nox}
+已不再可用。")))
+
+ (entry                                 ;2023-07-01
   (commit "17106e7ed3d21544dfd80e77aa785e1e5781fb1c")
   (title (en "@code{linux-xanmod} merged to Nonguix")
          (zh "@code{linux-xanmod} 已合併至 Nonguix"))
