@@ -23,22 +23,18 @@
    "The Smartdns package.")
   (config
    (file-like (plain-file "empty" ""))
-   "Configuration file for Smartdns.")
-  (log-file
-   (string "/var/log/smartdns.log")
-   "Where the logs go."))
+   "Configuration file for Smartdns."))
 
 (define smartdns-shepherd-service
   (match-lambda
-    (($ <smartdns-configuration> smartdns config log-file)
+    (($ <smartdns-configuration> smartdns config)
      (list (shepherd-service
             (documentation "Run smartdns.")
             (provision '(smartdns dns))
             (requirement '(loopback networking))
             (start #~(make-forkexec-constructor
                       (list #$(file-append smartdns "/sbin/smartdns")
-                            "-f" "-x" "-c" #$(file-append config))
-                      #:log-file #$log-file))
+                            "-f" "-c" #$(file-append config))))
             (stop #~(make-kill-destructor)))))))
 
 (define smartdns-service-type
