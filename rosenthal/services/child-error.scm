@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -10,6 +10,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages web)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
   #:use-module (gnu services databases)
@@ -193,14 +194,14 @@ headers.  This can expose sensitive information in your logs.")
 
 (define-configuration/no-serialization miniflux-configuration
   (miniflux
-   (string "/bin/miniflux")
-   "The miniflux executable.")
+   (package miniflux)
+   "The miniflux package.")
   (log-file
    (string "/var/log/miniflux.log")
    "Where the logs go.")
-  (config
+  (options
    (alist '())
-   "Association list of miniflux configurations."))
+   "Association list of miniflux configuration options."))
 
 (define %miniflux-accounts
   (list (user-account
@@ -215,26 +216,26 @@ headers.  This can expose sensitive information in your logs.")
          (name "miniflux")
          (create-database? #t))))
 
-(define miniflux-shepherd-service
-  (match-lambda
-    (($ <miniflux-configuration> miniflux log-file config)
-     (let ((config-file
-            (mixed-text-file
-             "miniflux.conf"
-             (apply string-append
-                    (map (lambda (alist)
-                           (string-append (car alist) "=" (cdr alist) "\n"))
-                         config)))))
-       (list (shepherd-service
-              (documentation "Run miniflux.")
-              (provision '(miniflux))
-              (requirement '(postgres user-processes))
-              (start #~(make-forkexec-constructor
-                        (list #$miniflux  "-config-file" #$config-file)
-                        #:user "miniflux"
-                        #:group "nogroup"
-                        #:log-file #$log-file))
-              (stop #~(make-kill-destructor))))))))
+(define (miniflux-shepherd-service config)
+  (match-record config <miniflux-configuration>
+    (miniflux log-file options)
+    (let ((config-file (mixed-text-file
+                        "miniflux.conf"
+                        (apply string-append
+                               (map (lambda (option)
+                                      (format #f "~a=~a~%"
+                                              (car option) (cdr option)))
+                                    options)))))
+      (list (shepherd-service
+             (documentation "Run miniflux.")
+             (provision '(miniflux))
+             (requirement '(postgres user-processes))
+             (start #~(make-forkexec-constructor
+                       (list #$miniflux "-config-file" #$config-file)
+                       #:user "miniflux"
+                       #:group "nogroup"
+                       #:log-file #$log-file))
+             (stop #~(make-kill-destructor)))))))
 
 (define miniflux-service-type
   (service-type
@@ -247,8 +248,7 @@ headers.  This can expose sensitive information in your logs.")
           (service-extension shepherd-root-service-type
                              miniflux-shepherd-service)))
    (default-value (miniflux-configuration))
-   (description
-    "Run Miniflux, a minimalist and opinionated feed reader.")))
+   (description "Run Miniflux, a minimalist and opinionated feed reader.")))
 
 
 ;;
