@@ -1,11 +1,11 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services dns)
-  #:use-module (ice-9 match)
   #:use-module (guix gexp)
   #:use-module (guix packages)
+  #:use-module (guix records)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
   #:use-module (gnu packages dns)
@@ -21,21 +21,21 @@
   (smartdns
    (package smartdns)
    "The Smartdns package.")
-  (config
+  (config-file
    (file-like (plain-file "empty" ""))
    "Configuration file for Smartdns."))
 
-(define smartdns-shepherd-service
-  (match-lambda
-    (($ <smartdns-configuration> smartdns config)
-     (list (shepherd-service
-            (documentation "Run smartdns.")
-            (provision '(smartdns dns))
-            (requirement '(loopback networking))
-            (start #~(make-forkexec-constructor
-                      (list #$(file-append smartdns "/sbin/smartdns")
-                            "-f" "-c" #$(file-append config))))
-            (stop #~(make-kill-destructor)))))))
+(define (smartdns-shepherd-service config)
+  (match-record config <smartdns-configuration>
+    (smartdns config-file)
+    (list (shepherd-service
+           (documentation "Run smartdns.")
+           (provision '(smartdns dns))
+           (requirement '(loopback networking))
+           (start #~(make-forkexec-constructor
+                     (list #$(file-append smartdns "/sbin/smartdns")
+                           "-f" "-c" #$(file-append config-file))))
+           (stop #~(make-kill-destructor))))))
 
 (define smartdns-service-type
   (service-type
