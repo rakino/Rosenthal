@@ -19,3 +19,16 @@
    "0kf4c4xs5naj8lpcmr3pbdvwj526wl9p6zphxxpimbll7qv6qfnd"
    "0.1.2"
    #:repository-url "https://github.com/camdencheek/tree-sitter-dockerfile"))
+
+(define-public tree-sitter-yaml
+  (let ((base
+         (tree-sitter-grammar
+          "yaml" "YAML"
+          "1bimf5fq85wn8dwlk665w15n2bj37fma5rsfxrph3i9yb0lvzi3q"
+          "0.5.0"
+          #:repository-url "https://github.com/ikatyang/tree-sitter-yaml")))
+    (package
+      (inherit base)
+      (arguments
+       (append '(#:tests? #f)           ;FIXME
+               (package-arguments base))))))
