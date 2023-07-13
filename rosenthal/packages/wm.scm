@@ -84,8 +84,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "368")
-        (commit "6830bfc17fd94709e2cdd4da0af989f102a26e59"))
+        (revision "548")
+        (commit "7e7633abf09b362d0bad9e3fc650fd692369291d"))
     (package
       (inherit base)
       (name "wlroots")
@@ -98,7 +98,7 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "13i83186hwpbghdflyqq1s762rqxzb75rj45c05vd6xx0f8j6q8q"))))
+                  "0w6m99gw9y4caj078j5yyadzwgcwmcjm5gzbs478bfhwbiaf72ra"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
@@ -143,22 +143,32 @@ protocols used by Hyprland to bridge the aforementioned gap.")
     (sha256
      (base32 "1wj0kwvkkk2r7k18m9i2hdp9i9z7n330dib27jlbc8mjr96976y5"))))
 
+(define hyprland-portals-patch
+  (origin
+    (method url-fetch)
+    (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
+                        "64fc19cc811434b81ab9bc6b8c64edbcbfd0cfd4" "/nix/"
+                        "portals.patch"))
+    (sha256
+     (base32 "14nijw02lb0c4h06adki0w7amgxg1m0qj48ds7iq4bq6fkl1m5l0"))))
+
 (define-public hyprland
-  (let ((commit "51a930f802c71a0e67f05e7b176ded74e8e95f87")
+  (let ((commit "5e577acf516b80173f695a458c2cc188a4d64560")
         (revision "0"))
     (package
       (name "hyprland")
-      (version "0.26.0")
+      (version "0.27.0")
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
                       (url "https://github.com/hyprwm/Hyprland")
                       (commit (string-append "v" version))))
                 (file-name (git-file-name name version))
-                (patches (list hyprland-unbundle-wlroots-patch))
+                (patches (list hyprland-unbundle-wlroots-patch
+                               hyprland-portals-patch))
                 (sha256
                  (base32
-                  "18lg023b2ds9qvyqhm8a0ph9a2hqamj91gbimlpc59zz1z8s3y1c"))))
+                  "1n4yfxfn8w5skk82k1fqn0a63g7c83fzyb7azn2h9yriczlqahlq"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
