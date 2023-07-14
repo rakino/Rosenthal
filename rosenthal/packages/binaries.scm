@@ -144,3 +144,24 @@ different needs.")
      "Hugo is a static site generator written in Go, optimized for speed and
 designed for flexibility.")
     (license license:asl2.0)))
+
+(define-public sing-box-bin
+  (package
+    (name "sing-box-bin")
+    (version "1.3.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/SagerNet/sing-box/releases/download/v"
+                    version "/sing-box-" version "-linux-amd64v3.tar.gz"))
+              (sha256
+               (base32
+                "1dn19l9zyj91fi8p1fjg76b7hhcg8l5lbjbig782zvjlfmbyjqyi"))))
+    (build-system copy-build-system)
+    (arguments (list #:install-plan #~'(("sing-box" "bin/sing-box"))))
+    (supported-systems '("x86_64-linux"))
+    (home-page "https://sing-box.sagernet.org/")
+    (synopsis "Universal proxy platform")
+    (description
+     "This package provides @code{sing-box}, a universal proxy platform.")
+    (license license:gpl3+)))
