@@ -165,3 +165,27 @@ designed for flexibility.")
     (description
      "This package provides @code{sing-box}, a universal proxy platform.")
     (license license:gpl3+)))
+
+(define-public tailscale-bin
+  (package
+    (name "tailscale-bin")
+    (version "1.44.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://pkgs.tailscale.com"
+                                  "/stable/tailscale_" version "_amd64.tgz"))
+              (sha256
+               (base32
+                "1kfxi9blvs2raws5k38bnlsf897nww7i4qa7fyizgbgmyis4l4kr"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("tailscale" "bin/tailscale")
+               ("tailscaled" "bin/tailscaled"))))
+    (supported-systems '("x86_64-linux"))
+    (home-page "https://tailscale.com/")
+    (synopsis "Private WireGuard® networks made easy")
+    (description
+     "This package provides @{tailscale}, which brings an easy and secure way
+to use WireGuard and 2FA.")
+    (license license:bsd-3)))
