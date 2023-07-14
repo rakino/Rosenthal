@@ -11,6 +11,7 @@
   #:use-module (guix build-system copy)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bootstrap)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages elf)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages glib))
@@ -189,3 +190,26 @@ designed for flexibility.")
      "This package provides @{tailscale}, which brings an easy and secure way
 to use WireGuard and 2FA.")
     (license license:bsd-3)))
+
+(define-public wakapi-bin
+  (package
+    (name "wakapi-bin")
+    (version "2.8.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/muety/wakapi/releases/download/"
+                    version "/wakapi_linux_amd64.zip"))
+              (sha256
+               (base32
+                "1qjmvihw9rnlvlmj5jv5nac3ki9y92z3hy7p39gp50x65ia1jwg4"))))
+    (build-system copy-build-system)
+    (arguments (list #:install-plan #~'(("wakapi" "bin/wakapi"))))
+    (supported-systems '("x86_64-linux"))
+    (native-inputs (list unzip))
+    (home-page "https://wakapi.dev/")
+    (synopsis "WakaTime-compatible backend")
+    (description
+     "This package provides @code{wakapi}, a WakaTime-compatible backend for
+coding statistics.")
+    (license license:expat)))
