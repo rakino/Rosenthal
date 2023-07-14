@@ -15,7 +15,7 @@
 (define-public cloudflared
   (package
     (name "cloudflared")
-    (version "2023.6.1")
+    (version "2023.7.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -27,7 +27,7 @@
               ;; (snippet '(delete-file-recursively "vendor"))
               (sha256
                (base32
-                "19hax7lmikgz55qz6f7ydzfy07q2wjgspgnq24xgq4fnkjvqia36"))))
+                "0s83r08ghlc9m9g6pc1p5w1rm5zjz8w1pd8bhp7ids1m799clhpw"))))
     (build-system go-build-system)
     (arguments
      (list #:go go-1.19
@@ -41,6 +41,9 @@
                     " -X github.com/cloudflare/cloudflared/cmd/cloudflared/updater.BuiltForPackageManager=Guix"))
            #:phases
            #~(modify-phases %standard-phases
+               (add-before 'build 'disable-cgo
+                 (lambda _
+                   (setenv "CGO_ENABLED" "0")))
                (add-after 'install 'install-documentation
                  (lambda _
                    (let ((src "src/github.com/cloudflare/cloudflared/cloudflared_man_template")
