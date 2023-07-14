@@ -18,6 +18,36 @@
 (define license
   (@@ (guix licenses) license))
 
+(define-public clash-bin
+  (package
+    (name "clash-bin")
+    (version "1.17.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/Dreamacro/clash/releases/download/v"
+                    version "/clash-linux-amd64-v3-v" version ".gz"))
+              (sha256
+               (base32
+                "0b3r6z46xky01aq6f9v7vj7n8bqai2rwwpk1mng6336s72fnz6ds"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'((#$(format #f "clash-linux-amd64-v3-v~a" version) "bin/clash"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'fix-permission
+                 (lambda _
+                   (chmod (string-append #$output "/bin/clash") #o555))))))
+    (supported-systems '("x86_64-linux"))
+    (home-page "https://github.com/Dreamacro/clash")
+    (synopsis "Rule-based tunnel in Go")
+    (description
+     "Clash is a cross-platform rule-based proxy utility that runs on the
+network and application layer, supporting various proxy and anti-censorship
+protocols out-of-the-box.")
+    (license license:gpl3)))
+
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
