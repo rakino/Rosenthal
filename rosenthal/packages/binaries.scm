@@ -213,3 +213,28 @@ to use WireGuard and 2FA.")
      "This package provides @code{wakapi}, a WakaTime-compatible backend for
 coding statistics.")
     (license license:expat)))
+
+(define-public wakatime-cli-bin
+  (package
+    (name "wakatime-cli-bin")
+    (version "1.73.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/wakatime/wakatime-cli"
+                                  "/releases/download/v" version
+                                  "/wakatime-cli-linux-amd64.zip"))
+              (sha256
+               (base32
+                "1y1hb3i2iac7vnl4x6fmpfslmvh7ckjldy8989zpik7ypi91fsjz"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("wakatime-cli-linux-amd64" "bin/wakatime-cli"))))
+    (supported-systems '("x86_64-linux"))
+    (native-inputs (list unzip))
+    (home-page "https://wakatime.com/plugins")
+    (synopsis "Command line interface to WakaTime")
+    (description
+     "This package provides @code{wakatime-cli}, the command line interface to
+WakaTime, which is used by all WakaTime text editor plugins.")
+    (license license:bsd-3)))
