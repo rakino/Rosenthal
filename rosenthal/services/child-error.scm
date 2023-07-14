@@ -260,8 +260,8 @@ headers.  This can expose sensitive information in your logs.")
 
 (define-configuration/no-serialization home-wakapi-configuration
   (wakapi
-   (string "/bin/wakapi")
-   "The wakapi executable.")
+   (file-like wakapi-bin)
+   "The wakapi package.")
   (config
    (yaml-config '())
    "Association list of Wakapi configurations."))
@@ -276,7 +276,9 @@ headers.  This can expose sensitive information in your logs.")
               (documentation "Run wakapi.")
               (provision '(wakapi))
               (start #~(make-forkexec-constructor
-                        (list #$wakapi "-config" #$config-file)))))))))
+                        (list #$(file-append wakapi "/bin/wakapi")
+                              "-config" #$config-file)))
+              (stop #~(make-kill-destructor))))))))
 
 (define home-wakapi-service-type
   (service-type
