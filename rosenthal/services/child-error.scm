@@ -16,6 +16,7 @@
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
   #:use-module (gnu system shadow)
+  #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages networking)
   #:use-module (rosenthal utils home-services-utils)
   #:export (clash-configuration
@@ -41,8 +42,8 @@
 
 (define-configuration/no-serialization clash-configuration
   (clash
-   (string "/bin/clash")
-   "The clash executable.")
+   (file-like clash-bin)
+   "The clash package.")
   (log-file
    (string "/var/log/clash.log")
    "Where the logs go.")
@@ -83,7 +84,8 @@
             (provision '(clash))
             (requirement '(loopback networking))
             (start #~(make-forkexec-constructor
-                      (list #$clash "-d" #$data-directory)
+                      (list #$(file-append clash "/bin/clash")
+                            "-d" #$data-directory)
                       #:user "clash"
                       #:group "clash"
                       #:log-file #$log-file))
