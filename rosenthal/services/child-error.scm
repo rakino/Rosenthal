@@ -25,6 +25,9 @@
             cloudflare-tunnel-configuration
             cloudflare-tunnel-service-type
 
+            cloudflare-warp-configuration
+            cloudflare-warp-service-type
+
             miniflux-configuration
             miniflux-service-type
 
@@ -188,6 +191,39 @@ headers.  This can expose sensitive information in your logs.")
                              cloudflare-tunnel-shepherd-service)))
    (default-value (cloudflare-tunnel-configuration))
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
+
+
+;;
+;; Cloudflare Warp
+;;
+
+
+(define-configuration/no-serialization cloudflare-warp-configuration
+  (cloudflare-warp
+   (file-like cloudflare-warp-bin)
+   "The Cloudflare Warp package."))
+
+(define (cloudflare-warp-shepherd-service config)
+  (match-record config <cloudflare-warp-configuration>
+    (cloudflare-warp)
+    (list (shepherd-service
+           (documentation "Run warp-svc.")
+           (provision '(cloudflare-warp))
+           (start #~(make-forkexec-constructor
+                     (list #$(file-append cloudflare-warp "/bin/warp-svc"))))
+           (stop #~(make-kill-destructor))))))
+
+(define cloudflare-warp-service-type
+  (service-type
+   (name 'cloudflare-warp)
+   (extensions
+    (list (service-extension shepherd-root-service-type
+                             cloudflare-warp-shepherd-service)
+          (service-extension
+           profile-service-type
+           (compose list cloudflare-warp-configuration-cloudflare-warp))))
+   (default-value (cloudflare-warp-configuration))
+   (description "Run warp-svc, the Cloudflare Warp daemon.")))
 
 
 ;;
