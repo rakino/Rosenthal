@@ -5,13 +5,13 @@
 
 This channel was created for experiments, it currently holds some packages not ready for upstreaming to [[https://guix.gnu.org/][GNU Guix]].
 
-Search for packages in Rosenthal and other channels with the [[https://toys.whereis.みんな/][toys]] instance maintained by [[https://git.sr.ht/~whereiseveryone/][whereis.みんな]] community.
+Search for packages in Rosenthal and other channels with the [[https://toys.whereis.みんな/][toys]] instance maintained by [[https://sr.ht/~whereiseveryone/][WhereIsEveryone]] community.
 
 Unstable contents: packages not publicly exported, packages with a suffix like =-dev=, =-for-<some package>= or =-<full version>=, and all services are considered unstable.  They are subject to change and may be deleted at any time.
 
 [[https://codeberg.org/hako/Rosenthal][Rosenthal]] 是[[https://ultrarare.space/][左煉]]維護的 [[https://guix.gnu.org/en/manual/devel/zh-cn/html_node/Tong-Dao-.html][Guix 頻道]]。該頻道因試驗而起，如今存有一些還算有趣，但尚未準備好加入 [[https://guix.gnu.org/zh-CN/][GNU Guix]] 上游的軟件包。
 
-[[https://git.sr.ht/~whereiseveryone/][whereis.みんな]]社區維護的 [[https://toys.whereis.みんな/][toys]] 實例，可用以檢索來自 Rosenthal 及其他 Guix 頻道的軟件包。
+[[https://sr.ht/~whereiseveryone/][WhereIsEveryone]] 社區維護的 [[https://toys.whereis.みんな/][toys]] 實例，可用以檢索來自 Rosenthal 及其他 Guix 頻道的軟件包。
 
 頻道內所有 Guix 服務，及名稱以 =-dev= 、 =-for-<某軟件包>= 或 =-<版本號>= 結尾的軟件包，均無穩定保證，隨時可能刪改。
 
@@ -112,10 +112,23 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + grimblast
 + hyprland
 + qogir-icon-theme
++ tree-sitter-cmake
++ tree-sitter-dockerfile
++ tree-sitter-yaml
+**** Binary Packages / 二進制包
++ clash-bin
++ hugo-bin
++ sing-box-bin
++ tailscale-bin
++ wakapi-bin
++ wakatime-cli-bin
+**** Non-free Packages / 非自由軟件
++ cloudflare-warp-bin
 
 *** Services / 服務
 + clash-service-type
 + cloudflare-tunnel-service-type
++ cloudflare-warp-service-type
 + miniflux-service-type
 + qbittorrent-service-type
 + smartdns-service-type
