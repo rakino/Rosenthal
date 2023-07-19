@@ -170,14 +170,14 @@ designed for flexibility.")
 (define-public tailscale-bin
   (package
     (name "tailscale-bin")
-    (version "1.44.0")
+    (version "1.44.2")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkgs.tailscale.com"
                                   "/stable/tailscale_" version "_amd64.tgz"))
               (sha256
                (base32
-                "1kfxi9blvs2raws5k38bnlsf897nww7i4qa7fyizgbgmyis4l4kr"))))
+                "0349cij3daiy24vcc21pj80mg2246xp29apgzid1q0fk7kwzg9yg"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
