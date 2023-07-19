@@ -153,11 +153,11 @@ protocols used by Hyprland to bridge the aforementioned gap.")
      (base32 "14nijw02lb0c4h06adki0w7amgxg1m0qj48ds7iq4bq6fkl1m5l0"))))
 
 (define-public hyprland
-  (let ((commit "2fed1badbfb3b5a10641ee41c55d7fa7c21682c8")
-        (revision "0"))
+  (let ((commit "b08b72358ad549fd066e5be0fc3aa4c9df367607"))
     (package
       (name "hyprland")
-      (version "0.27.1")
+      ;; NOTE: Remember to update commit hash ^
+      (version "0.27.2")
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -168,7 +168,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                                hyprland-portals-patch))
                 (sha256
                  (base32
-                  "1qynl4jdh6j8zw13ddvs2lr86m35k6x3n698ip0arlf87x5mg8i8"))))
+                  "0jyp4amy5hryczxa73lc5dpvarqxb6r1zsrqzwffan1nrhhqzsyq"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
