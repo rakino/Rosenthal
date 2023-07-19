@@ -84,8 +84,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "548")
-        (commit "7e7633abf09b362d0bad9e3fc650fd692369291d"))
+        (revision "660")
+        (commit "7791ffe0584c4ac13c170e1661ce33bdbd4a9b9e"))
     (package
       (inherit base)
       (name "wlroots")
@@ -98,7 +98,7 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0w6m99gw9y4caj078j5yyadzwgcwmcjm5gzbs478bfhwbiaf72ra"))))
+                  "1q85iadv6rad97hm26amixr4zcp7kws57f438fnxg44v0saww56x"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
@@ -153,11 +153,11 @@ protocols used by Hyprland to bridge the aforementioned gap.")
      (base32 "14nijw02lb0c4h06adki0w7amgxg1m0qj48ds7iq4bq6fkl1m5l0"))))
 
 (define-public hyprland
-  (let ((commit "5e577acf516b80173f695a458c2cc188a4d64560")
+  (let ((commit "2fed1badbfb3b5a10641ee41c55d7fa7c21682c8")
         (revision "0"))
     (package
       (name "hyprland")
-      (version "0.27.0")
+      (version "0.27.1")
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -168,7 +168,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                                hyprland-portals-patch))
                 (sha256
                  (base32
-                  "1n4yfxfn8w5skk82k1fqn0a63g7c83fzyb7azn2h9yriczlqahlq"))))
+                  "1qynl4jdh6j8zw13ddvs2lr86m35k6x3n698ip0arlf87x5mg8i8"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
