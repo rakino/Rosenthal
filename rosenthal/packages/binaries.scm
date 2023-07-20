@@ -111,7 +111,7 @@ different needs.")
 (define-public hugo-bin
   (package
     (name "hugo-bin")
-    (version "0.115.3")
+    (version "0.115.4")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -119,7 +119,7 @@ different needs.")
                     version "/hugo_extended_" version "_linux-amd64.tar.gz"))
               (sha256
                (base32
-                "0i56yy77h1d4f36c2b9vlmdr2x6wzq9q3l7sck80wkz9awdjfzhv"))))
+                "0aq5qgbznvyby4mj03s9scpgk3zz3bwzrz6pnv2l1vc2h0c1hf1q"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan #~'(("hugo" "bin/hugo"))
@@ -127,18 +127,16 @@ different needs.")
            #~(modify-phases %standard-phases
                (delete 'strip)
                (add-after 'install 'patch-elf
-                 (lambda _
+                 (lambda* (#:key inputs #:allow-other-keys)
                    (let ((hugo (string-append #$output "/bin/hugo")))
                      (invoke "patchelf" "--set-interpreter"
-                             (string-append #$(this-package-input "glibc")
-                                            #$(glibc-dynamic-linker))
+                             (search-input-file inputs #$(glibc-dynamic-linker))
                              hugo)
                      (invoke "patchelf" "--set-rpath"
                              (string-append #$gcc:lib "/lib")
                              hugo)))))))
     (supported-systems '("x86_64-linux"))
     (native-inputs (list patchelf))
-    (inputs (list glibc))
     (home-page "https://gohugo.io/")
     (synopsis "Static site generator")
     (description
