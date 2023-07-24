@@ -147,7 +147,7 @@ designed for flexibility.")
 (define-public sing-box-bin
   (package
     (name "sing-box-bin")
-    (version "1.3.0")
+    (version "1.3.3")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -155,9 +155,9 @@ designed for flexibility.")
                     version "/sing-box-" version "-linux-amd64v3.tar.gz"))
               (sha256
                (base32
-                "1dn19l9zyj91fi8p1fjg76b7hhcg8l5lbjbig782zvjlfmbyjqyi"))))
+                "1y8zc11ys1yxglzpbckrmjxl0s1hd1d6zzcmgh8kzpfpaqs7n67p"))))
     (build-system copy-build-system)
-    (arguments (list #:install-plan #~'(("sing-box" "bin/sing-box"))))
+    (arguments (list #:install-plan #~'(("sing-box" "bin/"))))
     (supported-systems '("x86_64-linux"))
     (home-page "https://sing-box.sagernet.org/")
     (synopsis "Universal proxy platform")
