@@ -147,7 +147,7 @@ designed for flexibility.")
 (define-public sing-box-bin
   (package
     (name "sing-box-bin")
-    (version "1.3.3")
+    (version "1.3.4")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -155,7 +155,7 @@ designed for flexibility.")
                     version "/sing-box-" version "-linux-amd64v3.tar.gz"))
               (sha256
                (base32
-                "1y8zc11ys1yxglzpbckrmjxl0s1hd1d6zzcmgh8kzpfpaqs7n67p"))))
+                "1l6dhi1bk7bfcpfnddzlwlp9axfw1ka855vk6px057b9ifds1qnx"))))
     (build-system copy-build-system)
     (arguments (list #:install-plan #~'(("sing-box" "bin/"))))
     (supported-systems '("x86_64-linux"))
