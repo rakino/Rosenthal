@@ -168,19 +168,18 @@ designed for flexibility.")
 (define-public tailscale-bin
   (package
     (name "tailscale-bin")
-    (version "1.44.2")
+    (version "1.46.1")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkgs.tailscale.com"
                                   "/stable/tailscale_" version "_amd64.tgz"))
               (sha256
                (base32
-                "0349cij3daiy24vcc21pj80mg2246xp29apgzid1q0fk7kwzg9yg"))))
+                "0s8q0p9gvrd726vdv9jlf4w6caq687ssrzbj7vza389aix3q6caa"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
-           #~'(("tailscale" "bin/tailscale")
-               ("tailscaled" "bin/tailscaled"))))
+           #~'(("." "bin/" #:include ("tailscale" "tailscaled")))))
     (supported-systems '("x86_64-linux"))
     (home-page "https://tailscale.com/")
     (synopsis "Private WireGuard® networks made easy")
