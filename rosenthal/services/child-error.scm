@@ -170,7 +170,6 @@ headers.  This can expose sensitive information in your logs.")
                             #$@extra-tunnel-options
 
                             "run"
-                            "--token" #$token
                             #$@(if http2-origin?
                                    '("--http2-origin")
                                    '())
@@ -180,7 +179,9 @@ headers.  This can expose sensitive information in your logs.")
                             #$@extra-options)
                       #:user "nobody"
                       #:group "nogroup"
-                      #:log-file #$log-file))
+                      #:log-file #$log-file
+                      #:environment-variables
+                      (list (format #f "TUNNEL_TOKEN=~a" #$token))))
             (stop #~(make-kill-destructor)))))))
 
 (define cloudflare-tunnel-service-type
