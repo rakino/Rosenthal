@@ -62,3 +62,28 @@ webserver).  Cloudflare attracts client requests and sends them to you via
 this daemon, without requiring you to poke holes on your firewall --- your
 origin can remain as closed as possible.")
     (license license:asl2.0)))
+
+(define-public socks2http
+  (package
+    (name "socks2http")
+    (version "0.0.0-20160712034938-bafa2cde8eb4")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/zenhack/socks2http")
+                    (commit (go-version->git-ref version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0c388rir9d0cy5vxqxj7m72nra0w5cya4mmgqdcvqmnk2vawdyb9"))))
+    (build-system go-build-system)
+    (arguments
+     (list #:install-source? #f
+           #:import-path "github.com/zenhack/socks2http"))
+    (inputs (list go-golang-org-x-net))
+    (home-page "https://github.com/zenhack/socks2http")
+    (synopsis "SOCKS5 to HTTP proxy")
+    (description
+     "This package provides a simple tool to plumb HTTP proxy requests through
+a SOCKS5 proxy.")
+    (license license:expat)))
