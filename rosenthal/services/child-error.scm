@@ -32,7 +32,10 @@
             miniflux-service-type
 
             home-wakapi-configuration
-            home-wakapi-service-type))
+            home-wakapi-service-type
+
+            home-socks2http-configuration
+            home-socks2http-service-type))
 
 ;; Child-error: services for packages not available in Guix, currently this
 ;; means some Go and Rust apps I build locally but don't want to package.
@@ -325,3 +328,42 @@ headers.  This can expose sensitive information in your logs.")
                              home-wakapi-shepherd-service)))
    (default-value (home-wakapi-configuration))
    (description "Run Wakapi, a self-hosted WakaTime-compatible backend.")))
+
+
+;;
+;; Socks2http
+;;
+
+
+(define-configuration home-socks2http-configuration
+  (socks2http
+   (file-like socks2http)
+   "Socks2http package to use.")
+  (socks-address
+   (string ":1080")
+   "SOCKS5 proxy address to connect to.")
+  (http-address
+   (string ":8000")
+   "HTTP proxy address to serve.")
+  (no-serialization))
+
+(define (home-socks2http-shepherd-service config)
+  (match-record config <home-socks2http-configuration>
+    (socks2http socks-address http-address)
+    (list (shepherd-service
+           (documentation "Run socks2http.")
+           (provision '(socks2http))
+           (start #~(make-forkexec-constructor
+                     (list #$(file-append socks2http "/bin/socks2http")
+                           "-raddr" #$socks-address
+                           "-laddr" #$http-address)))
+           (stop #~(make-kill-destructor))))))
+
+(define home-socks2http-service-type
+  (service-type
+   (name 'home-socks2http)
+   (extensions
+    (list (service-extension home-shepherd-service-type
+                             home-socks2http-shepherd-service)))
+   (default-value (home-socks2http-configuration))
+   (description "Run socks2http.")))
