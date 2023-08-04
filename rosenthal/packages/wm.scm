@@ -84,8 +84,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "660")
-        (commit "7791ffe0584c4ac13c170e1661ce33bdbd4a9b9e"))
+        (revision "669")
+        (commit "e8d545a9770a2473db32e0a0bfa757b05d2af4f3"))
     (package
       (inherit base)
       (name "wlroots")
@@ -98,7 +98,7 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1q85iadv6rad97hm26amixr4zcp7kws57f438fnxg44v0saww56x"))))
+                  "1pz8i3g24flswvv762jxnhff67jgl2nvqrj03f84fi1srf769zl2"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
@@ -152,11 +152,11 @@ protocols used by Hyprland to bridge the aforementioned gap.")
      (base32 "14nijw02lb0c4h06adki0w7amgxg1m0qj48ds7iq4bq6fkl1m5l0"))))
 
 (define-public hyprland
-  (let ((commit "b08b72358ad549fd066e5be0fc3aa4c9df367607"))
+  (let ((commit "9654749244117f7f150c6f2a2ce4dede6e8cbb25"))
     (package
       (name "hyprland")
       ;; NOTE: Remember to update commit hash ^
-      (version "0.27.2")
+      (version "0.28.0")
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -167,26 +167,38 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                                hyprland-portals-patch))
                 (sha256
                  (base32
-                  "0jyp4amy5hryczxa73lc5dpvarqxb6r1zsrqzwffan1nrhhqzsyq"))))
+                  "1ipg3f1js291vyh9888qsy5hgqqj10m8zzc1y8i1ihgikyzsqlmp"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
              #:phases
              #~(modify-phases %standard-phases
-                 (add-after 'unpack 'fix-default-wallpaper-path
-                   (lambda _
+                 (add-after 'unpack 'fix-path
+                   (lambda* (#:key inputs #:allow-other-keys)
                      (substitute* "src/render/OpenGL.cpp"
-                       (("/usr") #$output))))
+                       (("/usr") #$output))
+                     (substitute* (find-files "src" "\\.cpp")
+                       (("(execAndGet\\(\\(?\")\\<(cat|fc-list|lspci|nm)\\>"
+                         _ pre cmd)
+                        (format #f "~a~a"
+                                pre
+                                (search-input-file
+                                 inputs (string-append "/bin/" cmd)))))))
                  (add-after 'unpack 'substitute-meson-build
                    (lambda _
                      (substitute* "meson.build"
                        (("git") "true")
-                       (("@GIT_DIRTY@") "")
-                       (("@GIT_COMMIT_HASH@") #$commit)))))))
+                       (("@GIT_BRANCH@") "main")
+                       (("@GIT_COMMIT_HASH@") #$commit)
+                       (("@GIT_COMMIT_MESSAGE@") "?")
+                       (("@GIT_DIRTY@") ""))
+                     (substitute* (find-files "src" "\\.cpp")
+                       (("GIT_TAG") (format #f "\"v~a\"" #$version))))))))
       (native-inputs (list gcc-12 jq pkg-config))
       (inputs
        (list hyprland-protocols
              pango
+             pciutils
              udis86-for-hyprland
              wlroots-for-hyprland))
       (home-page "https://hyprland.org")
