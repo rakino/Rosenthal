@@ -104,9 +104,10 @@ protocols out-of-the-box.")
 secure, and more private experience online.  The WARP client sits between your
 device and the Internet, and has several connection modes to better suit
 different needs.")
-    (license (license "Application Terms of Service"
-                      "https://www.cloudflare.com/application/terms/"
-                      "nonfree"))))
+    (license
+     (license "Nonfree"
+              "https://www.cloudflare.com/application/terms/"
+              "This is a nonfree license.  Check the URI for details."))))
 
 (define-public hugo-bin
   (package
