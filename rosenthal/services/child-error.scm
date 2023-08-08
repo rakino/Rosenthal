@@ -3,10 +3,8 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services child-error)
-  #:use-module (ice-9 match)
   #:use-module (guix records)
   #:use-module (guix gexp)
-  #:use-module (guix packages)
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu packages admin)
@@ -37,16 +35,12 @@
             home-socks2http-configuration
             home-socks2http-service-type))
 
-;; Child-error: services for packages not available in Guix, currently this
-;; means some Go and Rust apps I build locally but don't want to package.
-
-
 ;;
 ;; Clash
 ;;
 
 
-(define-configuration/no-serialization clash-configuration
+(define-configuration clash-configuration
   (clash
    (file-like clash-bin)
    "The clash package.")
@@ -58,7 +52,8 @@
    "Where to store data.")
   (config
    (file-like (plain-file "empty" ""))
-   "Clash configuration file."))
+   "Clash configuration file.")
+  (no-serialization))
 
 (define %clash-accounts
   (list (user-group (name "clash") (system? #t))
@@ -70,32 +65,32 @@
          (shell (file-append shadow "/sbin/nologin")))))
 
 (define clash-activation
-  (match-lambda
-    (($ <clash-configuration> clash log-file data-directory config)
-     #~(begin
-         (use-modules (guix build utils))
-         (let ((config-dest (string-append #$data-directory "/config.yaml"))
-               (user (getpwnam "clash")))
-           (mkdir-p #$data-directory)
-           (chown #$data-directory (passwd:uid user) (passwd:gid user))
-           (if (file-exists? config-dest)
-               (delete-file config-dest))
-           (symlink #$config config-dest))))))
+  (match-record-lambda <clash-configuration>
+      (clash log-file data-directory config)
+    #~(begin
+        (use-modules (guix build utils))
+        (let ((config-dest (string-append #$data-directory "/config.yaml"))
+              (user (getpwnam "clash")))
+          (mkdir-p #$data-directory)
+          (chown #$data-directory (passwd:uid user) (passwd:gid user))
+          (if (file-exists? config-dest)
+              (delete-file config-dest))
+          (symlink #$config config-dest)))))
 
 (define clash-shepherd-service
-  (match-lambda
-    (($ <clash-configuration> clash log-file data-directory config)
-     (list (shepherd-service
-            (documentation "Run clash.")
-            (provision '(clash))
-            (requirement '(loopback networking))
-            (start #~(make-forkexec-constructor
-                      (list #$(file-append clash "/bin/clash")
-                            "-d" #$data-directory)
-                      #:user "clash"
-                      #:group "clash"
-                      #:log-file #$log-file))
-            (stop #~(make-kill-destructor)))))))
+  (match-record-lambda <clash-configuration>
+      (clash log-file data-directory config)
+    (list (shepherd-service
+           (documentation "Run clash.")
+           (provision '(clash))
+           (requirement '(loopback networking))
+           (start #~(make-forkexec-constructor
+                     (list #$(file-append clash "/bin/clash")
+                           "-d" #$data-directory)
+                     #:user "clash"
+                     #:group "clash"
+                     #:log-file #$log-file))
+           (stop #~(make-kill-destructor))))))
 
 (define clash-service-type
   (service-type
@@ -110,16 +105,15 @@
    (default-value (clash-configuration))
    (description "Run Clash.")))
 
-
 
 ;;
 ;; Cloudflare Tunnel
 ;;
 
 
-(define-configuration/no-serialization cloudflare-tunnel-configuration
+(define-configuration cloudflare-tunnel-configuration
   (cloudflared
-   (package cloudflared)
+   (file-like cloudflared)
    "The cloudflared executable.")
 
   ;; Tunnel options
@@ -151,41 +145,39 @@ headers.  This can expose sensitive information in your logs.")
    "Create an experimental post-quantum secure tunnel.")
   (extra-options
    (list-of-strings '())
-   "List of extra options."))
+   "List of extra options.")
+  (no-serialization))
 
 (define cloudflare-tunnel-shepherd-service
-  (match-lambda
-    (($ <cloudflare-tunnel-configuration> cloudflared metrics
-                                          log-level log-file
-                                          extra-tunnel-options
-                                          token http2-origin? post-quantum?
-                                          extra-options)
-     (list (shepherd-service
-            (documentation "Run cloudflared.")
-            (provision '(cloudflare-tunnel))
-            (requirement '(loopback networking))
-            (start #~(make-forkexec-constructor
-                      (list #$(file-append cloudflared "/bin/cloudflared")
-                            "tunnel"
-                            "--no-autoupdate"
-                            "--metrics" #$metrics
-                            "--loglevel" #$log-level
-                            #$@extra-tunnel-options
+  (match-record-lambda <cloudflare-tunnel-configuration>
+      (cloudflared metrics log-level log-file extra-tunnel-options
+                   token http2-origin? post-quantum? extra-options)
+    (list (shepherd-service
+           (documentation "Run cloudflared.")
+           (provision '(cloudflare-tunnel))
+           (requirement '(loopback networking))
+           (start #~(make-forkexec-constructor
+                     (list #$(file-append cloudflared "/bin/cloudflared")
+                           "tunnel"
+                           "--no-autoupdate"
+                           "--metrics" #$metrics
+                           "--loglevel" #$log-level
+                           #$@extra-tunnel-options
 
-                            "run"
-                            #$@(if http2-origin?
-                                   '("--http2-origin")
-                                   '())
-                            #$@(if post-quantum?
-                                   '("--post-quantum")
-                                   '())
-                            #$@extra-options)
-                      #:user "nobody"
-                      #:group "nogroup"
-                      #:log-file #$log-file
-                      #:environment-variables
-                      (list (format #f "TUNNEL_TOKEN=~a" #$token))))
-            (stop #~(make-kill-destructor)))))))
+                           "run"
+                           #$@(if http2-origin?
+                                  '("--http2-origin")
+                                  '())
+                           #$@(if post-quantum?
+                                  '("--post-quantum")
+                                  '())
+                           #$@extra-options)
+                     #:user "nobody"
+                     #:group "nogroup"
+                     #:log-file #$log-file
+                     #:environment-variables
+                     (list (format #f "TUNNEL_TOKEN=~a" #$token))))
+           (stop #~(make-kill-destructor))))))
 
 (define cloudflare-tunnel-service-type
   (service-type
@@ -202,14 +194,15 @@ headers.  This can expose sensitive information in your logs.")
 ;;
 
 
-(define-configuration/no-serialization cloudflare-warp-configuration
+(define-configuration cloudflare-warp-configuration
   (cloudflare-warp
    (file-like cloudflare-warp-bin)
-   "The Cloudflare Warp package."))
+   "The Cloudflare Warp package.")
+  (no-serialization))
 
-(define (cloudflare-warp-shepherd-service config)
-  (match-record config <cloudflare-warp-configuration>
-    (cloudflare-warp)
+(define cloudflare-warp-shepherd-service
+  (match-record-lambda  <cloudflare-warp-configuration>
+      (cloudflare-warp)
     (list (shepherd-service
            (documentation "Run warp-svc.")
            (provision '(cloudflare-warp))
@@ -234,16 +227,18 @@ headers.  This can expose sensitive information in your logs.")
 ;; Miniflux
 ;;
 
-(define-configuration/no-serialization miniflux-configuration
+
+(define-configuration miniflux-configuration
   (miniflux
-   (package miniflux)
+   (file-like miniflux)
    "The miniflux package.")
   (log-file
    (string "/var/log/miniflux.log")
    "Where the logs go.")
   (options
    (alist '())
-   "Association list of miniflux configuration options."))
+   "Association list of miniflux configuration options.")
+  (no-serialization))
 
 (define %miniflux-accounts
   (list (user-account
@@ -258,9 +253,9 @@ headers.  This can expose sensitive information in your logs.")
          (name "miniflux")
          (create-database? #t))))
 
-(define (miniflux-shepherd-service config)
-  (match-record config <miniflux-configuration>
-    (miniflux log-file options)
+(define miniflux-shepherd-service
+  (match-record-lambda <miniflux-configuration>
+      (miniflux log-file options)
     (let ((config-file (mixed-text-file
                         "miniflux.conf"
                         (apply string-append
@@ -298,27 +293,28 @@ headers.  This can expose sensitive information in your logs.")
 ;;
 
 
-(define-configuration/no-serialization home-wakapi-configuration
+(define-configuration home-wakapi-configuration
   (wakapi
    (file-like wakapi-bin)
    "The wakapi package.")
   (config
    (yaml-config '())
-   "Association list of Wakapi configurations."))
+   "Association list of Wakapi configurations.")
+  (no-serialization))
 
 (define home-wakapi-shepherd-service
-  (match-lambda
-    (($ <home-wakapi-configuration> wakapi config)
-     (let ((config-file (mixed-text-file
-                         "wakapi.yaml"
-                         #~(string-append #$@(serialize-yaml-config config) "\n"))))
-       (list (shepherd-service
-              (documentation "Run wakapi.")
-              (provision '(wakapi))
-              (start #~(make-forkexec-constructor
-                        (list #$(file-append wakapi "/bin/wakapi")
-                              "-config" #$config-file)))
-              (stop #~(make-kill-destructor))))))))
+  (match-record-lambda <home-wakapi-configuration>
+      (wakapi config)
+    (let ((config-file (mixed-text-file
+                        "wakapi.yaml"
+                        #~(string-append #$@(serialize-yaml-config config) "\n"))))
+      (list (shepherd-service
+             (documentation "Run wakapi.")
+             (provision '(wakapi))
+             (start #~(make-forkexec-constructor
+                       (list #$(file-append wakapi "/bin/wakapi")
+                             "-config" #$config-file)))
+             (stop #~(make-kill-destructor)))))))
 
 (define home-wakapi-service-type
   (service-type
@@ -347,9 +343,9 @@ headers.  This can expose sensitive information in your logs.")
    "HTTP proxy address to serve.")
   (no-serialization))
 
-(define (home-socks2http-shepherd-service config)
-  (match-record config <home-socks2http-configuration>
-    (socks2http socks-address http-address)
+(define home-socks2http-shepherd-service
+  (match-record-lambda <home-socks2http-configuration>
+      (socks2http socks-address http-address)
     (list (shepherd-service
            (documentation "Run socks2http.")
            (provision '(socks2http))

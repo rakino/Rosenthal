@@ -4,7 +4,6 @@
 
 (define-module (rosenthal services dns)
   #:use-module (guix gexp)
-  #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
@@ -17,17 +16,19 @@
 ;; Smartdns
 ;;
 
-(define-configuration/no-serialization smartdns-configuration
+
+(define-configuration smartdns-configuration
   (smartdns
-   (package smartdns)
+   (file-like smartdns)
    "The Smartdns package.")
   (config-file
    (file-like (plain-file "empty" ""))
-   "Configuration file for Smartdns."))
+   "Configuration file for Smartdns.")
+  (no-serialization))
 
-(define (smartdns-shepherd-service config)
-  (match-record config <smartdns-configuration>
-    (smartdns config-file)
+(define smartdns-shepherd-service
+  (match-record-lambda <smartdns-configuration>
+      (smartdns config-file)
     (list (shepherd-service
            (documentation "Run smartdns.")
            (provision '(smartdns dns))

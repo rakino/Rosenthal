@@ -4,7 +4,6 @@
 
 (define-module (rosenthal services bittorrent)
   #:use-module (guix gexp)
-  #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages bittorrent)
@@ -20,9 +19,9 @@
 ;;
 
 
-(define-configuration/no-serialization qbittorrent-configuration
+(define-configuration qbittorrent-configuration
   (qbittorrent
-   (package qbittorrent-nox)
+   (file-like qbittorrent-nox)
    "The qBittorrent package to use, we need @command{qbittorrent-nox}.")
   (log-file
    (string "/var/log/qbittorrent.log")
@@ -35,7 +34,8 @@
    "Directory to store configuration files in.")
   (extra-options
    (list-of-strings '())
-   "List of extra options."))
+   "List of extra options.")
+  (no-serialization))
 
 (define %qbittorrent-accounts
   (list (user-group (name "qbittorrent") (system? #t))
@@ -47,17 +47,19 @@
          (home-directory "/var/empty")
          (shell (file-append shadow "/sbin/nologin")))))
 
-(define (qbittorrent-activation config)
-  #~(begin
-      (use-modules (guix build utils))
-      (let ((profile-directory #$(qbittorrent-configuration-profile-directory config))
-            (user (getpwnam "qbittorrent")))
-        (mkdir-p profile-directory)
-        (chown profile-directory (passwd:uid user) (passwd:gid user)))))
+(define qbittorrent-activation
+  (match-record-lambda <qbittorrent-configuration>
+      (qbittorrent log-file webui-port profile-directory extra-options)
+    #~(begin
+        (use-modules (guix build utils))
+        (let ((profile-directory #$profile-directory)
+              (user (getpwnam "qbittorrent")))
+          (mkdir-p profile-directory)
+          (chown profile-directory (passwd:uid user) (passwd:gid user))))))
 
-(define (qbittorrent-shepherd-service config)
-  (match-record config <qbittorrent-configuration>
-    (qbittorrent log-file webui-port profile-directory extra-options)
+(define qbittorrent-shepherd-service
+  (match-record-lambda <qbittorrent-configuration>
+      (qbittorrent log-file webui-port profile-directory extra-options)
     (list (shepherd-service
            (documentation "Run qbittorrent.")
            (provision '(qbittorrent))
