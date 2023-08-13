@@ -147,6 +147,35 @@ different needs.")
 designed for flexibility.")
     (license license:asl2.0)))
 
+(define-public shadow-tls-bin
+  (package
+    (name "shadow-tls-bin")
+    (version "0.2.23")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/ihciah/shadow-tls/releases/download/v"
+                    version "/shadow-tls-x86_64-unknown-linux-musl"))
+              (sha256
+               (base32
+                "0jdmnhhrn8mwh5jx2k8fvmigq7vjbzx6wxd5zhahlcfga1p2kixc"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("shadow-tls-x86_64-unknown-linux-musl" "bin/shadow-tls"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'fix-permission
+                 (lambda _
+                   (chmod (string-append #$output "/bin/shadow-tls") #o555))))))
+    (supported-systems '("x86_64-linux"))
+    (home-page "https://www.ihcblog.com/a-better-tls-obfs-proxy/")
+    (synopsis "Proxy to expose real tls handshake to the firewall")
+    (description
+     "Shadow TLS is a proxy to expose real tls handshake to the @acronym{MITM,
+monster-in-the-middle}.")
+    (license license:expat)))
+
 (define-public sing-box-bin
   (package
     (name "sing-box-bin")
