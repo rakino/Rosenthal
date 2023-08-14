@@ -51,8 +51,8 @@
     (let ((environment
            #~(list (string-append
                     "PATH=" (string-join
-                             (list (file-append openresolv "/sbin")
-                                   (file-append coreutils "/bin"))
+                             (list #$(file-append openresolv "/sbin")
+                                   #$(file-append coreutils "/bin"))
                              ":")))))
       (list (shepherd-service
              (documentation "Run iwd")
