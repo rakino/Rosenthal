@@ -134,6 +134,7 @@ Non-free Packages / 非自由軟件：
 + cloudflare-warp-service-type
 + miniflux-service-type
 + qbittorrent-service-type
++ (home-)shadow-tls-service-type
 + smartdns-service-type
 + home-socks2http-service-type
 + home-wakapi-service-type

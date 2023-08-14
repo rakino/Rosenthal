@@ -32,6 +32,12 @@
             home-wakapi-configuration
             home-wakapi-service-type
 
+            shadow-tls-configuration
+            shadow-tls-client-configuration
+            shadow-tls-server-configuration
+            shadow-tls-service-type
+            home-shadow-tls-service-type
+
             home-socks2http-configuration
             home-socks2http-service-type))
 
@@ -324,6 +330,165 @@ headers.  This can expose sensitive information in your logs.")
                              home-wakapi-shepherd-service)))
    (default-value (home-wakapi-configuration))
    (description "Run Wakapi, a self-hosted WakaTime-compatible backend.")))
+
+
+;;
+;; ShadowTLS
+;;
+
+
+(define-maybe list-of-strings
+  (no-serialization))
+
+(define-configuration shadow-tls-client-configuration
+  (listen-address
+   (string "")
+   "Listen address with port.  Usually this port is used by Shadowsocks
+client.")
+  (server-address
+   (string "")
+   "ShadowTLS server address with port.")
+  (sni-list
+   (list-of-strings '(""))
+   "SNI list.")
+  (password
+   (string "")
+   "Must be the same as the ShadowTLS server.")
+  (alpn
+   maybe-list-of-strings
+   "ALPN ext.  Do not use unless you know what you are doing.")
+  (no-serialization))
+
+(define-configuration shadow-tls-server-configuration
+  (listen-address
+   (string "")
+   "Listen address with port.")
+  (server-address
+   (string "")
+   "Data server address with port.  Usually this port is listened by Shadowsocks
+server.")
+  (tls-name-list
+   (list-of-strings '(""))
+   "TLS names.  There must be a fallback server name at the last, and there can
+be multiple mappings.  Mappings can be represented as
+@code{ServerName:Host:Port}.  Host can be omitted, in this case
+@code{ServerName} is used as @code{Host}.  @code{Port} can be omitted too, which
+is @code{443} by default")
+  (password
+   (string "")
+   "Must be the same as the ShadowTLS client.")
+  (no-serialization))
+
+(define-record-type* <shadow-tls-configuration> shadow-tls-configuration
+  make-shadow-tls-configuration
+  shadow-tls-configuration?
+  this-shadow-tls-configuration
+
+  (shadow-tls    shadow-tls-configuration-shadow-tls        ;file-like
+                 (default shadow-tls-bin))
+  (threads       shadow-tls-configuration-threads           ;integer | #f
+                 (default #f))
+  (no-delay?     shadow-tls-configuration-disable-no-delay? ;boolean
+                 (default #t))
+  (v3-protocol?  shadow-tls-configuration-v3-protocol?      ;boolean
+                 (default #f))
+  (log-level     shadow-tls-configuration-log-level         ;string
+                 (default "info"))
+  (client        shadow-tls-configuration-client ;<shadow-tls-client-configuration> | #f
+                 (default #f))
+  (server        shadow-tls-configuration-server ;<shadow-tls-server-configuration> | #f
+                 (default #f))
+  (home-service? shadow-tls-configuration-home-service?
+                 (default for-home?) (innate)))
+
+(define shadow-tls-shepherd-service
+  (match-record-lambda <shadow-tls-configuration>
+      (shadow-tls threads no-delay? v3-protocol? log-level client server
+                  home-service?)
+    (let ((common-options
+           (append (if threads
+                       `("--threads" ,(number->string threads))
+                       '())
+                   (if no-delay?
+                       '()
+                       '("--disable-nodelay"))
+                   (if v3-protocol?
+                       '("--v3")
+                       '()))))
+      (append
+       (if client
+          (match-record client
+               <shadow-tls-client-configuration>
+               (listen-address server-address sni-list password alpn)
+             (let ((log-file
+                    (if home-service?
+                        #~(string-append %user-log-dir "/shadow-tls-client.log")
+                        "/var/log/shadow-tls-client.log")))
+               (list (shepherd-service
+                      (documentation "Run shadow-tls client.")
+                      (provision '(shadow-tls-client))
+                      (requirement (if home-service? '() '(networking)))
+                      (modules '((shepherd support)))
+                      (start #~(make-forkexec-constructor
+                                (list #$(file-append
+                                         shadow-tls "/bin/shadow-tls")
+                                      #$@common-options
+                                      "client"
+                                      "--listen" #$listen-address
+                                      "--server" #$server-address
+                                      "--sni" #$(string-join sni-list ";")
+                                      "--password" #$password
+                                      #$@(if (maybe-value-set? alpn)
+                                             `("--alpn" ,(string-join alpn ";"))
+                                             '()))
+                                #:user #$(and (not home-service?) "nobody")
+                                #:group #$(and (not home-service?) "nogroup")
+                                #:log-file #$log-file
+                                #:environment-variables
+                                (list (string-append "RUST_LOG=" #$log-level))))
+                      (stop #~(make-kill-destructor))))))
+           '())
+       (if server
+           (match-record server
+               <shadow-tls-server-configuration>
+               (listen-address server-address tls-name-list password)
+             (let ((log-file
+                    (if home-service?
+                        #~(string-append %user-log-dir "/shadow-tls-server.log")
+                        "/var/log/shadow-tls-server.log")))
+               (list (shepherd-service
+                      (documentation "Run shadow-tls server.")
+                      (provision '(shadow-tls-server))
+                      (requirement (if home-service? '() '(networking)))
+                      (modules '((shepherd support)))
+                      (start #~(make-forkexec-constructor
+                                (list #$(file-append
+                                         shadow-tls "/bin/shadow-tls")
+                                      #$@common-options
+                                      "server"
+                                      "--listen" #$listen-address
+                                      "--server" #$server-address
+                                      "--tls" #$(string-join tls-name-list ";")
+                                      "--password" #$password)
+                                #:user #$(and (not home-service?) "nobody")
+                                #:group #$(and (not home-service?) "nogroup")
+                                #:log-file #$log-file))
+                      (stop #~(make-kill-destructor))))))
+           '())))))
+
+(define shadow-tls-service-type
+  (service-type
+   (name 'shadow-tls)
+   (extensions
+    (list (service-extension shepherd-root-service-type
+                             shadow-tls-shepherd-service)))
+   (default-value (shadow-tls-server-configuration))
+   (description "Run shadow-tls.")))
+
+(define home-shadow-tls-service-type
+  (service-type
+   (inherit (system->home-service-type shadow-tls-service-type))
+   (default-value (for-home (shadow-tls-configuration)))))
 
 
 ;;
