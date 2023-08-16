@@ -1,17 +1,17 @@
 #+TITLE: Rosenthal - A certain Guix channel.
 
 ** About / 關於
-[[https://codeberg.org/hako/Rosenthal][Rosenthal]] is a [[https://guix.gnu.org/en/manual/devel/en/html_node/Channels.html][Guix channel]] maintained by [[https://ultrarare.space/][Hilton Chain]].
+[[https://codeberg.org/hako/Rosenthal][Rosenthal]] is a [[https://guix.gnu.org/en/manual/devel/en/html_node/Channels.html][Guix channel]].
 
 This channel was created for experiments, it currently holds some packages not ready for upstreaming to [[https://guix.gnu.org/][GNU Guix]].
 
-Search for packages in Rosenthal and other channels with the [[https://toys.whereis.みんな/][toys]] instance maintained by [[https://sr.ht/~whereiseveryone/][WhereIsEveryone]] community.
+You can search for packages and services in Rosenthal and other channels with the [[https://toys.whereis.みんな/][toys]] instance maintained by [[https://sr.ht/~whereiseveryone/][WhereIsEveryone]] community.
 
 Unstable contents: packages not publicly exported, packages with a suffix like =-dev=, =-for-<some package>= or =-<full version>=, and all services are considered unstable.  They are subject to change and may be deleted at any time.
 
-[[https://codeberg.org/hako/Rosenthal][Rosenthal]] 是[[https://ultrarare.space/][左煉]]維護的 [[https://guix.gnu.org/en/manual/devel/zh-cn/html_node/Tong-Dao-.html][Guix 頻道]]。該頻道因試驗而起，如今存有一些還算有趣，但尚未準備好加入 [[https://guix.gnu.org/zh-CN/][GNU Guix]] 上游的軟件包。
+[[https://codeberg.org/hako/Rosenthal][Rosenthal]] 是一個 [[https://guix.gnu.org/en/manual/devel/zh-cn/html_node/Tong-Dao-.html][Guix 頻道]]。該頻道因試驗而起，如今存有一些還算有趣，但尚未準備好加入 [[https://guix.gnu.org/zh-CN/][GNU Guix]] 上游的軟件包。
 
-[[https://sr.ht/~whereiseveryone/][WhereIsEveryone]] 社區維護的 [[https://toys.whereis.みんな/][toys]] 實例，可用以檢索來自 Rosenthal 及其他 Guix 頻道的軟件包。
+[[https://sr.ht/~whereiseveryone/][WhereIsEveryone]] 社區維護的 [[https://toys.whereis.みんな/][toys]] 實例，可用以檢索來自 Rosenthal 及其他 Guix 頻道的軟件包與服務。
 
 頻道內所有 Guix 服務，及名稱以 =-dev= 、 =-for-<某軟件包>= 或 =-<版本號>= 結尾的軟件包，均無穩定保證，隨時可能刪改。
 
@@ -112,17 +112,21 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + grimblast
 + hyprland
 + qogir-icon-theme
++ socks2http
 + tree-sitter-cmake
 + tree-sitter-dockerfile
 + tree-sitter-yaml
-**** Binary Packages / 二進制包
+
+Binary Packages / 二進制包：
 + clash-bin
 + hugo-bin
++ shadow-tls-bin
 + sing-box-bin
 + tailscale-bin
 + wakapi-bin
 + wakatime-cli-bin
-**** Non-free Packages / 非自由軟件
+
+Non-free Packages / 非自由軟件：
 + cloudflare-warp-bin
 
 *** Services / 服務
@@ -132,4 +136,5 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + miniflux-service-type
 + qbittorrent-service-type
 + smartdns-service-type
++ home-socks2http-service-type
 + home-wakapi-service-type
