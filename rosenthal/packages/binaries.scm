@@ -22,7 +22,7 @@
 (define-public clash-bin
   (package
     (name "clash-bin")
-    (version "1.17.0")
+    (version "1.18.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -30,7 +30,7 @@
                     version "/clash-linux-amd64-v3-v" version ".gz"))
               (sha256
                (base32
-                "0b3r6z46xky01aq6f9v7vj7n8bqai2rwwpk1mng6336s72fnz6ds"))))
+                "0gchpc4pvy24dvhb5nk08g97rswjqr1ic6i405f1ba5snfv8i5z8"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
