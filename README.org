@@ -114,7 +114,6 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + qogir-icon-theme
 + socks2http
 + tree-sitter-cmake
-+ tree-sitter-dockerfile
 + tree-sitter-yaml
 
 Binary Packages / 二進制包：

@@ -12,14 +12,6 @@
    "0.4.0"
    #:repository-url "https://github.com/uyha/tree-sitter-cmake"))
 
-;; <https://issues.guix.gnu.org/64431>
-(define-public tree-sitter-dockerfile
-  (tree-sitter-grammar
-   "dockerfile" "Dockerfile"
-   "0kf4c4xs5naj8lpcmr3pbdvwj526wl9p6zphxxpimbll7qv6qfnd"
-   "0.1.2"
-   #:repository-url "https://github.com/camdencheek/tree-sitter-dockerfile"))
-
 (define-public tree-sitter-yaml
   (let ((base
          (tree-sitter-grammar
