@@ -528,3 +528,9 @@ is @code{443} by default")
                              home-socks2http-shepherd-service)))
    (default-value (home-socks2http-configuration))
    (description "Run socks2http.")))
+
+
+
+
+(define-service-type-mapping
+  shadow-tls-service-type => home-shadow-tls-service-type)
