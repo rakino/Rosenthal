@@ -1,4 +1,4 @@
-#+TITLE: Rosenthal - A certain Guix channel.
+#+TITLE: Rosenthal - A certain Guix channel
 
 ** About / 關於
 [[https://codeberg.org/hako/Rosenthal][Rosenthal]] is a [[https://guix.gnu.org/en/manual/devel/en/html_node/Channels.html][Guix channel]].
@@ -113,7 +113,6 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + hyprland
 + qogir-icon-theme
 + socks2http
-+ tree-sitter-cmake
 + tree-sitter-yaml
 
 Binary Packages / 二進制包：
