@@ -91,8 +91,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "669")
-        (commit "e8d545a9770a2473db32e0a0bfa757b05d2af4f3"))
+        (revision "724")
+        (commit "717ded9bb0191ea31bf4368be32e7a15fe1b8294"))
     (package
       (inherit base)
       (name "wlroots")
@@ -105,7 +105,7 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1pz8i3g24flswvv762jxnhff67jgl2nvqrj03f84fi1srf769zl2"))))
+                  "0k4xhdpcv6c38vb2m3khjbikcmj48z3ry1696rv0zijcpcds84kq"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
@@ -149,73 +149,57 @@ protocols used by Hyprland to bridge the aforementioned gap.")
     (sha256
      (base32 "1wj0kwvkkk2r7k18m9i2hdp9i9z7n330dib27jlbc8mjr96976y5"))))
 
-(define hyprland-portals-patch
-  (origin
-    (method url-fetch)
-    (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
-                        "64fc19cc811434b81ab9bc6b8c64edbcbfd0cfd4" "/nix/"
-                        "portals.patch"))
-    (sha256
-     (base32 "14nijw02lb0c4h06adki0w7amgxg1m0qj48ds7iq4bq6fkl1m5l0"))))
-
 (define-public hyprland
-  (let ((commit "9654749244117f7f150c6f2a2ce4dede6e8cbb25"))
-    (package
-      (name "hyprland")
-      ;; NOTE: Remember to update commit hash ^
-      (version "0.28.0")
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                      (url "https://github.com/hyprwm/Hyprland")
-                      (commit (string-append "v" version))))
-                (file-name (git-file-name name version))
-                (patches (list hyprland-unbundle-wlroots-patch
-                               hyprland-portals-patch))
-                (sha256
-                 (base32
-                  "1ipg3f1js291vyh9888qsy5hgqqj10m8zzc1y8i1ihgikyzsqlmp"))))
-      (build-system meson-build-system)
-      (arguments
-       (list #:build-type "release"
-             #:phases
-             #~(modify-phases %standard-phases
-                 (add-after 'unpack 'fix-path
-                   (lambda* (#:key inputs #:allow-other-keys)
-                     (substitute* "src/render/OpenGL.cpp"
-                       (("/usr") #$output))
-                     (substitute* (find-files "src" "\\.cpp")
-                       (("(execAndGet\\(\\(?\")\\<(cat|fc-list|lspci|nm)\\>"
-                         _ pre cmd)
-                        (format #f "~a~a"
-                                pre
-                                (search-input-file
-                                 inputs (string-append "/bin/" cmd)))))))
-                 (add-after 'unpack 'substitute-meson-build
-                   (lambda _
-                     (substitute* "meson.build"
-                       (("git") "true")
-                       (("@GIT_BRANCH@") "main")
-                       (("@GIT_COMMIT_HASH@") #$commit)
-                       (("@GIT_COMMIT_MESSAGE@") "?")
-                       (("@GIT_DIRTY@") ""))
-                     (substitute* (find-files "src" "\\.cpp")
-                       (("GIT_TAG") (format #f "\"v~a\"" #$version))))))))
-      (native-inputs (list gcc-12 jq pkg-config))
-      (inputs
-       (list hyprland-protocols
-             pango
-             pciutils
-             udis86-for-hyprland
-             wlroots-for-hyprland))
-      (home-page "https://hyprland.org")
-      (synopsis "Dynamic tiling Wayland compositor based on wlroots")
-      (description
-       "@code{Hyprland} is a dynamic tiling Wayland compositor based on
-@code{wlroots} that doesn't sacrifice on its looks.  It supports multiple
-layouts, fancy effects, has a very flexible IPC model allowing for a lot of
-customization, and more.")
-      (license license:bsd-3))))
+  (package
+    (name "hyprland")
+    (version "0.29.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/hyprwm/Hyprland"
+                                  "/releases/download/v" version
+                                  "/source-v" version ".tar.gz"))
+              (modules '((guix build utils)))
+              (snippet '(delete-file-recursively "subprojects"))
+              (patches (list hyprland-unbundle-wlroots-patch))
+              (sha256
+               (base32
+                "0w4lx8ixdv4pi67kavs3r3d4zykmhn4pigch6dwqidgxsf382j9a"))))
+    (build-system meson-build-system)
+    (arguments
+     (list #:build-type "release"
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'unpack 'fix-path
+                 (lambda* (#:key inputs #:allow-other-keys)
+                   (substitute* "src/render/OpenGL.cpp"
+                     (("/usr") #$output))
+                   (substitute* (find-files "src" "\\.cpp")
+                     (("(execAndGet\\(\\(?\")\\<(cat|fc-list|lspci|nm)\\>"
+                       _ pre cmd)
+                      (format #f "~a~a"
+                              pre
+                              (search-input-file
+                               inputs (string-append "/bin/" cmd)))))))
+               (add-after 'unpack 'substitute-meson-build
+                 (lambda _
+                   (substitute* "meson.build"
+                     (("\\<git\\>") "true")
+                     ((".*@.*") "")))))))
+    (native-inputs (list gcc-12 jq pkg-config))
+    (inputs
+     (list hyprland-protocols
+           pango
+           pciutils
+           udis86-for-hyprland
+           wlroots-for-hyprland))
+    (home-page "https://hyprland.org")
+    (synopsis "Dynamic tiling Wayland compositor based on wlroots")
+    (description
+     "Hyprland is a dynamic tiling Wayland compositor based on @code{wlroots}
+that doesn't sacrifice on its looks.  It supports multiple layouts, fancy
+effects, has a very flexible IPC model allowing for a lot of customization, and
+more.")
+    (license license:bsd-3)))
 
 (define-public grimblast
   (package
