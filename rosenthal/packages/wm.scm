@@ -152,7 +152,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.29.0")
+    (version "0.29.1")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/hyprwm/Hyprland"
@@ -163,7 +163,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
-                "0w4lx8ixdv4pi67kavs3r3d4zykmhn4pigch6dwqidgxsf382j9a"))))
+                "1l2r93rwz35a2wqaqyhp02j7qclh40s2m22q8ighhrklq4cvmwss"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
