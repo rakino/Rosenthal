@@ -9,15 +9,15 @@
   #:use-module (guix git-download)
   #:use-module (guix packages))
 
-;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59552
+;; https://issues.guix.gnu.org/59552
 (define-public emacs-wakatime-mode
   ;; No release since May 5, 2015.
-  (let ((version "1.0.2") ;32a0154cd4bbd525d354997e6b12c6a9726d0b43, not tagged
-        (revision "55")
-        (commit "ef923829912c3854d230834f81083814b7c9d992"))
+  (let ((commit "ef923829912c3854d230834f81083814b7c9d992")
+        (revision "55"))
     (package
       (name "emacs-wakatime-mode")
-      (version (git-version version revision commit))
+      ;; 1.0.2 on commit 32a0154cd4bbd525d354997e6b12c6a9726d0b43, not tagged
+      (version (git-version "1.0.2" revision commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -36,6 +36,6 @@
       (home-page "https://wakatime.com/emacs")
       (synopsis "Automatic time tracking extension for Emacs using WakaTime")
       (description
-       "@code{wakatime-mode} is an Emacs plugin for automatic time tracking
-and metrics generated from your programming activity.")
+       "WakaTime mode is an Emacs minor mode for automatic time tracking and
+metrics generated from your programming activity.")
       (license license:gpl3+))))
