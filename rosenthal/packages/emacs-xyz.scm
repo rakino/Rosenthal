@@ -7,8 +7,7 @@
   #:use-module (guix build-system emacs)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
-  #:use-module (guix packages)
-  #:use-module (gnu packages emacs-xyz))
+  #:use-module (guix packages))
 
 ;; https://debbugs.gnu.org/cgi/bugreport.cgi?bug=59552
 (define-public emacs-wakatime-mode

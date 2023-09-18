@@ -11,7 +11,6 @@
   #:use-module (gnu packages networking)
   #:use-module (gnu services)
   #:use-module (gnu services dbus)
-  #:use-module (gnu services base)
   #:use-module (gnu services shepherd)
   #:use-module (gnu services configuration)
   #:use-module (rosenthal utils home-services-utils)

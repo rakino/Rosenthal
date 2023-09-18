@@ -3,13 +3,9 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages web)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (gnu packages xdisorg)
-  #:use-module (gnu packages web)
-  #:use-module (guix build-system gnu)
-  #:use-module (guix gexp)
+  #:use-module (guix packages)
   #:use-module (guix git-download)
-  #:use-module (guix packages))
+  #:use-module (gnu packages web))
 
 (define-public buku-run-dev
   (let ((revision "23")

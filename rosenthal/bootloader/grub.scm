@@ -5,7 +5,6 @@
 (define-module (rosenthal bootloader grub)
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
-  #:use-module (gnu packages bootloaders)
   #:use-module (rosenthal packages bootloaders)
   #:export (grub-efi-luks2-bootloader))
 
