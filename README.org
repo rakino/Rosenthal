@@ -131,6 +131,7 @@ Non-free Packages / 非自由軟件：
 + clash-service-type
 + cloudflare-tunnel-service-type
 + cloudflare-warp-service-type
++ iwd-service-type
 + miniflux-service-type
 + qbittorrent-service-type
 + (home-)shadow-tls-service-type
