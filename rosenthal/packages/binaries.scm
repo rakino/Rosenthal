@@ -130,11 +130,13 @@ different needs.")
                  (lambda* (#:key inputs #:allow-other-keys)
                    (let ((hugo (string-append #$output "/bin/hugo")))
                      (invoke "patchelf" "--set-interpreter"
-                             (search-input-file inputs #$(glibc-dynamic-linker))
+                             (string-append #$(this-package-input "glibc")
+                                            #$(glibc-dynamic-linker))
                              hugo)
                      (invoke "patchelf" "--set-rpath"
-                             (dirname (search-input-file
-                                       inputs "/lib/libgcc_s.so.1"))
+                             (string-append (ungexp (this-package-input "gcc")
+                                                    "lib")
+                                            "/lib")
                              hugo)))))))
     (supported-systems '("x86_64-linux"))
     (native-inputs (list patchelf))
