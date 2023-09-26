@@ -215,8 +215,8 @@ monster-in-the-middle}.")
     (home-page "https://tailscale.com/")
     (synopsis "Private WireGuard® networks made easy")
     (description
-     "This package provides @{tailscale}, which brings an easy and secure way
-to use WireGuard and 2FA.")
+     "This package provides @code{tailscale}, which brings an easy and secure
+way to use WireGuard and 2FA.")
     (license license:bsd-3)))
 
 (define-public wakapi-bin
