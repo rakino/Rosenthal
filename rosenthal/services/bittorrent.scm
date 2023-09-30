@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -72,7 +72,8 @@
                            #$@extra-options)
                      #:user "qbittorrent"
                      #:group "qbittorrent"
-                     #:log-file #$log-file))
+                     #:log-file #$log-file
+                     #:resource-limits '((nofile 65536 65536))))
            (stop #~(make-kill-destructor #:grace-period 1800))))))
 
 (define qbittorrent-service-type
