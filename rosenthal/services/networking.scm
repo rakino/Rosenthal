@@ -21,7 +21,6 @@
 
 (define %iwd-config-general
   '(enable-network-configuration?
-    ap-ranges
     use-default-interface?
     address-randomization
     address-randomization-range
@@ -64,7 +63,6 @@
 
 (define (uglify-field-name field-name)
   (case field-name
-    ((ap-ranges) "APRanges")
     ((control-port-over-nl80211?) "ControlPortOverNL80211")
     ((disable-anqp?) "DisableANQP")
     ((disable-ocv?) "DisableOCV")
@@ -154,10 +152,6 @@
   (enable-network-configuration?
    (boolean #f)
    "Enable network configuration.")
-
-  (ap-ranges
-   maybe-cidr4
-   "IP range for DHCP server (AP mode).")
 
   (use-default-interface?
    (boolean #f)
