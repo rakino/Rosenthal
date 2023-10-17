@@ -91,8 +91,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "735")
-        (commit "98a745d926d8048bc30aef11b421df207a01c279"))
+        (revision "751")
+        (commit "3406c1b17a4a7e6d4e2a7d9c1176affa72bce1bc"))
     (package
       (inherit base)
       (name "wlroots")
@@ -105,7 +105,7 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0hwwpimmxwbpa1a7dqf6pcwxq9yanzq6l4q52pc90iyagcci8hic"))))
+                  "0qv8zc92zpbyijgxmfsv6jzl68wqz9nmi17z68qpnn6ph9sy3h3r"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
@@ -143,16 +143,15 @@ protocols used by Hyprland to bridge the aforementioned gap.")
   (origin
     (method url-fetch)
     (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
-                        "c8cc811e85eec16932f59fdf3783e9a6195f20f8"
+                        "914851b91aeb450592e2d62749169298ac48fb0c"
                         "/nix/patches/meson-build.patch"))
-    (file-name "hyprland-unbundle-wlroots.patch")
     (sha256
-     (base32 "0czc8238vjhsfnhrya6chcvy922f40nlqa4j5mq6f9h002ag9bhk"))))
+     (base32 "1i8d1xz6172nd72x55cgx4sbs7p1vkg11p0yp1jz4jmg0b4dpz9y"))))
 
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.30.0")
+    (version "0.31.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/hyprwm/Hyprland"
@@ -163,7 +162,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
-                "106a03rsf8q6iw6svxl7sdhm84x8ngq0gkvfdq26r9g138n9p9v8"))))
+                "0di528cnphxsr2hwg5bd4rl9nkkq8q41dc7y1sij7wji22xgafw6"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -179,12 +178,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                       (format #f "~a~a"
                               pre
                               (search-input-file
-                               inputs (string-append "/bin/" cmd)))))))
-               (add-after 'unpack 'substitute-meson-build
-                 (lambda _
-                   (substitute* "meson.build"
-                     (("\\<git\\>") "true")
-                     ((".*@.*") "")))))))
+                               inputs (string-append "/bin/" cmd))))))))))
     (native-inputs (list gcc-13 jq pkg-config))
     (inputs
      (list hyprland-protocols
