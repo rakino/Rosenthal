@@ -180,7 +180,7 @@ monster-in-the-middle}.")
 (define-public sing-box-bin
   (package
     (name "sing-box-bin")
-    (version "1.5.3")
+    (version "1.6.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -188,14 +188,14 @@ monster-in-the-middle}.")
                     version "/sing-box-" version "-linux-amd64v3.tar.gz"))
               (sha256
                (base32
-                "1bbfga2a354l1x1bxc19dshxj96dq9ydr9pyrcqkdpk9iz73hqkl"))))
+                "1lz7x3yv6kbhz95swnb07mr1392xik9r5xy6yzphsgrrhbb90snk"))))
     (build-system copy-build-system)
     (arguments (list #:install-plan #~'(("sing-box" "bin/"))))
     (supported-systems '("x86_64-linux"))
     (home-page "https://sing-box.sagernet.org/")
     (synopsis "Universal proxy platform")
     (description
-     "This package provides @code{sing-box}, a universal proxy platform.")
+     "This package provides @command{sing-box}, a universal proxy platform.")
     (license license:gpl3+)))
 
 (define-public tailscale-bin
