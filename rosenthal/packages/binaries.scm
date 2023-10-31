@@ -201,14 +201,14 @@ monster-in-the-middle}.")
 (define-public tailscale-bin
   (package
     (name "tailscale-bin")
-    (version "1.50.1")
+    (version "1.52.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkgs.tailscale.com"
                                   "/stable/tailscale_" version "_amd64.tgz"))
               (sha256
                (base32
-                "0xmmpx34i9zsb48jg148fqm7xnldi63fdb3xll58y1xm1x46pznr"))))
+                "06dxw9k9and8vg5nsar1kc2ax9rj23whk92car6a6dpvxmcngp6n"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
@@ -217,7 +217,7 @@ monster-in-the-middle}.")
     (home-page "https://tailscale.com/")
     (synopsis "Private WireGuard® networks made easy")
     (description
-     "This package provides @code{tailscale}, which brings an easy and secure
+     "This package provides @command{tailscale}, which brings an easy and secure
 way to use WireGuard and 2FA.")
     (license license:bsd-3)))
 
