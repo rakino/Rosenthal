@@ -51,7 +51,7 @@ protocols out-of-the-box.")
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
-    (version "2023.7.40")
+    (version "2023.10.120")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkg.cloudflareclient.com"
@@ -59,7 +59,7 @@ protocols out-of-the-box.")
                                   "cloudflare-warp_" version "-1_amd64.deb"))
               (sha256
                (base32
-                "00nb0ibf7cx4l7pdrpb458lnpp61blkvxbm1hndlypmldiajrrzl"))))
+                "138c0yqp2d2cw89jsbfcii0r1fz0ll8wyf7kqs4pi5hb0mffwz05"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
@@ -68,8 +68,8 @@ protocols out-of-the-box.")
            #~(modify-phases %standard-phases
                (add-after 'unpack 'unpack-deb
                  (lambda _
-                   (let ((deb-pack
-                          (format #f "cloudflare-warp_~a-1_amd64.deb" #$version)))
+                   (let ((deb-pack (format #f "cloudflare-warp_~a-1_amd64.deb"
+                                           #$(package-version this-package))))
                      (invoke "ar" "-x" deb-pack)
                      (invoke "tar" "-xf" "data.tar.gz"))))
                (add-after 'install 'patch-elf
@@ -77,11 +77,14 @@ protocols out-of-the-box.")
                    (let ((ld.so (string-append #$(this-package-input "glibc")
                                                #$(glibc-dynamic-linker)))
                          (rpath (string-join
-                                 (list (string-append #$gcc:lib "/lib")
-                                       (string-append
-                                        #$(this-package-input "dbus") "/lib")
-                                       (string-append
-                                        #$(this-package-input "glibc") "/lib"))
+                                 (list
+                                  (string-append
+                                   (ungexp
+                                    (this-package-input "gcc") "lib") "/lib")
+                                  (string-append
+                                   #$(this-package-input "dbus") "/lib")
+                                  (string-append
+                                   #$(this-package-input "glibc") "/lib"))
                                  ":")))
                      (define (patch-elf file)
                        (format #t "Patching ~a ..." file)
@@ -95,7 +98,7 @@ protocols out-of-the-box.")
                                 (string-append #$output "/bin")))))))))
     (supported-systems '("x86_64-linux"))
     (native-inputs (list patchelf))
-    (inputs (list dbus glibc))
+    (inputs (list dbus `(,gcc "lib") glibc))
     (home-page "https://1.1.1.1/")
     (synopsis "Cloudflare WARP client")
     (description
