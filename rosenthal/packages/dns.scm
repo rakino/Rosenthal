@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2022 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -11,8 +11,8 @@
 
 (define-public dnsmasq-china-list
   ;; No version.
-  (let ((commit "f17390d33c46bd3651d1db49b78c5ed45b509001")
-        (revision "13"))
+  (let ((commit "db49c15abc364a7a041aa95a8f763cf1a957b0de")
+        (revision "14"))
     (package
       (name "dnsmasq-china-list")
       (version (git-version "0" revision commit))
@@ -24,7 +24,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1s1i98qzjb52gc3naa4rp0w1axb2vh6v4ny6abwvp34c4si6hk1a"))))
+                  "1w51gq3dfj4541cnm3p6xixv68i88kh687r95la6l1ybzfa4ciak"))))
       (build-system copy-build-system)
       (arguments
        (list #:install-plan
@@ -57,5 +57,5 @@ Best partner for chnroutes.
 foreign CDN results so you also get best CDN node for your VPN at the same
 time.
 @item Block ISP ads on NXDOMAIN result (like 114so).
-@end itemize\n")
+@end itemize")
       (license license:wtfpl2))))
