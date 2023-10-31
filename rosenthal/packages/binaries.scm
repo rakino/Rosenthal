@@ -247,7 +247,7 @@ coding statistics.")
 (define-public wakatime-cli-bin
   (package
     (name "wakatime-cli-bin")
-    (version "1.85.2")
+    (version "1.86.5")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/wakatime/wakatime-cli"
@@ -255,7 +255,7 @@ coding statistics.")
                                   "/wakatime-cli-linux-amd64.zip"))
               (sha256
                (base32
-                "09c9zgjfafzz25bz88jnkc565wvjq6j3sk05vxmc9vb06677cb0h"))))
+                "0wzhb89v82hr78bkb16rwkd4x8inf20pfr32l5j35m5sdiyrls8v"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
@@ -265,6 +265,6 @@ coding statistics.")
     (home-page "https://wakatime.com/plugins")
     (synopsis "Command line interface to WakaTime")
     (description
-     "This package provides @code{wakatime-cli}, the command line interface to
-WakaTime, which is used by all WakaTime text editor plugins.")
+     "This package provides @command{wakatime-cli}, the command line interface
+to WakaTime, which is used by all WakaTime text editor plugins.")
     (license license:bsd-3)))
