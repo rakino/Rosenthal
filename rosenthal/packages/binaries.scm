@@ -111,7 +111,7 @@ different needs.")
 (define-public hugo-bin
   (package
     (name "hugo-bin")
-    (version "0.119.0")
+    (version "0.120.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -119,7 +119,7 @@ different needs.")
                     version "/hugo_extended_" version "_linux-amd64.tar.gz"))
               (sha256
                (base32
-                "0c6pacv0hw7b0zx93gqjiq8k1k0lsxkdq2znx046w6m8nqn24vsx"))))
+                "08qkzd0s69qchwfs1dlxbd4hizszi29a6lqz861kap67j0gnm46c"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan #~'(("hugo" "bin/"))
@@ -127,7 +127,7 @@ different needs.")
            #~(modify-phases %standard-phases
                (delete 'strip)
                (add-after 'install 'patch-elf
-                 (lambda* (#:key inputs #:allow-other-keys)
+                 (lambda _
                    (let ((hugo (string-append #$output "/bin/hugo")))
                      (invoke "patchelf" "--set-interpreter"
                              (string-append #$(this-package-input "glibc")
