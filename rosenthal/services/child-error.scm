@@ -91,7 +91,13 @@
            (provision '(clash))
            (requirement '(loopback networking))
            (start #~(make-forkexec-constructor
-                     (list #$(file-append clash "/bin/clash")
+                     (list (let ((clash-meta-cmd
+                                  #$(file-append clash "/bin/clash.meta"))
+                                 (clash-cmd
+                                  #$(file-append clash "/bin/clash")))
+                             (if (file-exists? clash-meta-cmd)
+                                 clash-meta-cmd
+                                 clash-cmd))
                            "-d" #$data-directory)
                      #:user "clash"
                      #:group "clash"
