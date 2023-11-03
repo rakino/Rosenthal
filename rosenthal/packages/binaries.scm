@@ -48,6 +48,36 @@ network and application layer, supporting various proxy and anti-censorship
 protocols out-of-the-box.")
     (license license:gpl3)))
 
+(define-public clash-meta-bin
+  (package
+    (name "clash-meta-bin")
+    (version "1.16.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/MetaCubeX/Clash.Meta"
+                                  "/releases/download/v" version
+                                  "/clash.meta-linux-amd64-v" version ".gz"))
+              (sha256
+               (base32
+                "1kl4v87lqnc78zcvh0a9kyx3gfbj74nmpgcdd93kpaxa3rmrfnjb"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'((#$(string-append
+                   "clash.meta-linux-amd64-v" (package-version this-package))
+                "bin/clash.meta"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'fix-permission
+                 (lambda _
+                   (chmod (string-append #$output "/bin/clash.meta") #o555))))))
+    (supported-systems '("x86_64-linux"))
+    (home-page "https://wiki.metacubex.one/")
+    (synopsis "Rule-based tunnel in Go")
+    (description
+     "This package provides @command{clash.meta}, another @code{clash} kernel.")
+    (license license:gpl3)))
+
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
