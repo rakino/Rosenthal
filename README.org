@@ -117,6 +117,7 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 
 Binary Packages / 二進制包：
 + clash-bin
++ clash-meta-bin
 + hugo-bin
 + shadow-tls-bin
 + sing-box-bin
@@ -137,4 +138,5 @@ Non-free Packages / 非自由軟件：
 + (home-)shadow-tls-service-type
 + smartdns-service-type
 + home-socks2http-service-type
++ tailscale-service-type
 + home-wakapi-service-type
