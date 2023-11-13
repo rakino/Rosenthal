@@ -91,8 +91,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "751")
-        (commit "3406c1b17a4a7e6d4e2a7d9c1176affa72bce1bc"))
+        (revision "811")
+        (commit "5de9e1a99d6642c2d09d589aa37ff0a8945dcee1"))
     (package
       (inherit base)
       (name "wlroots")
@@ -105,7 +105,7 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0qv8zc92zpbyijgxmfsv6jzl68wqz9nmi17z68qpnn6ph9sy3h3r"))))
+                  "1cn7js806yfc4qfxjjbzwygg7c5qwb5nz4x85qba2c41zkqbsyqx"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
@@ -143,15 +143,15 @@ protocols used by Hyprland to bridge the aforementioned gap.")
   (origin
     (method url-fetch)
     (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
-                        "914851b91aeb450592e2d62749169298ac48fb0c"
+                        "d70cc88dab11bc6d1095523a0ce655dff40b27a2"
                         "/nix/patches/meson-build.patch"))
     (sha256
-     (base32 "1i8d1xz6172nd72x55cgx4sbs7p1vkg11p0yp1jz4jmg0b4dpz9y"))))
+     (base32 "1rxv5354561hp625pq901fj77r1qkayfldh13w5vq182s8scj44l"))))
 
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.31.0")
+    (version "0.32.3")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/hyprwm/Hyprland"
@@ -162,7 +162,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
-                "0di528cnphxsr2hwg5bd4rl9nkkq8q41dc7y1sij7wji22xgafw6"))))
+                "0dfzjs1wshhpny798wnblcfc4i6hfxvdp1794hhqm5q3s2xqwpi8"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
