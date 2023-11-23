@@ -35,7 +35,7 @@
            #:build-flags
            #~(list (string-append
                     "-ldflags="
-                    " -X main.Version=" #$version
+                    " -X main.Version=" #$(package-version this-package)
                     " -X github.com/cloudflare/cloudflared/cmd/cloudflared/updater.BuiltForPackageManager=Guix"))
            #:phases
            #~(modify-phases %standard-phases
@@ -47,7 +47,7 @@
                    (let ((src "src/github.com/cloudflare/cloudflared/cloudflared_man_template")
                          (dst (string-append #$output "/share/man/man1/cloudflared.1")))
                      (substitute* src
-                       (("\\$\\{VERSION\\}") #$version))
+                       (("\\$\\{VERSION\\}") #$(package-version this-package)))
                      (mkdir-p (dirname dst))
                      (copy-file src dst)))))))
     (home-page "https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/")
