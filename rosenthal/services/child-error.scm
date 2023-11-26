@@ -50,15 +50,22 @@
   (clash
    (file-like clash-bin)
    "The clash package.")
+
   (log-file
    (string "/var/log/clash.log")
    "Where the logs go.")
+
   (data-directory
    (string "/var/lib/clash")
    "Where to store data.")
+
   (config
    (file-like (plain-file "empty" ""))
    "Clash configuration file.")
+
+  (shepherd-provision
+   (list '(clash))
+   "A list of Shepherd service names (symbols) provided by this service.")
   (no-serialization))
 
 (define %clash-accounts
@@ -85,10 +92,10 @@
 
 (define clash-shepherd-service
   (match-record-lambda <clash-configuration>
-      (clash log-file data-directory config)
+      (clash log-file data-directory config shepherd-provision)
     (list (shepherd-service
            (documentation "Run clash.")
-           (provision '(clash))
+           (provision shepherd-provision)
            (requirement '(loopback networking))
            (start #~(make-forkexec-constructor
                      (list (let ((clash-meta-cmd
