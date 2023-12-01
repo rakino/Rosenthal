@@ -109,8 +109,7 @@ command line tool called @code{udcli} that incorporates the library.")
       (propagated-inputs
        (modify-inputs (package-propagated-inputs base)
          (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
-         (replace "libinput-minimal" libinput-minimal-1.23.0)
-         (replace "pixman" pixman-0.42.2)))
+         (replace "libinput-minimal" libinput-minimal-1.23.0)))
       (native-inputs
        (modify-inputs (package-native-inputs base)
          (replace "hwdata" `(,hwdata-for-hyprland "out")))))))
