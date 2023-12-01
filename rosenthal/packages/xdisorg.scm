@@ -8,20 +8,6 @@
   #:use-module (guix packages)
   #:use-module (gnu packages xdisorg))
 
-(define-public libdrm-2.4.115
-  (let ((base libdrm))
-    (package
-      (inherit base)
-      (name "libdrm")
-      (version "2.4.115")
-      (source (origin
-                (method url-fetch)
-                (uri (string-append "https://dri.freedesktop.org/libdrm/"
-                                    "libdrm-" version ".tar.xz"))
-                (sha256
-                 (base32
-                  "1sv53x41c1hws8c65mavjlmjhgpwpfzhagjf3cwxpga20pzgnk2m")))))))
-
 (define-public libxkbcommon-1.5.0
   (package
     (inherit libxkbcommon)
