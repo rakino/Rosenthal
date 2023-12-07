@@ -23,9 +23,6 @@
   (qbittorrent
    (file-like qbittorrent-nox)
    "The qBittorrent package to use, we need @command{qbittorrent-nox}.")
-  (log-file
-   (string "/var/log/qbittorrent.log")
-   "Where the logs go.")
   (webui-port
    (integer 8080)
    "Change the Web UI port.")
@@ -49,7 +46,7 @@
 
 (define qbittorrent-activation
   (match-record-lambda <qbittorrent-configuration>
-      (qbittorrent log-file webui-port profile-directory extra-options)
+      (qbittorrent webui-port profile-directory extra-options)
     #~(begin
         (use-modules (guix build utils))
         (let ((profile-directory #$profile-directory)
@@ -59,7 +56,7 @@
 
 (define qbittorrent-shepherd-service
   (match-record-lambda <qbittorrent-configuration>
-      (qbittorrent log-file webui-port profile-directory extra-options)
+      (qbittorrent webui-port profile-directory extra-options)
     (list (shepherd-service
            (documentation "Run qbittorrent.")
            (provision '(qbittorrent))
@@ -72,7 +69,6 @@
                            #$@extra-options)
                      #:user "qbittorrent"
                      #:group "qbittorrent"
-                     #:log-file #$log-file
                      #:resource-limits '((nofile 65536 65536))))
            (stop #~(make-kill-destructor #:grace-period 1800))))))
 
