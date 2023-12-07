@@ -91,6 +91,10 @@
               (delete-file config-dest))
           (symlink #$config config-dest)))))
 
+(define (clash-log-rotations config)
+  (list (log-rotation
+         (files (list (clash-configuration-log-file config))))))
+
 (define clash-shepherd-service
   (match-record-lambda <clash-configuration>
       (clash log-file data-directory config shepherd-provision)
@@ -121,7 +125,9 @@
           (service-extension activation-service-type
                              clash-activation)
           (service-extension account-service-type
-                             (const %clash-accounts))))
+                             (const %clash-accounts))
+          (service-extension rottlog-service-type
+                             clash-log-rotations)))
    (default-value (clash-configuration))
    (description "Run Clash.")))
 
