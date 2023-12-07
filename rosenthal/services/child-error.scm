@@ -10,6 +10,7 @@
   #:use-module (gnu packages admin)
   #:use-module (gnu packages web)
   #:use-module (gnu services)
+  #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
@@ -167,6 +168,10 @@ headers.  This can expose sensitive information in your logs.")
    "List of extra options.")
   (no-serialization))
 
+(define (cloudflare-tunnel-log-rotations config)
+  (list (log-rotation
+         (files (list (cloudflare-tunnel-configuration-log-file config))))))
+
 (define cloudflare-tunnel-shepherd-service
   (match-record-lambda <cloudflare-tunnel-configuration>
       (cloudflared metrics log-level log-file extra-tunnel-options
@@ -203,7 +208,9 @@ headers.  This can expose sensitive information in your logs.")
    (name 'cloudflare-tunnel)
    (extensions
     (list (service-extension shepherd-root-service-type
-                             cloudflare-tunnel-shepherd-service)))
+                             cloudflare-tunnel-shepherd-service)
+          (service-extension rottlog-service-type
+                             cloudflare-tunnel-log-rotations)))
    (default-value (cloudflare-tunnel-configuration))
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
 
