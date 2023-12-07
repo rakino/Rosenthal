@@ -32,8 +32,7 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xorg)
-  #:use-module (rosenthal packages freedesktop)
-  #:use-module (rosenthal packages xdisorg))
+  #:use-module (rosenthal packages freedesktop))
 
 (define hwdata-for-hyprland
   (package
