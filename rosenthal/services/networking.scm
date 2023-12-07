@@ -347,6 +347,10 @@ list, power save will be disabled."))
 (define add-iwd-package
   (compose list iwd-configuration-iwd))
 
+(define (iwd-log-rotations config)
+  (list (log-rotation
+         (files (list (iwd-configuration-log-file config))))))
+
 (define (iwd-shepherd-service config)
   (match-record config <iwd-configuration>
                 (iwd resolvconf log-file
@@ -382,7 +386,9 @@ list, power save will be disabled."))
           (service-extension etc-service-type
                              add-iwd-config-file)
           (service-extension profile-service-type
-                             add-iwd-package)))
+                             add-iwd-package)
+          (service-extension rottlog-service-type
+                             iwd-log-rotations)))
    (default-value (iwd-configuration))
    (description "Run iwd, the iNet wireless daemon.")))
 
