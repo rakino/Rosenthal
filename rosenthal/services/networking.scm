@@ -9,6 +9,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages networking)
   #:use-module (gnu services)
+  #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services dbus)
   #:use-module (gnu services shepherd)
@@ -401,7 +402,7 @@ list, power save will be disabled."))
    "The iptables package to use.")
 
   (log-file
-   (string "/dev/null")
+   (string "/var/log/tailscaled.log")
    "Path to log file.")
 
   (bird-socket
@@ -457,6 +458,10 @@ to #f.")
    "Log verbosity level; 0 is default, 1 or higher are increasingly verbose.")
   (no-serialization))
 
+(define (tailscale-log-rotations config)
+  (list (log-rotation
+         (files (list (tailscale-configuration-log-file config))))))
+
 (define tailscale-shepherd-service
   (match-record-lambda <tailscale-configuration>
       (tailscale iptables log-file bird-socket debug-server port socket
@@ -506,6 +511,8 @@ to #f.")
     (list (service-extension shepherd-root-service-type
                              tailscale-shepherd-service)
           (service-extension profile-service-type
-                             (compose list tailscale-configuration-tailscale))))
+                             (compose list tailscale-configuration-tailscale))
+          (service-extension rottlog-service-type
+                             tailscale-log-rotations)))
    (default-value (tailscale-configuration))
    (description "Run tailscaled.")))
