@@ -31,7 +31,6 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
-  #:use-module (gnu packages xorg)
   #:use-module (rosenthal packages freedesktop))
 
 (define hwdata-for-hyprland
@@ -104,8 +103,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "811")
-        (commit "5de9e1a99d6642c2d09d589aa37ff0a8945dcee1"))
+        (revision "903")
+        (commit "5d639394f3e83b01596dcd166a44a9a1a2583350"))
     (package
       (inherit base)
       (name "wlroots")
@@ -118,10 +117,10 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1cn7js806yfc4qfxjjbzwygg7c5qwb5nz4x85qba2c41zkqbsyqx"))))
+                  "0nn6zyz7486fbpxibdz5yg7pmw15qh7r0rjz2baxqykm1yhg4jzf"))))
       (propagated-inputs
-       (modify-inputs (package-propagated-inputs base)
-         (append libdisplay-info-for-hyprland libxcb xcb-util-renderutil)
+       (modify-inputs (package-propagated-inputs wlroots)
+         (prepend libdisplay-info-for-hyprland libdrm-for-hyprland)
          (replace "libinput-minimal" libinput-minimal-1.24.0)))
       (native-inputs
        (modify-inputs (package-native-inputs base)
@@ -163,7 +162,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.32.3")
+    (version "0.33.1")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/hyprwm/Hyprland"
@@ -174,7 +173,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
-                "0dfzjs1wshhpny798wnblcfc4i6hfxvdp1794hhqm5q3s2xqwpi8"))))
+                "0lwib3a4spdpigzz4333wppljm1if6fa97nnb50y1pd4j353jazy"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
