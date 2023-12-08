@@ -213,15 +213,15 @@ monster-in-the-middle}.")
 (define-public sing-box-bin
   (package
     (name "sing-box-bin")
-    (version "1.6.4")
+    (version "1.7.2")
     (source (origin
               (method url-fetch)
               (uri (string-append
                     "https://github.com/SagerNet/sing-box/releases/download/v"
-                    version "/sing-box-" version "-linux-amd64v3.tar.gz"))
+                    version "/sing-box-" version "-linux-amd64.tar.gz"))
               (sha256
                (base32
-                "0vxvk03ja9k0vsfslzs13bhbsn15wc35vqv92gi99ak5crdhvkl0"))))
+                "1hi59ybpy575ida313h0xn1rsagd2n0akdxq6gbayrfkx4i7xsax"))))
     (build-system copy-build-system)
     (arguments (list #:install-plan #~'(("sing-box" "bin/"))))
     (supported-systems '("x86_64-linux"))
