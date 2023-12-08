@@ -3,6 +3,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services bittorrent)
+  #:use-module (ice-9 format)
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (gnu packages admin)
@@ -44,15 +45,32 @@
          (home-directory "/var/empty")
          (shell (file-append shadow "/sbin/nologin")))))
 
+;; Set default password to adminadmin
+(define %qbittorrent-default-config-file
+  (plain-file
+   "qBittorrent.conf"
+   (format #f "~
+[LegalNotice]
+Accepted=true
+[Preferences]
+WebUI\\Password_PBKDF2=\"@ByteArray(ARQ77eY1NUZaQsuDHbIMCA==:0WMRkYTUWVT9wVvdDtHAjU9b3b7uB8NR1Gur2hmQCvCDpm39Q+PsJRJPaCU51dEiz+dTzh8qbPsL8WkFljQYFQ==)\"~%")))
+
 (define qbittorrent-activation
   (match-record-lambda <qbittorrent-configuration>
-      (qbittorrent webui-port profile-directory extra-options)
+      (profile-directory)
     #~(begin
-        (use-modules (guix build utils))
-        (let ((profile-directory #$profile-directory)
-              (user (getpwnam "qbittorrent")))
-          (mkdir-p profile-directory)
-          (chown profile-directory (passwd:uid user) (passwd:gid user))))))
+        (use-modules (srfi srfi-26)
+                     (guix build utils))
+        (let ((user (getpwnam "qbittorrent"))
+              (config-file
+               (string-append
+                #$profile-directory "/qBittorrent/config/qBittorrent.conf")))
+          (unless (file-exists? config-file)
+            (mkdir-p (dirname config-file))
+            (copy-file #$%qbittorrent-default-config-file config-file)
+            (map (cut chown <> (passwd:uid user) (passwd:gid user))
+                 (cons #$profile-directory
+                       (find-files #$profile-directory #:directories? #t))))))))
 
 (define qbittorrent-shepherd-service
   (match-record-lambda <qbittorrent-configuration>
