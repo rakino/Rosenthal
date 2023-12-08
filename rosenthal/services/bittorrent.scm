@@ -88,7 +88,11 @@ WebUI\\Password_PBKDF2=\"@ByteArray(ARQ77eY1NUZaQsuDHbIMCA==:0WMRkYTUWVT9wVvdDtH
                      #:user "qbittorrent"
                      #:group "qbittorrent"
                      #:resource-limits '((nofile 65536 65536))))
-           (stop #~(make-kill-destructor #:grace-period 1800))))))
+           (stop #~(make-kill-destructor #:grace-period 1800))
+           (actions
+            (list (shepherd-configuration-action
+                   (string-append profile-directory
+                                  "/qBittorrent/config/qBittorrent.conf"))))))))
 
 (define qbittorrent-service-type
   (service-type
