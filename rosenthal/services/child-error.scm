@@ -114,7 +114,10 @@
                      #:user "clash"
                      #:group "clash"
                      #:log-file #$log-file))
-           (stop #~(make-kill-destructor))))))
+           (stop #~(make-kill-destructor))
+           (actions
+            (list (shepherd-configuration-action
+                   (string-append data-directory "/config.yaml"))))))))
 
 (define clash-service-type
   (service-type
