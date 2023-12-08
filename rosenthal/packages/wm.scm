@@ -63,6 +63,20 @@
     (description "This package provides an EDID and DisplayID library.")
     (license license:expat)))
 
+(define libdrm-for-hyprland
+  (package
+    (inherit libdrm)
+    (name "libdrm")
+    (version "2.4.118")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://dri.freedesktop.org/libdrm/libdrm-"
+                    version ".tar.xz"))
+              (sha256
+               (base32
+                "125bcyarlzlxfq57viyvmxy32y0561c21j46z1brrz5mya2vsxx7"))))))
+
 (define udis86-for-hyprland
   (let ((revision "186")
         (commit "5336633af70f3917760a6d441ff02d93477b0c86"))
