@@ -292,4 +292,4 @@ more.")
 @code{xdg-desktop-portal-wlr} for Hyprland with support for
 @code{xdg-desktop-portal} screenshot and casting interfaces, while adding a few
 extra portals specific to Hyprland, mostly for window sharing.")
-    (license license:expat)))
+    (license license:bsd-3)))
