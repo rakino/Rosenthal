@@ -3,6 +3,8 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services networking)
+  #:use-module (srfi srfi-1)
+  #:use-module (ice-9 match)
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (gnu packages dns)
@@ -301,44 +303,23 @@ instead.")
 list, power save will be disabled."))
 
 (define (serialize-iwd-configuration config)
-  (mixed-text-file
-   "main.conf"
-   #~(string-append
-      "[General]\n"
-      #$(serialize-configuration config
-                                 (filter-configuration-fields
-                                  iwd-configuration-fields
-                                  %iwd-config-general))
-      "[Network]\n"
-      #$(serialize-configuration config
-                                 (filter-configuration-fields
-                                  iwd-configuration-fields
-                                  %iwd-config-network))
-      "[Blacklist]\n"
-      #$(serialize-configuration config
-                                 (filter-configuration-fields
-                                  iwd-configuration-fields
-                                  %iwd-config-blacklist))
-      "[Rank]\n"
-      #$(serialize-configuration config
-                                 (filter-configuration-fields
-                                  iwd-configuration-fields
-                                  %iwd-config-rank))
-      "[Scan]\n"
-      #$(serialize-configuration config
-                                 (filter-configuration-fields
-                                  iwd-configuration-fields
-                                  %iwd-config-scan))
-      "[IPv4]\n"
-      #$(serialize-configuration config
-                                 (filter-configuration-fields
-                                  iwd-configuration-fields
-                                  %iwd-config-ipv4))
-      "[DriverQuirks]\n"
-      #$(serialize-configuration config
-                                 (filter-configuration-fields
-                                  iwd-configuration-fields
-                                  %iwd-config-driver-quirks)))))
+  (apply mixed-text-file "main.conf"
+         (append-map
+          (match-lambda
+            ((section . fields)
+             (list "[" section "]\n"
+                   (serialize-configuration
+                    config
+                    (filter-configuration-fields
+                     iwd-configuration-fields
+                     fields)))))
+          `(("General"      . ,%iwd-config-general)
+            ("Network"      . ,%iwd-config-network)
+            ("Blacklist"    . ,%iwd-config-blacklist)
+            ("Rank"         . ,%iwd-config-rank)
+            ("Scan"         . ,%iwd-config-scan)
+            ("IPv4"         . ,%iwd-config-ipv4)
+            ("DriverQuirks" . ,%iwd-config-driver-quirks)))))
 
 (define (add-iwd-config-file config)
   `(("iwd/main.conf"
