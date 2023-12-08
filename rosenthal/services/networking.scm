@@ -456,7 +456,11 @@ to #f.")
                  http-proxy-server socks5-server state-directory state-file
                  tunnel-interface upload-log? verbosity)
     (let ((environment
-           #~(list (string-append "PATH=" #$(file-append iptables "/sbin")))))
+           #~(list (string-append "PATH="
+                                  (string-join
+                                   '(#$(file-append iptables "/sbin")
+                                     #$(file-append iproute "/sbin"))
+                                   ":")))))
       (list (shepherd-service
              (documentation "Run tailscaled")
              (provision '(tailscaled))
