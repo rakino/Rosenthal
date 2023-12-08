@@ -6,7 +6,6 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system meson)
-  #:use-module (guix build-system qt)
   #:use-module (guix download)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
@@ -14,10 +13,10 @@
   #:use-module (guix utils)
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages bash)
-  #:use-module (gnu packages cmake)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages gl)
+  #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gtk)
   #:use-module (gnu packages guile)
@@ -250,7 +249,7 @@ more.")
 (define-public xdg-desktop-portal-hyprland
   (package
     (name "xdg-desktop-portal-hyprland")
-    (version "0.5.0")
+    (version "1.2.5")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -259,57 +258,32 @@ more.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1dmgc0w4wjj9hwqg17wg529v8sbxr6czp9s319d5407jm780x40b"))))
+                "1cfrqirvpxnj6dapm8q30vx040nzg4f9g622s5pdiv684yd3z2jz"))))
     (build-system meson-build-system)
     (arguments
-     (list #:imported-modules
-           (append %meson-build-system-modules
-                   %qt-build-system-modules)
-           #:modules
-           '((guix build utils)
-             (guix build meson-build-system)
-             ((guix build qt-build-system) #:prefix qt:))
-           #:tests? #f                  ;No tests
+     (list #:tests? #f                  ;No tests
            #:phases
            #~(modify-phases %standard-phases
                (add-after 'unpack 'fix-path
                  (lambda* (#:key inputs #:allow-other-keys)
                    (substitute* (find-files "." "\\.cp?*$")
                      (("/bin/sh") "sh")
-                     (("\\<(sh|grim|slurp)\\>" _ cmd)
+                     (("\\<(sh|grim|hyprctl|slurp)\\>" _ cmd)
                       (search-input-file inputs (string-append "/bin/" cmd)))
-                     (("\"(hyprland-share-picker)\"" _ cmd)
-                      (string-append "\"" #$output "/bin/" cmd "\"")))))
-               ;; After building the portal, we need to build the share selector
-               ;; using qt
-               (add-after 'install 'chdir
-                 (lambda _
-                   (chdir "../source/hyprland-share-picker/")))
-               (add-after 'chdir 'qt-build
-                 (lambda* (#:key (make-flags '()) (parallel-build? #t)
-                           #:allow-other-keys)
-                   ((assoc-ref qt:%standard-phases 'build)
-                    #:make-flags make-flags
-                    #:parallel-build? parallel-build?)))
-               (add-after 'qt-build 'install-hyprland-share-picker
-                 (lambda _
-                   (install-file "build/hyprland-share-picker"
-                                 (string-append #$output "/bin"))))
-               (add-after 'install-hyprland-share-picker 'qt-wrap
-                 (assoc-ref qt:%standard-phases 'qt-wrap)))))
-    (native-inputs (list cmake-minimal pkg-config))
+                     (("\\<(hyprland-share-picker)\\>" _ cmd)
+                      (string-append #$output "/bin/" cmd))))))))
+    (native-inputs
+     (list gcc-13 pkg-config wayland))
     (inputs
      (list bash-minimal
-           basu
            grim
+           hyprland
            hyprland-protocols
-           libinih
            mesa
            pipewire
            qtbase-5
+           sdbus-c++
            slurp
-           `(,util-linux "lib")
-           wayland
            wayland-protocols))
     (home-page "https://github.com/hyprwm/xdg-desktop-portal-hyprland")
     (synopsis "XDG Desktop Portal backend for Hyprland")
