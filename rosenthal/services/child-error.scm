@@ -349,7 +349,8 @@ headers.  This can expose sensitive information in your logs.")
              (start #~(make-forkexec-constructor
                        (list #$(file-append wakapi "/bin/wakapi")
                              "-config" #$config-file)))
-             (stop #~(make-kill-destructor)))))))
+             (stop #~(make-kill-destructor))
+             (actions (list (shepherd-configuration-action config-file))))))))
 
 (define home-wakapi-service-type
   (service-type
