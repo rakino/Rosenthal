@@ -354,7 +354,8 @@ list, power save will be disabled."))
                        #:log-file #$log-file
                        #:environment-variables #$environment))
              (stop #~(make-kill-destructor))
-             (actions (list (shepherd-configuration-action conf))))))))
+             (actions
+              (list (shepherd-configuration-action "/etc/iwd/main.conf"))))))))
 
 (define iwd-service-type
   (service-type
