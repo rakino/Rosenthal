@@ -184,7 +184,7 @@ designed for flexibility.")
 (define-public shadow-tls-bin
   (package
     (name "shadow-tls-bin")
-    (version "0.2.23")
+    (version "0.2.25")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -192,7 +192,7 @@ designed for flexibility.")
                     version "/shadow-tls-x86_64-unknown-linux-musl"))
               (sha256
                (base32
-                "0jdmnhhrn8mwh5jx2k8fvmigq7vjbzx6wxd5zhahlcfga1p2kixc"))))
+                "0chmqzfmyw5w8ybshkwigc3r25svq7fyw371d0dj2ibzsprgawx1"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
