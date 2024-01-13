@@ -7,7 +7,6 @@
   #:use-module (ice-9 match)
   #:use-module (guix gexp)
   #:use-module (guix records)
-  #:use-module (gnu packages dns)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages networking)
   #:use-module (gnu services)
@@ -147,10 +146,6 @@
   (iwd
    (file-like iwd)
    "The iwd package to use.")
-
-  (resolvconf
-   (file-like openresolv)
-   "The resolvconf package to use.")
 
   (log-file
    (string "/var/log/iwd.log")
@@ -334,7 +329,7 @@ list, power save will be disabled."))
 
 (define (iwd-shepherd-service config)
   (match-record config <iwd-configuration>
-                (iwd resolvconf log-file
+                (iwd log-file
                      enable-network-configuration? name-resolving-service)
     (let ((conf (serialize-iwd-configuration config)))
       (list (shepherd-service
