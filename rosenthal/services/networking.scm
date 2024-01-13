@@ -336,12 +336,7 @@ list, power save will be disabled."))
   (match-record config <iwd-configuration>
                 (iwd resolvconf log-file
                      enable-network-configuration? name-resolving-service)
-    (let ((conf (serialize-iwd-configuration config))
-          (environment
-           (if (eqv? name-resolving-service 'resolvconf)
-               #~(list (string-append
-                        "PATH=" #$(file-append resolvconf "/sbin")))
-               #~(default-environment-variables))))
+    (let ((conf (serialize-iwd-configuration config)))
       (list (shepherd-service
              (documentation "Run iwd")
              (provision `(,@(if enable-network-configuration?
@@ -351,8 +346,7 @@ list, power save will be disabled."))
              (requirement '(user-processes dbus-system))
              (start #~(make-forkexec-constructor
                        (list (string-append #$iwd "/libexec/iwd"))
-                       #:log-file #$log-file
-                       #:environment-variables #$environment))
+                       #:log-file #$log-file))
              (stop #~(make-kill-destructor))
              (actions
               (list (shepherd-configuration-action "/etc/iwd/main.conf"))))))))
