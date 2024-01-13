@@ -13,7 +13,7 @@
 (define-public cloudflared
   (package
     (name "cloudflared")
-    (version "2023.10.0")
+    (version "2024.1.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -25,10 +25,10 @@
               ;; (snippet '(delete-file-recursively "vendor"))
               (sha256
                (base32
-                "0l61m560kc818viv84ncnpg64icyw4simy2n047vz40wzcv73s2g"))))
+                "1ngbjxj0skflcky5jpvp7mizszrfbsbivh6jidlb081m1l44rjc8"))))
     (build-system go-build-system)
     (arguments
-     (list #:go go-1.20
+     (list #:go go-1.21
            #:install-source? #f
            #:import-path "github.com/cloudflare/cloudflared/cmd/cloudflared"
            #:unpack-path "github.com/cloudflare/cloudflared"
