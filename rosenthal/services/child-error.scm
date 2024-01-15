@@ -103,12 +103,12 @@
            (provision shepherd-provision)
            (requirement '(loopback networking))
            (start #~(make-forkexec-constructor
-                     (list (let ((clash-meta-cmd
-                                  #$(file-append clash "/bin/clash.meta"))
+                     (list (let ((mihomo-cmd
+                                  #$(file-append clash "/bin/mihomo"))
                                  (clash-cmd
                                   #$(file-append clash "/bin/clash")))
-                             (if (file-exists? clash-meta-cmd)
-                                 clash-meta-cmd
+                             (if (file-exists? mihomo-cmd)
+                                 mihomo-cmd
                                  clash-cmd))
                            "-d" #$data-directory)
                      #:user "clash"
