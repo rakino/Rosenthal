@@ -12,6 +12,7 @@
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (gnu packages autotools)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gcc)
@@ -85,7 +86,7 @@
   (package
     (inherit libdrm)
     (name "libdrm")
-    (version "2.4.118")
+    (version "2.4.120")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -93,7 +94,7 @@
                     version ".tar.xz"))
               (sha256
                (base32
-                "125bcyarlzlxfq57viyvmxy32y0561c21j46z1brrz5mya2vsxx7"))))))
+                "0yijzgg6rdsa68bz03sw0lcfa2nclv9m3as1cja50wkcyxim7x9v"))))))
 
 (define udis86-for-hyprland
   (let ((revision "186")
@@ -122,12 +123,12 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "903")
-        (commit "5d639394f3e83b01596dcd166a44a9a1a2583350"))
+        (revision "168")
+        (commit "00b869c1a96f300a8f25da95d624524895e0ddf2"))
     (package
       (inherit base)
       (name "wlroots")
-      (version (git-version "0.16.0" revision commit))
+      (version (git-version "0.17.0" revision commit))
       (source (origin
                 (method git-fetch)
                 (uri (git-reference
@@ -136,7 +137,7 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0nn6zyz7486fbpxibdz5yg7pmw15qh7r0rjz2baxqykm1yhg4jzf"))))
+                  "18s8iw3w8g3qwd6kw03r2myms5hxhl4xryy9vmpj573y98di6xg4"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs wlroots)
          (prepend libdisplay-info-for-hyprland libdrm-for-hyprland)
@@ -181,18 +182,25 @@ protocols used by Hyprland to bridge the aforementioned gap.")
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.33.1")
+    (version "0.35.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/hyprwm/Hyprland"
                                   "/releases/download/v" version
                                   "/source-v" version ".tar.gz"))
               (modules '((guix build utils)))
-              (snippet '(delete-file-recursively "subprojects"))
+              (snippet
+               '(begin
+                  ;; Remove bundled sources and hyprpm utility.
+                  (substitute* "meson.build"
+                    ((".*hyprpm/src.*") ""))
+                  (for-each delete-file-recursively
+                            '("hyprpm"
+                              "subprojects"))))
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
-                "0lwib3a4spdpigzz4333wppljm1if6fa97nnb50y1pd4j353jazy"))))
+                "06wcpcb3hd6av3scv9qnvp6zs6g6sqx8m7r0rjmchcb1c1jdflyy"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -200,18 +208,26 @@ protocols used by Hyprland to bridge the aforementioned gap.")
            #~(modify-phases %standard-phases
                (add-after 'unpack 'fix-path
                  (lambda* (#:key inputs #:allow-other-keys)
-                   (substitute* "src/render/OpenGL.cpp"
-                     (("/usr") #$output))
-                   (substitute* (find-files "src" "\\.cpp")
-                     (("(execAndGet\\(\\(?\")\\<(cat|fc-list|lspci|nm)\\>"
+                   (substitute* (find-files "src" "\\.cpp$")
+                     (("/usr/local(/bin/Hyprland)" _ path)
+                      (string-append #$output path))
+                     (("/usr") #$output)
+                     (("(execAndGet\\(\")\\<(cat|fc-list|lspci)\\>"
                        _ pre cmd)
-                      (format #f "~a~a"
-                              pre
-                              (search-input-file
-                               inputs (string-append "/bin/" cmd))))))))))
+                      (string-append
+                       pre (search-input-file
+                            inputs (string-append "bin/" cmd))))
+                     (("\\<cc\\>") (search-input-file inputs "bin/gcc"))
+                     ;; NOTE: Add binutils to inputs will override ld-wrapper.
+                     (("(execAndGet\\(\\(\")\\<nm\\>" _ pre)
+                      (string-append pre #$binutils "/bin/nm"))
+                     (("\\<objcopy\\>")
+                      (string-append #$binutils "/bin/objcopy"))))))))
     (native-inputs (list gcc-13 jq pkg-config))
     (inputs
-     (list hyprland-protocols
+     (list cairo-for-hyprland
+           gcc-13
+           hyprland-protocols
            pango
            pciutils
            udis86-for-hyprland
