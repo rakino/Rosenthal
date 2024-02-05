@@ -32,6 +32,26 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (rosenthal packages freedesktop))
 
+(define cairo-for-hyprland
+  (package
+    (inherit cairo)
+    (name "cairo")
+    (version "1.18.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://cairographics.org/releases/cairo-"
+                                  version ".tar.xz"))
+              (sha256
+               (base32
+                "0r0by563s75xyzz0d0j1nmjqmdrk2x9agk7r57p3v8vqp4v0ffi4"))))
+    (build-system meson-build-system)
+    (arguments
+     (list #:tests? #f
+           #:glib-or-gtk? #t
+           #:configure-flags
+           #~(list "-Dspectre=disabled")))
+    (outputs '("out"))))
+
 (define hwdata-for-hyprland
   (package
     (inherit hwdata)
