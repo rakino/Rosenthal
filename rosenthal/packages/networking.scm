@@ -8,7 +8,7 @@
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
-  #:use-module (gnu packages golang))
+  #:use-module (gnu packages golang-build))
 
 (define-public cloudflared
   (package
