@@ -317,7 +317,8 @@ more.")
            hyprland-protocols
            mesa
            pipewire
-           qtbase-5
+           qtbase
+           qtwayland
            sdbus-c++
            slurp
            wayland-protocols))
