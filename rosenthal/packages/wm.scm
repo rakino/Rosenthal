@@ -4,6 +4,7 @@
 
 (define-module (rosenthal packages wm)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system meson)
   #:use-module (guix download)
@@ -240,6 +241,28 @@ that doesn't sacrifice on its looks.  It supports multiple layouts, fancy
 effects, has a very flexible IPC model allowing for a lot of customization, and
 more.")
     (license license:bsd-3)))
+
+(define-public hyprlang
+  (package
+    (name "hyprlang")
+    (version "0.4.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/hyprwm/hyprlang")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "12lxqza2crbdszvkgd1sz0rwjf80i835r77k9q69fi3x32pdjvcx"))))
+    (build-system cmake-build-system)
+    (native-inputs (list gcc-13))
+    (home-page "https://hyprland.org/hyprlang/")
+    (synopsis "Official implementation library for hypr config language")
+    (description
+     "This package provides the official implementation for hypr configuration
+language used in @code{hyprland}.")
+    (license license:gpl3+)))
 
 (define-public grimblast
   (package
