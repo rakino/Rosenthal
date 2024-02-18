@@ -283,7 +283,7 @@ coding statistics.")
 (define-public wakatime-cli-bin
   (package
     (name "wakatime-cli-bin")
-    (version "1.88.7")
+    (version "1.90.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/wakatime/wakatime-cli"
@@ -291,7 +291,7 @@ coding statistics.")
                                   "/wakatime-cli-linux-amd64.zip"))
               (sha256
                (base32
-                "0cw54ayh098z9df0ayx8yqyjkhd47yjwja6bywf488vbd22v9fri"))))
+                "0pcb0kw7761hbq92hnbldzhn2v4ad42vn3gavksiw0mz5v334wp5"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
