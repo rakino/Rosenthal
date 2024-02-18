@@ -308,7 +308,7 @@ language used in @code{hyprland}.")
 (define-public xdg-desktop-portal-hyprland
   (package
     (name "xdg-desktop-portal-hyprland")
-    (version "1.2.5")
+    (version "1.3.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -317,8 +317,8 @@ language used in @code{hyprland}.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1cfrqirvpxnj6dapm8q30vx040nzg4f9g622s5pdiv684yd3z2jz"))))
-    (build-system meson-build-system)
+                "0fdbzxanmmzrvb9wfzg1pdsnlg7dl6v5k8bl44w10n48s7bbbzn0"))))
+    (build-system cmake-build-system)
     (arguments
      (list #:tests? #f                  ;No tests
            #:phases
@@ -338,6 +338,7 @@ language used in @code{hyprland}.")
            grim
            hyprland
            hyprland-protocols
+           hyprlang
            mesa
            pipewire
            qtbase-5
