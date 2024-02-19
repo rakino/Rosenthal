@@ -62,27 +62,6 @@
        ((#:phases _) #~%standard-phases)))
     (outputs '("out"))))
 
-(define libdisplay-info-for-hyprland
-  (package
-    (name "libdisplay-info")
-    (version "0.1.1")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://gitlab.freedesktop.org/emersion/libdisplay-info")
-                    (commit version)))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "1ffq7w1ig1y44rrmkv1hvfjylzgq7f9nlnnsdgdv7pmcpfh45pgf"))))
-    (build-system meson-build-system)
-    (arguments '(#:tests? #f))          ;TODO
-    (native-inputs (list hwdata-for-hyprland pkg-config python-minimal-wrapper))
-    (home-page "https://emersion.pages.freedesktop.org/libdisplay-info/")
-    (synopsis "EDID and DisplayID library")
-    (description "This package provides an EDID and DisplayID library.")
-    (license license:expat)))
-
 (define libdrm-for-hyprland
   (package
     (inherit libdrm)
@@ -141,7 +120,7 @@ command line tool called @code{udcli} that incorporates the library.")
                   "18s8iw3w8g3qwd6kw03r2myms5hxhl4xryy9vmpj573y98di6xg4"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs wlroots)
-         (prepend libdisplay-info-for-hyprland libdrm-for-hyprland)
+         (prepend libdisplay-info libdrm-for-hyprland)
          (replace "libinput-minimal" libinput-minimal-1.24.0)))
       (native-inputs
        (modify-inputs (package-native-inputs base)
