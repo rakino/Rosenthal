@@ -11,5 +11,7 @@
 (define grub-efi-luks2-bootloader
   (bootloader
    (inherit grub-efi-bootloader)
-   (name 'grub-efi-luks2-bootloader)
+   ;; NOTE: Don't change the name.  Generation switching code only knows
+   ;; bootloaders defined in (gnu bootloader grub).
+   (name 'grub-efi)
    (package grub-efi-luks2)))
