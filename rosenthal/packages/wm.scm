@@ -1,4 +1,5 @@
 ;; SPDX-FileCopyrightText: 2022-2023 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2024 Apathetic Wendigo <coleclough.lucy@gmail.com>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -32,6 +33,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages cmake)
   #:use-module (rosenthal packages freedesktop))
 
 (define cairo-for-hyprland
@@ -150,6 +152,28 @@ functionality.  Since @code{wlr-protocols} is closed for new submissions, and
 protocols used by Hyprland to bridge the aforementioned gap.")
     (license license:bsd-3)))
 
+(define tomlplusplus
+  (package
+    (name "tomlplusplus")
+    (version "3.4.0")
+    (source (origin
+        (method url-fetch)
+        (uri (string-append "https://github.com/marzer/tomlplusplus"
+                            "/archive/refs/tags/v"
+                            version
+                            ".tar.gz"))
+        (sha256
+         (base32 "0maisabrwnz1fad5va7gnpgwmh9q39ikdfwfryfaxym471czc5w5"))))
+    (build-system meson-build-system)
+    (native-inputs (list cmake))
+    (home-page "https://marzer.github.io/tomlplusplus/")
+    (synopsis "TOML config parser and serializer for C++")
+    (description
+     "Header-only TOML config file parser and serializer for C++17")
+    (license license:expat)
+  )
+)
+
 (define hyprland-unbundle-wlroots-patch
   (origin
     (method url-fetch)
@@ -170,13 +194,8 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                                   "/source-v" version ".tar.gz"))
               (modules '((guix build utils)))
               (snippet
-               '(begin
-                  ;; Remove bundled sources and hyprpm utility.
-                  (substitute* "meson.build"
-                    ((".*hyprpm/src.*") ""))
-                  (for-each delete-file-recursively
-                            '("hyprpm"
-                              "subprojects"))))
+               ;; Remove bundled sources
+               '(delete-file-recursively "subprojects"))
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
@@ -203,7 +222,11 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                       (string-append pre #$binutils "/bin/nm"))
                      (("\\<objcopy\\>")
                       (string-append #$binutils "/bin/objcopy"))))))))
-    (native-inputs (list gcc-13 jq pkg-config))
+    (native-inputs
+     (list gcc-13
+           jq
+           pkg-config
+           tomlplusplus))
     (inputs
      (list cairo-for-hyprland
            gcc-13
