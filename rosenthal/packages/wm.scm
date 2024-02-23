@@ -170,9 +170,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
     (synopsis "TOML config parser and serializer for C++")
     (description
      "Header-only TOML config file parser and serializer for C++17")
-    (license license:expat)
-  )
-)
+    (license license:expat)))
 
 (define hyprland-unbundle-wlroots-patch
   (origin
