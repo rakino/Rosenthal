@@ -147,7 +147,7 @@ different needs.")
 (define-public hugo-bin
   (package
     (name "hugo-bin")
-    (version "0.122.0")
+    (version "0.123.4")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -155,7 +155,7 @@ different needs.")
                     version "/hugo_extended_" version "_linux-amd64.tar.gz"))
               (sha256
                (base32
-                "042f8ffz9ybmjynd2dk40zvppl0bkm4k6zqrp2zqpbvhl5csi6vc"))))
+                "0akyda0sasll4bfanjf2qg7rf5qkfbklhdbl33687bnm44np67zd"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan #~'(("hugo" "bin/"))
