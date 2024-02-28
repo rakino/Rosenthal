@@ -154,15 +154,15 @@ protocols used by Hyprland to bridge the aforementioned gap.")
   (origin
     (method url-fetch)
     (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
-                        "d70cc88dab11bc6d1095523a0ce655dff40b27a2"
+                        "13f6f0b923ff3ec94a3bec886c28b90402ceef91"
                         "/nix/patches/meson-build.patch"))
     (sha256
-     (base32 "1rxv5354561hp625pq901fj77r1qkayfldh13w5vq182s8scj44l"))))
+     (base32 "02sq5ymxxrxp93mccafc4ilpsvs4m8bxc3whp7bcc5v9dx41va8k"))))
 
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.35.0")
+    (version "0.36.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/hyprwm/Hyprland"
@@ -180,7 +180,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
-                "06wcpcb3hd6av3scv9qnvp6zs6g6sqx8m7r0rjmchcb1c1jdflyy"))))
+                "1fr92bgny52r6xmpw9jzzib8s97dcgivan44jb7sqqs6g5ww6i4f"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -201,13 +201,14 @@ protocols used by Hyprland to bridge the aforementioned gap.")
                      ;; NOTE: Add binutils to inputs will override ld-wrapper.
                      (("(execAndGet\\(\\(\")\\<nm\\>" _ pre)
                       (string-append pre #$binutils "/bin/nm"))
-                     (("\\<objcopy\\>")
-                      (string-append #$binutils "/bin/objcopy"))))))))
+                     (("\\<(addr2line|objcopy)\\>" _ cmd)
+                      (string-append #$binutils "/bin/" cmd))))))))
     (native-inputs (list gcc-13 jq pkg-config))
     (inputs
      (list cairo-for-hyprland
            gcc-13
            hyprland-protocols
+           hyprlang
            pango
            pciutils
            udis86-for-hyprland
