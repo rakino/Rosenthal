@@ -7,6 +7,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system meson)
+  #:use-module (guix build-system qt)
   #:use-module (guix download)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
@@ -339,9 +340,10 @@ language used in @code{hyprland}.")
               (sha256
                (base32
                 "0fdbzxanmmzrvb9wfzg1pdsnlg7dl6v5k8bl44w10n48s7bbbzn0"))))
-    (build-system cmake-build-system)
+    (build-system qt-build-system)
     (arguments
      (list #:tests? #f                  ;No tests
+           #:qtbase qtbase
            #:phases
            #~(modify-phases %standard-phases
                (add-after 'unpack 'fix-path
@@ -362,7 +364,7 @@ language used in @code{hyprland}.")
            hyprlang
            mesa
            pipewire
-           qtbase-5
+           qtwayland
            sdbus-c++
            slurp
            wayland-protocols))
