@@ -15,6 +15,7 @@
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages gl)
@@ -140,6 +141,29 @@ command line tool called @code{udcli} that incorporates the library.")
       (native-inputs
        (modify-inputs (package-native-inputs base)
          (replace "hwdata" `(,hwdata-for-hyprland "out")))))))
+
+(define-public hyprcursor
+  (package
+    (name "hyprcursor")
+    (version "0.1.5")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/hyprwm/hyprcursor")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0252abb9yjskclhxjc2ar6r2x9pfllpbas7rfp4597i2gnxrzbvv"))))
+    (build-system cmake-build-system)
+    (arguments (list #:tests? #f))      ;FIXME
+    (inputs (list cairo-for-hyprland hyprlang librsvg libzip))
+    (native-inputs (list gcc-13 pkg-config))
+    (home-page "https://hyprland.org/")
+    (synopsis "Hyprland cursor format, library and utilities")
+    (description
+     "This package provides Hyprland cursor format, library and utilities.")
+    (license license:bsd-3)))
 
 (define-public hyprland-protocols
   (package
