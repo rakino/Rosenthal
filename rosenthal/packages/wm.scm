@@ -225,7 +225,7 @@ more.")
 (define-public hyprlang
   (package
     (name "hyprlang")
-    (version "0.4.1")
+    (version "0.5.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -234,7 +234,7 @@ more.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1zpx961fvjwjmxfkraymj3a1m5a4g0ic537bdm59hhx8ccypd5ds"))))
+                "0f8mahg6d6wylybvh6hgayls57miwwv4w69fbaskd8d7dkg2h7kd"))))
     (build-system cmake-build-system)
     (native-inputs (list gcc-13))
     (home-page "https://hyprland.org/hyprlang/")
