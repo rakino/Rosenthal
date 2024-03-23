@@ -101,6 +101,21 @@ set architectures.  It consists of a C library called @code{libudis86} and a
 command line tool called @code{udcli} that incorporates the library.")
       (license license:bsd-2))))
 
+(define wayland-protocols-for-hyprland
+  (package
+    (inherit wayland-protocols)
+    (name "wayland-protocols")
+    (version "1.34")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://gitlab.freedesktop.org/wayland/wayland-protocols"
+                    "/-/releases/" version "/downloads/"
+                    "wayland-protocols-" version ".tar.xz"))
+              (sha256
+               (base32
+                "1sxgvis0abkymc02nhx2svm60myiq3shvy759sphpxl5rp52g6y5"))))))
+
 (define wlroots-for-hyprland
   (let ((base wlroots)
         (revision "168")
