@@ -119,8 +119,8 @@ command line tool called @code{udcli} that incorporates the library.")
 
 (define wlroots-for-hyprland
   (let ((base wlroots)
-        (revision "168")
-        (commit "00b869c1a96f300a8f25da95d624524895e0ddf2"))
+        (revision "255")
+        (commit "50eae512d9cecbf0b3b1898bb1f0b40fa05fe19b"))
     (package
       (inherit base)
       (name "wlroots")
@@ -133,11 +133,12 @@ command line tool called @code{udcli} that incorporates the library.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "18s8iw3w8g3qwd6kw03r2myms5hxhl4xryy9vmpj573y98di6xg4"))))
+                  "0bwpppb86nfjg2lw62y449f9iz2v8djqb8n6g1cn45vqnwj8hxf1"))))
       (propagated-inputs
        (modify-inputs (package-propagated-inputs wlroots)
-         (prepend libdisplay-info libdrm-for-hyprland)
-         (replace "libinput-minimal" libinput-minimal-1.24.0)))
+         (prepend libdrm-for-hyprland)
+         (replace "libinput-minimal" libinput-minimal-1.24.0)
+         (replace "wayland-protocols" wayland-protocols-for-hyprland)))
       (native-inputs
        (modify-inputs (package-native-inputs base)
          (replace "hwdata" `(,hwdata-for-hyprland "out")))))))
@@ -193,15 +194,15 @@ protocols used by Hyprland to bridge the aforementioned gap.")
   (origin
     (method url-fetch)
     (uri (string-append "https://github.com/hyprwm/Hyprland" "/raw/"
-                        "13f6f0b923ff3ec94a3bec886c28b90402ceef91"
+                        "c5e28ebcfe00a510922779b2c568cfa52a317445"
                         "/nix/patches/meson-build.patch"))
     (sha256
-     (base32 "02sq5ymxxrxp93mccafc4ilpsvs4m8bxc3whp7bcc5v9dx41va8k"))))
+     (base32 "00i7c98ignfgkk3x1r1masmlj92xzb8cdb7nyfhivbfkdlfyzgpj"))))
 
 (define-public hyprland
   (package
     (name "hyprland")
-    (version "0.36.0")
+    (version "0.37.1")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/hyprwm/Hyprland"
@@ -219,7 +220,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
               (patches (list hyprland-unbundle-wlroots-patch))
               (sha256
                (base32
-                "1fr92bgny52r6xmpw9jzzib8s97dcgivan44jb7sqqs6g5ww6i4f"))))
+                "0qpqk2idjim4ljl35msnbqi05k8glbljh7218hyay61jckvk6g5z"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -246,6 +247,7 @@ protocols used by Hyprland to bridge the aforementioned gap.")
     (inputs
      (list cairo-for-hyprland
            gcc-13
+           hyprcursor
            hyprland-protocols
            hyprlang
            pango
