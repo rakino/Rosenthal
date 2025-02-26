@@ -553,6 +553,483 @@
                rust-zerovec-0.10.4
                rust-zerovec-derive-0.10.3)))
 
+(define-public niri-cargo-inputs
+  (delay (list rust-adler2-2.0.0
+               rust-ahash-0.8.11
+               rust-aho-corasick-1.1.3
+               rust-allocator-api2-0.2.21
+               rust-android-activity-0.6.0
+               rust-android-properties-0.2.2
+               rust-annotate-snippets-0.9.2
+               rust-anstream-0.6.18
+               rust-anstyle-1.0.10
+               rust-anstyle-parse-0.2.6
+               rust-anstyle-query-1.1.2
+               rust-anstyle-wincon-3.0.7
+               rust-anyhow-1.0.96
+               rust-appendlist-1.4.0
+               rust-approx-0.4.0
+               rust-approx-0.5.1
+               rust-arrayvec-0.7.6
+               rust-as-raw-xcb-connection-1.0.1
+               rust-async-broadcast-0.7.2
+               rust-async-channel-2.3.1
+               rust-async-executor-1.13.1
+               rust-async-fs-2.1.2
+               rust-async-io-2.4.0
+               rust-async-lock-3.4.0
+               rust-async-process-2.3.0
+               rust-async-recursion-1.1.1
+               rust-async-signal-0.2.10
+               rust-async-task-4.7.1
+               rust-async-trait-0.1.86
+               rust-atomic-0.6.0
+               rust-atomic-waker-1.1.2
+               rust-autocfg-1.4.0
+               rust-base64-0.21.7
+               rust-bindgen-0.69.5
+               rust-bit-set-0.8.0
+               rust-bit-vec-0.8.0
+               rust-bitflags-1.3.2
+               rust-bitflags-2.8.0
+               rust-block2-0.5.1
+               rust-blocking-1.6.1
+               rust-bumpalo-3.17.0
+               rust-bytemuck-1.21.0
+               rust-bytemuck-derive-1.8.1
+               rust-byteorder-1.5.0
+               rust-bytes-1.10.0
+               rust-cairo-rs-0.20.7
+               rust-cairo-sys-rs-0.20.7
+               rust-calloop-0.13.0
+               rust-calloop-0.14.2
+               rust-calloop-wayland-source-0.3.0
+               rust-calloop-wayland-source-0.4.0
+               rust-cc-1.2.15
+               rust-cesu8-1.1.0
+               rust-cexpr-0.6.0
+               rust-cfg-expr-0.15.8
+               rust-cfg-expr-0.17.2
+               rust-cfg-if-1.0.0
+               rust-cfg-aliases-0.2.1
+               rust-cgmath-0.18.0
+               rust-chumsky-0.9.3
+               rust-clang-sys-1.8.1
+               rust-clap-4.5.31
+               rust-clap-builder-4.5.31
+               rust-clap-derive-4.5.28
+               rust-clap-lex-0.7.4
+               rust-colorchoice-1.0.3
+               rust-combine-4.6.7
+               rust-concurrent-queue-2.5.0
+               rust-console-0.15.10
+               rust-convert-case-0.6.0
+               rust-cookie-factory-0.3.3
+               rust-core-foundation-0.9.4
+               rust-core-foundation-sys-0.8.7
+               rust-core-graphics-0.23.2
+               rust-core-graphics-types-0.1.3
+               rust-crc32fast-1.4.2
+               rust-crossbeam-deque-0.8.6
+               rust-crossbeam-epoch-0.9.18
+               rust-crossbeam-utils-0.8.21
+               rust-csscolorparser-0.7.0
+               rust-cursor-icon-1.1.0
+               rust-diff-0.1.13
+               rust-directories-6.0.0
+               rust-dirs-sys-0.5.0
+               rust-dispatch-0.2.0
+               rust-displaydoc-0.2.5
+               rust-dlib-0.5.2
+               rust-downcast-rs-1.2.1
+               rust-dpi-0.1.1
+               rust-drm-0.14.1
+               rust-drm-ffi-0.9.0
+               rust-drm-fourcc-2.2.0
+               rust-drm-sys-0.8.0
+               rust-dyn-clone-1.0.18
+               rust-either-1.14.0
+               rust-encode-unicode-1.0.0
+               rust-endi-1.1.0
+               rust-enumflags2-0.7.11
+               rust-enumflags2-derive-0.7.11
+               rust-equivalent-1.0.2
+               rust-errno-0.3.10
+               rust-event-listener-5.4.0
+               rust-event-listener-strategy-0.5.3
+               rust-fastrand-2.3.0
+               rust-fdeflate-0.3.7
+               rust-field-offset-0.3.6
+               rust-flate2-1.1.0
+               rust-fnv-1.0.7
+               rust-foreign-types-0.5.0
+               rust-foreign-types-macros-0.2.3
+               rust-foreign-types-shared-0.3.1
+               rust-form-urlencoded-1.2.1
+               rust-futures-0.3.31
+               rust-futures-channel-0.3.31
+               rust-futures-core-0.3.31
+               rust-futures-executor-0.3.31
+               rust-futures-io-0.3.31
+               rust-futures-lite-2.6.0
+               rust-futures-macro-0.3.31
+               rust-futures-sink-0.3.31
+               rust-futures-task-0.3.31
+               rust-futures-util-0.3.31
+               rust-gbm-0.18.0
+               rust-gbm-sys-0.4.0
+               rust-gdk-pixbuf-0.20.9
+               rust-gdk-pixbuf-sys-0.20.7
+               rust-gdk4-0.9.6
+               rust-gdk4-sys-0.9.6
+               rust-generator-0.8.4
+               rust-gethostname-0.4.3
+               rust-getrandom-0.2.15
+               rust-getrandom-0.3.1
+               rust-gio-0.20.9
+               rust-gio-sys-0.20.9
+               rust-git-version-0.3.9
+               rust-git-version-macro-0.3.9
+               rust-gl-generator-0.14.0
+               rust-glam-0.30.0
+               rust-glib-0.20.9
+               rust-glib-macros-0.20.7
+               rust-glib-sys-0.20.9
+               rust-glob-0.3.2
+               rust-gobject-sys-0.20.9
+               rust-graphene-rs-0.20.9
+               rust-graphene-sys-0.20.7
+               rust-gsk4-0.9.6
+               rust-gsk4-sys-0.9.6
+               rust-gtk4-0.9.6
+               rust-gtk4-macros-0.9.5
+               rust-gtk4-sys-0.9.6
+               rust-hashbrown-0.14.5
+               rust-hashbrown-0.15.2
+               rust-heck-0.4.1
+               rust-heck-0.5.0
+               rust-hermit-abi-0.3.9
+               rust-hermit-abi-0.4.0
+               rust-hex-0.4.3
+               rust-icu-collections-1.5.0
+               rust-icu-locid-1.5.0
+               rust-icu-locid-transform-1.5.0
+               rust-icu-locid-transform-data-1.5.0
+               rust-icu-normalizer-1.5.0
+               rust-icu-normalizer-data-1.5.0
+               rust-icu-properties-1.5.1
+               rust-icu-properties-data-1.5.0
+               rust-icu-provider-1.5.0
+               rust-icu-provider-macros-1.5.0
+               rust-idna-1.0.3
+               rust-idna-adapter-1.2.0
+               rust-indexmap-2.7.1
+               rust-input-0.9.1
+               rust-input-sys-1.18.0
+               rust-insta-1.42.1
+               rust-io-lifetimes-1.0.11
+               rust-is-terminal-0.4.15
+               rust-is-ci-1.2.0
+               rust-is-terminal-polyfill-1.70.1
+               rust-itertools-0.12.1
+               rust-itoa-1.0.14
+               rust-jni-0.21.1
+               rust-jni-sys-0.3.0
+               rust-jobserver-0.1.32
+               rust-js-sys-0.3.77
+               rust-keyframe-1.1.1
+               rust-khronos-api-3.1.0
+               rust-knuffel-3.2.0
+               rust-knuffel-derive-3.2.0
+               rust-lazy-static-1.5.0
+               rust-lazycell-1.3.0
+               rust-libadwaita-0.7.1
+               rust-libadwaita-sys-0.7.1
+               rust-libc-0.2.170
+               rust-libdisplay-info-0.2.2
+               rust-libdisplay-info-derive-0.1.0
+               rust-libdisplay-info-sys-0.2.2
+               rust-libloading-0.8.6
+               rust-libm-0.2.11
+               rust-libredox-0.1.3
+               rust-libseat-0.2.3
+               rust-libseat-sys-0.1.9
+               rust-libspa-0.8.0
+               rust-libspa-sys-0.8.0
+               rust-libudev-sys-0.1.4
+               rust-linked-hash-map-0.5.6
+               rust-linux-raw-sys-0.4.15
+               rust-linux-raw-sys-0.6.5
+               rust-litemap-0.7.4
+               rust-log-0.4.26
+               rust-loom-0.7.2
+               rust-matchers-0.1.0
+               rust-memchr-2.7.4
+               rust-memmap2-0.9.5
+               rust-memoffset-0.9.1
+               rust-miette-5.10.0
+               rust-miette-derive-5.10.0
+               rust-minimal-lexical-0.2.1
+               rust-miniz-oxide-0.8.5
+               rust-ndk-0.9.0
+               rust-ndk-context-0.1.1
+               rust-ndk-sys-0.6.0+11769913
+               rust-nix-0.27.1
+               rust-nix-0.29.0
+               rust-nom-7.1.3
+               rust-nu-ansi-term-0.46.0
+               rust-num-traits-0.2.19
+               rust-num-enum-0.7.3
+               rust-num-enum-derive-0.7.3
+               rust-objc-sys-0.3.5
+               rust-objc2-0.5.2
+               rust-objc2-app-kit-0.2.2
+               rust-objc2-cloud-kit-0.2.2
+               rust-objc2-contacts-0.2.2
+               rust-objc2-core-data-0.2.2
+               rust-objc2-core-image-0.2.2
+               rust-objc2-core-location-0.2.2
+               rust-objc2-encode-4.1.0
+               rust-objc2-foundation-0.2.2
+               rust-objc2-link-presentation-0.2.2
+               rust-objc2-metal-0.2.2
+               rust-objc2-quartz-core-0.2.2
+               rust-objc2-symbols-0.2.2
+               rust-objc2-ui-kit-0.2.2
+               rust-objc2-uniform-type-identifiers-0.2.2
+               rust-objc2-user-notifications-0.2.2
+               rust-once-cell-1.20.3
+               rust-option-ext-0.2.0
+               rust-orbclient-0.3.48
+               rust-ordered-float-5.0.0
+               rust-ordered-stream-0.2.0
+               rust-overload-0.1.1
+               rust-owo-colors-3.5.0
+               rust-pango-0.20.9
+               rust-pango-sys-0.20.9
+               rust-pangocairo-0.20.7
+               rust-pangocairo-sys-0.20.7
+               rust-parking-2.2.1
+               rust-paste-1.0.15
+               rust-percent-encoding-2.3.1
+               rust-phf-0.11.3
+               rust-phf-generator-0.11.3
+               rust-phf-macros-0.11.3
+               rust-phf-shared-0.11.3
+               rust-pin-project-1.1.9
+               rust-pin-project-internal-1.1.9
+               rust-pin-project-lite-0.2.16
+               rust-pin-utils-0.1.0
+               rust-piper-0.2.4
+               rust-pipewire-0.8.0
+               rust-pipewire-sys-0.8.0
+               rust-pixman-0.2.1
+               rust-pixman-sys-0.1.0
+               rust-pkg-config-0.3.31
+               rust-png-0.17.16
+               rust-polling-3.7.4
+               rust-portable-atomic-1.11.0
+               rust-ppv-lite86-0.2.20
+               rust-pretty-assertions-1.4.1
+               rust-proc-macro-crate-3.2.0
+               rust-proc-macro-error-1.0.4
+               rust-proc-macro-error-attr-1.0.4
+               rust-proc-macro2-1.0.93
+               rust-profiling-1.0.16
+               rust-profiling-procmacros-1.0.16
+               rust-proptest-1.6.0
+               rust-proptest-derive-0.5.1
+               rust-quick-error-1.2.3
+               rust-quick-xml-0.37.2
+               rust-quote-1.0.38
+               rust-rand-0.8.5
+               rust-rand-chacha-0.3.1
+               rust-rand-core-0.6.4
+               rust-rand-xorshift-0.3.0
+               rust-raw-window-handle-0.6.2
+               rust-rayon-1.10.0
+               rust-rayon-core-1.12.1
+               rust-redox-syscall-0.4.1
+               rust-redox-syscall-0.5.9
+               rust-redox-users-0.5.0
+               rust-regex-1.11.1
+               rust-regex-automata-0.1.10
+               rust-regex-automata-0.4.9
+               rust-regex-syntax-0.6.29
+               rust-regex-syntax-0.8.5
+               rust-rustc-hash-1.1.0
+               rust-rustc-version-0.4.1
+               rust-rustix-0.38.44
+               rust-rustversion-1.0.19
+               rust-rusty-fork-0.3.0
+               rust-ryu-1.0.19
+               rust-same-file-1.0.6
+               rust-schemars-0.8.22
+               rust-schemars-derive-0.8.22
+               rust-scoped-tls-1.0.1
+               rust-sd-notify-0.4.5
+               rust-semver-1.0.25
+               rust-serde-1.0.218
+               rust-serde-derive-1.0.218
+               rust-serde-derive-internals-0.29.1
+               rust-serde-json-1.0.139
+               rust-serde-repr-0.1.19
+               rust-serde-spanned-0.6.8
+               rust-sharded-slab-0.1.7
+               rust-shlex-1.3.0
+               rust-signal-hook-registry-1.4.2
+               rust-simd-adler32-0.3.7
+               rust-similar-2.7.0
+               rust-siphasher-1.0.1
+               rust-slab-0.4.9
+               rust-smallvec-1.14.0
+               rust-smawk-0.3.2
+               rust-smithay-0.4.4
+               rust-smithay-client-toolkit-0.19.2
+               rust-smithay-drm-extras-0.1.0
+               rust-smol-str-0.2.2
+               rust-stable-deref-trait-1.2.0
+               rust-static-assertions-1.1.0
+               rust-strsim-0.11.1
+               rust-supports-color-2.1.0
+               rust-supports-hyperlinks-2.1.0
+               rust-supports-unicode-2.1.0
+               rust-syn-1.0.109
+               rust-syn-2.0.98
+               rust-synstructure-0.13.1
+               rust-system-deps-6.2.2
+               rust-system-deps-7.0.3
+               rust-target-lexicon-0.12.16
+               rust-tempfile-3.17.1
+               rust-terminal-size-0.1.17
+               rust-textwrap-0.15.2
+               rust-thiserror-1.0.69
+               rust-thiserror-2.0.11
+               rust-thiserror-impl-1.0.69
+               rust-thiserror-impl-2.0.11
+               rust-thread-local-1.1.8
+               rust-tinystr-0.7.6
+               rust-toml-0.8.20
+               rust-toml-datetime-0.6.8
+               rust-toml-edit-0.22.24
+               rust-tracing-0.1.41
+               rust-tracing-attributes-0.1.28
+               rust-tracing-core-0.1.33
+               rust-tracing-log-0.2.0
+               rust-tracing-subscriber-0.3.19
+               rust-tracy-client-0.17.6
+               rust-tracy-client-0.18.0
+               rust-tracy-client-sys-0.24.3
+               rust-udev-0.9.3
+               rust-uds-windows-1.1.0
+               rust-unarray-0.1.4
+               rust-unicode-ident-1.0.17
+               rust-unicode-linebreak-0.1.5
+               rust-unicode-segmentation-1.12.0
+               rust-unicode-width-0.1.14
+               rust-url-2.5.4
+               rust-utf16-iter-1.0.5
+               rust-utf8-iter-1.0.4
+               rust-utf8parse-0.2.2
+               rust-valuable-0.1.1
+               rust-version-compare-0.2.0
+               rust-version-check-0.9.5
+               rust-wait-timeout-0.2.1
+               rust-walkdir-2.5.0
+               rust-wasi-0.11.0+wasi-snapshot-preview1
+               rust-wasi-0.13.3+wasi-0.2.2
+               rust-wasm-bindgen-0.2.100
+               rust-wasm-bindgen-backend-0.2.100
+               rust-wasm-bindgen-futures-0.4.50
+               rust-wasm-bindgen-macro-0.2.100
+               rust-wasm-bindgen-macro-support-0.2.100
+               rust-wasm-bindgen-shared-0.2.100
+               rust-wayland-backend-0.3.8
+               rust-wayland-client-0.31.8
+               rust-wayland-csd-frame-0.3.0
+               rust-wayland-cursor-0.31.8
+               rust-wayland-egl-0.32.5
+               rust-wayland-protocols-0.32.6
+               rust-wayland-protocols-misc-0.3.6
+               rust-wayland-protocols-plasma-0.3.6
+               rust-wayland-protocols-wlr-0.3.6
+               rust-wayland-scanner-0.31.6
+               rust-wayland-server-0.31.7
+               rust-wayland-sys-0.31.6
+               rust-web-sys-0.3.77
+               rust-web-time-1.1.0
+               rust-winapi-0.3.9
+               rust-winapi-i686-pc-windows-gnu-0.4.0
+               rust-winapi-util-0.1.9
+               rust-winapi-x86-64-pc-windows-gnu-0.4.0
+               rust-windows-0.58.0
+               rust-windows-core-0.58.0
+               rust-windows-implement-0.58.0
+               rust-windows-interface-0.58.0
+               rust-windows-result-0.2.0
+               rust-windows-strings-0.1.0
+               rust-windows-sys-0.45.0
+               rust-windows-sys-0.48.0
+               rust-windows-sys-0.52.0
+               rust-windows-sys-0.59.0
+               rust-windows-targets-0.42.2
+               rust-windows-targets-0.48.5
+               rust-windows-targets-0.52.6
+               rust-windows-aarch64-gnullvm-0.42.2
+               rust-windows-aarch64-gnullvm-0.48.5
+               rust-windows-aarch64-gnullvm-0.52.6
+               rust-windows-aarch64-msvc-0.42.2
+               rust-windows-aarch64-msvc-0.48.5
+               rust-windows-aarch64-msvc-0.52.6
+               rust-windows-i686-gnu-0.42.2
+               rust-windows-i686-gnu-0.48.5
+               rust-windows-i686-gnu-0.52.6
+               rust-windows-i686-gnullvm-0.52.6
+               rust-windows-i686-msvc-0.42.2
+               rust-windows-i686-msvc-0.48.5
+               rust-windows-i686-msvc-0.52.6
+               rust-windows-x86-64-gnu-0.42.2
+               rust-windows-x86-64-gnu-0.48.5
+               rust-windows-x86-64-gnu-0.52.6
+               rust-windows-x86-64-gnullvm-0.42.2
+               rust-windows-x86-64-gnullvm-0.48.5
+               rust-windows-x86-64-gnullvm-0.52.6
+               rust-windows-x86-64-msvc-0.42.2
+               rust-windows-x86-64-msvc-0.48.5
+               rust-windows-x86-64-msvc-0.52.6
+               rust-winit-0.30.9
+               rust-winnow-0.7.3
+               rust-wit-bindgen-rt-0.33.0
+               rust-write16-1.0.0
+               rust-writeable-0.5.5
+               rust-x11-dl-2.21.0
+               rust-x11rb-0.13.1
+               rust-x11rb-protocol-0.13.1
+               rust-xcursor-0.3.8
+               rust-xdg-home-1.3.0
+               rust-xkbcommon-0.8.0
+               rust-xkbcommon-dl-0.4.2
+               rust-xkeysym-0.2.1
+               rust-xml-rs-0.8.25
+               rust-xshell-0.2.7
+               rust-xshell-macros-0.2.7
+               rust-yansi-1.0.1
+               rust-yansi-term-0.1.2
+               rust-yoke-0.7.5
+               rust-yoke-derive-0.7.5
+               rust-zbus-5.5.0
+               rust-zbus-macros-5.5.0
+               rust-zbus-names-4.2.0
+               rust-zerocopy-0.7.35
+               rust-zerocopy-derive-0.7.35
+               rust-zerofrom-0.1.5
+               rust-zerofrom-derive-0.1.5
+               rust-zerovec-0.10.4
+               rust-zerovec-derive-0.10.3
+               rust-zvariant-5.4.0
+               rust-zvariant-derive-5.4.0
+               rust-zvariant-utils-3.2.0)))
+
 (define-public rust-addr2line-0.24.2
   (let ((name "rust-addr2line")
         (version "0.24.2"))
@@ -601,6 +1078,24 @@
       (uri (crate-uri "allocator-api2" "0.2.21"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "08zrzs022xwndihvzdn78yqarv2b9696y67i6h78nla3ww87jgb8")))))
+(define-public rust-android-activity-0.6.0
+  (let ((name "rust-android-activity")
+        (version "0.6.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "android-activity" "0.6.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0inh88x8x2fh62jg739s9hwyvdh8i920qf0qw7bhr802j9c7hsgg")))))
+
+(define-public rust-android-properties-0.2.2
+  (let ((name "rust-android-properties")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "android-properties" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "016slvg269c0y120p9qd8vdfqa2jbw4j0g18gfw6p3ain44v4zpw")))))
+
 (define-public rust-android-system-properties-0.1.5
   (let ((name "rust-android-system-properties")
         (version "0.1.5"))
@@ -618,6 +1113,15 @@
       (uri (crate-uri "android-tzdata" "0.1.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1w7ynjxrfs97xg3qlcdns4kgfpwcdv824g611fq32cag4cdr96g9")))))
+(define-public rust-annotate-snippets-0.9.2
+  (let ((name "rust-annotate-snippets")
+        (version "0.9.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "annotate-snippets" "0.9.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "07p8r6jzb7nqydq0kr5pllckqcdxlyld2g275v425axnzffpxbyc")))))
+
 (define-public rust-anstream-0.6.18
   (let ((name "rust-anstream")
         (version "0.6.18"))
@@ -666,6 +1170,24 @@
       (uri (crate-uri "anyhow" "1.0.96"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1x0b2lk76lfgj069jadmn9zi1wscwz45nwfjgnvbdnc99qc4v5kb")))))
+(define-public rust-appendlist-1.4.0
+  (let ((name "rust-appendlist")
+        (version "1.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "appendlist" "1.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1lnbl7mc7capcqj1z1ylxvm4h492sb9sr8pzww3q6lrhrmrxqjg1")))))
+
+(define-public rust-approx-0.4.0
+  (let ((name "rust-approx")
+        (version "0.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "approx" "0.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0y52dg58lapl4pp1kqlznfw1blbki0nx6b0aw8kja2yi3gyhaaiz")))))
+
 (define-public rust-approx-0.5.1
   (let ((name "rust-approx")
         (version "0.5.1"))
@@ -698,6 +1220,105 @@
       (uri (crate-uri "argon2" "0.5.3"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0wn0kk97k49wxidfigmz1pdqmygqzi4h6w72ib7cpq765s4i0diw")))))
+(define-public rust-arrayvec-0.7.6
+  (let ((name "rust-arrayvec")
+        (version "0.7.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "arrayvec" "0.7.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0l1fz4ccgv6pm609rif37sl5nv5k6lbzi7kkppgzqzh1vwix20kw")))))
+
+(define-public rust-as-raw-xcb-connection-1.0.1
+  (let ((name "rust-as-raw-xcb-connection")
+        (version "1.0.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "as-raw-xcb-connection" "1.0.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0sqgpz2ymv5yx76r5j2npjq2x5qvvqnw0vrs35cyv30p3pfp2m8p")))))
+
+(define-public rust-async-broadcast-0.7.2
+  (let ((name "rust-async-broadcast")
+        (version "0.7.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-broadcast" "0.7.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ckmqcwyqwbl2cijk1y4r0vy60i89gqc86ijrxzz5f2m4yjqfnj3")))))
+
+(define-public rust-async-channel-2.3.1
+  (let ((name "rust-async-channel")
+        (version "2.3.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-channel" "2.3.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0skvwxj6ysfc6d7bhczz9a2550260g62bm5gl0nmjxxyn007id49")))))
+
+(define-public rust-async-executor-1.13.1
+  (let ((name "rust-async-executor")
+        (version "1.13.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-executor" "1.13.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1v6w1dbvsmw6cs4dk4lxj5dvrikc6xi479wikwaab2qy3h09mjih")))))
+
+(define-public rust-async-fs-2.1.2
+  (let ((name "rust-async-fs")
+        (version "2.1.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-fs" "2.1.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0jp0p7lg9zqy2djgdmivbzx0yqmfn9sm2s9dkhaws3zlharhkkgb")))))
+
+(define-public rust-async-io-2.4.0
+  (let ((name "rust-async-io")
+        (version "2.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-io" "2.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0n8h0vy53n4vdkq529scqnkzm9vcl3r73za9nj81s2nfrhiv78j3")))))
+
+(define-public rust-async-lock-3.4.0
+  (let ((name "rust-async-lock")
+        (version "3.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-lock" "3.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "060vh45i809wcqyxzs5g69nqiqah7ydz0hpkcjys9258vqn4fvpz")))))
+
+(define-public rust-async-process-2.3.0
+  (let ((name "rust-async-process")
+        (version "2.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-process" "2.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1fr6cpqdw7hrmzns1983lgx86cg8vyz7nlrn0h0125iqq8fmy9b3")))))
+
+(define-public rust-async-recursion-1.1.1
+  (let ((name "rust-async-recursion")
+        (version "1.1.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-recursion" "1.1.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "04ac4zh8qz2xjc79lmfi4jlqj5f92xjvfaqvbzwkizyqd4pl4hrv")))))
+
+(define-public rust-async-signal-0.2.10
+  (let ((name "rust-async-signal")
+        (version "0.2.10"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-signal" "0.2.10"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1wxrq3871l00mil43nmh0akvwjjjnv0bn7n2pzwbvh00k0s00zk3")))))
+
 (define-public rust-async-stream-0.3.6
   (let ((name "rust-async-stream")
         (version "0.3.6"))
@@ -714,6 +1335,15 @@
       (uri (crate-uri "async-stream-impl" "0.3.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0kaplfb5axsvf1gfs2gk6c4zx6zcsns0yf3ssk7iwni7bphlvhn7")))))
+(define-public rust-async-task-4.7.1
+  (let ((name "rust-async-task")
+        (version "4.7.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "async-task" "4.7.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1pp3avr4ri2nbh7s6y9ws0397nkx1zymmcr14sq761ljarh3axcb")))))
+
 (define-public rust-async-trait-0.1.86
   (let ((name "rust-async-trait")
         (version "0.1.86"))
@@ -730,6 +1360,15 @@
       (uri (crate-uri "atoi" "2.0.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0a05h42fggmy7h0ajjv6m7z72l924i7igbx13hk9d8pyign9k3gj")))))
+(define-public rust-atomic-0.6.0
+  (let ((name "rust-atomic")
+        (version "0.6.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "atomic" "0.6.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "15193mfhmrq3p6vi1a10hw3n6kvzf5h32zikhby3mdj0ww1q10cd")))))
+
 (define-public rust-atomic-waker-1.1.2
   (let ((name "rust-atomic-waker")
         (version "1.1.2"))
@@ -874,6 +1513,33 @@
       (uri (crate-uri "beef" "0.5.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1c95lbnhld96iwwbyh5kzykbpysq0fnjfhwxa1mhap5qxgrl30is")))))
+(define-public rust-bindgen-0.69.5
+  (let ((name "rust-bindgen")
+        (version "0.69.5"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "bindgen" "0.69.5"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1240snlcfj663k04bjsg629g4wx6f83flgbjh5rzpgyagk3864r7")))))
+
+(define-public rust-bit-set-0.8.0
+  (let ((name "rust-bit-set")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "bit-set" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "18riaa10s6n59n39vix0cr7l2dgwdhcpbcm97x1xbyfp1q47x008")))))
+
+(define-public rust-bit-vec-0.8.0
+  (let ((name "rust-bit-vec")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "bit-vec" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1xxa1s2cj291r7k1whbxq840jxvmdsq9xgh7bvrxl46m80fllxjy")))))
+
 (define-public rust-bitflags-1.3.2
   (let ((name "rust-bitflags")
         (version "1.3.2"))
@@ -914,6 +1580,15 @@
       (uri (crate-uri "block2" "0.5.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0pyiha5his2grzqr3mynmq244laql2j20992i59asp0gy7mjw4rc")))))
+(define-public rust-blocking-1.6.1
+  (let ((name "rust-blocking")
+        (version "1.6.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "blocking" "1.6.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1si99l8zp7c4zq87y35ayjgc5c9b60jb8h0k14zfcs679z2l2gvh")))))
+
 (define-public rust-bumpalo-3.17.0
   (let ((name "rust-bumpalo")
         (version "3.17.0"))
@@ -938,6 +1613,15 @@
       (uri (crate-uri "bytemuck" "1.21.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "18wj81x9xhqcd6985r8qxmbik6szjfjfj62q3xklw8h2p3x7srgg")))))
+(define-public rust-bytemuck-derive-1.8.1
+  (let ((name "rust-bytemuck-derive")
+        (version "1.8.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "bytemuck_derive" "1.8.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ykwbnpm9y8hssp8kiaws2s4hljv4cl85mwgp1m67fzpnj9n59rz")))))
+
 (define-public rust-byteorder-1.5.0
   (let ((name "rust-byteorder")
         (version "1.5.0"))
@@ -962,6 +1646,60 @@
       (uri (crate-uri "bytes" "1.10.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1ybcmdrlxrsrn7lnl0xrjg10j7zb4r01jjs5b2sqhrcwh62aq7gn")))))
+(define-public rust-cairo-rs-0.20.7
+  (let ((name "rust-cairo-rs")
+        (version "0.20.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cairo-rs" "0.20.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1xy02qa4mn9bwnhsbmkry4yjz230r66nvrkh4fn9dkw61m8val5f")))))
+
+(define-public rust-cairo-sys-rs-0.20.7
+  (let ((name "rust-cairo-sys-rs")
+        (version "0.20.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cairo-sys-rs" "0.20.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1pwh4b4mdsipjl9lrg5p5bygbdk11kz6m5y7mbrb0ziwwjw6p2zi")))))
+
+(define-public rust-calloop-0.13.0
+  (let ((name "rust-calloop")
+        (version "0.13.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "calloop" "0.13.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1v5zgidnhsyml403rzr7vm99f8q6r5bxq5gxyiqkr8lcapwa57dr")))))
+
+(define-public rust-calloop-0.14.2
+  (let ((name "rust-calloop")
+        (version "0.14.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "calloop" "0.14.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1jzx8rmgndj1br4gnd4iaxayqi79g897lz6qdy2l670xcqj9g4hh")))))
+
+(define-public rust-calloop-wayland-source-0.3.0
+  (let ((name "rust-calloop-wayland-source")
+        (version "0.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "calloop-wayland-source" "0.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "086x5mq16prrcwd9k6bw9an0sp8bj9l5daz4ziz5z4snf2c6m9lm")))))
+
+(define-public rust-calloop-wayland-source-0.4.0
+  (let ((name "rust-calloop-wayland-source")
+        (version "0.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "calloop-wayland-source" "0.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1bsxx4dz4k4icza63w108n8s1agm7890nl3syigaa9p0pcfplsl7")))))
+
 (define-public rust-cassowary-0.3.0
   (let ((name "rust-cassowary")
         (version "0.3.0"))
@@ -986,6 +1724,24 @@
       (uri (crate-uri "cc" "1.2.15"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1bq1c3qbarhx3z10bfpk8df2kq2akx7k0v68sm1z8xx5xrcy4dn7")))))
+(define-public rust-cesu8-1.1.0
+  (let ((name "rust-cesu8")
+        (version "1.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cesu8" "1.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0g6q58wa7khxrxcxgnqyi9s1z2cjywwwd3hzr5c55wskhx6s0hvd")))))
+
+(define-public rust-cexpr-0.6.0
+  (let ((name "rust-cexpr")
+        (version "0.6.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cexpr" "0.6.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0rl77bwhs5p979ih4r0202cn5jrfsrbgrksp40lkfz5vk1x3ib3g")))))
+
 (define-public rust-cfg-aliases-0.1.1
   (let ((name "rust-cfg-aliases")
         (version "0.1.1"))
@@ -1004,6 +1760,24 @@
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "092pxdc1dbgjb6qvh83gk56rkic2n2ybm4yvy76cgynmzi3zwfk1")))))
 
+(define-public rust-cfg-expr-0.15.8
+  (let ((name "rust-cfg-expr")
+        (version "0.15.8"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cfg-expr" "0.15.8"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "00lgf717pmf5qd2qsxxzs815v6baqg38d6m5i6wlh235p14asryh")))))
+
+(define-public rust-cfg-expr-0.17.2
+  (let ((name "rust-cfg-expr")
+        (version "0.17.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cfg-expr" "0.17.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12a7zr6ff4i6mfwcv711dll0w5pr3dw1lvkaf4c4a66i1gjacjwd")))))
+
 (define-public rust-cfg-if-1.0.0
   (let ((name "rust-cfg-if")
         (version "1.0.0"))
@@ -1012,6 +1786,15 @@
       (uri (crate-uri "cfg-if" "1.0.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1za0vb97n4brpzpv8lsbnzmq5r8f2b0cpqqr0sy8h5bn751xxwds")))))
+(define-public rust-cgmath-0.18.0
+  (let ((name "rust-cgmath")
+        (version "0.18.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cgmath" "0.18.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "05sk7c1c1jg5ygqvc3y77kxddp177gwazfibhd864ag3800x760s")))))
+
 (define-public rust-chacha20-0.9.1
   (let ((name "rust-chacha20")
         (version "0.9.1"))
@@ -1028,6 +1811,15 @@
       (uri (crate-uri "chrono" "0.4.40"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0z334kqnvq5zx6xsq1k6zk8g9z14fgk2w3vkn4n13pvi3mhn8y8s")))))
+(define-public rust-chumsky-0.9.3
+  (let ((name "rust-chumsky")
+        (version "0.9.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "chumsky" "0.9.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1jcnafc8rjfs1al08gqzyn0kpbaizgdwrd0ajqafspd18ikxdswf")))))
+
 (define-public rust-cipher-0.4.4
   (let ((name "rust-cipher")
         (version "0.4.4"))
@@ -1036,6 +1828,15 @@
       (uri (crate-uri "cipher" "0.4.4"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1b9x9agg67xq5nq879z66ni4l08m6m3hqcshk37d4is4ysd3ngvp")))))
+(define-public rust-clang-sys-1.8.1
+  (let ((name "rust-clang-sys")
+        (version "1.8.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "clang-sys" "1.8.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1x1r9yqss76z8xwpdanw313ss6fniwc1r7dzb5ycjn0ph53kj0hb")))))
+
 (define-public rust-clap-4.5.31
   (let ((name "rust-clap")
         (version "4.5.31"))
@@ -1108,6 +1909,15 @@
       (uri (crate-uri "colored" "2.2.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0g6s7j2qayjd7i3sivmwiawfdg8c8ldy0g2kl4vwk1yk16hjaxqi")))))
+(define-public rust-combine-4.6.7
+  (let ((name "rust-combine")
+        (version "4.6.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "combine" "4.6.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1z8rh8wp59gf8k23ar010phgs0wgf5i8cx4fg01gwcnzfn5k0nms")))))
+
 (define-public rust-compact-str-0.7.1
   (let ((name "rust-compact-str")
         (version "0.7.1"))
@@ -1157,6 +1967,24 @@
       (uri (crate-uri "const-oid" "0.9.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1y0jnqaq7p2wvspnx7qj76m7hjcqpz73qzvr9l2p9n2s51vr6if2")))))
+(define-public rust-convert-case-0.6.0
+  (let ((name "rust-convert-case")
+        (version "0.6.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "convert_case" "0.6.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1jn1pq6fp3rri88zyw6jlhwwgf6qiyc08d6gjv0qypgkl862n67c")))))
+
+(define-public rust-cookie-factory-0.3.3
+  (let ((name "rust-cookie-factory")
+        (version "0.3.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cookie-factory" "0.3.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "18mka6fk3843qq3jw1fdfvzyv05kx7kcmirfbs2vg2kbw9qzm1cq")))))
+
 (define-public rust-core-foundation-0.9.4
   (let ((name "rust-core-foundation")
         (version "0.9.4"))
@@ -1285,6 +2113,24 @@
       (uri (crate-uri "crypto_secretbox" "0.1.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1qa1w5s8dbyb88269zrmvbnillqahz394pl07bsds6gpmn3wzmmr")))))
+(define-public rust-csscolorparser-0.7.0
+  (let ((name "rust-csscolorparser")
+        (version "0.7.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "csscolorparser" "0.7.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12423a53ikbzacavi157kf3xz9p93sn8gqvwsifvjzwahima3ya6")))))
+
+(define-public rust-cursor-icon-1.1.0
+  (let ((name "rust-cursor-icon")
+        (version "1.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "cursor-icon" "1.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "14brf4vd6az9hnszwzqj7xyfaymqx9806d4i7xmwlaja3wjsr9ln")))))
+
 (define-public rust-curve25519-dalek-4.1.3
   (let ((name "rust-curve25519-dalek")
         (version "4.1.3"))
@@ -1382,6 +2228,15 @@
       (uri (crate-uri "directories" "5.0.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0dba6xzk79s1clqzxh2qlgzk3lmvvks1lzzjhhi3hd70hhxifjcs")))))
+(define-public rust-directories-6.0.0
+  (let ((name "rust-directories")
+        (version "6.0.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "directories" "6.0.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0zgy2w088v8w865c11dmc3dih899fgrhvrfp7g83h6v6ai60kx8n")))))
+
 (define-public rust-dirs-5.0.1
   (let ((name "rust-dirs")
         (version "5.0.1"))
@@ -1398,6 +2253,24 @@
       (uri (crate-uri "dirs-sys" "0.4.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "071jy0pvaad9lsa6mzawxrh7cmr7hsmsdxwzm7jzldfkrfjha3sj")))))
+(define-public rust-dirs-sys-0.5.0
+  (let ((name "rust-dirs-sys")
+        (version "0.5.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "dirs-sys" "0.5.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1aqzpgq6ampza6v012gm2dppx9k35cdycbj54808ksbys9k366p0")))))
+
+(define-public rust-dispatch-0.2.0
+  (let ((name "rust-dispatch")
+        (version "0.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "dispatch" "0.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0fwjr9b7582ic5689zxj8lf7zl94iklhlns3yivrnv8c9fxr635x")))))
+
 (define-public rust-displaydoc-0.2.5
   (let ((name "rust-displaydoc")
         (version "0.2.5"))
@@ -1424,6 +2297,15 @@
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0z5n3f4m5c7flqnr6vg9qz51j9mjb1s2afcsfnqf7x9nwsc1vicd")))))
 
+(define-public rust-dlib-0.5.2
+  (let ((name "rust-dlib")
+        (version "0.5.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "dlib" "0.5.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "04m4zzybx804394dnqs1blz241xcy480bdwf3w9p4k6c3l46031k")))))
+
 (define-public rust-dotenvy-0.15.7
   (let ((name "rust-dotenvy")
         (version "0.15.7"))
@@ -1440,6 +2322,60 @@
       (uri (crate-uri "downcast-rs" "1.2.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1lmrq383d1yszp7mg5i7i56b17x2lnn3kb91jwsq0zykvg2jbcvm")))))
+(define-public rust-dpi-0.1.1
+  (let ((name "rust-dpi")
+        (version "0.1.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "dpi" "0.1.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0lzz48gpgbwdrw0s8vib0589ij9jizv1vzsphm4xd9kw58lhwp7j")))))
+
+(define-public rust-drm-0.14.1
+  (let ((name "rust-drm")
+        (version "0.14.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "drm" "0.14.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0vvmj9n0wslrbw3rinpzlfyhwwgr02gqspy1al5gfh99dif8rg40")))))
+
+(define-public rust-drm-ffi-0.9.0
+  (let ((name "rust-drm-ffi")
+        (version "0.9.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "drm-ffi" "0.9.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12vff80hdpp81gj5lqw25xnkppwsxc4wklpn8nc556wsv5ci9r6q")))))
+
+(define-public rust-drm-fourcc-2.2.0
+  (let ((name "rust-drm-fourcc")
+        (version "2.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "drm-fourcc" "2.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1x76v9a0pkgym4n6cah4barnai9gsssm7gjzxskw2agwibdvrbqa")))))
+
+(define-public rust-drm-sys-0.8.0
+  (let ((name "rust-drm-sys")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "drm-sys" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1345z72hd2rna4qxd2zcpbzvw0z7ywfndk6g2ngdci69vg46dyxs")))))
+
+(define-public rust-dyn-clone-1.0.18
+  (let ((name "rust-dyn-clone")
+        (version "1.0.18"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "dyn-clone" "1.0.18"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0dag651ph5q0mcax74y4m1k9hyl737q1v03isck3mzxsfd7g9vpy")))))
+
 (define-public rust-ed25519-2.2.3
   (let ((name "rust-ed25519")
         (version "2.2.3"))
@@ -1480,6 +2416,33 @@
       (uri (crate-uri "encoding_rs" "0.8.35"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1wv64xdrr9v37rqqdjsyb8l8wzlcbab80ryxhrszvnj59wy0y0vm")))))
+(define-public rust-endi-1.1.0
+  (let ((name "rust-endi")
+        (version "1.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "endi" "1.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1gxp388g2zzbncp3rdn60wxkr49xbhhx94nl9p4a6c41w4ma7n53")))))
+
+(define-public rust-enumflags2-0.7.11
+  (let ((name "rust-enumflags2")
+        (version "0.7.11"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "enumflags2" "0.7.11"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0iwi60d54lgby0f29b5isikxraf0wvnqdmlddx68a62kbx34nbxs")))))
+
+(define-public rust-enumflags2-derive-0.7.11
+  (let ((name "rust-enumflags2-derive")
+        (version "0.7.11"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "enumflags2_derive" "0.7.11"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0yfdjyrf9b4mi1r589azkyirjhzmdw29nqq0mdjnsyldlmjayk7w")))))
+
 (define-public rust-env-filter-0.1.3
   (let ((name "rust-env-filter")
         (version "0.1.3"))
@@ -1536,6 +2499,15 @@
       (uri (crate-uri "event-listener" "5.4.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1bii2gn3vaa33s0gr2zph7cagiq0ppcfxcxabs24ri9z9kgar4il")))))
+(define-public rust-event-listener-strategy-0.5.3
+  (let ((name "rust-event-listener-strategy")
+        (version "0.5.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "event-listener-strategy" "0.5.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1ch5gf6knllyq12jkb5zdfag573dh44307q4pwwi2g37sc6lwgiw")))))
+
 (define-public rust-eyre-0.6.12
   (let ((name "rust-eyre")
         (version "0.6.12"))
@@ -1576,6 +2548,15 @@
       (uri (crate-uri "fiat-crypto" "0.2.9"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "07c1vknddv3ak7w89n85ik0g34nzzpms6yb845vrjnv9m4csbpi8")))))
+(define-public rust-field-offset-0.3.6
+  (let ((name "rust-field-offset")
+        (version "0.3.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "field-offset" "0.3.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0zq5sssaa2ckmcmxxbly8qgz3sxpb8g1lwv90sdh1z74qif2gqiq")))))
+
 (define-public rust-filedescriptor-0.8.3
   (let ((name "rust-filedescriptor")
         (version "0.8.3"))
@@ -1720,6 +2701,15 @@
       (uri (crate-uri "futures-io" "0.3.31"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1ikmw1yfbgvsychmsihdkwa8a1knank2d9a8dk01mbjar9w1np4y")))))
+(define-public rust-futures-lite-2.6.0
+  (let ((name "rust-futures-lite")
+        (version "2.6.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "futures-lite" "2.6.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0cmmgszlmkwsac9pyw5rfjakmshgx4wmzmlyn6mmjs0jav4axvgm")))))
+
 (define-public rust-futures-macro-0.3.31
   (let ((name "rust-futures-macro")
         (version "0.3.31"))
@@ -1760,6 +2750,69 @@
       (uri (crate-uri "fuzzy-matcher" "0.3.7"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "153csv8rsk2vxagb68kpmiknvdd3bzqj03x805khckck28rllqal")))))
+(define-public rust-gbm-0.18.0
+  (let ((name "rust-gbm")
+        (version "0.18.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gbm" "0.18.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0skyaj51xlazaa24jdkxxi2g6pnw834k3yqlf2ly999wincjx1ff")))))
+
+(define-public rust-gbm-sys-0.4.0
+  (let ((name "rust-gbm-sys")
+        (version "0.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gbm-sys" "0.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0vzp28ip4w74p05ygs4p9m7sspggn2zvcykbpyv8ypbqrhm5yfn1")))))
+
+(define-public rust-gdk-pixbuf-0.20.9
+  (let ((name "rust-gdk-pixbuf")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gdk-pixbuf" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1l0llkzf7v634h5a8dz6935xkf3ma3fqm9vhpggiw8hazzbayqvm")))))
+
+(define-public rust-gdk-pixbuf-sys-0.20.7
+  (let ((name "rust-gdk-pixbuf-sys")
+        (version "0.20.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gdk-pixbuf-sys" "0.20.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0p0b3lrzamsz580dyrr5i99i32ppsjp6mfmvfrs9kgq2j9y5iwk7")))))
+
+(define-public rust-gdk4-0.9.6
+  (let ((name "rust-gdk4")
+        (version "0.9.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gdk4" "0.9.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0q1dld01fgj7qxj644by0fc242mcn36w3bagn4z1mkdfq7cwjl28")))))
+
+(define-public rust-gdk4-sys-0.9.6
+  (let ((name "rust-gdk4-sys")
+        (version "0.9.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gdk4-sys" "0.9.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0fj722lp86fpa1b1i3s2anavdmcpybd0b47mkhknzd72k1bvjvkg")))))
+
+(define-public rust-generator-0.8.4
+  (let ((name "rust-generator")
+        (version "0.8.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "generator" "0.8.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1p9qqk9nzarjdcl5fr4iylvsv446g0svlpk63lxis4ysrqad2syc")))))
+
 (define-public rust-generic-array-0.14.7
   (let ((name "rust-generic-array")
         (version "0.14.7"))
@@ -1800,6 +2853,168 @@
       (uri (crate-uri "gimli" "0.31.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0gvqc0ramx8szv76jhfd4dms0zyamvlg4whhiz11j34hh3dqxqh7")))))
+(define-public rust-gio-0.20.9
+  (let ((name "rust-gio")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gio" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "11vl4zkb3zvrklr7zhdlcyb35rbrm8d0xpbjfpm89782z1q0rw54")))))
+
+(define-public rust-gio-sys-0.20.9
+  (let ((name "rust-gio-sys")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gio-sys" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "17izngigdvv3gfda2qk059vcgihmxbaa7rjl3cz8r69618jva3hn")))))
+
+(define-public rust-git-version-0.3.9
+  (let ((name "rust-git-version")
+        (version "0.3.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "git-version" "0.3.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "06ddi3px6l2ip0srn8512bsh8wrx4rzi65piya0vrz5h7nm6im8s")))))
+
+(define-public rust-git-version-macro-0.3.9
+  (let ((name "rust-git-version-macro")
+        (version "0.3.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "git-version-macro" "0.3.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1h1s08fgh9bkwnc2hmjxcldv69hlxpq7a09cqdxsd5hb235hq0ak")))))
+
+(define-public rust-gl-generator-0.14.0
+  (let ((name "rust-gl-generator")
+        (version "0.14.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gl_generator" "0.14.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0k8j1hmfnff312gy7x1aqjzcm8zxid7ij7dlb8prljib7b1dz58s")))))
+
+(define-public rust-glam-0.30.0
+  (let ((name "rust-glam")
+        (version "0.30.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "glam" "0.30.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1ihxmcsrkflmhvdwncyn20if55fmq0lzsjhj9pyc41n4hfbdzz0p")))))
+
+(define-public rust-glib-0.20.9
+  (let ((name "rust-glib")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "glib" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "11knyc1lgd0bkw42ysl4v2x3v9c7glqz5s9db8wyb7h5z2d82yvh")))))
+
+(define-public rust-glib-macros-0.20.7
+  (let ((name "rust-glib-macros")
+        (version "0.20.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "glib-macros" "0.20.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0s6yik6pgqg5wydcz5v0x8m1jz57m5bsd50zkkpvlw9fy3w02mki")))))
+
+(define-public rust-glib-sys-0.20.9
+  (let ((name "rust-glib-sys")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "glib-sys" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1yxfqf6wllka0am0brqwwj18yb7q9xp79mhprgyd3zaclilqi4m8")))))
+
+(define-public rust-glob-0.3.2
+  (let ((name "rust-glob")
+        (version "0.3.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "glob" "0.3.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1cm2w34b5w45fxr522h5b0fv1bxchfswcj560m3pnjbia7asvld8")))))
+
+(define-public rust-gobject-sys-0.20.9
+  (let ((name "rust-gobject-sys")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gobject-sys" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1qz7jrpfk0z8mhnz7fxxx208kc5ljryif7f84sfas6d4735s6wy7")))))
+
+(define-public rust-graphene-rs-0.20.9
+  (let ((name "rust-graphene-rs")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "graphene-rs" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "06fy773j9r0v7xzwv3sl2pvw55i68q653jcjzbf6hbdkpw8mkg1w")))))
+
+(define-public rust-graphene-sys-0.20.7
+  (let ((name "rust-graphene-sys")
+        (version "0.20.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "graphene-sys" "0.20.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0fnjh55lnrd8mgladbapfxak44swlbafqb5pg7l41wsva4wqv9hi")))))
+
+(define-public rust-gsk4-0.9.6
+  (let ((name "rust-gsk4")
+        (version "0.9.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gsk4" "0.9.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0mgqq5m6cm4q7ajjgw92z13z2ikpvh6zx2gwzdjrz30wjcpygxb1")))))
+
+(define-public rust-gsk4-sys-0.9.6
+  (let ((name "rust-gsk4-sys")
+        (version "0.9.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gsk4-sys" "0.9.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1p1n4jhhxyvj7hb0cqhzvazrck0qw81sz36ydfj8avzsapg5jl3m")))))
+
+(define-public rust-gtk4-0.9.6
+  (let ((name "rust-gtk4")
+        (version "0.9.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gtk4" "0.9.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "078911sc8wvnihlz3kq80chl0miz9z2g7rnds17rjc7ha484j75g")))))
+
+(define-public rust-gtk4-macros-0.9.5
+  (let ((name "rust-gtk4-macros")
+        (version "0.9.5"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gtk4-macros" "0.9.5"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "169rqfxfczivcpz7019slsrpkx8crqjka43ymxmikp838xn7il8f")))))
+
+(define-public rust-gtk4-sys-0.9.6
+  (let ((name "rust-gtk4-sys")
+        (version "0.9.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "gtk4-sys" "0.9.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1mh3xjkjb99y97z234cvyar08vcr7zblg1nrw48c6xsdwl0kpq21")))))
+
 (define-public rust-h2-0.3.26
   (let ((name "rust-h2")
         (version "0.3.26"))
@@ -1856,6 +3071,15 @@
       (uri (crate-uri "hashlink" "0.10.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1h8lzvnl9qxi3zyagivzz2p1hp6shgddfmccyf6jv7s1cdicz0kk")))))
+(define-public rust-heck-0.4.1
+  (let ((name "rust-heck")
+        (version "0.4.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "heck" "0.4.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1a7mqsnycv5z4z5vnv1k34548jzmc0ajic7c1j8jsaspnhw5ql4m")))))
+
 (define-public rust-heck-0.5.0
   (let ((name "rust-heck")
         (version "0.5.0"))
@@ -1872,6 +3096,15 @@
       (uri (crate-uri "hermit-abi" "0.3.9"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "092hxjbjnq5fmz66grd9plxd0sh6ssg5fhgwwwqbrzgzkjwdycfj")))))
+(define-public rust-hermit-abi-0.4.0
+  (let ((name "rust-hermit-abi")
+        (version "0.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "hermit-abi" "0.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1k1zwllx6nfq417hy38x4akw1ivlv68ymvnzyxs76ffgsqcskxpv")))))
+
 (define-public rust-hex-0.4.3
   (let ((name "rust-hex")
         (version "0.4.3"))
@@ -2184,6 +3417,33 @@
       (uri (crate-uri "inout" "0.1.4"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "008xfl1jn9rxsq19phnhbimccf4p64880jmnpg59wqi07kk117w7")))))
+(define-public rust-input-0.9.1
+  (let ((name "rust-input")
+        (version "0.9.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "input" "0.9.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1abmv1djhynihipjppgsmw6nbp6pcgzk8rzi4v6wmyci9990kp7v")))))
+
+(define-public rust-input-sys-1.18.0
+  (let ((name "rust-input-sys")
+        (version "1.18.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "input-sys" "1.18.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1c4y24wf0jixi52js4f7cjspbgi0bzzaqfhn8m91qcq03i6mnkxx")))))
+
+(define-public rust-insta-1.42.1
+  (let ((name "rust-insta")
+        (version "1.42.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "insta" "1.42.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "11law2fzalj7pb5sy044xr2spzyzv8rnq5ay6rmqk4qdwcjv3hbi")))))
+
 (define-public rust-interim-0.1.2
   (let ((name "rust-interim")
         (version "0.1.2"))
@@ -2192,6 +3452,15 @@
       (uri (crate-uri "interim" "0.1.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1x5ykyv8bkv13398q3dpycg5943rw1jycvjbhi2yih30zw5hzzcs")))))
+(define-public rust-io-lifetimes-1.0.11
+  (let ((name "rust-io-lifetimes")
+        (version "1.0.11"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "io-lifetimes" "1.0.11"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1hph5lz4wd3drnn6saakwxr497liznpfnv70via6s0v8x6pbkrza")))))
+
 (define-public rust-ipnet-2.11.0
   (let ((name "rust-ipnet")
         (version "2.11.0"))
@@ -2200,6 +3469,24 @@
       (uri (crate-uri "ipnet" "2.11.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0c5i9sfi2asai28m8xp48k5gvwkqrg5ffpi767py6mzsrswv17s6")))))
+(define-public rust-is-ci-1.2.0
+  (let ((name "rust-is-ci")
+        (version "1.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "is_ci" "1.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ifwvxmrsj4r29agfzr71bjq6y1bihkx38fbzafq5vl0jn1wjmbn")))))
+
+(define-public rust-is-terminal-0.4.15
+  (let ((name "rust-is-terminal")
+        (version "0.4.15"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "is-terminal" "0.4.15"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0dzdvjg3f10cfv8wi1dcnw6rq7mcwss1nzdwmrb9zkim7zaj76z1")))))
+
 (define-public rust-is-terminal-polyfill-1.70.1
   (let ((name "rust-is-terminal-polyfill")
         (version "1.70.1"))
@@ -2216,6 +3503,15 @@
       (uri (crate-uri "iso8601" "0.6.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "13f9a6izrm87dd66qcagw65lw714072a8y8hyjk23ar4z37pghf5")))))
+(define-public rust-itertools-0.12.1
+  (let ((name "rust-itertools")
+        (version "0.12.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "itertools" "0.12.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0s95jbb3ndj1lvfxyq5wanc0fm0r6hg6q4ngb92qlfdxvci10ads")))))
+
 (define-public rust-itertools-0.13.0
   (let ((name "rust-itertools")
         (version "0.13.0"))
@@ -2240,6 +3536,33 @@
       (uri (crate-uri "itoa" "1.0.14"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0x26kr9m062mafaxgcf2p6h2x7cmixm0zw95aipzn2hr3d5jlnnp")))))
+(define-public rust-jni-0.21.1
+  (let ((name "rust-jni")
+        (version "0.21.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "jni" "0.21.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "15wczfkr2r45slsljby12ymf2hij8wi5b104ghck9byjnwmsm1qs")))))
+
+(define-public rust-jni-sys-0.3.0
+  (let ((name "rust-jni-sys")
+        (version "0.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "jni-sys" "0.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0c01zb9ygvwg9wdx2fii2d39myzprnpqqhy7yizxvjqp5p04pbwf")))))
+
+(define-public rust-jobserver-0.1.32
+  (let ((name "rust-jobserver")
+        (version "0.1.32"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "jobserver" "0.1.32"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1l2k50qmj84x9mn39ivjz76alqmx72jhm12rw33zx9xnpv5xpla8")))))
+
 (define-public rust-jpeg-decoder-0.3.1
   (let ((name "rust-jpeg-decoder")
         (version "0.3.1"))
@@ -2256,6 +3579,42 @@
       (uri (crate-uri "js-sys" "0.3.77"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "13x2qcky5l22z4xgivi59xhjjx4kxir1zg7gcj0f1ijzd4yg7yhw")))))
+(define-public rust-keyframe-1.1.1
+  (let ((name "rust-keyframe")
+        (version "1.1.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "keyframe" "1.1.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1afr5ffns3k79xaqnw6rw3qn8sngwly6gxfnjn8d060mk3vqnw30")))))
+
+(define-public rust-khronos-api-3.1.0
+  (let ((name "rust-khronos-api")
+        (version "3.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "khronos_api" "3.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1p0xj5mlbagqyvvnv8wmv3cr7l9y1m153888pxqwg3vk3mg5inz2")))))
+
+(define-public rust-knuffel-3.2.0
+  (let ((name "rust-knuffel")
+        (version "3.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "knuffel" "3.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "04vl2xmdn280rcigv96v06a00v7gbxqggr0w9cqi2407qvfydgh4")))))
+
+(define-public rust-knuffel-derive-3.2.0
+  (let ((name "rust-knuffel-derive")
+        (version "3.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "knuffel-derive" "3.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0g98909l5wb1d1hcz61q53kvsmjadry2w3l47lg9dywwqib7z5wi")))))
+
 (define-public rust-lazy-static-1.5.0
   (let ((name "rust-lazy-static")
         (version "1.5.0"))
@@ -2264,6 +3623,33 @@
       (uri (crate-uri "lazy_static" "1.5.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1zk6dqqni0193xg6iijh7i3i44sryglwgvx20spdvwk3r6sbrlmv")))))
+(define-public rust-lazycell-1.3.0
+  (let ((name "rust-lazycell")
+        (version "1.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "lazycell" "1.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0m8gw7dn30i0zjjpjdyf6pc16c34nl71lpv461mix50x3p70h3c3")))))
+
+(define-public rust-libadwaita-0.7.1
+  (let ((name "rust-libadwaita")
+        (version "0.7.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libadwaita" "0.7.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0is205jr9nc1ynmcm62dkvvm765myp5ay4xmcb1hcxjyp2gyw4c6")))))
+
+(define-public rust-libadwaita-sys-0.7.1
+  (let ((name "rust-libadwaita-sys")
+        (version "0.7.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libadwaita-sys" "0.7.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1y9sr3glrda5ddzgngfqw4gigdx57qzx5dh4zbad8601aqis56dh")))))
+
 (define-public rust-libc-0.2.170
   (let ((name "rust-libc")
         (version "0.2.170"))
@@ -2272,6 +3658,42 @@
       (uri (crate-uri "libc" "0.2.170"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0a38q3avb6r6azxb7yfbjly5sbr8926z6c4sryyp33rgrf03cnw7")))))
+(define-public rust-libdisplay-info-0.2.2
+  (let ((name "rust-libdisplay-info")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libdisplay-info" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0avs90mwzbfkwc09xlvvdy0szrbi670y61c1w0l75hqd7blwy422")))))
+
+(define-public rust-libdisplay-info-derive-0.1.0
+  (let ((name "rust-libdisplay-info-derive")
+        (version "0.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libdisplay-info-derive" "0.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1vpwss66rmhdd0f85c3nwjshddmiarf4iya5v13aacmp6q8d677a")))))
+
+(define-public rust-libdisplay-info-sys-0.2.2
+  (let ((name "rust-libdisplay-info-sys")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libdisplay-info-sys" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0v34vjczpj8hzxnx1nj5cxwf326m91gn7bi3l3zkfg72xij94kvz")))))
+
+(define-public rust-libloading-0.8.6
+  (let ((name "rust-libloading")
+        (version "0.8.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libloading" "0.8.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0d2ccr88f8kv3x7va2ccjxalcjnhrci4j2kwxp7lfmbkpjs4wbzw")))))
+
 (define-public rust-libm-0.2.11
   (let ((name "rust-libm")
         (version "0.2.11"))
@@ -2288,6 +3710,44 @@
       (uri (crate-uri "libredox" "0.1.3"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "139602gzgs0k91zb7dvgj1qh4ynb8g1lbxsswdim18hcb6ykgzy0")))))
+(define-public rust-libseat-0.2.3
+  (let ((name "rust-libseat")
+        (version "0.2.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libseat" "0.2.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0350b89h2xk5rdqqla162a2pak7yzbpfckqwg68cd42ppmdj8fn2")))))
+
+(define-public rust-libseat-sys-0.1.9
+  (let ((name "rust-libseat-sys")
+        (version "0.1.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libseat-sys" "0.1.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0997n2s413ggzi4amy0jbnfl8jvgpjnkxzycjs56ks2p0pjj2ihk")))))
+
+(define-public rust-libspa-0.8.0
+  (let ((name "rust-libspa")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libspa" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "044qs48yl0llp2dmrgwxj9y1pgfy09i6fhq661zqqb9a3fwa9wv5"))
+      (patches (rosenthal-patches "rust-libspa.patch")))))
+
+(define-public rust-libspa-sys-0.8.0
+  (let ((name "rust-libspa-sys")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libspa-sys" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "07yh4i5grzbxkchg6dnxlwbdw2wm5jnd7ffbhl77jr0388b9f3dz"))
+      (patches (rosenthal-patches "rust-libspa-sys.patch")))))
+
 (define-public rust-libsqlite3-sys-0.30.1
   (let ((name "rust-libsqlite3-sys")
         (version "0.30.1"))
@@ -2296,6 +3756,24 @@
       (uri (crate-uri "libsqlite3-sys" "0.30.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0jcikvgbj84xc7ikdmpc8m4y5lyqgrb9aqblphwk67kv95xgp69f")))))
+(define-public rust-libudev-sys-0.1.4
+  (let ((name "rust-libudev-sys")
+        (version "0.1.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "libudev-sys" "0.1.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "09236fdzlx9l0dlrsc6xx21v5x8flpfm3d5rjq9jr5ivlas6k11w")))))
+
+(define-public rust-linked-hash-map-0.5.6
+  (let ((name "rust-linked-hash-map")
+        (version "0.5.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "linked-hash-map" "0.5.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "03vpgw7x507g524nx5i1jf5dl8k3kv0fzg8v3ip6qqwbpkqww5q7")))))
+
 (define-public rust-linux-raw-sys-0.4.15
   (let ((name "rust-linux-raw-sys")
         (version "0.4.15"))
@@ -2304,6 +3782,15 @@
       (uri (crate-uri "linux-raw-sys" "0.4.15"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1aq7r2g7786hyxhv40spzf2nhag5xbw2axxc1k8z5k1dsgdm4v6j")))))
+(define-public rust-linux-raw-sys-0.6.5
+  (let ((name "rust-linux-raw-sys")
+        (version "0.6.5"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "linux-raw-sys" "0.6.5"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1mv3c1zz51ydcj768zavm8g06gz5jb1p7yigmmif7hz5whdmnf1a")))))
+
 (define-public rust-listenfd-1.0.2
   (let ((name "rust-listenfd")
         (version "1.0.2"))
@@ -2360,6 +3847,15 @@
       (uri (crate-uri "logos-derive" "0.14.4"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "07bk3q4jry9f8blrnsiy872ivilzy62xaglnn2ni5p590qmp5yr4")))))
+(define-public rust-loom-0.7.2
+  (let ((name "rust-loom")
+        (version "0.7.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "loom" "0.7.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1jpszf9qxv8ydpsm2h9vcyvxvyxcfkhmmfbylzd4gfbc0k40v7j1")))))
+
 (define-public rust-lru-0.12.5
   (let ((name "rust-lru")
         (version "0.12.5"))
@@ -2408,6 +3904,24 @@
       (uri (crate-uri "memchr" "2.7.4"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "18z32bhxrax0fnjikv475z7ii718hq457qwmaryixfxsl2qrmjkq")))))
+(define-public rust-memmap2-0.9.5
+  (let ((name "rust-memmap2")
+        (version "0.9.5"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "memmap2" "0.9.5"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0krpvvkpg4i3l05cv3q2xk24a1vj5c86gbrli2wzhj1qkpnpwgzx")))))
+
+(define-public rust-memoffset-0.9.1
+  (let ((name "rust-memoffset")
+        (version "0.9.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "memoffset" "0.9.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12i17wh9a9plx869g7j4whf62xw68k5zd4k0k5nh6ys5mszid028")))))
+
 (define-public rust-metrics-0.21.1
   (let ((name "rust-metrics")
         (version "0.21.1"))
@@ -2440,6 +3954,15 @@
       (uri (crate-uri "metrics-util" "0.15.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0glpkmrj7zkg9b290x6qxf93kmd9b4b4sbkk1fs19l8y95pfvqjd")))))
+(define-public rust-miette-5.10.0
+  (let ((name "rust-miette")
+        (version "5.10.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "miette" "5.10.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0vl5qvl3bgha6nnkdl7kiha6v4ypd6d51wyc4q1bvdpamr75ifsr")))))
+
 (define-public rust-miette-7.5.0
   (let ((name "rust-miette")
         (version "7.5.0"))
@@ -2448,6 +3971,15 @@
       (uri (crate-uri "miette" "7.5.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "114lv0nx46lxc5pncz6iyrzcfhn5g9a5janzc8cgsdvvz1jm358s")))))
+(define-public rust-miette-derive-5.10.0
+  (let ((name "rust-miette-derive")
+        (version "5.10.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "miette-derive" "5.10.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0p33msrngkxlp5ajm8nijamii9vcwwpy8gfh4m53qnmrc0avrrs9")))))
+
 (define-public rust-miette-derive-7.5.0
   (let ((name "rust-miette-derive")
         (version "7.5.0"))
@@ -2512,6 +4044,42 @@
       (uri (crate-uri "multimap" "0.10.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "00vs2frqdhrr8iqx4y3fbq73ax5l12837fvbjrpi729d85alrz6y")))))
+(define-public rust-ndk-0.9.0
+  (let ((name "rust-ndk")
+        (version "0.9.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "ndk" "0.9.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1m32zpmi5w1pf3j47k6k5fw395dc7aj8d0mdpsv53lqkprxjxx63")))))
+
+(define-public rust-ndk-context-0.1.1
+  (let ((name "rust-ndk-context")
+        (version "0.1.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "ndk-context" "0.1.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12sai3dqsblsvfd1l1zab0z6xsnlha3xsfl7kagdnmj3an3jvc17")))))
+
+(define-public rust-ndk-sys-0.6.0+11769913
+  (let ((name "rust-ndk-sys")
+        (version "0.6.0+11769913"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "ndk-sys" "0.6.0+11769913"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0wx8r6pji20if4xs04g73gxl98nmjrfc73z0v6w1ypv6a4qdlv7f")))))
+
+(define-public rust-nix-0.27.1
+  (let ((name "rust-nix")
+        (version "0.27.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "nix" "0.27.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ly0kkmij5f0sqz35lx9czlbk6zpihb7yh1bsy4irzwfd2f4xc1f")))))
+
 (define-public rust-nix-0.28.0
   (let ((name "rust-nix")
         (version "0.28.0"))
@@ -2520,6 +4088,15 @@
       (uri (crate-uri "nix" "0.28.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1r0rylax4ycx3iqakwjvaa178jrrwiiwghcw95ndzy72zk25c8db")))))
+(define-public rust-nix-0.29.0
+  (let ((name "rust-nix")
+        (version "0.29.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "nix" "0.29.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ikvn7s9r2lrfdm3mx1h7nbfjvcc6s9vxdzw7j5xfkd2qdnp9qki")))))
+
 (define-public rust-nom-7.1.3
   (let ((name "rust-nom")
         (version "7.1.3"))
@@ -2584,6 +4161,24 @@
       (uri (crate-uri "num_cpus" "1.16.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0hra6ihpnh06dvfvz9ipscys0xfqa9ca9hzp384d5m02ssvgqqa1")))))
+
+(define-public rust-num-enum-0.7.3
+  (let ((name "rust-num-enum")
+        (version "0.7.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "num_enum" "0.7.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0yai0vafhy85mvhknzfqd7lm04hzaln7i5c599rhy8mj831kyqaf")))))
+
+(define-public rust-num-enum-derive-0.7.3
+  (let ((name "rust-num-enum-derive")
+        (version "0.7.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "num_enum_derive" "0.7.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0mksna1jj87ydh146gn6jcqkvvs920c3dgh0p4f3xk184kpl865g")))))
 
 (define-public rust-num-integer-0.1.46
   (let ((name "rust-num-integer")
@@ -2650,6 +4245,24 @@
       (uri (crate-uri "objc2-app-kit" "0.2.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1zqyi5l1bm26j1bgmac9783ah36m5kcrxlqp5carglnpwgcrms74")))))
+(define-public rust-objc2-cloud-kit-0.2.2
+  (let ((name "rust-objc2-cloud-kit")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-cloud-kit" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "02dhjvmcq8c2bwj31jx423jygif1scs9f0lmlab0ayhw75b3ppbl")))))
+
+(define-public rust-objc2-contacts-0.2.2
+  (let ((name "rust-objc2-contacts")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-contacts" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12a8m927xrrxa54xhqhqnkkl1a6l07pyrpnqfk9jz09kkh755zx5")))))
+
 (define-public rust-objc2-core-data-0.2.2
   (let ((name "rust-objc2-core-data")
         (version "0.2.2"))
@@ -2666,6 +4279,15 @@
       (uri (crate-uri "objc2-core-image" "0.2.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "102csfb82zi2sbzliwsfd589ckz0gysf7y6434c9zj97lmihj9jm")))))
+(define-public rust-objc2-core-location-0.2.2
+  (let ((name "rust-objc2-core-location")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-core-location" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "10apgsrigqryvi4rcc0f6yfjflvrl83f4bi5hkr48ck89vizw300")))))
+
 (define-public rust-objc2-encode-4.1.0
   (let ((name "rust-objc2-encode")
         (version "4.1.0"))
@@ -2682,6 +4304,15 @@
       (uri (crate-uri "objc2-foundation" "0.2.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1a6mi77jsig7950vmx9ydvsxaighzdiglk5d229k569pvajkirhf")))))
+(define-public rust-objc2-link-presentation-0.2.2
+  (let ((name "rust-objc2-link-presentation")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-link-presentation" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "160k4qh00yrx57dabn3hzas4r98kmk9bc0qsy1jvwday3irax8d1")))))
+
 (define-public rust-objc2-metal-0.2.2
   (let ((name "rust-objc2-metal")
         (version "0.2.2"))
@@ -2698,6 +4329,42 @@
       (uri (crate-uri "objc2-quartz-core" "0.2.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0ynw8819c36l11rim8n0yzk0fskbzrgaqayscyqi8swhzxxywaz4")))))
+(define-public rust-objc2-symbols-0.2.2
+  (let ((name "rust-objc2-symbols")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-symbols" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1p04hjkxan18g2b7h9n2n8xxsvazapv2h6mfmmdk06zc7pz4ws0a")))))
+
+(define-public rust-objc2-ui-kit-0.2.2
+  (let ((name "rust-objc2-ui-kit")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-ui-kit" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0vrb5r8z658l8c19bx78qks8c5hg956544yirf8npk90idwldfxq")))))
+
+(define-public rust-objc2-uniform-type-identifiers-0.2.2
+  (let ((name "rust-objc2-uniform-type-identifiers")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-uniform-type-identifiers" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1ziv4wkbxcaw015ypg0q49ycl7m14l3x56mpq2k1rznv92bmzyj4")))))
+
+(define-public rust-objc2-user-notifications-0.2.2
+  (let ((name "rust-objc2-user-notifications")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "objc2-user-notifications" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1cscv2w3vxzaslz101ddv0z9ycrrs4ayikk4my4qd3im8bvcpkvn")))))
+
 (define-public rust-object-0.36.7
   (let ((name "rust-object")
         (version "0.36.7"))
@@ -2738,6 +4405,33 @@
       (uri (crate-uri "option-ext" "0.2.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0zbf7cx8ib99frnlanpyikm1bx8qn8x602sw1n7bg6p9x94lyx04")))))
+(define-public rust-orbclient-0.3.48
+  (let ((name "rust-orbclient")
+        (version "0.3.48"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "orbclient" "0.3.48"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0hzxjsvvsl5i9d3aqzc6kdcsch1i6flij5dkignhhkz2qb72c2xs")))))
+
+(define-public rust-ordered-float-5.0.0
+  (let ((name "rust-ordered-float")
+        (version "5.0.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "ordered-float" "5.0.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "009z1k7w729ls2sfg4zknn9v63sk1zghnq54p2lwcjjkdvszkhg2")))))
+
+(define-public rust-ordered-stream-0.2.0
+  (let ((name "rust-ordered-stream")
+        (version "0.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "ordered-stream" "0.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0l0xxp697q7wiix1gnfn66xsss7fdhfivl2k7bvpjs4i3lgb18ls")))))
+
 (define-public rust-os-pipe-1.2.1
   (let ((name "rust-os-pipe")
         (version "1.2.1"))
@@ -2754,6 +4448,15 @@
       (uri (crate-uri "overload" "0.1.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0fdgbaqwknillagy1xq7xfgv60qdbk010diwl7s1p0qx7hb16n5i")))))
+(define-public rust-owo-colors-3.5.0
+  (let ((name "rust-owo-colors")
+        (version "3.5.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "owo-colors" "3.5.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0vyvry6ba1xmpd45hpi6savd8mbx09jpmvnnwkf6z62pk6s4zc61")))))
+
 (define-public rust-palette-0.7.6
   (let ((name "rust-palette")
         (version "0.7.6"))
@@ -2770,6 +4473,42 @@
       (uri (crate-uri "palette_derive" "0.7.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0c0xhpk1nqyq4jr2m8xnka7w47vqzc7m2vq9ih8wxyjv02phs0zm")))))
+(define-public rust-pango-0.20.9
+  (let ((name "rust-pango")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pango" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1v7h4m7sz0x38il14jzsw7qphbpsw17a0hq8zj5w16ygp30ms7vb")))))
+
+(define-public rust-pango-sys-0.20.9
+  (let ((name "rust-pango-sys")
+        (version "0.20.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pango-sys" "0.20.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1dds8ljd3ar05c9744s3xlcyg8bkg5a211mpkvj8zgbk2rsrpfqd")))))
+
+(define-public rust-pangocairo-0.20.7
+  (let ((name "rust-pangocairo")
+        (version "0.20.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pangocairo" "0.20.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1dlp76pkknxfl6pi41zfcm9kdhchyzjs72pgl196aapa5yd51426")))))
+
+(define-public rust-pangocairo-sys-0.20.7
+  (let ((name "rust-pangocairo-sys")
+        (version "0.20.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pangocairo-sys" "0.20.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0rv7mnp2cnrvaq73c3dwf1szc0ngi312z4l3cyjac4br2hjarrjv")))))
+
 (define-public rust-parking-2.2.1
   (let ((name "rust-parking")
         (version "2.2.1"))
@@ -2922,6 +4661,52 @@
       (uri (crate-uri "pin-utils" "0.1.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "117ir7vslsl2z1a7qzhws4pd01cg2d3338c47swjyvqv2n60v1wb")))))
+(define-public rust-piper-0.2.4
+  (let ((name "rust-piper")
+        (version "0.2.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "piper" "0.2.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0rn0mjjm0cwagdkay77wgmz3sqf8fqmv9d9czm79mvr2yj8c9j4n")))))
+
+(define-public rust-pipewire-0.8.0
+  (let ((name "rust-pipewire")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pipewire" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1nldg1hz4v0qr26lzdxqpvrac4zbc3pb6436sl392425bjx4brh8"))
+      (patches (rosenthal-patches "rust-pipewire.patch")))))
+
+(define-public rust-pipewire-sys-0.8.0
+  (let ((name "rust-pipewire-sys")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pipewire-sys" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "04hiy3rl8v3j2dfzp04gr7r8l5azzqqsvqdzwa7sipdij27ii7l4")))))
+
+(define-public rust-pixman-0.2.1
+  (let ((name "rust-pixman")
+        (version "0.2.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pixman" "0.2.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1pqybqb7rmd58yr9xvmd8iix30znw5w71cq2wnlc16n1jva1g8nf")))))
+
+(define-public rust-pixman-sys-0.1.0
+  (let ((name "rust-pixman-sys")
+        (version "0.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "pixman-sys" "0.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1nja8kc7zs1w4lhllvsgssa0b07n4cgwb0zyvqapj7g8i4z4i851")))))
+
 (define-public rust-pkcs1-0.7.5
   (let ((name "rust-pkcs1")
         (version "0.7.5"))
@@ -2954,6 +4739,15 @@
       (uri (crate-uri "png" "0.17.16"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "09kmkms9fmkbkarw0lnf0scqvjwwg3r7riddag0i3q39r0pil5c2")))))
+(define-public rust-polling-3.7.4
+  (let ((name "rust-polling")
+        (version "3.7.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "polling" "3.7.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0bs4nhwfwsvlzlhah2gbhj3aa9ynvchv2g350wapswh26a65c156")))))
+
 (define-public rust-poly1305-0.8.0
   (let ((name "rust-poly1305")
         (version "0.8.0"))
@@ -3011,6 +4805,33 @@
       (uri (crate-uri "prettyplease" "0.2.29"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1b2zi42b5x3yckpin4ina1gr3n2m9zvvjmwdlhzzwz8zdv8cw939")))))
+(define-public rust-proc-macro-crate-3.2.0
+  (let ((name "rust-proc-macro-crate")
+        (version "3.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "proc-macro-crate" "3.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0yzsqnavb3lmrcsmbrdjfrky9vcbl46v59xi9avn0796rb3likwf")))))
+
+(define-public rust-proc-macro-error-1.0.4
+  (let ((name "rust-proc-macro-error")
+        (version "1.0.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "proc-macro-error" "1.0.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1373bhxaf0pagd8zkyd03kkx6bchzf6g0dkwrwzsnal9z47lj9fs")))))
+
+(define-public rust-proc-macro-error-attr-1.0.4
+  (let ((name "rust-proc-macro-error-attr")
+        (version "1.0.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "proc-macro-error-attr" "1.0.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0sgq6m5jfmasmwwy8x4mjygx5l7kp8s4j60bv25ckv2j1qc41gm1")))))
+
 (define-public rust-proc-macro2-1.0.93
   (let ((name "rust-proc-macro2")
         (version "1.0.93"))
@@ -3019,6 +4840,42 @@
       (uri (crate-uri "proc-macro2" "1.0.93"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "169dw9wch753if1mgyi2nfl1il77gslvh6y2q46qplprwml6m530")))))
+(define-public rust-profiling-1.0.16
+  (let ((name "rust-profiling")
+        (version "1.0.16"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "profiling" "1.0.16"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0kcz2xzg4qx01r5az8cf9ffjasi2srj56sna32igddh0vi7cggdg")))))
+
+(define-public rust-profiling-procmacros-1.0.16
+  (let ((name "rust-profiling-procmacros")
+        (version "1.0.16"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "profiling-procmacros" "1.0.16"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0c7y2k4mz5dp2ksj1h4zbxsxq4plmjzccscdaml3h1pizdh2wpx6")))))
+
+(define-public rust-proptest-1.6.0
+  (let ((name "rust-proptest")
+        (version "1.6.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "proptest" "1.6.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0l4y4bb8hffv7cys7d59qwqdmvmqjfzz0x9vblc08209clqfkjhl")))))
+
+(define-public rust-proptest-derive-0.5.1
+  (let ((name "rust-proptest-derive")
+        (version "0.5.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "proptest-derive" "0.5.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0jay6jwfvrwzz5bqpi4hxx3ax6kax06p0h29vgkxb0vl42nckqaf")))))
+
 (define-public rust-prost-0.13.5
   (let ((name "rust-prost")
         (version "0.13.5"))
@@ -3083,6 +4940,15 @@
       (uri (crate-uri "quanta" "0.11.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1axrw0nqc90bq671w05jd9460pmwg86c4r132mjsi4c2g8m6czm1")))))
+(define-public rust-quick-error-1.2.3
+  (let ((name "rust-quick-error")
+        (version "1.2.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "quick-error" "1.2.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1q6za3v78hsspisc197bg3g7rpc989qycy8ypr8ap8igv10ikl51")))))
+
 (define-public rust-quick-xml-0.37.2
   (let ((name "rust-quick-xml")
         (version "0.37.2"))
@@ -3147,6 +5013,15 @@
       (uri (crate-uri "rand_core" "0.6.4"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0b4j2v4cb5krak1pv6kakv4sz6xcwbrmy2zckc32hsigbrwy82zc")))))
+(define-public rust-rand-xorshift-0.3.0
+  (let ((name "rust-rand-xorshift")
+        (version "0.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "rand_xorshift" "0.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "13vcag7gmqspzyabfl1gr9ykvxd2142q2agrj8dkyjmfqmgg4nyj")))))
+
 (define-public rust-ratatui-0.27.0
   (let ((name "rust-ratatui")
         (version "0.27.0"))
@@ -3163,6 +5038,15 @@
       (uri (crate-uri "raw-cpuid" "10.7.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0ckkg47m8wbdinqg4z4dx7ipi3d7fjxdnrwzikx70x46rdwpcabc")))))
+(define-public rust-raw-window-handle-0.6.2
+  (let ((name "rust-raw-window-handle")
+        (version "0.6.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "raw-window-handle" "0.6.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ff5c648hncwx7hm2a8fqgqlbvbl4xawb6v3xxv9wkpjyrr5arr0")))))
+
 (define-public rust-rayon-1.10.0
   (let ((name "rust-rayon")
         (version "1.10.0"))
@@ -3179,6 +5063,15 @@
       (uri (crate-uri "rayon-core" "1.12.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1qpwim68ai5h0j7axa8ai8z0payaawv3id0lrgkqmapx7lx8fr8l")))))
+(define-public rust-redox-syscall-0.4.1
+  (let ((name "rust-redox-syscall")
+        (version "0.4.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "redox_syscall" "0.4.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1aiifyz5dnybfvkk4cdab9p2kmphag1yad6iknc7aszlxxldf8j7")))))
+
 (define-public rust-redox-syscall-0.5.9
   (let ((name "rust-redox-syscall")
         (version "0.5.9"))
@@ -3195,6 +5088,15 @@
       (uri (crate-uri "redox_users" "0.4.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0hya2cxx6hxmjfxzv9n8rjl5igpychav7zfi1f81pz6i4krry05s")))))
+(define-public rust-redox-users-0.5.0
+  (let ((name "rust-redox-users")
+        (version "0.5.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "redox_users" "0.5.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0awxx66izdw6kz97r3zxrl5ms5f6dqi5l0f58mlsvlmx8wyrsvyx")))))
+
 (define-public rust-regex-1.11.1
   (let ((name "rust-regex")
         (version "1.11.1"))
@@ -3420,6 +5322,15 @@
       (uri (crate-uri "rustversion" "1.0.19"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1m39qd65jcd1xgqzdm3017ppimiggh2446xngwp1ngr8hjbmpi7p")))))
+(define-public rust-rusty-fork-0.3.0
+  (let ((name "rust-rusty-fork")
+        (version "0.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "rusty-fork" "0.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0kxwq5c480gg6q0j3bg4zzyfh2kwmc3v2ba94jw8ncjc8mpcqgfb")))))
+
 (define-public rust-rusty-paserk-0.4.0
   (let ((name "rust-rusty-paserk")
         (version "0.4.0"))
@@ -3452,6 +5363,15 @@
       (uri (crate-uri "salsa20" "0.10.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "04w211x17xzny53f83p8f7cj7k2hi8zck282q5aajwqzydd2z8lp")))))
+(define-public rust-same-file-1.0.6
+  (let ((name "rust-same-file")
+        (version "1.0.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "same-file" "1.0.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "00h5j1w87dmhnvbv9l8bic3y7xxsnjmssvifw2ayvgx9mb1ivz4k")))))
+
 (define-public rust-schannel-0.1.27
   (let ((name "rust-schannel")
         (version "0.1.27"))
@@ -3460,6 +5380,33 @@
       (uri (crate-uri "schannel" "0.1.27"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0gbbhy28v72kd5iina0z2vcdl3vz63mk5idvkzn5r52z6jmfna8z")))))
+(define-public rust-schemars-0.8.22
+  (let ((name "rust-schemars")
+        (version "0.8.22"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "schemars" "0.8.22"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "05an9nbi18ynyxv1rjmwbg6j08j0496hd64mjggh53mwp3hjmgrz")))))
+
+(define-public rust-schemars-derive-0.8.22
+  (let ((name "rust-schemars-derive")
+        (version "0.8.22"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "schemars_derive" "0.8.22"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0kakyzrp5801s4i043l4ilv96lzimnlh01pap958h66n99w6bqij")))))
+
+(define-public rust-scoped-tls-1.0.1
+  (let ((name "rust-scoped-tls")
+        (version "1.0.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "scoped-tls" "1.0.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "15524h04mafihcvfpgxd8f4bgc3k95aclz8grjkg9a0rxcvn9kz1")))))
+
 (define-public rust-scopeguard-1.2.0
   (let ((name "rust-scopeguard")
         (version "1.2.0"))
@@ -3476,6 +5423,15 @@
       (uri (crate-uri "sct" "0.7.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "056lmi2xkzdg1dbai6ha3n57s18cbip4pnmpdhyljli3m99n216s")))))
+(define-public rust-sd-notify-0.4.5
+  (let ((name "rust-sd-notify")
+        (version "0.4.5"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "sd-notify" "0.4.5"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1x1bmz30x2i35j771rqyyan40473aqk0xjrh2dk9xdnqf7gylhxr")))))
+
 (define-public rust-security-framework-2.11.1
   (let ((name "rust-security-framework")
         (version "2.11.1"))
@@ -3516,6 +5472,15 @@
       (uri (crate-uri "serde_derive" "1.0.218"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0azqd74xbpb1v5vf6w1fdbgmwp39ljjfj25cib5rgrzlj7hh75gh")))))
+(define-public rust-serde-derive-internals-0.29.1
+  (let ((name "rust-serde-derive-internals")
+        (version "0.29.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "serde_derive_internals" "0.29.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "04g7macx819vbnxhi52cx0nhxi56xlhrybgwybyy7fb9m4h6mlhq")))))
+
 (define-public rust-serde-json-1.0.139
   (let ((name "rust-serde-json")
         (version "1.0.139"))
@@ -3540,6 +5505,24 @@
       (uri (crate-uri "serde_regex" "1.1.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1pxsnxb8c198szghk1hvzvhva36w2q5zs70hqkmdf5d89qd6y4x8")))))
+(define-public rust-serde-repr-0.1.19
+  (let ((name "rust-serde-repr")
+        (version "0.1.19"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "serde_repr" "0.1.19"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1sb4cplc33z86pzlx38234xr141wr3cmviqgssiadisgl8dlar3c")))))
+
+(define-public rust-serde-spanned-0.6.8
+  (let ((name "rust-serde-spanned")
+        (version "0.6.8"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "serde_spanned" "0.6.8"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1q89g70azwi4ybilz5jb8prfpa575165lmrffd49vmcf76qpqq47")))))
+
 (define-public rust-serde-urlencoded-0.7.1
   (let ((name "rust-serde-urlencoded")
         (version "0.7.1"))
@@ -3644,6 +5627,15 @@
       (uri (crate-uri "simd-adler32" "0.3.7"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1zkq40c3iajcnr5936gjp9jjh1lpzhy44p3dq3fiw75iwr1w2vfn")))))
+(define-public rust-similar-2.7.0
+  (let ((name "rust-similar")
+        (version "2.7.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "similar" "2.7.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1aidids7ymfr96s70232s6962v5g9l4zwhkvcjp4c5hlb6b5vfxv")))))
+
 (define-public rust-siphasher-1.0.1
   (let ((name "rust-siphasher")
         (version "1.0.1"))
@@ -3676,6 +5668,52 @@
       (uri (crate-uri "smallvec" "1.14.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1z8wpr53x6jisklqhkkvkgyi8s5cn69h2d2alhqfxahzxwiq7kvz")))))
+(define-public rust-smawk-0.3.2
+  (let ((name "rust-smawk")
+        (version "0.3.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "smawk" "0.3.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0344z1la39incggwn6nl45k8cbw2x10mr5j0qz85cdz9np0qihxp")))))
+
+(define-public rust-smithay-0.4.4
+  (let ((name "rust-smithay")
+        (version "0.4.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "smithay" "0.4.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0nd3wq104pls1ql9kmgfp7gfbi6jxzmgddl457zqgfq9b2q4nhd0"))
+      (patches (rosenthal-patches "rust-smithay.patch")))))
+
+(define-public rust-smithay-client-toolkit-0.19.2
+  (let ((name "rust-smithay-client-toolkit")
+        (version "0.19.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "smithay-client-toolkit" "0.19.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "05h05hg4dn3v6br5jbdbs5nalk076a64s7fn6i01nqzby2hxwmrl")))))
+
+(define-public rust-smithay-drm-extras-0.1.0
+  (let ((name "rust-smithay-drm-extras")
+        (version "0.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "smithay-drm-extras" "0.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "15hflf1yn04inm94m7b49gfx3c75h850ny6vv8bc4m9rnag10s7s")))))
+
+(define-public rust-smol-str-0.2.2
+  (let ((name "rust-smol-str")
+        (version "0.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "smol_str" "0.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1bfylqf2vnqaglw58930vpxm2rfzji5gjp15a2c0kh8aj6v8ylyx")))))
+
 (define-public rust-socket2-0.5.8
   (let ((name "rust-socket2")
         (version "0.5.8"))
@@ -3828,6 +5866,42 @@
       (uri (crate-uri "subtle" "2.6.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "14ijxaymghbl1p0wql9cib5zlwiina7kall6w7g89csprkgbvhhk")))))
+(define-public rust-supports-color-2.1.0
+  (let ((name "rust-supports-color")
+        (version "2.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "supports-color" "2.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12csf7chawxinaapm9rh718nha9hggk6ra86fdaw9hxdagg8qffn")))))
+
+(define-public rust-supports-hyperlinks-2.1.0
+  (let ((name "rust-supports-hyperlinks")
+        (version "2.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "supports-hyperlinks" "2.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0g93nh1db3f9lyd0ry35bqjrxkg6sbysn36x9hgd9m5h5rlk2hpq")))))
+
+(define-public rust-supports-unicode-2.1.0
+  (let ((name "rust-supports-unicode")
+        (version "2.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "supports-unicode" "2.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0yp703pvpzpmaw9mpncvwf0iqis4xmhs569ii1g20jhqvngc2l7q")))))
+
+(define-public rust-syn-1.0.109
+  (let ((name "rust-syn")
+        (version "1.0.109"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "syn" "1.0.109"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ds2if4600bd59wsv7jjgfkayfzy3hnazs394kz6zdkmna8l3dkj")))))
+
 (define-public rust-syn-2.0.98
   (let ((name "rust-syn")
         (version "2.0.98"))
@@ -3884,6 +5958,33 @@
       (uri (crate-uri "system-configuration-sys" "0.5.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1jckxvdr37bay3i9v52izgy52dg690x5xfg3hd394sv2xf4b2px7")))))
+(define-public rust-system-deps-6.2.2
+  (let ((name "rust-system-deps")
+        (version "6.2.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "system-deps" "6.2.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0j93ryw031n3h8b0nfpj5xwh3ify636xmv8kxianvlyyipmkbrd3")))))
+
+(define-public rust-system-deps-7.0.3
+  (let ((name "rust-system-deps")
+        (version "7.0.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "system-deps" "7.0.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "01d0fllzpkfybzadyaq1vlx70imzj56dxs4rk9w2f4ikkypkmlk6")))))
+
+(define-public rust-target-lexicon-0.12.16
+  (let ((name "rust-target-lexicon")
+        (version "0.12.16"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "target-lexicon" "0.12.16"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1cg3bnx1gdkdr5hac1hzxy64fhw4g7dqkd0n3dxy5lfngpr1mi31")))))
+
 (define-public rust-tempfile-3.17.1
   (let ((name "rust-tempfile")
         (version "3.17.1"))
@@ -3892,6 +5993,15 @@
       (uri (crate-uri "tempfile" "3.17.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0c52ggq5vy5mzgk5ly36cgzs1cig3cv6r1jarijmzxgkn6na1r92")))))
+(define-public rust-terminal-size-0.1.17
+  (let ((name "rust-terminal-size")
+        (version "0.1.17"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "terminal_size" "0.1.17"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1pq60ng1a7fjp597ifk1cqlz8fv9raz9xihddld1m1pfdia1lg33")))))
+
 (define-public rust-terminal-size-0.4.1
   (let ((name "rust-terminal-size")
         (version "0.4.1"))
@@ -3909,6 +6019,15 @@
       (uri (crate-uri "testing_logger" "0.1.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "087pi7y9iisspafyzblj41qvrw95dfb6px7pavlkmls5rckvg4kd")))))
+
+(define-public rust-textwrap-0.15.2
+  (let ((name "rust-textwrap")
+        (version "0.15.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "textwrap" "0.15.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0galmidi6gpn308b1kv3r4qbb48j2926lcj0idwhdhlylhjybcxp")))))
 
 (define-public rust-thiserror-1.0.69
   (let ((name "rust-thiserror")
@@ -4070,6 +6189,33 @@
       (uri (crate-uri "toml" "0.5.11"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0d2266nx8b3n22c7k24x4428z6di8n83a9n466jm7a2hipfz1xzl")))))
+(define-public rust-toml-0.8.20
+  (let ((name "rust-toml")
+        (version "0.8.20"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "toml" "0.8.20"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0j012b37iz1mihksr6a928s6dzszxvblzg3l5wxp7azzsv6sb1yd")))))
+
+(define-public rust-toml-datetime-0.6.8
+  (let ((name "rust-toml-datetime")
+        (version "0.6.8"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "toml_datetime" "0.6.8"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0hgv7v9g35d7y9r2afic58jvlwnf73vgd1mz2k8gihlgrf73bmqd")))))
+
+(define-public rust-toml-edit-0.22.24
+  (let ((name "rust-toml-edit")
+        (version "0.22.24"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "toml_edit" "0.22.24"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0x0lgp70x5cl9nla03xqs5vwwwlrwmd0djkdrp3h3lpdymgpkd0p")))))
+
 (define-public rust-tonic-0.12.3
   (let ((name "rust-tonic")
         (version "0.12.3"))
@@ -4182,6 +6328,33 @@
       (uri (crate-uri "tracing-tree" "0.4.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "175lqyfp6zq7jbj8m026xdp8p765pzgfdzfxahfggmdhy5wwlngl")))))
+(define-public rust-tracy-client-0.17.6
+  (let ((name "rust-tracy-client")
+        (version "0.17.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "tracy-client" "0.17.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0zkwz9aq97znyal3hz9wmxya97pj01ddpv92ha7l39a6fdw2s83k")))))
+
+(define-public rust-tracy-client-0.18.0
+  (let ((name "rust-tracy-client")
+        (version "0.18.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "tracy-client" "0.18.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1nrn739vanildbbzfdcsh8y1fzp2p848db49vmpvf0jv600jq2nr")))))
+
+(define-public rust-tracy-client-sys-0.24.3
+  (let ((name "rust-tracy-client-sys")
+        (version "0.24.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "tracy-client-sys" "0.24.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0ps3iwb7q1fzs9pir6b0nqi8n7i67lci4jp6z4xrq8s8lmyz7zv9")))))
+
 (define-public rust-tree-magic-mini-3.1.6
   (let ((name "rust-tree-magic-mini")
         (version "3.1.6"))
@@ -4222,6 +6395,33 @@
       (uri (crate-uri "typenum" "1.18.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0gwgz8n91pv40gabrr1lzji0b0hsmg0817njpy397bq7rvizzk0x")))))
+(define-public rust-udev-0.9.3
+  (let ((name "rust-udev")
+        (version "0.9.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "udev" "0.9.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "17vy1yc6ipb5m2kc2d4lx2qpj45yr7grsjzm3y2gq0a4xblkfkmg")))))
+
+(define-public rust-uds-windows-1.1.0
+  (let ((name "rust-uds-windows")
+        (version "1.1.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "uds_windows" "1.1.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1fb4y65pw0rsp0gyfyinjazlzxz1f6zv7j4zmb20l5pxwv1ypnl9")))))
+
+(define-public rust-unarray-0.1.4
+  (let ((name "rust-unarray")
+        (version "0.1.4"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "unarray" "0.1.4"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "154smf048k84prsdgh09nkm2n0w0336v84jd4zikyn6v6jrqbspa")))))
+
 (define-public rust-unicode-bidi-0.3.18
   (let ((name "rust-unicode-bidi")
         (version "0.3.18"))
@@ -4238,6 +6438,15 @@
       (uri (crate-uri "unicode-ident" "1.0.17"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1gpdxvaskz04whays5igg4zyca0dl7vdy2arsfxb13kpjcx4gqh0")))))
+(define-public rust-unicode-linebreak-0.1.5
+  (let ((name "rust-unicode-linebreak")
+        (version "0.1.5"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "unicode-linebreak" "0.1.5"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "07spj2hh3daajg335m4wdav6nfkl0f6c0q72lc37blr97hych29v")))))
+
 (define-public rust-unicode-normalization-0.1.24
   (let ((name "rust-unicode-normalization")
         (version "0.1.24"))
@@ -4374,6 +6583,33 @@
       (uri (crate-uri "version_check" "0.9.5"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0nhhi4i5x89gm911azqbn7avs9mdacw2i3vcz3cnmz3mv4rqz4hb")))))
+(define-public rust-version-compare-0.2.0
+  (let ((name "rust-version-compare")
+        (version "0.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "version-compare" "0.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "12y9262fhjm1wp0aj3mwhads7kv0jz8h168nn5fb8b43nwf9abl5")))))
+
+(define-public rust-wait-timeout-0.2.1
+  (let ((name "rust-wait-timeout")
+        (version "0.2.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wait-timeout" "0.2.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "04azqv9mnfxgvnc8j2wp362xraybakh2dy1nj22gj51rdl93pb09")))))
+
+(define-public rust-walkdir-2.5.0
+  (let ((name "rust-walkdir")
+        (version "2.5.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "walkdir" "2.5.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0jsy7a710qv8gld5957ybrnc07gavppp963gs32xk4ag8130jy99")))))
+
 (define-public rust-want-0.3.1
   (let ((name "rust-want")
         (version "0.3.1"))
@@ -4470,6 +6706,33 @@
       (uri (crate-uri "wayland-client" "0.31.8"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0gzpr9gdd8yk1crflxngg5iwa1szyyzp4i4zbgpslf1nsgihs4n2")))))
+(define-public rust-wayland-csd-frame-0.3.0
+  (let ((name "rust-wayland-csd-frame")
+        (version "0.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-csd-frame" "0.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0zjcmcqprfzx57hlm741n89ssp4sha5yh5cnmbk2agflvclm0p32")))))
+
+(define-public rust-wayland-cursor-0.31.8
+  (let ((name "rust-wayland-cursor")
+        (version "0.31.8"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-cursor" "0.31.8"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0pccjqiln1izjbdzprqiijhad4k00wmr5r003a44h1v5nv5jjc59")))))
+
+(define-public rust-wayland-egl-0.32.5
+  (let ((name "rust-wayland-egl")
+        (version "0.32.5"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-egl" "0.32.5"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "00lr5nlc7xa050p7rzlrndlc82iy0g29lhpxizs73qhh38j3hj2h")))))
+
 (define-public rust-wayland-protocols-0.31.2
   (let ((name "rust-wayland-protocols")
         (version "0.31.2"))
@@ -4478,6 +6741,33 @@
       (uri (crate-uri "wayland-protocols" "0.31.2"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1x310l1p6p3p3l76nl1l2yava9408dy77s605917zadlp1jz70cg")))))
+(define-public rust-wayland-protocols-0.32.6
+  (let ((name "rust-wayland-protocols")
+        (version "0.32.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-protocols" "0.32.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1z0yahh48x8qzdbcallmxn5am5897hkk5d7p51ly6dwvhr3cz087")))))
+
+(define-public rust-wayland-protocols-misc-0.3.6
+  (let ((name "rust-wayland-protocols-misc")
+        (version "0.3.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-protocols-misc" "0.3.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0m2spzy9diwc3sx0bqq7qx8qdip5lw1ns227bnqinv8220cfxdzy")))))
+
+(define-public rust-wayland-protocols-plasma-0.3.6
+  (let ((name "rust-wayland-protocols-plasma")
+        (version "0.3.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-protocols-plasma" "0.3.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1cs6gpgxybjvr60j6j824blsvz4hnmjwaah2cdkzvzh3cz3srjkw")))))
+
 (define-public rust-wayland-protocols-wlr-0.2.0
   (let ((name "rust-wayland-protocols-wlr")
         (version "0.2.0"))
@@ -4486,6 +6776,15 @@
       (uri (crate-uri "wayland-protocols-wlr" "0.2.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1mjww9psk2nc5hm2q4s3qas30rbzfg1sb6qgw518fbbcdfvn27xd")))))
+(define-public rust-wayland-protocols-wlr-0.3.6
+  (let ((name "rust-wayland-protocols-wlr")
+        (version "0.3.6"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-protocols-wlr" "0.3.6"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1cpqb0d4ryf87x2wgca5n71wilhvc0jjva0zasbdgalmypk052i4")))))
+
 (define-public rust-wayland-scanner-0.31.6
   (let ((name "rust-wayland-scanner")
         (version "0.31.6"))
@@ -4494,6 +6793,15 @@
       (uri (crate-uri "wayland-scanner" "0.31.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "110ldnyfxjqvjssir1jf3ndlci7xy9lpv4aqg775y518bpyxlvw9")))))
+(define-public rust-wayland-server-0.31.7
+  (let ((name "rust-wayland-server")
+        (version "0.31.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "wayland-server" "0.31.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1jx410qa59vry55xm40dqgqa7d0cx7xs3a5qaxv8xzwcsrzbvylp")))))
+
 (define-public rust-wayland-sys-0.31.6
   (let ((name "rust-wayland-sys")
         (version "0.31.6"))
@@ -4558,6 +6866,15 @@
       (uri (crate-uri "winapi-i686-pc-windows-gnu" "0.4.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1dmpa6mvcvzz16zg6d5vrfy4bxgg541wxrcip7cnshi06v38ffxc")))))
+(define-public rust-winapi-util-0.1.9
+  (let ((name "rust-winapi-util")
+        (version "0.1.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "winapi-util" "0.1.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1fqhkcl9scd230cnfj8apfficpf5c9vhwnk4yy9xfc1sw69iq8ng")))))
+
 (define-public rust-winapi-x86-64-pc-windows-gnu-0.4.0
   (let ((name "rust-winapi-x86-64-pc-windows-gnu")
         (version "0.4.0"))
@@ -4574,6 +6891,24 @@
       (uri (crate-uri "windows" "0.52.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1gnh210qjlprpd1szaq04rjm1zqgdm9j7l9absg0kawi2rwm72p4")))))
+(define-public rust-windows-0.58.0
+  (let ((name "rust-windows")
+        (version "0.58.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows" "0.58.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1dkjj94b0gn91nn1n22cvm4afsj98f5qrhcl3112v6f4jcfx816x")))))
+
+(define-public rust-windows-aarch64-gnullvm-0.42.2
+  (let ((name "rust-windows-aarch64-gnullvm")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows_aarch64_gnullvm" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1y4q0qmvl0lvp7syxvfykafvmwal5hrjb4fmv04bqs0bawc52yjr")))))
+
 (define-public rust-windows-aarch64-gnullvm-0.48.5
   (let ((name "rust-windows-aarch64-gnullvm")
         (version "0.48.5"))
@@ -4591,6 +6926,15 @@
       (uri (crate-uri "windows_aarch64_gnullvm" "0.52.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1lrcq38cr2arvmz19v32qaggvj8bh1640mdm9c2fr877h0hn591j")))))
+
+(define-public rust-windows-aarch64-msvc-0.42.2
+  (let ((name "rust-windows-aarch64-msvc")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows_aarch64_msvc" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0hsdikjl5sa1fva5qskpwlxzpc5q9l909fpl1w6yy1hglrj8i3p0")))))
 
 (define-public rust-windows-aarch64-msvc-0.48.5
   (let ((name "rust-windows-aarch64-msvc")
@@ -4618,6 +6962,24 @@
       (uri (crate-uri "windows-core" "0.52.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1nc3qv7sy24x0nlnb32f7alzpd6f72l4p24vl65vydbyil669ark")))))
+(define-public rust-windows-core-0.58.0
+  (let ((name "rust-windows-core")
+        (version "0.58.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows-core" "0.58.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "16czypy425jzmiys4yb3pwsh7cm6grxn9kjp889iqnf2r17d99kb")))))
+
+(define-public rust-windows-i686-gnu-0.42.2
+  (let ((name "rust-windows-i686-gnu")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows_i686_gnu" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0kx866dfrby88lqs9v1vgmrkk1z6af9lhaghh5maj7d4imyr47f6")))))
+
 (define-public rust-windows-i686-gnu-0.48.5
   (let ((name "rust-windows-i686-gnu")
         (version "0.48.5"))
@@ -4645,6 +7007,15 @@
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0rpdx1537mw6slcpqa0rm3qixmsb79nbhqy5fsm3q2q9ik9m5vhf")))))
 
+(define-public rust-windows-i686-msvc-0.42.2
+  (let ((name "rust-windows-i686-msvc")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows_i686_msvc" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0q0h9m2aq1pygc199pa5jgc952qhcnf0zn688454i7v4xjv41n24")))))
+
 (define-public rust-windows-i686-msvc-0.48.5
   (let ((name "rust-windows-i686-msvc")
         (version "0.48.5"))
@@ -4662,6 +7033,24 @@
       (uri (crate-uri "windows_i686_msvc" "0.52.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0rkcqmp4zzmfvrrrx01260q3xkpzi6fzi2x2pgdcdry50ny4h294")))))
+
+(define-public rust-windows-implement-0.58.0
+  (let ((name "rust-windows-implement")
+        (version "0.58.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows-implement" "0.58.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "16spr5z65z21qyv379rv2mb1s5q2i9ibd1p2pkn0dr9qr535pg9b")))))
+
+(define-public rust-windows-interface-0.58.0
+  (let ((name "rust-windows-interface")
+        (version "0.58.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows-interface" "0.58.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "059mxmfvx3x88q74ms0qlxmj2pnidmr5mzn60hakn7f95m34qg05")))))
 
 (define-public rust-windows-link-0.1.0
   (let ((name "rust-windows-link")
@@ -4695,6 +7084,15 @@
       (uri (crate-uri "windows-strings" "0.1.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "042dxvi3133f7dyi2pgcvknwkikk47k8bddwxbq5s0l6qhjv3nac")))))
+(define-public rust-windows-sys-0.45.0
+  (let ((name "rust-windows-sys")
+        (version "0.45.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows-sys" "0.45.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1l36bcqm4g89pknfp8r9rl1w4bn017q6a8qlx8viv0xjxzjkna3m")))))
+
 (define-public rust-windows-sys-0.48.0
   (let ((name "rust-windows-sys")
         (version "0.48.0"))
@@ -4719,6 +7117,15 @@
       (uri (crate-uri "windows-sys" "0.59.0"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0fw5672ziw8b3zpmnbp9pdv1famk74f1l9fcbc3zsrzdg56vqf0y")))))
+(define-public rust-windows-targets-0.42.2
+  (let ((name "rust-windows-targets")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows-targets" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0wfhnib2fisxlx8c507dbmh97kgij4r6kcxdi0f9nk6l1k080lcf")))))
+
 (define-public rust-windows-targets-0.48.5
   (let ((name "rust-windows-targets")
         (version "0.48.5"))
@@ -4735,6 +7142,15 @@
       (uri (crate-uri "windows-targets" "0.52.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0wwrx625nwlfp7k93r2rra568gad1mwd888h1jwnl0vfg5r4ywlv")))))
+(define-public rust-windows-x86-64-gnu-0.42.2
+  (let ((name "rust-windows-x86-64-gnu")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows_x86_64_gnu" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0dnbf2xnp3xrvy8v9mgs3var4zq9v9yh9kv79035rdgyp2w15scd")))))
+
 (define-public rust-windows-x86-64-gnu-0.48.5
   (let ((name "rust-windows-x86-64-gnu")
         (version "0.48.5"))
@@ -4751,6 +7167,15 @@
       (uri (crate-uri "windows_x86_64_gnu" "0.52.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0y0sifqcb56a56mvn7xjgs8g43p33mfqkd8wj1yhrgxzma05qyhl")))))
+(define-public rust-windows-x86-64-gnullvm-0.42.2
+  (let ((name "rust-windows-x86-64-gnullvm")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows_x86_64_gnullvm" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "18wl9r8qbsl475j39zvawlidp1bsbinliwfymr43fibdld31pm16")))))
+
 (define-public rust-windows-x86-64-gnullvm-0.48.5
   (let ((name "rust-windows-x86-64-gnullvm")
         (version "0.48.5"))
@@ -4767,6 +7192,15 @@
       (uri (crate-uri "windows_x86_64_gnullvm" "0.52.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "03gda7zjx1qh8k9nnlgb7m3w3s1xkysg55hkd1wjch8pqhyv5m94")))))
+(define-public rust-windows-x86-64-msvc-0.42.2
+  (let ((name "rust-windows-x86-64-msvc")
+        (version "0.42.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "windows_x86_64_msvc" "0.42.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1w5r0q0yzx827d10dpjza2ww0j8iajqhmb54s735hhaj66imvv4s")))))
+
 (define-public rust-windows-x86-64-msvc-0.48.5
   (let ((name "rust-windows-x86-64-msvc")
         (version "0.48.5"))
@@ -4783,6 +7217,24 @@
       (uri (crate-uri "windows_x86_64_msvc" "0.52.6"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1v7rb5cibyzx8vak29pdrk8nx9hycsjs4w0jgms08qk49jl6v7sq")))))
+(define-public rust-winit-0.30.9
+  (let ((name "rust-winit")
+        (version "0.30.9"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "winit" "0.30.9"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1h1wmvhfcq2lg6c6715d7pgnv85508zm94ahcfvaiv68337yl2d8")))))
+
+(define-public rust-winnow-0.7.3
+  (let ((name "rust-winnow")
+        (version "0.7.3"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "winnow" "0.7.3"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1c9bmhpdwbdmll6b4l6skabz0296dchnmnxw84hh2y3ggyllwzqf")))))
+
 (define-public rust-winreg-0.50.0
   (let ((name "rust-winreg")
         (version "0.50.0"))
@@ -4823,6 +7275,15 @@
       (uri (crate-uri "writeable" "0.5.5"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0lawr6y0bwqfyayf3z8zmqlhpnzhdx0ahs54isacbhyjwa7g778y")))))
+(define-public rust-x11-dl-2.21.0
+  (let ((name "rust-x11-dl")
+        (version "2.21.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "x11-dl" "2.21.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0vsiq62xpcfm0kn9zjw5c9iycvccxl22jya8wnk18lyxzqj5jwrq")))))
+
 (define-public rust-x11rb-0.13.1
   (let ((name "rust-x11rb")
         (version "0.13.1"))
@@ -4839,6 +7300,78 @@
       (uri (crate-uri "x11rb-protocol" "0.13.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0gfbxf2k7kbk577j3rjhfx7hm70kmwln6da7xyc4l2za0d2pq47c")))))
+(define-public rust-xcursor-0.3.8
+  (let ((name "rust-xcursor")
+        (version "0.3.8"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xcursor" "0.3.8"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0qazsl7h8nrbbzx84qrv39w8m2qc27g0mvrszgdls2v6n6k3vwqf")))))
+
+(define-public rust-xdg-home-1.3.0
+  (let ((name "rust-xdg-home")
+        (version "1.3.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xdg-home" "1.3.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1xm122zz0wjc8p8cmchij0j9nw34hwncb39jc7dc0mgvb2rdl77c")))))
+
+(define-public rust-xkbcommon-0.8.0
+  (let ((name "rust-xkbcommon")
+        (version "0.8.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xkbcommon" "0.8.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1j8s1sfwc6bw9phsca65rw3q3b5l2651v1s0pk5yxm6baa9wlrld")))))
+
+(define-public rust-xkbcommon-dl-0.4.2
+  (let ((name "rust-xkbcommon-dl")
+        (version "0.4.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xkbcommon-dl" "0.4.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1iai0r3b5skd9vbr8z5b0qixiz8jblzfm778ddm8ba596a0dwffh")))))
+
+(define-public rust-xkeysym-0.2.1
+  (let ((name "rust-xkeysym")
+        (version "0.2.1"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xkeysym" "0.2.1"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0mksx670cszyd7jln6s7dhkw11hdfv7blwwr3isq98k22ljh1k5r")))))
+
+(define-public rust-xml-rs-0.8.25
+  (let ((name "rust-xml-rs")
+        (version "0.8.25"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xml-rs" "0.8.25"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1i73ajf6scni5bi1a51r19xykgrambdx5fkks0fyg5jqqbml1ff5")))))
+
+(define-public rust-xshell-0.2.7
+  (let ((name "rust-xshell")
+        (version "0.2.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xshell" "0.2.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0g9pd9bfp0f35rzichic55k7p1mn8mqp607y5rimhiq14g390wly")))))
+
+(define-public rust-xshell-macros-0.2.7
+  (let ((name "rust-xshell-macros")
+        (version "0.2.7"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "xshell-macros" "0.2.7"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0irm50jxdc92r0kd6yvl5p28jsfzha59brxk7z9w3jcf7z6h1b1j")))))
+
 (define-public rust-yansi-1.0.1
   (let ((name "rust-yansi")
         (version "1.0.1"))
@@ -4847,6 +7380,15 @@
       (uri (crate-uri "yansi" "1.0.1"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0jdh55jyv0dpd38ij4qh60zglbw9aa8wafqai6m0wa7xaxk3mrfg")))))
+
+(define-public rust-yansi-term-0.1.2
+  (let ((name "rust-yansi-term")
+        (version "0.1.2"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "yansi-term" "0.1.2"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1w8vjlvxba6yvidqdvxddx3crl6z66h39qxj8xi6aqayw2nk0p7y")))))
 
 (define-public rust-yoke-0.7.5
   (let ((name "rust-yoke")
@@ -4864,6 +7406,33 @@
       (uri (crate-uri "yoke-derive" "0.7.5"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "0m4i4a7gy826bfvnqa9wy6sp90qf0as3wps3wb0smjaamn68g013")))))
+(define-public rust-zbus-5.5.0
+  (let ((name "rust-zbus")
+        (version "5.5.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "zbus" "5.5.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0dmjaih7gi2d0fa37zzylvbmxqn80x4d7haxr5xn86za93v37hsr")))))
+
+(define-public rust-zbus-macros-5.5.0
+  (let ((name "rust-zbus-macros")
+        (version "5.5.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "zbus_macros" "5.5.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1h4zf0wh647fvv97bnsr3ah64cgcnz1r8d10c2q3w2hdxc8as9gk")))))
+
+(define-public rust-zbus-names-4.2.0
+  (let ((name "rust-zbus-names")
+        (version "4.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "zbus_names" "4.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "15ybdd6zic7simi9wjg0ywrxfq4sxg3z0wiyysadps3cpxj8xrkv")))))
+
 (define-public rust-zerocopy-0.7.35
   (let ((name "rust-zerocopy")
         (version "0.7.35"))
@@ -4928,3 +7497,27 @@
       (uri (crate-uri "zerovec-derive" "0.10.3"))
       (file-name (string-append name "-" version ".tar.gz"))
       (sha256 (base32 "1ik322dys6wnap5d3gcsn09azmssq466xryn5czfm13mn7gsdbvf")))))
+(define-public rust-zvariant-5.4.0
+  (let ((name "rust-zvariant")
+        (version "5.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "zvariant" "5.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "1b53qpb3q7j233512s2684iy7wyydra31pi5vkxwygw98kh9xpxj")))))
+(define-public rust-zvariant-derive-5.4.0
+  (let ((name "rust-zvariant-derive")
+        (version "5.4.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "zvariant_derive" "5.4.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0bsbz68dsvkynnnpxpfchmhyl5bsgjjmcbazjg24rf5qhnm0q5vl")))))
+(define-public rust-zvariant-utils-3.2.0
+  (let ((name "rust-zvariant-utils")
+        (version "3.2.0"))
+    (origin
+      (method url-fetch)
+      (uri (crate-uri "zvariant_utils" "3.2.0"))
+      (file-name (string-append name "-" version ".tar.gz"))
+      (sha256 (base32 "0d7wllndiv7vwgapmji3q9sxmzbaqfdxjwkqnx9vbmz58gpdyvp1")))))
