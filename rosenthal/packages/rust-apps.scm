@@ -46,6 +46,11 @@
       ''("client" "sync" "server" "clipboard" "daemon")
       #:phases
       #~(modify-phases %standard-phases
+          (add-after 'unpack 'patch-references
+            (lambda _
+              (substitute* (find-files "crates/atuin/src/shell")
+                (("atuin (uuid|history|search)" all)
+                 (string-append #$output "/bin/" all)))))
           (replace 'install
             (lambda* (#:key outputs features #:allow-other-keys)
               (let* ((out      (assoc-ref outputs "out"))
