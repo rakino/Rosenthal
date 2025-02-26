@@ -41,7 +41,6 @@
     (arguments
      (list
       #:install-source? #f
-      #:tests? #f                  ;TODO
       #:features
       ''("client" "sync" "server" "clipboard" "daemon")
       #:phases
