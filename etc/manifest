@@ -5,7 +5,7 @@
 
 (specifications->manifest
  '(
-   "atuin-bin"
+   "atuin"
    "cloudflare-warp-bin"
    "cloudflared"
    "dinit"

@@ -5,6 +5,7 @@
 (define-module (rosenthal packages binaries)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix gexp)
+  #:use-module (guix deprecation)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix build-system copy)
@@ -17,61 +18,14 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages glib)
   #:use-module (gnu packages java)
-  #:use-module (gnu packages nss))
+  #:use-module (gnu packages nss)
+  #:use-module (rosenthal packages rust-apps))
 
 (define license
   (@@ (guix licenses) license))
 
 (define-public atuin-bin
-  (package
-    (name "atuin-bin")
-    (version "18.4.0")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/atuinsh/atuin/releases/download/v"
-                    version "/atuin-x86_64-unknown-linux-gnu.tar.gz"))
-              (sha256
-               (base32
-                "09rbk68mlfvjqzpydq9i83c05vpvn03s2343mswimc5svlclwslh"))))
-    (build-system copy-build-system)
-    (arguments
-     (list #:install-plan #~'(("atuin" "bin/"))
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'install 'patch-elf
-                 (lambda _
-                   (let ((ld.so (string-append #$(this-package-input "glibc")
-                                               #$(glibc-dynamic-linker)))
-                         (runpath (string-join
-                                   (list
-                                    (string-append
-                                     (ungexp
-                                      (this-package-input "gcc") "lib") "/lib")
-                                    (string-append
-                                     #$(this-package-input "glibc") "/lib"))
-                                   ":")))
-                     (define (patch-elf file)
-                       (format #t "Patching ~a ..." file)
-                       (unless (string-contains file ".so")
-                         (invoke "patchelf" "--set-interpreter" ld.so file))
-                       (invoke "patchelf" "--set-rpath" runpath file)
-                       (display " done\n"))
-                     (for-each (lambda (file)
-                                 (patch-elf file))
-                               (find-files
-                                (string-append #$output "/bin")))))))))
-    (supported-systems '("x86_64-linux"))
-    (native-inputs (list patchelf-0.16))
-    (inputs (list `(,gcc "lib") glibc))
-    (home-page "https://atuin.sh/")
-    (synopsis "Sync, search and backup shell history")
-    (description
-     "Atuin replaces existing shell history with a SQLite database, and records
-additional context for commands.  Additionally, it provides optional and fully
-encrypted synchronisation of history between machines, via an Atuin server.")
-    (license license:gpl3)
-    (properties '((upstream-name . "atuin")))))
+  (deprecated-package "atuin-bin" atuin))
 
 (define bitwarden
   (package

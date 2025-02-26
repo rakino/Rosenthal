@@ -83,6 +83,7 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 
 ** Content / 內容
 *** Packages / 軟件包
++ atuin
 + cloudflared
 + dinit
 + dnsmasq-china-list
@@ -95,7 +96,6 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + tree-sitter-yaml
 
 Binary Packages / 二進制包：
-+ atuin-bin
 + bitwarden-icecat
 + clash-bin
 + hugo-bin
