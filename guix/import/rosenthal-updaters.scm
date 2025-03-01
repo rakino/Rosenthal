@@ -11,7 +11,7 @@
   #:use-module (guix upstream)
   #:export (%cloudflare-warp-updater))
 
-(define* (cloudflare-warp-import pkg #:key (version #f))
+(define* (cloudflare-warp-import pkg #:key version partial-version?)
   (let* ((source-uri (assq-ref (package-properties pkg) 'release-monitoring-url))
          (response port (http-get source-uri #:streaming? #t))
          (content (recutils->alist port))
