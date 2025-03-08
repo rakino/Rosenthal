@@ -95,6 +95,7 @@ Rosenthal 頻道定義如下，將其加入 =~/.config/guix/channels.scm= 以由
 + pam-dumb-runtime-dir
 + socks2http
 + tree-sitter-yaml
++ xwayland-satellite
 
 Binary Packages / 二進制包：
 + bitwarden-icecat
