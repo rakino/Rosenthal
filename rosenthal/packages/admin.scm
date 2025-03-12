@@ -73,6 +73,7 @@ the user to manage services with dependencies and parallel startup.")
               (uri (git-reference
                     (url "https://github.com/ifreund/dumb_runtime_dir")
                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
               (sha256
                (base32
                 "0nrxhvbh3bs4pi4f5h03zw1p1ys19qmmlx263ysly8302wkxk1m4"))))
