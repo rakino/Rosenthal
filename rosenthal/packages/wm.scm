@@ -170,6 +170,9 @@ extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
                   (setenv "XDG_RUNTIME_DIR" "/tmp")))
               (add-after 'install 'install-extras
                 (lambda _
+                  (substitute* "resources/niri.desktop"
+                    (("niri-session")
+                     (string-append #$output "/bin/niri --session")))
                   (install-file
                    "resources/niri.desktop"
                    (in-vicinity #$output "share/wayland-sessions"))
