@@ -230,7 +230,7 @@ designed for flexibility.")
 (define-public komga-bin
   (package
    (name "komga-bin")
-   (version "1.20.0")
+   (version "1.21.2")
    (source (origin
              (method url-fetch)
              (uri (string-append
@@ -238,7 +238,7 @@ designed for flexibility.")
                    "/komga-" version ".jar"))
              (sha256
               (base32
-               "1dyxavr2jn85appysj8j88i2x3fv46l5s25x4gb47hr4n68f230n"))))
+               "0ya31gjikr71m8mc2pagm1pgc951q6q6yi7mvpa47qskspbkk30m"))))
    (build-system copy-build-system)
    (arguments
     (list #:install-plan
