@@ -29,6 +29,7 @@
     (build-system cargo-build-system)
     (arguments
      (list #:install-source? #f
+           #:tests? #f                  ;Requires running display server.
            #:phases
            #~(modify-phases %standard-phases
                (add-after 'unpack 'fix-paths
@@ -36,10 +37,7 @@
                    (substitute* "src/lib.rs"
                      (("\"Xwayland\"")
                       (format #f "\"~a\""
-                              (search-input-file inputs "bin/Xwayland"))))))
-               (add-before 'check 'prepare-for-tests
-                 (lambda _
-                   (setenv "XDG_RUNTIME_DIR" "/tmp"))))))
+                              (search-input-file inputs "bin/Xwayland")))))))))
     (native-inputs (list pkg-config))
     (inputs
      (cons* clang
