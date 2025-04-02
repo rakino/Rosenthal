@@ -120,7 +120,7 @@ protocols out-of-the-box.")
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
-    (version "2025.1.861.0")
+    (version "2025.2.600.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkg.cloudflareclient.com"
@@ -128,7 +128,7 @@ protocols out-of-the-box.")
                                   "cloudflare-warp_" version "_amd64.deb"))
               (sha256
                (base32
-                "00icbjfi8xhb47fw4n3xxy2p077val9qwjfcirskww161rw6l758"))))
+                "0rabxl6vfj3pljn77w96kb2k9w99hh5pvis1grr4im6lf5m86xsj"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
