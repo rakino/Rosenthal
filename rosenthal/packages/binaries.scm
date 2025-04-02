@@ -83,6 +83,9 @@ network and application layer, supporting various proxy and anti-censorship
 protocols out-of-the-box.")
     (license license:gpl3)))
 
+(define-public hugo-bin
+  (deprecated-package "hugo-bin" hugo))
+
 (define-public mihomo-bin
   (package
     (name "mihomo-bin")
@@ -185,47 +188,6 @@ different needs.")
      '((upstream-name . "cloudflare-warp")
        (release-monitoring-url
         . "https://pkg.cloudflareclient.com/dists/bookworm/main/binary-amd64/Packages")))))
-
-(define-public hugo-bin
-  (package
-    (name "hugo-bin")
-    (version "0.145.0")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/gohugoio/hugo" "/releases/download/v"
-                    version "/hugo_extended_" version "_linux-amd64.tar.gz"))
-              (sha256
-               (base32
-                "1r2alw2a3acs99dx89p886p3qbwpds6kpgz510jjiym8dna6hx3w"))))
-    (build-system copy-build-system)
-    (arguments
-     (list #:install-plan #~'(("hugo" "bin/"))
-           #:phases
-           #~(modify-phases %standard-phases
-               (delete 'strip)
-               (add-after 'install 'patch-elf
-                 (lambda _
-                   (let ((hugo (string-append #$output "/bin/hugo")))
-                     (invoke "patchelf" "--set-interpreter"
-                             (string-append #$(this-package-input "glibc")
-                                            #$(glibc-dynamic-linker))
-                             hugo)
-                     (invoke "patchelf" "--set-rpath"
-                             (string-append (ungexp (this-package-input "gcc")
-                                                    "lib")
-                                            "/lib")
-                             hugo)))))))
-    (supported-systems '("x86_64-linux"))
-    (native-inputs (list patchelf-0.16))
-    (inputs (list `(,gcc "lib") glibc))
-    (home-page "https://gohugo.io/")
-    (synopsis "Static site generator")
-    (description
-     "Hugo is a static site generator written in Go, optimized for speed and
-designed for flexibility.")
-    (license license:asl2.0)
-    (properties '((upstream-name . "hugo")))))
 
 (define-public komga-bin
   (package

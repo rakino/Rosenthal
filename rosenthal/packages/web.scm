@@ -8,8 +8,10 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
+  #:use-module (rosenthal utils download)
   #:use-module (guix build-system go)
   #:use-module (gnu packages golang)
+  #:use-module (gnu packages image)
   #:use-module (gnu packages web))
 
 (define-public buku-run-dev
@@ -28,6 +30,75 @@
                 (sha256
                  (base32
                   "079ygn39px71bypa54jn4z55iq24lxxcy7jv3ijy08iinqbfvldc")))))))
+
+(define-public hugo
+  (package
+    (name "hugo")
+    (version "0.145.0")
+    (source
+     (origin
+       (method go-vendored-fetch)
+       (uri (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/gohugoio/hugo")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "19kfij8c1ljfn8xr3mfm5c89fhp62bl0c7rx0i8726jn6dbpl9g5"))))
+       (sha256
+        (base32
+         "10fmva8p4hcbs2kyjggbanrmix1mf1fym549c5zdv80khpppzfnb"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:go go-1.23
+      #:install-source? #f
+      #:import-path "."
+      #:build-flags
+      ''("-tags" "extended withdeploy"
+         "-ldflags=-X github.com/gohugoio/hugo/common/hugo.vendorInfo=Nonguix")
+      #:test-flags ''("-skip=^TestCommands/mod|^TestCommands/server")
+      #:test-subdirs ''(".")
+      #:modules
+      '(((guix build gnu-build-system) #:prefix gnu:)
+        (guix build go-build-system)
+        (guix build utils))
+      #:phases
+      #~(modify-phases %standard-phases
+          (replace 'unpack
+            (lambda args
+              (apply (assoc-ref gnu:%standard-phases 'unpack) args)
+              (unsetenv "GO111MODULE")))
+          (replace 'install-license-files
+            (assoc-ref gnu:%standard-phases 'install-license-files))
+          (add-after 'unpack 'fix-paths
+            (lambda* (#:key inputs #:allow-other-keys)
+              (setenv "C_INCLUDE_PATH"
+                      (string-append
+                       (getenv "C_INCLUDE_PATH") ":"
+                       (dirname
+                        (dirname
+                         (dirname
+                          (search-input-file inputs "src/dec/alphai_dec.h"))))))
+              (with-directory-excursion "vendor/github.com/bep/gowebp"
+                (substitute* (find-files "internal/libwebp")
+                  (("../../libwebp_src/(.*)\"" _ file)
+                   (string-append (search-input-file inputs file) "\""))))
+              (with-directory-excursion "vendor/github.com/bep/golibsass"
+                (substitute* (find-files "internal/libsass")
+                  (("../../libsass_src/(.*)\"" _ file)
+                   (string-append (search-input-file inputs file) "\"")))))))))
+    (inputs
+     (list (package-source libsass)
+           (package-source libwebp)))
+    (home-page "https://gohugo.io/")
+    (synopsis "Static site generator")
+    (description
+     "Hugo is a static site generator written in Go, optimized for speed and
+designed for flexibility.")
+    (license license:asl2.0)))
 
 ;; TODO: Package Forgejo without vendored dependencies.
 (define-public forgejo
