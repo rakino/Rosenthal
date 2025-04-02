@@ -377,7 +377,7 @@ in sidebar.")
 (define-public sing-box-bin
   (package
     (name "sing-box-bin")
-    (version "1.11.5")
+    (version "1.11.6")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -385,7 +385,7 @@ in sidebar.")
                     version "/sing-box-" version "-linux-amd64.tar.gz"))
               (sha256
                (base32
-                "0g9gx26h8zccag0h4q4c9hijl81agk0b2anm46ca1skzgn6hy35y"))))
+                "150cafy3hmv6zm86fdp1siflwmqa81ca87wy8sw5nj2i65xa7742"))))
     (build-system copy-build-system)
     (arguments (list #:install-plan #~'(("sing-box" "bin/"))))
     (supported-systems '("x86_64-linux"))
