@@ -19,7 +19,9 @@
   #:use-module (gnu packages glib)
   #:use-module (gnu packages java)
   #:use-module (gnu packages nss)
-  #:use-module (rosenthal packages rust-apps))
+  #:use-module (rosenthal packages networking)
+  #:use-module (rosenthal packages rust-apps)
+  #:use-module (rosenthal packages web))
 
 (define license
   (@@ (guix licenses) license))
@@ -359,30 +361,7 @@ in sidebar.")
     (properties '((upstream-name . "sing-box")))))
 
 (define-public tailscale-bin
-  (package
-    (name "tailscale-bin")
-    (version "1.82.0")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append "https://pkgs.tailscale.com"
-                                  "/stable/tailscale_" version "_amd64.tgz"))
-              (sha256
-               (base32
-                "0ayc224qr2v04qvppbjlhfvnv360qm4129nwzspcd2929xaqkbf4"))))
-    (build-system copy-build-system)
-    (arguments
-     (list #:install-plan
-           #~'(("." "bin/" #:include ("tailscale" "tailscaled")))))
-    (supported-systems '("x86_64-linux"))
-    (home-page "https://tailscale.com/")
-    (synopsis "Private WireGuard® networks made easy")
-    (description
-     "This package provides @command{tailscale}, which brings an easy and secure
-way to use WireGuard and 2FA.")
-    (license license:bsd-3)
-    (properties
-     '((release-monitoring-url . "https://github.com/tailscale/tailscale/releases")
-       (upstream-name . "tailscale")))))
+  (deprecated-package "tailscale-bin" tailscale))
 
 (define-public wakapi-bin
   (package

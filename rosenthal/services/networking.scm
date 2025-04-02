@@ -9,12 +9,12 @@
   #:use-module (guix records)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages networking)
+  #:use-module (rosenthal packages networking)
   #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services dbus)
   #:use-module (gnu services shepherd)
-  #:use-module (rosenthal packages binaries)
   #:export (iwd-configuration
             iwd-service-type
 
@@ -367,7 +367,7 @@ list, power save will be disabled."))
 
 (define-configuration tailscale-configuration
   (tailscale
-   (file-like tailscale-bin)
+   (file-like tailscale)
    "The tailscale package to use.")
 
   (iptables

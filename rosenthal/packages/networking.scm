@@ -8,6 +8,7 @@
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
+  #:use-module (rosenthal utils download)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages golang-build))
 
@@ -86,3 +87,76 @@ origin can remain as closed as possible.")
      "This package provides a simple tool to plumb HTTP proxy requests through
 a SOCKS5 proxy.")
     (license license:expat)))
+
+(define-public tailscale
+  (package
+    (name "tailscale")
+    (version "1.80.3")
+    (source
+     (origin
+       (method go-vendored-fetch)
+       (uri (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/tailscale/tailscale")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "07s8kwksvd0f9r65zkrhp3sn4jrv0c8g5w0wbiv9qq950l8gdv2h"))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32
+         "0g2pzazrfl41s1gra2g3ni34ddgw32mb2rjlv8x17g3yc7axdbqa"))
+       (modules '((guix build utils)))
+       (snippet '(delete-file-recursively "tool"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:go go-1.23
+      #:install-source? #f
+      #:import-path "."
+      #:build-flags
+      #~(list "-tags" "ts_include_cli"
+              (string-append
+               "-ldflags="
+               " -X tailscale.com/version.longStamp=v"
+               #$(package-version this-package)
+               " -X tailscale.com/version.shortStamp=v"
+               #$(package-version this-package)))
+      #:test-flags ''("-skip=^TestPackageDocs$")
+      #:test-subdirs ''(".")
+      #:modules
+      '(((guix build gnu-build-system) #:prefix gnu:)
+        (guix build go-build-system)
+        (guix build utils))
+      #:phases
+      #~(modify-phases %standard-phases
+          (replace 'unpack
+            (lambda args
+              (apply (assoc-ref gnu:%standard-phases 'unpack) args)
+              (unsetenv "GO111MODULE")))
+          (replace 'install-license-files
+            (assoc-ref gnu:%standard-phases 'install-license-files))
+          ;; TODO: Fix command references.
+          (replace 'build
+            (lambda* (#:key build-flags parallel-build? #:allow-other-keys)
+              (let* ((njobs (if parallel-build? (parallel-job-count) 1)))
+                (setenv "GOMAXPROCS" (number->string njobs))
+                (for-each
+                 (lambda (pkg)
+                   (apply invoke "go" "build" "-ldflags=-s -w" "-trimpath"
+                          "-o" (string-append #$output "/bin/" pkg)
+                          `(,@build-flags
+                            ,(string-append "tailscale.com/cmd/" pkg))))
+                 '("derper"
+                   "derpprobe"
+                   "tailscale"
+                   "tailscaled"
+                   "tsidp"))))))))
+    (home-page "https://tailscale.com/")
+    (synopsis "Private WireGuard® networks made easy")
+    (description
+     "This package provides @command{tailscale}, which brings an easy and secure
+way to use WireGuard and 2FA.")
+    (license license:bsd-3)))
