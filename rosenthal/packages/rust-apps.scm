@@ -75,4 +75,4 @@
      "Atuin replaces existing shell history with a SQLite database, and records
 additional context for commands.  Additionally, it provides optional and fully
 encrypted synchronisation of history between machines, via an Atuin server.")
-    (license license:gpl3)))
+    (license license:expat)))
