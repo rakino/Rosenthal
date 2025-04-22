@@ -1,10 +1,11 @@
 ;; -*- mode: scheme -*-
-;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2022, 2023, 2025 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: CC0-1.0
 
 (channel
  (version 0)
+ (directory "modules")
  (keyring-reference "keyring")
  (url "https://codeberg.org/hako/rosenthal.git")
  (news-file "NEWS"))
