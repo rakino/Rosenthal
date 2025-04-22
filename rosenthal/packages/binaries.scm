@@ -366,7 +366,7 @@ in sidebar.")
 (define-public wakapi-bin
   (package
     (name "wakapi-bin")
-    (version "2.13.1")
+    (version "2.13.3")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -374,7 +374,7 @@ in sidebar.")
                     version "/wakapi_linux_amd64.zip"))
               (sha256
                (base32
-                "1z31xfra0iq4nxb59l2nzgx2kr215z13lfnq36arbqv3v4lqnz99"))))
+                "1znlp9h1rvisas6qf5r76yg0mbiiqxwgrqcc10gvcjsjrib844av"))))
     (build-system copy-build-system)
     (arguments (list #:install-plan #~'(("wakapi" "bin/wakapi"))))
     (supported-systems '("x86_64-linux"))
