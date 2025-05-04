@@ -43,7 +43,7 @@
      (cons* clang
             xcb-util-cursor
             xorg-server-xwayland
-            xwayland-satellite-cargo-inputs))
+            (rosenthal-cargo-inputs 'xwayland-satellite)))
     (home-page "https://github.com/Supreeeme/xwayland-satellite")
     (synopsis "Xwayland outside your Wayland")
     (description

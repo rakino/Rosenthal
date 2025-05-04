@@ -20,7 +20,7 @@
   #:use-module (gnu packages xdisorg)
   #:use-module (rosenthal packages rust-crates))
 
-(define rust-pipewire
+(define-public rust-pipewire
   (let ((commit "fd3d8f7861a29c2eeaa4c393402e013578bb36d9")
         (revision "0"))
     (package
@@ -46,35 +46,30 @@
                      (substitute* "libspa/Cargo.toml"
                        (("^pipewire.*") ""))))
                  (replace 'package
-                   (lambda _
+                   (lambda* (#:key cargo-package-flags vendor-dir #:allow-other-keys)
                      (begin
                        ;;error: invalid inclusion of reserved file name Cargo.toml.orig in package source
                        (when (file-exists? "Cargo.toml.orig")
                          (delete-file "Cargo.toml.orig"))
 
-                       ;; Use unstable feature ‘--registry’.
-                       (setenv "RUSTC_BOOTSTRAP" "1")
                        (for-each
                         (lambda (pkg)
-                          (invoke "cargo" "package" "--offline" "--package" pkg
-                                  "--registry" "crates-io" "-Z" "package-workspace"
-                                  "--no-metadata" "--no-verify")
+                          (apply invoke "cargo" "package" "--offline" "--package" pkg
+                                 cargo-package-flags)
                           (for-each
                            (lambda (crate)
-                             (invoke "tar" "xzf" crate "-C" "guix-vendor"))
-                           (begin
-                             (delete-file-recursively "target/package/tmp-registry")
-                             (find-files "target/package" "\\.crate$")))
+                             (invoke "tar" "xzf" crate "-C" vendor-dir))
+                           (find-files "target/package" "\\.crate$"))
                           ((assoc-ref %standard-phases 'patch-cargo-checksums)))
-                        '("libspa-sys" "libspa" "pipewire-sys" "pipewire"))
-                       (unsetenv "RUSTC_BOOTSTRAP")))))))
-      (inputs rust-pipewire-cargo-inputs)
+                        '("libspa-sys" "libspa" "pipewire-sys" "pipewire"))))))))
+      (inputs (rosenthal-cargo-inputs 'rust-pipewire))
       (home-page "https://pipewire.org/")
       (synopsis "Rust bindings for PipeWire")
       (description "This package provides Rust bindings for PipeWire.")
-      (license license:expat))))
+      (license license:expat)
+      (properties '((hidden? . #t))))))
 
-(define rust-smithay
+(define-public rust-smithay
   (let ((commit "0cd3345c59f7cb139521f267956a1a4e33248393")
         (revision "0"))
     (package
@@ -95,29 +90,23 @@
              #:phases
              #~(modify-phases %standard-phases
                  (replace 'package
-                   (lambda _
+                   (lambda* (#:key cargo-package-flags vendor-dir #:allow-other-keys)
                      (begin
                        ;;error: invalid inclusion of reserved file name Cargo.toml.orig in package source
                        (when (file-exists? "Cargo.toml.orig")
                          (delete-file "Cargo.toml.orig"))
 
-                       ;; Use unstable feature ‘--registry’.
-                       (setenv "RUSTC_BOOTSTRAP" "1")
                        (for-each
                         (lambda (pkg)
-                          (invoke "cargo" "package" "--offline" "--package" pkg
-                                  "--registry" "crates-io" "-Z" "package-workspace"
-                                  "--no-metadata" "--no-verify")
+                          (apply invoke "cargo" "package" "--offline" "--package" pkg
+                                 cargo-package-flags)
                           (for-each
                            (lambda (crate)
-                             (invoke "tar" "xzf" crate "-C" "guix-vendor"))
-                           (begin
-                             (delete-file-recursively "target/package/tmp-registry")
-                             (find-files "target/package" "\\.crate$")))
+                             (invoke "tar" "xzf" crate "-C" vendor-dir))
+                           (find-files "target/package" "\\.crate$"))
                           ((assoc-ref %standard-phases 'patch-cargo-checksums)))
-                        '("smithay" "smithay-drm-extras"))
-                       (unsetenv "RUSTC_BOOTSTRAP")))))))
-      (inputs rust-smithay-cargo-inputs)
+                        '("smithay" "smithay-drm-extras"))))))))
+      (inputs (rosenthal-cargo-inputs 'rust-smithay))
       (home-page "https://github.com/Smithay/smithay")
       (synopsis "Smithy for Rust Wayland compositors")
       (description
@@ -128,7 +117,8 @@ will need, in a generic fashion.
 
 It supports the @code{wayland}, @code{wayland-protocols}, and some external
 extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
-      (license license:expat))))
+      (license license:expat)
+      (properties '((hidden? . #t))))))
 
 (define-public niri
   (package
@@ -151,22 +141,22 @@ extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
               (add-after 'unpack 'use-guix-vendored-dependencies
                 (lambda _
                   (substitute* "Cargo.toml"
-                    (("# version = \"0.4.1\"")
-                     "version = \"0.4.0\"")
-                    (("# version = \"0.1.0\"")
-                     "version = \"0.1.0\"")
+                    (("# version =.*")
+                     "version = \"*\"")
                     (("git.*optional")
-                     "version = \"0.8.0\", optional")
+                     "version = \"*\", optional")
                     (("^git = .*")
                      ""))))
-              (add-after 'configure 'set-rust-flags
+              (add-after 'unpack 'set-environment
                 (lambda _
-                  (setenv "RUSTFLAGS" (string-join
-                                       '("-C" "link-arg=-lEGL"
-                                         "-C" "link-arg=-lwayland-client")
-                                       " "))))
-              (add-before 'check 'prepare-test-environment
-                (lambda _
+                  (setenv "RUSTFLAGS"
+                          (string-join
+                           '("-C" "link-arg=-lEGL"
+                             "-C" "link-arg=-lwayland-client")
+                           " "))
+                  (setenv "NIRI_BUILD_VERSION_STRING"
+                          #$(package-version this-package))
+                  ;; For tests.
                   (setenv "XDG_RUNTIME_DIR" "/tmp")))
               (add-after 'install 'install-extras
                 (lambda _
@@ -190,10 +180,8 @@ extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
            mesa
            pango
            pipewire
-           rust-pipewire
-           rust-smithay
            wayland
-           niri-cargo-inputs))
+           (rosenthal-cargo-inputs 'niri)))
    (home-page "https://github.com/YaLTeR/niri")
    (synopsis "Scrollable-tiling Wayland compositor")
    (description

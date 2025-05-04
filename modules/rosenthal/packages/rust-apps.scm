@@ -8,7 +8,6 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cargo)
-  #:use-module (gnu packages crates-crypto)
   #:use-module (rosenthal packages rust-crates))
 
 (define-public atuin
@@ -68,7 +67,7 @@
                 ;; otherwise cargo will raise an error.
                 (invoke "cargo" "install" "--no-track" "--path" "crates/atuin"
                         "--root" out "--features" (string-join features))))))))
-    (inputs (cons* rust-ring-0.17 atuin-cargo-inputs))
+    (inputs (rosenthal-cargo-inputs 'atuin))
     (home-page "https://atuin.sh/")
     (synopsis "Sync, search and backup shell history")
     (description
