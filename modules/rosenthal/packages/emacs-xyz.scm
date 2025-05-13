@@ -6,8 +6,28 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix build-system emacs)
   #:use-module (guix gexp)
+  #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages))
+
+(define-public emacs-nftables-mode
+  (package
+    (name "emacs-nftables-mode")
+    (version "1.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://elpa.gnu.org/packages/nftables-mode-"
+                           version ".tar"))
+       (sha256
+        (base32 "1wjw6n60kj84j8gj62mr6s97xd0aqvr4v7npyxwmhckw9z13xcqv"))))
+    (build-system emacs-build-system)
+    (home-page "https://elpa.gnu.org/packages/nftables-mode.html")
+    (synopsis "Major mode for editing nftables scripts")
+    (description
+     "@code{nftables-mode} is an Emacs major mode for editing nftables scripts.
+It currently only offers basic highlighting and primitive indentation.")
+    (license license:gpl3+)))
 
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
