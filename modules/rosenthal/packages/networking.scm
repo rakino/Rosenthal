@@ -9,8 +9,11 @@
   #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (rosenthal utils download)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages dns)
   #:use-module (gnu packages golang)
-  #:use-module (gnu packages golang-build))
+  #:use-module (gnu packages golang-build)
+  #:use-module (gnu packages linux))
 
 (define-public cloudflared
   (package
@@ -92,10 +95,7 @@ a SOCKS5 proxy.")
   (package
     (name "tailscale")
     (version "1.80.3")
-    (source
-     (origin
-       (method go-vendored-fetch)
-       (uri (origin
+    (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/tailscale/tailscale")
@@ -103,16 +103,17 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "07s8kwksvd0f9r65zkrhp3sn4jrv0c8g5w0wbiv9qq950l8gdv2h"))))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32
-         "0g2pzazrfl41s1gra2g3ni34ddgw32mb2rjlv8x17g3yc7axdbqa"))
-       (modules '((guix build utils)))
-       (snippet '(delete-file-recursively "tool"))))
+                "07s8kwksvd0f9r65zkrhp3sn4jrv0c8g5w0wbiv9qq950l8gdv2h"))
+              (modules '((guix build utils)))
+              (snippet
+               '(begin
+                  (delete-file-recursively "tool")
+                  (substitute* "net/tstun/tun_linux.go"
+                    (("/sbin/(modprobe)" _ cmd) cmd))))))
     (build-system go-build-system)
     (arguments
      (list
+      #:tests? (not (%current-target-system)) ;TODO: Run test suite.
       #:go go-1.23
       #:install-source? #f
       #:import-path "."
@@ -120,25 +121,26 @@ a SOCKS5 proxy.")
       #~(list "-tags" "ts_include_cli"
               (string-append
                "-ldflags="
-               " -X tailscale.com/version.longStamp=v"
+               " -X tailscale.com/version.longStamp="
                #$(package-version this-package)
-               " -X tailscale.com/version.shortStamp=v"
+               " -X tailscale.com/version.shortStamp="
                #$(package-version this-package)))
-      #:test-flags ''("-skip=^TestPackageDocs$")
-      #:test-subdirs ''(".")
       #:modules
-      '(((guix build gnu-build-system) #:prefix gnu:)
+      '((ice-9 match)
+        ((guix build gnu-build-system) #:prefix gnu:)
         (guix build go-build-system)
         (guix build utils))
       #:phases
       #~(modify-phases %standard-phases
           (replace 'unpack
             (lambda args
+              (unsetenv "GO111MODULE")
               (apply (assoc-ref gnu:%standard-phases 'unpack) args)
-              (unsetenv "GO111MODULE")))
+              (copy-recursively
+               #+(this-package-native-input "vendored-go-dependencies")
+               "vendor")))
           (replace 'install-license-files
             (assoc-ref gnu:%standard-phases 'install-license-files))
-          ;; TODO: Fix command references.
           (replace 'build
             (lambda* (#:key build-flags parallel-build? #:allow-other-keys)
               (let* ((njobs (if parallel-build? (parallel-job-count) 1)))
@@ -151,12 +153,69 @@ a SOCKS5 proxy.")
                             ,(string-append "tailscale.com/cmd/" pkg))))
                  '("derper"
                    "derpprobe"
-                   "tailscale"
+                   "tailscaled"
+                   "tsidp")))))
+          (add-after 'install 'install-extras
+            (lambda _
+              (symlink (in-vicinity #$output "bin/tailscaled")
+                       (in-vicinity #$output "bin/tailscale"))
+              (let ((tailscale
+                     (or (which "tailscale")
+                         (in-vicinity #$output "bin/tailscale"))))
+                (map
+                 (match-lambda
+                   ((shell . path)
+                    (let ((file (in-vicinity #$output path)))
+                      (mkdir-p (dirname file))
+                      (with-output-to-file file
+                        (lambda ()
+                          (invoke tailscale "completion" shell))))))
+                 '(("bash" . "etc/bash_completion.d/tailscale")
+                   ("fish" . "share/fish/vendor_completions.d/tailscale.fish")
+                   ("zsh"  . "share/zsh/site-functions/_tailscale"))))))
+          (add-after 'install 'wrap-binaries
+            (lambda* (#:key inputs #:allow-other-keys)
+              (wrap-program (in-vicinity #$output "bin/tailscaled")
+                `("PATH" ":" prefix
+                  ,(map (lambda (cmd)
+                          (dirname (search-input-file inputs cmd)))
+                        '("bin/find"
+                          "bin/getent"
+                          "bin/modprobe"
+                          "sbin/ip"
+                          "sbin/iptables"
+                          "sbin/resolvconf"
+                          "sbin/sysctl"))))))
+          (delete 'check)
+          (add-after 'install 'check
+            (lambda* (#:key tests? #:allow-other-keys)
+              (when tests?
+                (for-each
+                 (lambda (cmd)
+                   (invoke (string-append #$output "/bin/" cmd) "--help"))
+                 '("derper"
+                   "derpprobe"
                    "tailscaled"
                    "tsidp"))))))))
+    (native-inputs
+     (append
+      (list (origin
+              (method (go-mod-vendor #:go go-1.23))
+              (uri (package-source this-package))
+              (file-name "vendored-go-dependencies")
+              (sha256
+               (base32
+                "1lp5xqb9nmz1dqmmvdnnl0qla7zw6v25jbyf6shrl65rh270wmgk"))))
+      (if (%current-target-system)
+          (list this-package)
+          '())))
+    (inputs
+     (list findutils glibc iproute iptables-nft kmod openresolv procps))
     (home-page "https://tailscale.com/")
-    (synopsis "Private WireGuard® networks made easy")
+    (synopsis "Mesh VPN service utilizing the WireGuard protocol and 2FA")
     (description
-     "This package provides @command{tailscale}, which brings an easy and secure
-way to use WireGuard and 2FA.")
+     "Tailscale is a mesh VPN service that simplifies the process of securely
+connecting devices and services across various networks.  It allows you to
+create a private network with minimal configuration and aims to remove the
+complexity of building a trusted and secure network.")
     (license license:bsd-3)))

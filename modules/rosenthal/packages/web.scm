@@ -34,11 +34,8 @@
 (define-public hugo
   (package
     (name "hugo")
-    (version "0.145.0")
-    (source
-     (origin
-       (method go-vendored-fetch)
-       (uri (origin
+    (version "0.147.2")
+    (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/gohugoio/hugo")
@@ -46,10 +43,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "19kfij8c1ljfn8xr3mfm5c89fhp62bl0c7rx0i8726jn6dbpl9g5"))))
-       (sha256
-        (base32
-         "10fmva8p4hcbs2kyjggbanrmix1mf1fym549c5zdv80khpppzfnb"))))
+                "0j0grh8sxd6ma9g406cbcwhwgfdazc4lg3r7jmiyrw2287d218yz"))))
     (build-system go-build-system)
     (arguments
      (list
@@ -57,8 +51,10 @@
       #:install-source? #f
       #:import-path "."
       #:build-flags
-      ''("-tags" "extended withdeploy"
-         "-ldflags=-X github.com/gohugoio/hugo/common/hugo.vendorInfo=Nonguix")
+      #~(list "-tags" "extended withdeploy"
+              (string-append
+               "-ldflags="
+               " -X github.com/gohugoio/hugo/common/hugo.vendorInfo=Nonguix"))
       #:test-flags ''("-skip=^TestCommands/mod|^TestCommands/server")
       #:test-subdirs ''(".")
       #:modules
@@ -69,35 +65,52 @@
       #~(modify-phases %standard-phases
           (replace 'unpack
             (lambda args
+              (unsetenv "GO111MODULE")
               (apply (assoc-ref gnu:%standard-phases 'unpack) args)
-              (unsetenv "GO111MODULE")))
+              (copy-recursively
+               #+(this-package-native-input "vendored-go-dependencies")
+               "vendor")))
           (replace 'install-license-files
             (assoc-ref gnu:%standard-phases 'install-license-files))
           (add-after 'unpack 'fix-paths
-            (lambda* (#:key inputs #:allow-other-keys)
+            (lambda* (#:key native-inputs inputs #:allow-other-keys)
               (setenv "C_INCLUDE_PATH"
                       (string-append
                        (getenv "C_INCLUDE_PATH") ":"
                        (dirname
                         (dirname
                          (dirname
-                          (search-input-file inputs "src/dec/alphai_dec.h"))))))
+                          (search-input-file
+                           (or native-inputs inputs)
+                           "src/dec/alphai_dec.h"))))))
               (with-directory-excursion "vendor/github.com/bep/gowebp"
                 (substitute* (find-files "internal/libwebp")
                   (("../../libwebp_src/(.*)\"" _ file)
-                   (string-append (search-input-file inputs file) "\""))))
+                   (format #f "~a\""
+                           (search-input-file
+                            (or native-inputs inputs) file)))))
               (with-directory-excursion "vendor/github.com/bep/golibsass"
                 (substitute* (find-files "internal/libsass")
                   (("../../libsass_src/(.*)\"" _ file)
-                   (string-append (search-input-file inputs file) "\"")))))))))
-    (inputs
-     (list (package-source libsass)
+                   (format #f "~a\""
+                           (search-input-file
+                            (or native-inputs inputs) file))))))))))
+    (native-inputs
+     (list (origin
+             (method (go-mod-vendor #:go go-1.23))
+             (uri (package-source this-package))
+             (file-name "vendored-go-dependencies")
+             (sha256
+              (base32
+               "1pwq7i0y2gb4cw9nriy699wa6pqlhz42rjkzv39g355nyszwpyj8")))
+           (package-source libsass)
            (package-source libwebp)))
     (home-page "https://gohugo.io/")
-    (synopsis "Static site generator")
+    (synopsis "Static site generator written in Go")
     (description
      "Hugo is a static site generator written in Go, optimized for speed and
-designed for flexibility.")
+designed for flexibility.  With its advanced templating system and fast asset
+pipelines, Hugo renders a complete site in seconds, often less.")
     (license license:asl2.0)))
 
 ;; TODO: Package Forgejo without vendored dependencies.
