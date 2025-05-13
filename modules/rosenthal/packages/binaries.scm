@@ -55,69 +55,11 @@
 (define-public bitwarden/icecat
   (make-icecat-extension bitwarden))
 
-(define-public clash-bin
-  (package
-    (name "clash-bin")
-    (version "1.18.0")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/Dreamacro/clash/releases/download/v"
-                    version "/clash-linux-amd64-v3-v" version ".gz"))
-              (sha256
-               (base32
-                "0gchpc4pvy24dvhb5nk08g97rswjqr1ic6i405f1ba5snfv8i5z8"))))
-    (build-system copy-build-system)
-    (arguments
-     (list #:install-plan
-           #~'((#$(format #f "clash-linux-amd64-v3-v~a" version) "bin/clash"))
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'install 'fix-permission
-                 (lambda _
-                   (chmod (string-append #$output "/bin/clash") #o555))))))
-    (supported-systems '("x86_64-linux"))
-    (home-page "https://github.com/Dreamacro/clash")
-    (synopsis "Rule-based tunnel in Go")
-    (description
-     "Clash is a cross-platform rule-based proxy utility that runs on the
-network and application layer, supporting various proxy and anti-censorship
-protocols out-of-the-box.")
-    (license license:gpl3)))
-
 (define-public hugo-bin
   (deprecated-package "hugo-bin" hugo))
 
 (define-public mihomo-bin
-  (package
-    (name "mihomo-bin")
-    (version "1.19.5")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/MetaCubeX/mihomo/releases/download/v"
-                    version "/mihomo-linux-amd64-v" version ".gz"))
-              (sha256
-               (base32
-                "1x7i7v1gkfgc19fmsn9annv8nvwfl6w5pqr1m3982plzabnlr1ni"))))
-    (build-system copy-build-system)
-    (arguments
-     (list #:install-plan
-           #~'((#$(string-append
-                   "mihomo-linux-amd64-v" (package-version this-package))
-                "bin/mihomo"))
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'install 'fix-permission
-                 (lambda _
-                   (chmod (string-append #$output "/bin/mihomo") #o555))))))
-    (supported-systems '("x86_64-linux"))
-    (home-page "https://wiki.metacubex.one/")
-    (synopsis "Rule-based tunnel in Go")
-    (description
-     "This package provides @command{mihomo}, another @code{clash} kernel.")
-    (license license:gpl3)
-    (properties '((upstream-name . "mihomo")))))
+  (deprecated-package "mihomo-bin" mihomo))
 
 (define-public clash-meta-bin
   (deprecated-package "clash-meta-bin" mihomo-bin))
