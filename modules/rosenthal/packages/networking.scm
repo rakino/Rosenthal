@@ -136,6 +136,92 @@ It supports various protocols, making it a versatile tool for users seeking to
 bypass network restrictions." )
     (license license:gpl3+)))
 
+(define-public sing-box
+  (package
+    (name "sing-box")
+    (version "1.11.10")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/SagerNet/sing-box")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "07vsg2zch1z6wk5k0zqj81n95l3crgzkgvafxkyy7za7y72h1jhr"))))
+    (build-system go-build-system)
+    (arguments
+     (list
+      #:tests? (not (%current-target-system)) ;TODO: Run test suite.
+      #:go go-1.23
+      #:install-source? #f
+      #:import-path "./cmd/sing-box"
+      #:build-flags
+      #~(list "-tags" (string-join
+                       '("with_quic"
+                         "with_dhcp"
+                         "with_wireguard"
+                         "with_ech"
+                         "with_utls"
+                         "with_reality_server"
+                         "with_acme"
+                         "with_clash_api"
+                         "with_gvisor"))
+              (string-append
+               "-ldflags="
+               " -X github.com/sagernet/sing-box/constant.Version="
+               #$(package-version this-package)))
+      #:modules
+      '((ice-9 match)
+        ((guix build gnu-build-system) #:prefix gnu:)
+        (guix build go-build-system)
+        (guix build utils))
+      #:phases
+      #~(modify-phases %standard-phases
+          (replace 'unpack
+            (lambda args
+              (unsetenv "GO111MODULE")
+              (apply (assoc-ref gnu:%standard-phases 'unpack) args)
+              (copy-recursively
+               #+(this-package-native-input "vendored-go-dependencies")
+               "vendor")))
+          (replace 'install-license-files
+            (assoc-ref gnu:%standard-phases 'install-license-files))
+          (add-after 'install 'install-extras
+            (lambda _
+              (let ((sing-box
+                     (or (which "sing-box")
+                         (in-vicinity #$output "bin/sing-box"))))
+                (map
+                 (match-lambda
+                   ((shell . path)
+                    (let ((file (in-vicinity #$output path)))
+                      (mkdir-p (dirname file))
+                      (with-output-to-file file
+                        (lambda ()
+                          (invoke sing-box "completion" shell))))))
+                 '(("bash" . "etc/bash_completion.d/sing-box")
+                   ("fish" . "share/fish/vendor_completions.d/sing-box.fish")
+                   ("zsh"  . "share/zsh/site-functions/_sing-box")))))))))
+    (native-inputs
+     (append
+      (list (origin
+              (method (go-mod-vendor #:go go-1.23))
+              (uri (package-source this-package))
+              (file-name "vendored-go-dependencies")
+              (sha256
+               (base32
+                "11607z2j6q6y20z7lkvhcd8z498mry6291lx69j73qa88wbc0mzd"))))
+      (if (%current-target-system)
+          (list this-package)
+          '())))
+    (home-page "https://sing-box.sagernet.org/")
+    (synopsis "Universal proxy platform")
+    (description
+     "@command{sing-box} is a customizable and univsersal proxy platform that
+can be used to create network proxy servers, clients and transparent proxies.")
+    (license license:gpl3+)))
+
 (define-public socks2http
   (package
     (name "socks2http")

@@ -281,26 +281,7 @@ in sidebar.")
   (make-icecat-extension sidebery))
 
 (define-public sing-box-bin
-  (package
-    (name "sing-box-bin")
-    (version "1.11.8")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/SagerNet/sing-box/releases/download/v"
-                    version "/sing-box-" version "-linux-amd64.tar.gz"))
-              (sha256
-               (base32
-                "0fdv8wvkydm20fgpy30hm3b6v3vz09pim178faximpyv4846m46z"))))
-    (build-system copy-build-system)
-    (arguments (list #:install-plan #~'(("sing-box" "bin/"))))
-    (supported-systems '("x86_64-linux"))
-    (home-page "https://sing-box.sagernet.org/")
-    (synopsis "Universal proxy platform")
-    (description
-     "This package provides @command{sing-box}, a universal proxy platform.")
-    (license license:gpl3+)
-    (properties '((upstream-name . "sing-box")))))
+  (deprecated-package "sing-box-bin" sing-box))
 
 (define-public tailscale-bin
   (deprecated-package "tailscale-bin" tailscale))
