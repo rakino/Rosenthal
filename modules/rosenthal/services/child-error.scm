@@ -127,6 +127,8 @@
 ;;
 
 
+(define-maybe string)
+
 (define-configuration cloudflare-tunnel-configuration
   (cloudflared
    (file-like cloudflared)
@@ -148,8 +150,11 @@ headers.  This can expose sensitive information in your logs.")
 
   ;; Subcommand options
   (token
-   (string "")
+   maybe-string
    "The Tunnel token.")
+  (token-file
+   maybe-string
+   "Secert file for the Tunnel token.")
   (extra-options
    (list-of-strings '())
    "List of extra options.")
@@ -158,7 +163,7 @@ headers.  This can expose sensitive information in your logs.")
 (define cloudflare-tunnel-shepherd-service
   (match-record-lambda <cloudflare-tunnel-configuration>
       (cloudflared log-level log-file extra-tunnel-options
-                   token extra-options)
+                   token token-file extra-options)
     (list (shepherd-service
            (documentation "Run cloudflared.")
            (provision '(cloudflare-tunnel))
@@ -175,7 +180,14 @@ headers.  This can expose sensitive information in your logs.")
                      #:group "nogroup"
                      #:log-file #$log-file
                      #:environment-variables
-                     (list (format #f "TUNNEL_TOKEN=~a" #$token))))
+                     (list #$@(if (maybe-value-set? token)
+                                  (list (format #f "TUNNEL_TOKEN=~a"
+                                                token))
+                                  '())
+                           #$@(if (maybe-value-set? token-file)
+                                  (list (format #f "TUNNEL_TOKEN_FILE=~a"
+                                                token-file))
+                                  '()))))
            (stop #~(make-kill-destructor))))))
 
 (define cloudflare-tunnel-service-type
