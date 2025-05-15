@@ -88,6 +88,8 @@
 (define (serialize-boolean field-name val)
   (serialize-field field-name (if val "true" "false")))
 
+(define-maybe boolean)
+
 (define cidr4? (@@ (gnu services vpn) cidr4?))
 
 (define serialize-cidr4 serialize-field)
@@ -100,10 +102,14 @@
 (define (serialize-randomization-method field-name val)
   (serialize-field field-name (or val 'disabled)))
 
+(define-maybe randomization-method)
+
 (define (randomization-range? val)
   (memv val '(full nic)))
 
 (define serialize-randomization-range serialize-field)
+
+(define-maybe randomization-range)
 
 (define (signal-strength? val)
   (and (number? val)
@@ -112,16 +118,22 @@
 
 (define serialize-signal-strength serialize-field)
 
+(define-maybe signal-strength)
+
 (define (seconds? val)
   (and (integer? val)
        (not (negative? val))))
 
 (define serialize-seconds serialize-field)
 
+(define-maybe seconds)
+
 (define (protection-mode? val)
   (memv val '(0 1 2)))
 
 (define serialize-protection-mode serialize-field)
+
+(define-maybe protection-mode)
 
 (define (resolution-method? val)
   (memv val '(#f resolvconf)))
@@ -131,7 +143,11 @@
 
 (define serialize-integer serialize-field)
 
+(define-maybe integer)
+
 (define serialize-number serialize-field)
+
+(define-maybe number)
 
 (define (serialize-list-of-strings field-name val)
   (serialize-field field-name (string-join val ",")))
@@ -141,6 +157,8 @@
 (define list-of-cidr4? (list-of cidr4?))
 
 (define serialize-list-of-cidr4 serialize-list-of-strings)
+
+(define-maybe list-of-cidr4)
 
 (define-configuration iwd-configuration
   (iwd
@@ -157,12 +175,12 @@
    "Enable network configuration.")
 
   (use-default-interface?
-   (boolean #f)
+   maybe-boolean
    "Do not allow iwd to destroy / recreate wireless interfaces at startup,
 including default interfaces.")
 
   (address-randomization
-   (randomization-method #f)
+   maybe-randomization-method
    "Available values are @code{#f}, @code{once} and @code{network}.  @code{#f}
 for default kernel behavior, @code{once} to randomize the MAC address when iwd
 starts or the hardware is detected for the first time, @code{network} to
@@ -170,43 +188,43 @@ randomize the MAC address on each connection to a network (the MAC address is
 generated based on the SSID and permanent address of the adapter).")
 
   (address-randomization-range
-   (randomization-range 'full)
+   maybe-randomization-range
    "Available values are @code{nic} and @code{full}.  @code{nic} to only
 randomize the NIC specific octets (last 3 ones), @code{full} to randomize all
 6 octets of the address.")
 
   (roam-threshold
-   (signal-strength -70)
+   maybe-signal-strength
    "Value in dBm, control how aggressively iwd roams when connected to a 2.4Ghz
 access point.")
 
   (roam-threshold-5g
-   (signal-strength -76)
+   maybe-signal-strength
    "Value in dBm, control how aggressively iwd roams when connected to a 5Ghz
 access point.")
 
   (roam-retry-interval
-   (seconds 60)
+   maybe-seconds
    "How long to wait before attempting to roam again if the last roam attempt
 failed, or if the signal of the newly connected BSS is still considered weak.")
 
   (management-frame-protection
-   (protection-mode 1)
+   maybe-protection-mode
    "Available values are @code{0}, @code{1} and @code{2}.  @code{0} to
 completely turn off MFP (even if the hardware is capable), @code{1} to enable
 MFP if the local hardware and remote AP both support it, @code{2} to always
 require MFP.")
 
   (control-port-over-nl80211?
-   (boolean #t)
+   maybe-boolean
    "Enable sending EAPoL packets over NL80211.")
 
   (disable-anqp?
-   (boolean #t)
+   maybe-boolean
    "Disable ANQP queries.")
 
   (disable-ocv?
-   (boolean #f)
+   maybe-boolean
    "Disable Operating Channel Validation.")
 
   (country
@@ -215,7 +233,7 @@ require MFP.")
 
   ;; Network
   (enable-ipv6?
-   (boolean #t)
+   maybe-boolean
    "Configure IPv6 addresses and routes.")
 
   (name-resolving-service
@@ -226,57 +244,57 @@ resolution method used by the system and must be used in conjunction with
 information.")
 
   (route-priority-offset
-   (integer 300)
+   maybe-integer
    "Configure a route priority offset used by the system to prioritize the
 default routes.  The route with lower priority offset is preferred.")
 
   ;; Blacklist
   (initial-timeout
-   (seconds 60)
+   maybe-seconds
    "The initial time that a BSS spends on the blacklist.")
 
   (multiplier
-   (integer 30)
+   maybe-integer
    "If the BSS was blacklisted previously and another connection attempt has
 failed after the initial timeout has expired, then the BSS blacklist time will
 be extended by a multiple of @code{multiplier} for each unsuccessful attempt up
 to @code{maximum-timeout} time.")
 
   (maximum-timeout
-   (seconds 86400)
+   maybe-seconds
    "Maximum time that a BSS is blacklisted.")
 
   ;; Rank
   (band-modifier-5ghz
-   (number 1.0)
+   maybe-number
    "Increase or decrease the preference for 5GHz access points by increasing or
 decreasing the value of this modifier.")
 
   (band-modifier-6ghz
-   (number 1.0)
+   maybe-number
    "Increase or decrease the preference for 6GHz access points by increasing or
 decreasing the value of this modifier.")
 
   ;; Scan
   (disable-periodic-scan?
-   (boolean #f)
+   maybe-boolean
    "Disable periodic scan.")
 
   (initial-periodic-scan-interval
-   (seconds 10)
+   maybe-seconds
    "The initial periodic scan interval upon disconnect.")
 
   (maximum-periodic-scan-interval
-   (seconds 300)
+   maybe-seconds
    "The maximum periodic scan interval.")
 
   (disable-roaming-scan?
-   (boolean #f)
+   maybe-boolean
    "Disable roaming scan.")
 
   ;; IPv4
   (ap-address-pool
-   (list-of-cidr4 '("192.168.0.0/16"))
+   maybe-list-of-cidr4
    "Define the space of IPs used for the AP mode subnet addresses and the DHCP
 server.")
 
