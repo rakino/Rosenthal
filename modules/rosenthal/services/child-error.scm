@@ -160,13 +160,22 @@ headers.  This can expose sensitive information in your logs.")
    "List of extra options.")
   (no-serialization))
 
+(define %cloudflare-tunnel-accounts
+  (list (user-account
+          (name "cloudflared")
+          (group "nogroup")
+          (system? #t)
+          (home-directory "/var/empty")
+          (create-home-directory? #f)
+          (shell (file-append shadow "/sbin/nologin")))))
+
 (define cloudflare-tunnel-shepherd-service
   (match-record-lambda <cloudflare-tunnel-configuration>
       (cloudflared log-level log-file extra-tunnel-options
                    token token-file extra-options)
     (list (shepherd-service
            (documentation "Run cloudflared.")
-           (provision '(cloudflare-tunnel))
+           (provision '(cloudflare-tunnel cloudflared))
            (requirement '(loopback networking))
            (start #~(make-forkexec-constructor
                      (list #$(file-append cloudflared "/bin/cloudflared")
@@ -176,7 +185,7 @@ headers.  This can expose sensitive information in your logs.")
                            #$@extra-tunnel-options
                            "run"
                            #$@extra-options)
-                     #:user "nobody"
+                     #:user "cloudflared"
                      #:group "nogroup"
                      #:log-file #$log-file
                      #:environment-variables
@@ -196,6 +205,8 @@ headers.  This can expose sensitive information in your logs.")
    (extensions
     (list (service-extension shepherd-root-service-type
                              cloudflare-tunnel-shepherd-service)
+          (service-extension account-service-type
+                             (const %cloudflare-tunnel-accounts))
           (service-extension log-rotation-service-type
                              (compose list cloudflare-tunnel-configuration-log-file))))
    (default-value (cloudflare-tunnel-configuration))
