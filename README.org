@@ -24,17 +24,7 @@ Channel definition:
 
 For configuration, see [[https://guix.gnu.org/manual/devel/en/html_node/Specifying-Additional-Channels.html][Specifying Additional Channels]], [[https://guix.gnu.org/manual/devel/en/html_node/Customizing-the-System_002dWide-Guix.html][Customizing the System-Wide Guix]] and [[https://guix.gnu.org/manual/devel/en/html_node/Guix-Home-Services.html#index-home_002dchannels_002dservice_002dtype][~home-channels-service-type~]] in /GNU Guix Reference Manual/.
 
-Substitutes (see [[https://guix.gnu.org/manual/devel/en/html_node/Substitutes.html][Substitutes]] in /GNU Guix Reference Manual/) are available on [[https://substitute.boiledscript.com/][~https://substitute.boiledscript.com~]], with the following signing key:
-#+begin_src scheme
-  (public-key
-   (ecc
-    (curve Ed25519)
-    (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))
-#+end_src
-
 Wiki: https://codeberg.org/hako/Rosenthal/wiki
-
-Build status: https://ci.boiledscript.com/jobset/rosenthal
 
 Git repositories:
 - Codeberg: https://codeberg.org/hako/Rosenthal
