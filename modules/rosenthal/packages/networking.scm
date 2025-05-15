@@ -13,7 +13,8 @@
   #:use-module (gnu packages dns)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages golang-build)
-  #:use-module (gnu packages linux))
+  #:use-module (gnu packages linux)
+  #:use-module (rosenthal packages golang))
 
 (define-public cloudflared
   (package
@@ -33,7 +34,7 @@
                 "0mblq1zvl7722k3515yc99ym18li39anlcmj8s10m7kkp9yfc596"))))
     (build-system go-build-system)
     (arguments
-     (list #:go go-1.23
+     (list #:go go-cloudflare
            #:install-source? #f
            #:import-path "github.com/cloudflare/cloudflared/cmd/cloudflared"
            #:unpack-path "github.com/cloudflare/cloudflared"
