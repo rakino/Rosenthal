@@ -253,7 +253,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.80.3")
+    (version "1.82.5")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -262,7 +262,7 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "07s8kwksvd0f9r65zkrhp3sn4jrv0c8g5w0wbiv9qq950l8gdv2h"))
+                "05g3bwmdmhdq45v04znly8v3jjxh45b0gh959x5g6k9yq27ssn04"))
               (modules '((guix build utils)))
               (snippet
                '(begin
@@ -273,7 +273,7 @@ a SOCKS5 proxy.")
     (arguments
      (list
       #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-      #:go go-1.23
+      #:go go-1.24
       #:install-source? #f
       #:import-path "."
       #:build-flags
@@ -359,12 +359,12 @@ a SOCKS5 proxy.")
     (native-inputs
      (append
       (list (origin
-              (method (go-mod-vendor #:go go-1.23))
+              (method (go-mod-vendor #:go go-1.24))
               (uri (package-source this-package))
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "1lp5xqb9nmz1dqmmvdnnl0qla7zw6v25jbyf6shrl65rh270wmgk"))))
+                "15hpl0binvfwxazawd24xx32mxnfmpvprr5pk0854ashl0vj89aa"))))
       (if (%current-target-system)
           (list this-package)
           '())))
