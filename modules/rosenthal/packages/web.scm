@@ -106,7 +106,7 @@ from serving static websites to running dynamic web applications.")
 (define-public hugo
   (package
     (name "hugo")
-    (version "0.147.2")
+    (version "0.147.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -115,11 +115,11 @@ from serving static websites to running dynamic web applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0j0grh8sxd6ma9g406cbcwhwgfdazc4lg3r7jmiyrw2287d218yz"))))
+                "17r4lhxkrv4rd2g5ap7glxnhkvg611g0z143bfj0kx80ir7rbdq8"))))
     (build-system go-build-system)
     (arguments
      (list
-      #:go go-1.23
+      #:go go-1.24
       #:install-source? #f
       #:import-path "."
       #:build-flags
@@ -169,7 +169,7 @@ from serving static websites to running dynamic web applications.")
                             (or native-inputs inputs) file))))))))))
     (native-inputs
      (list (origin
-             (method (go-mod-vendor #:go go-1.23))
+             (method (go-mod-vendor #:go go-1.24))
              (uri (package-source this-package))
              (file-name "vendored-go-dependencies")
              (sha256
