@@ -12,7 +12,8 @@
   #:use-module (guix build-system go)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages image)
-  #:use-module (gnu packages web))
+  #:use-module (gnu packages web)
+  #:use-module (gnu packages version-control))
 
 (define-public buku-run-dev
   (let ((revision "23")
@@ -113,11 +114,11 @@ designed for flexibility.  With its advanced templating system and fast asset
 pipelines, Hugo renders a complete site in seconds, often less.")
     (license license:asl2.0)))
 
-;; TODO: Package Forgejo without vendored dependencies.
 (define-public forgejo
   (package
     (name "forgejo")
     (version "10.0.3")
+    ;; TODO: Address npm dependencies and fetch from git.
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -125,13 +126,17 @@ pipelines, Hugo renders a complete site in seconds, often less.")
                     version "/forgejo-src-" version ".tar.gz"))
               (sha256
                (base32
-                "0cqp4x3xrvr7q1pkijqmf6jnx3wahi20xjfrv7ap81ykif83269x"))))
+                "0cqp4x3xrvr7q1pkijqmf6jnx3wahi20xjfrv7ap81ykif83269x"))
+              (modules '((guix build utils)))
+              ;; Avoid downloading toolchain.
+              (snippet '(substitute* "go.mod"
+                          (("^toolchain.*") "")))))
     (build-system go-build-system)
     (arguments
-     (list #:go go-1.23
+     (list #:tests? (not (%current-target-system)) ;TODO: Run test suite.
+           #:go go-1.23
            #:install-source? #f
-           #:tests? #f                  ;TODO
-           #:import-path "code.gitea.io/gitea"
+           #:import-path "."
            #:build-flags
            #~(list (string-append
                     "-ldflags="
@@ -149,40 +154,38 @@ pipelines, Hugo renders a complete site in seconds, often less.")
            #:phases
            #~(modify-phases %standard-phases
                (replace 'unpack
-                 (assoc-ref gnu:%standard-phases 'unpack))
-               (add-after 'unpack 'support-module
-                 (lambda _
+                 (lambda args
                    (unsetenv "GO111MODULE")
-                   (substitute* "go.mod"
-                     (("^toolchain.*") ""))))
-               (replace 'build
-                 (lambda* (#:key build-flags (parallel-build? #t)
-                           #:allow-other-keys)
-                   (let* ((njobs (if parallel-build? (parallel-job-count) 1)))
-                     (setenv "GOMAXPROCS" (number->string njobs)))
-                   (apply invoke "go" "install"
-                          "-v" "-x"
-                          "-ldflags=-s -w"
-                          "-trimpath"
-                          build-flags)))
-               (replace 'install
+                   (apply (assoc-ref gnu:%standard-phases 'unpack) args)))
+               (replace 'install-license-files
+                 (assoc-ref gnu:%standard-phases 'install-license-files))
+               (add-after 'install 'rename-binary
+                 (lambda _
+                   (rename-file (in-vicinity #$output "bin/gitea")
+                                (in-vicinity #$output "bin/forgejo"))))
+               (add-after 'install 'install-extras
                  (lambda _
                    (mkdir-p (in-vicinity #$output "/etc/forgejo"))
-                   (copy-file
-                    "custom/conf/app.example.ini"
-                    (in-vicinity #$output "etc/forgejo/app.ini"))
+                   (copy-file "custom/conf/app.example.ini"
+                              (in-vicinity #$output "etc/forgejo/app.ini"))
                    (for-each
                     (lambda (dir)
                       (copy-recursively
                        dir (string-append #$output "/etc/forgejo/" dir)))
-                    '("options" "public" "templates"))
-                   (with-directory-excursion (in-vicinity #$output "bin")
-                     (rename-file "gitea" "forgejo"))))
-               (replace 'install-license-files
-                 (assoc-ref gnu:%standard-phases 'install-license-files)))))
+                    '("options" "public" "templates"))))
+               (delete 'check)
+               (add-after 'install 'check
+                 (lambda* (#:key tests? #:allow-other-keys)
+                   (when tests?
+                     (let ((gitea (in-vicinity #$output "bin/gitea")))
+                       (invoke gitea "--help")
+                       (invoke gitea "--version"))))))))
+    (native-inputs (list git-minimal))
+    (home-page "https://forgejo.org/")
     (synopsis "Lightweight software forge")
     (description
-     "Forgejo is a self-hosted lightweight software forge.  Easy to install and
-low maintenance, it just does the job.")
-    (home-page "https://forgejo.org/")
+     "Forgejo is a self-hosted, lightweight software forge designed to
+facilitate collaborative software development.  It is built to be easy to
+install and maintain, making it an ideal choice for teams and organizations
+looking for a reliable platform to manage their software projects.")
     (license license:gpl3+)))
