@@ -58,4 +58,6 @@ foreign CDN results so you also get best CDN node for your VPN at the same
 time.
 @item Block ISP ads on NXDOMAIN result (like 114so).
 @end itemize")
-      (license license:wtfpl2))))
+      (license license:wtfpl2)
+      (properties
+       '((rosenthal-update? . #f))))))

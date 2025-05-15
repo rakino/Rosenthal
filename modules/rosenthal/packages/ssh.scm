@@ -23,4 +23,7 @@
        (modify-inputs (package-inputs base)
          (append `(,zlib "static"))
          (replace "libtomcrypt" `(,libtomcrypt "static"))
-         (replace "libtommath" `(,libtommath "static")))))))
+         (replace "libtommath" `(,libtommath "static"))))
+      (properties
+       `(,@(package-properties base)
+         (rosenthal-update? . #f))))))

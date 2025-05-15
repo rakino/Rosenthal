@@ -258,4 +258,6 @@ pipelines, Hugo renders a complete site in seconds, often less.")
 facilitate collaborative software development.  It is built to be easy to
 install and maintain, making it an ideal choice for teams and organizations
 looking for a reliable platform to manage their software projects.")
-    (license license:gpl3+)))
+    (license license:gpl3+)
+    (properties
+     '((rosenthal-update? . #f)))))

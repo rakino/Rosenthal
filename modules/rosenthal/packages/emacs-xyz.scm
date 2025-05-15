@@ -50,7 +50,9 @@ It currently only offers basic highlighting and primitive indentation.")
       (description
        "This package provides enhanced completions for the tailscale command
 and it's subcommands.")
-      (license license:gpl3+))))
+      (license license:gpl3+)
+      (properties
+       '((rosenthal-update? . #f))))))
 
 (define-public emacs-treesit-auto
   (package
@@ -73,7 +75,9 @@ and it's subcommands.")
      "@code{treesit-auto} is an Emacs package for automatically using tree-sitter
 major modes and falling back to the original major mode when its tree-sitter
 counterpart is unavailable.")
-    (license license:gpl3+)))
+    (license license:gpl3+)
+    (properties
+     '((rosenthal-update? . #f)))))
 
 ;; https://issues.guix.gnu.org/59552
 (define-public emacs-wakatime-mode
@@ -104,4 +108,6 @@ counterpart is unavailable.")
       (description
        "WakaTime mode is an Emacs minor mode for automatic time tracking and
 metrics generated from your programming activity.")
-      (license license:gpl3+))))
+      (license license:gpl3+)
+      (properties
+       '((rosenthal-update? . #f))))))

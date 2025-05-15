@@ -67,7 +67,9 @@
       (synopsis "Rust bindings for PipeWire")
       (description "This package provides Rust bindings for PipeWire.")
       (license license:expat)
-      (properties '((hidden? . #t))))))
+      (properties
+       '((hidden? . #t)
+         (rosenthal-update? . #f))))))
 
 (define-public rust-smithay
   (let ((commit "0cd3345c59f7cb139521f267956a1a4e33248393")
@@ -118,7 +120,9 @@ will need, in a generic fashion.
 It supports the @code{wayland}, @code{wayland-protocols}, and some external
 extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
       (license license:expat)
-      (properties '((hidden? . #t))))))
+      (properties
+       '((hidden? . #t)
+         (rosenthal-update? . #f))))))
 
 (define-public niri
   (package

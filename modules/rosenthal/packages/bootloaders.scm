@@ -47,4 +47,7 @@
                   (delete-file "configure")))))))
       (native-inputs
        (modify-inputs (package-native-inputs base)
-         (append autoconf automake python-minimal-wrapper))))))
+         (append autoconf automake python-minimal-wrapper)))
+      (properties
+       `(,@(package-properties base)
+         (rosenthal-update? . #f))))))

@@ -20,4 +20,7 @@
          ((#:phases _) #~%standard-phases)))
       (inputs
        (modify-inputs (package-inputs base)
-         (delete "libx11" "libxext" "libxfixes"))))))
+         (delete "libx11" "libxext" "libxfixes")))
+      (properties
+       `(,@(package-properties base)
+         (rosenthal-update? . #f))))))

@@ -35,4 +35,6 @@
       (inherit base)
       (arguments
        (append '(#:tests? #f)           ;FIXME
-               (package-arguments base))))))
+               (package-arguments base)))
+      (properties
+       '((rosenthal-update? . #f))))))

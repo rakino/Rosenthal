@@ -25,4 +25,7 @@
               ;; FIXME: All mdev tests fail when building staticly.
               (add-before 'check 'disable-failing-tests
                 (lambda _
-                  (delete-file "testsuite/mdev.tests"))))))))))
+                  (delete-file "testsuite/mdev.tests")))))))
+      (properties
+       `(,@(package-properties base)
+         (rosenthal-update? . #f))))))

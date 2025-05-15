@@ -246,7 +246,9 @@ can be used to create network proxy servers, clients and transparent proxies.")
     (description
      "This package provides a simple tool to plumb HTTP proxy requests through
 a SOCKS5 proxy.")
-    (license license:expat)))
+    (license license:expat)
+    (properties
+     '((rosenthal-update? . #f)))))
 
 (define-public tailscale
   (package

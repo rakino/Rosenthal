@@ -3,6 +3,7 @@
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages binaries)
+  #:use-module (srfi srfi-1)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix gexp)
   #:use-module (guix deprecation)
@@ -29,7 +30,7 @@
 (define-public atuin-bin
   (deprecated-package "atuin-bin" atuin))
 
-(define bitwarden
+(define-public bitwarden
   (package
     (name "bitwarden")
     (version "2025.3.1")
@@ -50,10 +51,18 @@
     (description
      "This package provides browser extension for Bitwarden client.")
     (license license:gpl3)
-    (properties '((addon-id . "{446900e4-71c2-419f-a6a7-df9c091e268b}")))))
+    (properties
+     '((addon-id . "{446900e4-71c2-419f-a6a7-df9c091e268b}")
+       (hidden? . #t)
+       (rosenthal-update? . #f)))))
 
 (define-public bitwarden/icecat
-  (make-icecat-extension bitwarden))
+  (let ((base (make-icecat-extension bitwarden)))
+    (package
+      (inherit base)
+      (properties
+       `(,@(alist-delete 'hidden? (package-properties base))
+         (rosenthal-update? . #f))))))
 
 (define-public hugo-bin
   (deprecated-package "hugo-bin" hugo))
@@ -180,11 +189,14 @@ eBooks.")
    (license license:expat)
    (properties '((upstream-name . "komga")))))
 
-(define miniflux-injector
+(define-public miniflux-injector
   (package
     (name "miniflux-injector")
     (version "2.3.3")
-    (properties '((addon-id . "{528ec801-2e29-4cb9-ae71-5a90503138d1}")))
+    (properties
+     '((addon-id . "{528ec801-2e29-4cb9-ae71-5a90503138d1}")
+       (hidden? . #t)
+       (rosenthal-update? . #f)))
     (source
      (origin
        (method url-fetch/zipbomb)
@@ -219,7 +231,12 @@ results are added in a sidebar next to search engine results.")
     (license license:expat)))
 
 (define-public miniflux-injector/icecat
-  (make-icecat-extension miniflux-injector))
+  (let ((base (make-icecat-extension miniflux-injector)))
+    (package
+      (inherit base)
+      (properties
+       `(,@(alist-delete 'hidden? (package-properties base))
+         (rosenthal-update? . #f))))))
 
 (define-public navidrome-bin
   (package
