@@ -13,12 +13,13 @@
   #:use-module (gnu packages golang)
   #:use-module (gnu packages image)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages version-control))
+  #:use-module (gnu packages version-control)
+  #:use-module (rosenthal packages golang))
 
 (define-public caddy
   (package
     (name "caddy")
-    (version "2.9.1")
+    (version "2.10.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -27,13 +28,13 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1cnkx7n2ca49xgzqx3lanh1bm1mkpnnl03vjzy7gd4z6dq2mqvax"))
+                "00crxr956sp865pc3mg0zsacsy80s8v4jgqpmbq3hrsk2gcdsc47"))
               (modules '((guix build utils)))
               (snippet '(substitute* "go.mod"
                           (("^toolchain.*") "")))))
     (build-system go-build-system)
     (arguments
-     (list #:go go-1.23
+     (list #:go go-1.24
            #:tests? (not (%current-target-system)) ;TODO: Run test suite.
            #:install-source? #f
            #:import-path "./cmd/caddy"
@@ -86,12 +87,12 @@
                        (invoke caddy "version"))))))))
     (native-inputs
      (list (origin
-             (method (go-mod-vendor #:go go-1.23))
+             (method (go-mod-vendor #:go go-1.24))
              (uri (package-source this-package))
              (file-name "vendored-go-dependencies")
              (sha256
               (base32
-               "13viia2v0ac3nbg0pxngiq05wbd563xs5k64l3ypy5p7ljx6kfda")))))
+               "0iwxhc85xnhpqrahiaw1017vxg27hc5q22rc0f96g42mc2mbi2zl")))))
     (home-page "https://caddyserver.com/")
     (synopsis "Extensible HTTP web server with automatic HTTPS")
     (description
