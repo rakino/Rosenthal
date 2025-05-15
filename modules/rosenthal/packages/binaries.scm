@@ -221,6 +221,32 @@ results are added in a sidebar next to search engine results.")
 (define-public miniflux-injector/icecat
   (make-icecat-extension miniflux-injector))
 
+(define-public navidrome-bin
+  (package
+    (name "navidrome-bin")
+    (version "0.55.2")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/navidrome/navidrome/releases/download/v"
+                    version "/navidrome_" version "_linux_amd64.tar.gz"))
+              (sha256
+               (base32
+                "0h3984p10am39y619ibrvk1g96ra52kig929n792399q2jw1lrlp"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("navidrome" "bin/"))))
+    (supported-systems '("x86_64-linux"))
+    (home-page "https://www.navidrome.org/")
+    (synopsis "Web-based music collection server and streamer")
+    (description
+     "Navidrome is a self-hosted music server that allows users to stream and
+manage their music collections.  It provides a web interface and is compatible
+with the Subsonic API.")
+    (license license:expat)
+    (properties '((upstream-name . "navidrome")))))
+
 (define-public shadow-tls-bin
   (package
     (name "shadow-tls-bin")
