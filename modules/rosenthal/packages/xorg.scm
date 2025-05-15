@@ -8,10 +8,10 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cargo)
+  #:use-module (rosenthal utils cargo)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages pkg-config)
-  #:use-module (gnu packages xorg)
-  #:use-module (rosenthal packages rust-crates))
+  #:use-module (gnu packages xorg))
 
 (define-public xwayland-satellite
   (package

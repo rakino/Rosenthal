@@ -8,7 +8,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cargo)
-  #:use-module (rosenthal packages rust-crates))
+  #:use-module (rosenthal utils cargo))
 
 (define-public atuin
   (package

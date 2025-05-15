@@ -8,6 +8,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cargo)
+  #:use-module (rosenthal utils cargo)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gl)
@@ -17,8 +18,7 @@
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages wm)
-  #:use-module (gnu packages xdisorg)
-  #:use-module (rosenthal packages rust-crates))
+  #:use-module (gnu packages xdisorg))
 
 (define-public rust-pipewire
   (let ((commit "fd3d8f7861a29c2eeaa4c393402e013578bb36d9")

@@ -3,16 +3,13 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages rust-crates)
-  #:use-module (guix diagnostics)
-  #:use-module (guix i18n)
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix build-system cargo)
   #:use-module (rosenthal packages wm)
-  #:export (lookup-cargo-inputs
-            rosenthal-cargo-inputs))
+  #:export (lookup-cargo-inputs))
 
 ;;;
 ;;; This file is managed by ‘guix import’.  DO NOT add definitions manually.
@@ -48,15 +45,6 @@
            (lambda (name)
              "Return the inputs for NAME."
              (hashq-ref table name))))))))
-
-(define* (rosenthal-cargo-inputs name #:key (module '(rosenthal packages rust-crates)))
-  "Lookup Cargo inputs for NAME defined in MODULE, return an empty list if
-        unavailable."
-  (let ((lookup (module-ref (resolve-interface module) 'lookup-cargo-inputs)))
-    (or (lookup name)
-        (begin
-          (warning (G_ "no Cargo inputs available for '~a'~%") name)
-          '()))))
 
 ;;;
 ;;; Rust dependencies fetched from crates.io and non-workspace development
