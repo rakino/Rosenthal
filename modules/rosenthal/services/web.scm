@@ -7,6 +7,7 @@
   #:use-module (guix records)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages version-control)
+  #:use-module (gnu packages video)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages web)
   #:use-module (gnu services)
@@ -28,6 +29,9 @@
 
             misskey-configuration
             misskey-service-type
+
+            navidrome-configuration
+            navidrome-service-type
 
             vaultwarden-configuration
             vaultwarden-service-type))
@@ -348,6 +352,77 @@
                              misskey-oci-containers)))
    (default-value (misskey-configuration))
    (description "Run Misskey, an interplanetary microblogging platform.")))
+
+
+;;;
+;;; Navidrome
+;;;
+
+
+(define-configuration navidrome-configuration
+  (navidrome
+   (file-like navidrome-bin)
+   "")
+  (ffmpeg
+   (file-like ffmpeg)
+   "")
+  (auto-start?
+   (boolean #t)
+   "")
+  (extra-config
+   (string "")
+   "")
+  (no-serialization))
+
+(define %navidrome-accounts
+  (list (user-group (name "navidrome") (system? #t))
+        (user-account
+         (name "navidrome")
+         (group "navidrome")
+         (system? #t)
+         (comment "Navidrome user")
+         (home-directory "/var/lib/navidrome"))))
+
+(define navidrome-shepherd-service
+  (match-record-lambda <navidrome-configuration>
+      (navidrome ffmpeg auto-start? extra-config)
+    (let ((config-file
+           (mixed-text-file
+            "navidrome.toml"
+            "DataFolder = '/var/lib/navidrome'\n"
+            "CacheFolder = '/var/lib/navidrome/cache'\n"
+            "EnableInsightsCollector = false\n"
+            extra-config)))
+      (list (shepherd-service
+             (documentation "Run Navidrome.")
+             (provision '(navidrome))
+             (requirement '(loopback user-processes))
+             (start
+              #~(make-forkexec-constructor
+                 (list #$(file-append navidrome "/bin/navidrome")
+                       "--configfile" #$config-file)
+                 #:user "navidrome"
+                 #:group "navidrome"
+                 #:log-file "/var/log/navidrome.log"
+                 #:environment-variables
+                 (list "LC_ALL=C.UTF-8"
+                       (string-append "PATH=" #$ffmpeg "/bin"))))
+             (stop
+              #~(make-kill-destructor))
+             (auto-start? auto-start?)
+             (actions
+              (list (shepherd-configuration-action config-file))))))))
+
+(define navidrome-service-type
+  (service-type
+   (name 'navidrome)
+   (extensions
+    (list (service-extension account-service-type
+                             (const %navidrome-accounts))
+          (service-extension shepherd-root-service-type
+                             navidrome-shepherd-service)))
+   (default-value (navidrome-configuration))
+   (description "Run Navidrome.")))
 
 
 ;;
