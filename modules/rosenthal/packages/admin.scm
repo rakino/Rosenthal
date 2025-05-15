@@ -19,7 +19,7 @@
 (define-public dinit
   (package
     (name "dinit")
-    (version "0.19.3")
+    (version "0.19.4")
     (source
      (origin
        (method git-fetch)
@@ -28,7 +28,7 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0gw5jvh9bxnnwdv7ajscs03d6x2hcs9i3hxkqfjs19d4wr5rghyq"))))
+        (base32 "09k7airphnpg6hmif91d9nfi5fhz40qh52sp8vnrshfy7mhkq571"))))
     (build-system meson-build-system)
     (arguments
      (list #:configure-flags
