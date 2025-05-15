@@ -133,8 +133,7 @@ WebUI\\Password_PBKDF2=\"@ByteArray(ARQ77eY1NUZaQsuDHbIMCA==:0WMRkYTUWVT9wVvdDtH
                 #$(file-append qbittorrent "/bin/qbittorrent-nox")
                 #$(string-append "--webui-port=" (number->string webui-port))
                 #$@extra-options)))
-           (stop #~(make-kill-destructor #:grace-period 1800))
-           (auto-start? #f)))))
+           (stop #~(make-kill-destructor #:grace-period 1800))))))
 
 (define home-qbittorrent-service-type
   (service-type
