@@ -32,6 +32,93 @@
                  (base32
                   "079ygn39px71bypa54jn4z55iq24lxxcy7jv3ijy08iinqbfvldc")))))))
 
+(define-public caddy
+  (package
+    (name "caddy")
+    (version "2.9.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/caddyserver/caddy")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1cnkx7n2ca49xgzqx3lanh1bm1mkpnnl03vjzy7gd4z6dq2mqvax"))
+              (modules '((guix build utils)))
+              (snippet '(substitute* "go.mod"
+                          (("^toolchain.*") "")))))
+    (build-system go-build-system)
+    (arguments
+     (list #:go go-1.23
+           #:tests? (not (%current-target-system)) ;TODO: Run test suite.
+           #:install-source? #f
+           #:import-path "./cmd/caddy"
+           #:build-flags
+           #~(list "-tags" "nobadger nomysql nopgx"
+                   (string-append
+                    "-ldflags="
+                    " -X github.com/caddyserver/caddy/v2.CustomVersion="
+                    #$(package-version this-package)))
+           #:modules
+           '((ice-9 match)
+             ((guix build gnu-build-system) #:prefix gnu:)
+             (guix build go-build-system)
+             (guix build utils))
+           #:phases
+           #~(modify-phases %standard-phases
+               (replace 'unpack
+                 (lambda args
+                   (unsetenv "GO111MODULE")
+                   (apply (assoc-ref gnu:%standard-phases 'unpack) args)
+                   (copy-recursively
+                    #+(this-package-native-input "vendored-go-dependencies")
+                    "vendor")))
+               (replace 'install-license-files
+                 (assoc-ref gnu:%standard-phases 'install-license-files))
+               (add-after 'install 'install-extras
+                 (lambda _
+                   (let ((caddy
+                          (or (which "caddy")
+                              (in-vicinity #$output "bin/caddy"))))
+                     (invoke caddy "manpage" "--directory"
+                             (in-vicinity #$output "share/man/man8"))
+                     (map
+                      (match-lambda
+                        ((shell . path)
+                         (let ((file (in-vicinity #$output path)))
+                           (mkdir-p (dirname file))
+                           (with-output-to-file file
+                             (lambda ()
+                               (invoke caddy "completion" shell))))))
+                      '(("bash" . "etc/bash_completion.d/caddy")
+                        ("fish" . "share/fish/vendor_completions.d/caddy.fish")
+                        ("zsh"  . "share/zsh/site-functions/_caddy"))))))
+               (delete 'check)
+               (add-after 'install 'check
+                 (lambda* (#:key tests? #:allow-other-keys)
+                   (when tests?
+                     (let ((caddy (in-vicinity #$output "bin/caddy")))
+                       (invoke caddy "help")
+                       (invoke caddy "version"))))))))
+    (native-inputs
+     (list (origin
+             (method (go-mod-vendor #:go go-1.23))
+             (uri (package-source this-package))
+             (file-name "vendored-go-dependencies")
+             (sha256
+              (base32
+               "13viia2v0ac3nbg0pxngiq05wbd563xs5k64l3ypy5p7ljx6kfda")))))
+    (home-page "https://caddyserver.com/")
+    (synopsis "Extensible HTTP web server with automatic HTTPS")
+    (description
+     "Caddy is a web server designed for simplicity and ease of use.  It is
+notable for its automatic HTTPS feature, which enables secure connections
+without requiring complex configuration.  Caddy is built with a focus on
+performance and flexibility, making it suitable for a variety of applications,
+from serving static websites to running dynamic web applications.")
+    (license license:asl2.0)))
+
 (define-public hugo
   (package
     (name "hugo")
