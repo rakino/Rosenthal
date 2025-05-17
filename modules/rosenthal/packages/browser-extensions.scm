@@ -1,4 +1,4 @@
-;; SPDX-FileCopyrightText: 2023-2024 Hilton Chain <hako@ultrarare.space>
+;; SPDX-FileCopyrightText: 2023-2025 Hilton Chain <hako@ultrarare.space>
 ;;
 ;; SPDX-License-Identifier: GPL-3.0-or-later
 
@@ -108,6 +108,7 @@ results are added in a sidebar next to search engine results.")
               (uri (git-reference
                     (url "https://github.com/27justin/ohmyech")
                     (commit "ec7935d500a9d354776586e25261cef3595c40c7")))
+              (file-name (git-file-name name version))
               (sha256
                (base32
                 "1mrbm8c8z9zpfrs0qk5qj64f35p7c5lrxfn3nhda0ar0b2rv6593"))
