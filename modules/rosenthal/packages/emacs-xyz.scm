@@ -8,7 +8,32 @@
   #:use-module (guix gexp)
   #:use-module (guix download)
   #:use-module (guix git-download)
-  #:use-module (guix packages))
+  #:use-module (guix packages)
+  #:use-module (gnu packages emacs-xyz))
+
+(define-public emacs-caddyfile-mode
+  (let ((commit "fc41148f5a7eb320f070666f046fb9d88cf17680")
+        (revision "0"))
+    (package
+      (name "emacs-caddyfile-mode")
+      (version (git-version "0.2" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/Schnouki/caddyfile-mode")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1s9kbav5wbyividn9zncd153h89nil0i9aj9hgxa95q9fy84r23w"))))
+      (build-system emacs-build-system)
+      (propagated-inputs (list emacs-loop))
+      (home-page "https://github.com/Schnouki/caddyfile-mode")
+      (synopsis "Emacs major mode for editing Caddy configuration files")
+      (description
+       "This package provides @code{caddyfile-mode}, an Emacs major mode for
+editing Caddyfiles, configuration files for @code{caddy}.")
+      (license license:gpl3+))))
 
 (define-public emacs-nftables-mode
   (package
