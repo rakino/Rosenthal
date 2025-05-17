@@ -30,40 +30,6 @@
 (define-public atuin-bin
   (deprecated-package "atuin-bin" atuin))
 
-(define-public bitwarden
-  (package
-    (name "bitwarden")
-    (version "2025.3.1")
-    (source (origin
-              (method url-fetch/zipbomb)
-              (uri (string-append "https://github.com/bitwarden/clients"
-                                  "/releases/download/browser-v" version
-                                  "/dist-firefox-" version ".zip"))
-              (sha256
-               (base32
-                "03s8z32rc4mwzi61xpzn4f9z6kxwdnshqy61h2kr3cvq9974li3s"))))
-    (build-system copy-build-system)
-    (arguments
-     (list #:install-plan
-           #~'(("." #$(assq-ref (package-properties this-package) 'addon-id)))))
-    (home-page "https://bitwarden.com/")
-    (synopsis "Bitwarden client browser extension")
-    (description
-     "This package provides browser extension for Bitwarden client.")
-    (license license:gpl3)
-    (properties
-     '((addon-id . "{446900e4-71c2-419f-a6a7-df9c091e268b}")
-       (hidden? . #t)
-       (rosenthal-update? . #f)))))
-
-(define-public bitwarden/icecat
-  (let ((base (make-icecat-extension bitwarden)))
-    (package
-      (inherit base)
-      (properties
-       `(,@(alist-delete 'hidden? (package-properties base))
-         (rosenthal-update? . #f))))))
-
 (define-public hugo-bin
   (deprecated-package "hugo-bin" hugo))
 
