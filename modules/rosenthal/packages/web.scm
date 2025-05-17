@@ -188,7 +188,7 @@ pipelines, Hugo renders a complete site in seconds, often less.")
 (define-public forgejo
   (package
     (name "forgejo")
-    (version "10.0.3")
+    (version "11.0.1")
     ;; TODO: Address npm dependencies and fetch from git.
     (source (origin
               (method url-fetch)
@@ -197,7 +197,7 @@ pipelines, Hugo renders a complete site in seconds, often less.")
                     version "/forgejo-src-" version ".tar.gz"))
               (sha256
                (base32
-                "0cqp4x3xrvr7q1pkijqmf6jnx3wahi20xjfrv7ap81ykif83269x"))
+                "1mpdbwq3h0l5yk8f2sjpnyr0b6wngryx3238166rf7l2k5869bmq"))
               (modules '((guix build utils)))
               ;; Avoid downloading toolchain.
               (snippet '(substitute* "go.mod"
@@ -205,7 +205,7 @@ pipelines, Hugo renders a complete site in seconds, often less.")
     (build-system go-build-system)
     (arguments
      (list #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-           #:go go-1.23
+           #:go go-1.24
            #:install-source? #f
            #:import-path "."
            #:build-flags
@@ -214,9 +214,9 @@ pipelines, Hugo renders a complete site in seconds, often less.")
                     " -X main.ReleaseVersion=" #$(package-version this-package)
                     " -X main.Version=" #$(package-version this-package)
                     " -X main.ForgejoVersion=" #$(package-version this-package)
-                    " -X code.gitea.io/gitea/modules/setting.AppWorkPath=/var/lib/forgejo"
-                    " -X code.gitea.io/gitea/modules/setting.CustomPath=" #$output "/etc/forgejo"
-                    " -X code.gitea.io/gitea/modules/setting.CustomConf=/etc/forgejo/app.ini"))
+                    " -X forgejo.org/modules/setting.AppWorkPath=/var/lib/forgejo"
+                    " -X forgejo.org/modules/setting.CustomPath=" #$output "/etc/forgejo"
+                    " -X forgejo.org/modules/setting.CustomConf=/etc/forgejo/app.ini"))
            #:modules
            '(((guix build gnu-build-system) #:prefix gnu:)
              (guix build go-build-system)
@@ -232,7 +232,7 @@ pipelines, Hugo renders a complete site in seconds, often less.")
                  (assoc-ref gnu:%standard-phases 'install-license-files))
                (add-after 'install 'rename-binary
                  (lambda _
-                   (rename-file (in-vicinity #$output "bin/gitea")
+                   (rename-file (in-vicinity #$output "bin/forgejo.org")
                                 (in-vicinity #$output "bin/forgejo"))))
                (add-after 'install 'install-extras
                  (lambda _
@@ -245,12 +245,12 @@ pipelines, Hugo renders a complete site in seconds, often less.")
                        dir (string-append #$output "/etc/forgejo/" dir)))
                     '("options" "public" "templates"))))
                (delete 'check)
-               (add-after 'install 'check
+               (add-after 'rename-binary 'check
                  (lambda* (#:key tests? #:allow-other-keys)
                    (when tests?
-                     (let ((gitea (in-vicinity #$output "bin/gitea")))
-                       (invoke gitea "--help")
-                       (invoke gitea "--version"))))))))
+                     (let ((forgejo (in-vicinity #$output "bin/forgejo")))
+                       (invoke forgejo "--help")
+                       (invoke forgejo "--version"))))))))
     (native-inputs (list git-minimal))
     (home-page "https://forgejo.org/")
     (synopsis "Lightweight software forge")
