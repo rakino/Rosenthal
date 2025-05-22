@@ -111,7 +111,7 @@ different needs.")
 (define-public komga-bin
   (package
    (name "komga-bin")
-   (version "1.21.2")
+   (version "1.21.3")
    (source (origin
              (method url-fetch)
              (uri (string-append
@@ -119,7 +119,7 @@ different needs.")
                    "/komga-" version ".jar"))
              (sha256
               (base32
-               "0ya31gjikr71m8mc2pagm1pgc951q6q6yi7mvpa47qskspbkk30m"))))
+               "1w3yk0xnc6pyqpmzg7vcadmmxxg2zr5lvf88ri7iyihdb85zyn1l"))))
    (build-system copy-build-system)
    (arguments
     (list #:install-plan
