@@ -10,12 +10,44 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (rosenthal utils download)
+  #:use-module (guix build-system copy)
   #:use-module (guix build-system go)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages image)
   #:use-module (gnu packages web)
   #:use-module (gnu packages version-control)
   #:use-module (rosenthal packages golang))
+
+(define-public ai-robots-txt
+  (package
+    (name "ai-robots-txt")
+    (version "1.31")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/ai-robots-txt/ai.robots.txt")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1bvq24w8pq56knhdacjkq93v6l719jcj3jf4fsknlmp9m6izm3zj"))
+              (modules '((guix build utils)))
+              (snippet '(delete-file-recursively "code"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           ''(("." "share/ai-robots-txt/"
+               #:include ("robots.txt"
+                          ".htaccess"
+                          "nginx-block-ai-bots.conf"
+                          "Caddyfile"
+                          "haproxy-block-ai-bots.txt")))))
+    (home-page "https://github.com/ai-robots-txt/ai.robots.txt")
+    (synopsis "List of AI agents and robots to block")
+    (description
+     "This package provides a collection of configuration files to help
+website owners block unwanted AI crawlers from accessing their sites.")
+    (license license:expat)))
 
 (define-public caddy
   (package
