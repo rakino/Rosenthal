@@ -33,7 +33,9 @@
       (description
        "This package provides @code{caddyfile-mode}, an Emacs major mode for
 editing Caddyfiles, configuration files for @code{caddy}.")
-      (license license:gpl3+))))
+      (license license:gpl3+)
+      (properties
+       '((rosenthal-update? . #f))))))
 
 (define-public emacs-nftables-mode
   (package

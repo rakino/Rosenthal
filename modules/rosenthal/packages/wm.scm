@@ -192,4 +192,6 @@ extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
     "Niri is a scrollable-tiling Wayland compositor which arranges windows in a
 scrollable format.  It is considered stable for daily use and performs most
 functions expected of a Wayland compositor.")
-   (license license:gpl3)))
+   (license license:gpl3)
+   (properties
+    '((rosenthal-update? . #f)))))
