@@ -15,7 +15,7 @@
 (define-public bitwarden
   (package
     (name "bitwarden")
-    (version "2025.3.1")
+    (version "2025.5.0")
     (source (origin
               (method url-fetch/zipbomb)
               (uri (string-append "https://github.com/bitwarden/clients"
@@ -23,7 +23,7 @@
                                   "/dist-firefox-" version ".zip"))
               (sha256
                (base32
-                "03s8z32rc4mwzi61xpzn4f9z6kxwdnshqy61h2kr3cvq9974li3s"))))
+                "139q19bn14p70czh9ylb3wjz0kmsgn340lcjn2wwi0vb6pdlwa3f"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
