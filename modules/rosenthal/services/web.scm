@@ -4,6 +4,7 @@
 
 (define-module (rosenthal services web)
   #:use-module (guix gexp)
+  #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages version-control)
@@ -16,9 +17,13 @@
   #:use-module (gnu services databases)
   #:use-module (gnu services docker)
   #:use-module (gnu services shepherd)
+  #:use-module (gnu system privilege)
   #:use-module (gnu system shadow)
   #:use-module (rosenthal utils home-services-utils)
-  #:export (forgejo-configuration
+  #:export (caddy-configuration
+            caddy-service-type
+
+            forgejo-configuration
             forgejo-service-type
 
             jellyfin-configuration
@@ -36,6 +41,90 @@
             vaultwarden-configuration
             vaultwarden-service-type))
 
+;;;
+;;; Caddy
+;;;
+
+(define-configuration/no-serialization caddy-configuration
+  (caddy
+   (file-like caddy)
+   "")
+  (caddyfile
+   file-like
+   ""))
+
+(define (caddy-accounts config)
+  (list (user-group (name "caddy") (system? #t))
+        (user-account
+         (name "caddy")
+         (group "caddy")
+         (system? #t)
+         (comment "Caddy user")
+         (home-directory "/var/lib/caddy"))))
+
+(define caddy-privileged-programs
+  (match-record-lambda <caddy-configuration>
+      (caddy)
+    (list (privileged-program
+           (program (file-append caddy "/bin/caddy"))
+           (capabilities "cap_net_bind_service=+ep")))))
+
+(define caddy-activation
+  (match-record-lambda <caddy-configuration>
+      (caddyfile)
+    (with-imported-modules
+        (source-module-closure '((guix build utils)
+                                 (gnu build activation)))
+      #~(begin
+          (use-modules (srfi srfi-26)
+                       (guix build utils)
+                       (gnu build activation))
+          (let* ((config-dir "/etc/caddy")
+                 (data-dir "/var/lib/caddy")
+                 (config-file (in-vicinity config-dir "Caddyfile"))
+                 (user (getpwnam "caddy")))
+            (for-each (cut mkdir-p/perms <> user #o750)
+                      (list config-dir data-dir))
+            (copy-file #$caddyfile config-file)
+            (for-each
+             (lambda (file)
+               (chown file (passwd:uid user) (passwd:gid user)))
+             (find-files data-dir #:directories? #t)))))))
+
+(define (caddy-shepherd-services config)
+  (list (shepherd-service
+          (provision '(caddy))
+          (requirement '(user-processes loopback))
+          (start
+           #~(make-forkexec-constructor
+              (list "/run/privileged/bin/caddy" "run"
+                    "--environ" "--config" "/etc/caddy/Caddyfile")
+              #:user "caddy"
+              #:group "caddy"
+              #:directory "/var/lib/caddy"
+              #:log-file "/var/log/caddy.log"
+              #:resource-limits '((nofile 1048576 1048576))
+              #:environment-variables '("HOME=/var/lib/caddy")))
+          (stop
+           #~(make-kill-destructor)))))
+
+(define caddy-service-type
+  (service-type
+   (name 'caddy)
+   (extensions
+    (list (service-extension account-service-type
+                             caddy-accounts)
+          (service-extension privileged-program-service-type
+                             caddy-privileged-programs)
+          (service-extension activation-service-type
+                             caddy-activation)
+          (service-extension shepherd-root-service-type
+                             caddy-shepherd-services)))
+   (default-value #f)
+   (description "")))
+
+
+
 ;;
 ;; Forgejo
 ;;
