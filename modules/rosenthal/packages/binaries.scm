@@ -42,7 +42,7 @@
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
-    (version "2025.4.929.0")
+    (version "2025.4.943.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkg.cloudflareclient.com"
@@ -50,7 +50,7 @@
                                   "cloudflare-warp_" version "_amd64.deb"))
               (sha256
                (base32
-                "1ygqr6l7lsbkq1f8qwgypv2flyjd430sjkrwsw8rhd2lgnvwisff"))))
+                "08gczvxr2826vsz15ysadxm8llwgshxm5qqczn29w9iyirkc4k2q"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
