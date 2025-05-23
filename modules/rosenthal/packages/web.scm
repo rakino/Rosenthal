@@ -6,6 +6,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix gexp)
   #:use-module (guix packages)
+  #:use-module (guix utils)
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (rosenthal utils download)
@@ -37,7 +38,10 @@
      (list #:go go-1.24
            #:tests? (not (%current-target-system)) ;TODO: Run test suite.
            #:install-source? #f
-           #:import-path "./cmd/caddy"
+           #:import-path
+           (if (string=? "caddy" (package-name this-package))
+               "./cmd/caddy"
+               ".")
            #:build-flags
            #~(list "-tags" "nobadger nomysql nopgx"
                    (string-append
@@ -102,6 +106,32 @@ without requiring complex configuration.  Caddy is built with a focus on
 performance and flexibility, making it suitable for a variety of applications,
 from serving static websites to running dynamic web applications.")
     (license license:asl2.0)))
+
+(define-public caddy/hako
+  (package
+    (inherit caddy)
+    (name "caddy-hako")
+    (version "2025.05.23-1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://git.boiledscript.com/hako/caddy.git")
+                    (commit version)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "03jdlyakaxysz5wmxbwrdwl3rgkp0a0ws10g27hj1lmkdic860h9"))))
+    (native-inputs
+     (modify-inputs (package-native-inputs caddy)
+       (replace "vendored-go-dependencies"
+         (origin
+           (method (go-mod-vendor #:go go-1.24))
+           (uri (package-source this-package))
+           (file-name "vendored-go-dependencies")
+           (sha256
+            (base32
+             "0m01p9y96m1krjg1rf53kndxklql8i4hfv09rc3xnxbmqh5ahm43"))))))
+    (home-page "https://git.boiledscript.com/hako/caddy")))
 
 (define-public hugo
   (package
