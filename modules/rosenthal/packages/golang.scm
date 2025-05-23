@@ -12,7 +12,7 @@
   (package
     (inherit go-1.23)
     (name "go")
-    (version "1.24.2")
+    (version "1.24.3")
     (source
      (origin
        (method git-fetch)
@@ -21,7 +21,7 @@
              (commit (string-append "go" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "199yajw3amvspl9k2a75v4jblwr965laqngxbnsi5l3ragp5c1ck"))))
+        (base32 "1b24pdsxrarw22gffv85sghpgvgamafvwwrvvhmyv3hqf89m97zk"))))
     (native-inputs
      ;; Go 1.24 and later requires Go 1.22+ as the bootstrap toolchain.
      (alist-replace "go" (list go-1.22) (package-native-inputs go-1.23)))
