@@ -60,4 +60,4 @@ time.
 @end itemize")
       (license license:wtfpl2)
       (properties
-       '((rosenthal-update? . #f))))))
+       '((disable-updater? . #t))))))

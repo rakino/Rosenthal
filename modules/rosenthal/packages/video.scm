@@ -23,4 +23,4 @@
          (delete "libx11" "libxext" "libxfixes")))
       (properties
        `(,@(package-properties base)
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))

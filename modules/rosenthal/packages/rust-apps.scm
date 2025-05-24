@@ -76,4 +76,4 @@ additional context for commands.  Additionally, it provides optional and fully
 encrypted synchronisation of history between machines, via an Atuin server.")
     (license license:expat)
     (properties
-     '((rosenthal-update? . #f)))))
+     '((disable-updater? . #t)))))

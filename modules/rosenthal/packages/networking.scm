@@ -248,7 +248,7 @@ can be used to create network proxy servers, clients and transparent proxies.")
 a SOCKS5 proxy.")
     (license license:expat)
     (properties
-     '((rosenthal-update? . #f)))))
+     '((disable-updater? . #t)))))
 
 (define-public tailscale
   (package

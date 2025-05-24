@@ -16,7 +16,8 @@
              search-patch)
   #:export (rosenthal-patches
             %rosenthal-package-module-path
-            all-rosenthal-packages))
+            all-rosenthal-packages
+            rosenthal-disable-updater?))
 
 ;;; Commentary:
 ;;;
@@ -99,3 +100,6 @@ packages, excluding superseded packages."
                    (all-modules %rosenthal-package-module-path #:warn warn-about-load-error)
                    ;; Dismiss deprecated packages but keep hidden packages.
                    #:select? (negate package-superseded))))
+
+(define (rosenthal-disable-updater? p)
+  (assq-ref (package-properties p) 'disable-updater?))

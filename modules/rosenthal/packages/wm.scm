@@ -69,7 +69,7 @@
       (license license:expat)
       (properties
        '((hidden? . #t)
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))
 
 (define-public rust-smithay
   (let ((commit "0cd3345c59f7cb139521f267956a1a4e33248393")
@@ -122,7 +122,7 @@ extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
       (license license:expat)
       (properties
        '((hidden? . #t)
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))
 
 (define-public niri
   (package
@@ -194,4 +194,4 @@ scrollable format.  It is considered stable for daily use and performs most
 functions expected of a Wayland compositor.")
    (license license:gpl3)
    (properties
-    '((rosenthal-update? . #f)))))
+    '((disable-updater? . #t)))))

@@ -163,7 +163,8 @@ from serving static websites to running dynamic web applications.")
            (sha256
             (base32
              "0m01p9y96m1krjg1rf53kndxklql8i4hfv09rc3xnxbmqh5ahm43"))))))
-    (home-page "https://git.boiledscript.com/hako/caddy")))
+    (home-page "https://git.boiledscript.com/hako/caddy")
+    (properties '((disable-updater? . #t)))))
 
 (define-public hugo
   (package
@@ -323,4 +324,4 @@ install and maintain, making it an ideal choice for teams and organizations
 looking for a reliable platform to manage their software projects.")
     (license license:gpl3+)
     (properties
-     '((rosenthal-update? . #f)))))
+     '((disable-updater? . #t)))))

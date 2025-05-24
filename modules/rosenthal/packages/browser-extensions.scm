@@ -36,7 +36,7 @@
     (properties
      '((addon-id . "{446900e4-71c2-419f-a6a7-df9c091e268b}")
        (hidden? . #t)
-       (rosenthal-update? . #f)))))
+       (disable-updater? . #t)))))
 
 (define-public bitwarden/icecat
   (let ((base (make-icecat-extension bitwarden)))
@@ -44,7 +44,7 @@
       (inherit base)
       (properties
        `(,@(alist-delete 'hidden? (package-properties base))
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))
 
 (define-public miniflux-injector
   (package
@@ -53,7 +53,7 @@
     (properties
      '((addon-id . "{528ec801-2e29-4cb9-ae71-5a90503138d1}")
        (hidden? . #t)
-       (rosenthal-update? . #f)))
+       (disable-updater? . #t)))
     (source
      (origin
        (method url-fetch/zipbomb)
@@ -93,7 +93,7 @@ results are added in a sidebar next to search engine results.")
       (inherit base)
       (properties
        `(,@(alist-delete 'hidden? (package-properties base))
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))
 
 (define-public ohmyech
   (package
@@ -102,7 +102,7 @@ results are added in a sidebar next to search engine results.")
     (properties
      '((addon-id . "{46b8ab0b-8adf-4e43-ad67-acef5a8d45c9}")
        (hidden? . #t)
-       (rosenthal-update? . #f)))
+       (disable-updater? . #t)))
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -143,4 +143,4 @@ during the @acronym{TLS, Transport Layer Security} handshake process.")
       (inherit base)
       (properties
        `(,@(alist-delete 'hidden? (package-properties base))
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))

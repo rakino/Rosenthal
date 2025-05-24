@@ -35,7 +35,7 @@
 editing Caddyfiles, configuration files for @code{caddy}.")
       (license license:gpl3+)
       (properties
-       '((rosenthal-update? . #f))))))
+       '((disable-updater? . #t))))))
 
 (define-public emacs-nftables-mode
   (package
@@ -79,7 +79,7 @@ It currently only offers basic highlighting and primitive indentation.")
 and it's subcommands.")
       (license license:gpl3+)
       (properties
-       '((rosenthal-update? . #f))))))
+       '((disable-updater? . #t))))))
 
 (define-public emacs-treesit-auto
   (package
@@ -104,7 +104,7 @@ major modes and falling back to the original major mode when its tree-sitter
 counterpart is unavailable.")
     (license license:gpl3+)
     (properties
-     '((rosenthal-update? . #f)))))
+     '((disable-updater? . #t)))))
 
 ;; https://issues.guix.gnu.org/59552
 (define-public emacs-wakatime-mode
@@ -137,4 +137,4 @@ counterpart is unavailable.")
 metrics generated from your programming activity.")
       (license license:gpl3+)
       (properties
-       '((rosenthal-update? . #f))))))
+       '((disable-updater? . #t))))))

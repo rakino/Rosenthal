@@ -27,7 +27,7 @@
      (alist-replace "go" (list go-1.22) (package-native-inputs go-1.23)))
     (properties
      `(,@(package-properties go-1.23)
-       (rosenthal-update? . #f)))))
+       (disable-updater? . #t)))))
 
 (define-public go-cloudflare
   (let ((commit "37bc41c6ff79507200a315b72834fce6ca427a7e")
@@ -49,4 +49,4 @@
       (synopsis "Go with Cloudflare experimental patches")
       (properties
        `(,@(package-properties go-1.22)
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))

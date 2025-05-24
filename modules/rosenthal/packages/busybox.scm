@@ -28,4 +28,4 @@
                   (delete-file "testsuite/mdev.tests")))))))
       (properties
        `(,@(package-properties base)
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))

@@ -26,4 +26,4 @@
          (replace "libtommath" `(,libtommath "static"))))
       (properties
        `(,@(package-properties base)
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))

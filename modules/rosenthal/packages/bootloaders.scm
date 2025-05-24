@@ -50,4 +50,4 @@
          (append autoconf automake python-minimal-wrapper)))
       (properties
        `(,@(package-properties base)
-         (rosenthal-update? . #f))))))
+         (disable-updater? . #t))))))
