@@ -17,7 +17,7 @@
   #:use-module (gnu system shadow)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages networking)
-  #:use-module (rosenthal utils home-services-utils)
+  #:use-module (rosenthal utils serializers yaml)
   #:export (clash-configuration
             clash-service-type
 
@@ -345,7 +345,7 @@ headers.  This can expose sensitive information in your logs.")
       (wakapi config)
     (let ((config-file (mixed-text-file
                         "wakapi.yaml"
-                        #~(string-append #$@(serialize-yaml-config config) "\n"))))
+                        #~(string-append #$@(yaml-serialize config) "\n"))))
       (list (shepherd-service
              (documentation "Run wakapi.")
              (provision '(wakapi))

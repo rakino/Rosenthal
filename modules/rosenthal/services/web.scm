@@ -19,7 +19,7 @@
   #:use-module (gnu services shepherd)
   #:use-module (gnu system privilege)
   #:use-module (gnu system shadow)
-  #:use-module (rosenthal utils home-services-utils)
+  #:use-module (rosenthal utils serializers yaml)
   #:export (caddy-configuration
             caddy-service-type
 
@@ -411,7 +411,7 @@
     (let ((config-file
            (mixed-text-file
             "misskey.yaml"
-            #~(string-append #$@(serialize-yaml-config config) "\n"))))
+            #~(string-append #$@(yaml-serialize config) "\n"))))
       (list (oci-container-configuration
              (user "misskey")
              (group "docker")
