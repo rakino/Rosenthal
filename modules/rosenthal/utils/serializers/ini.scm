@@ -6,9 +6,7 @@
   #:use-module (ice-9 match)
   #:use-module (ice-9 format)
   #:use-module (srfi srfi-1)
-
-  #:use-module (rosenthal utils serializers utils)
-
+  #:use-module (rosenthal utils serializers)
   #:use-module (guix packages)
   #:use-module (guix gexp)
   #:use-module (guix diagnostics)

@@ -2,7 +2,7 @@
 ;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
-(define-module (rosenthal utils serializers utils)
+(define-module (rosenthal utils serializers)
   #:use-module (gnu services configuration)
   #:use-module (guix gexp)
   #:use-module (srfi srfi-1)

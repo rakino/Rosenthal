@@ -3,7 +3,7 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal utils serializers yaml)
-  #:use-module (rosenthal utils serializers utils)
+  #:use-module (rosenthal utils serializers)
   #:use-module (gnu home services utils)
   #:use-module (gnu services configuration)
   #:use-module (guix diagnostics)
