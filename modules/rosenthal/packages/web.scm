@@ -49,6 +49,56 @@
 website owners block unwanted AI crawlers from accessing their sites.")
     (license license:expat)))
 
+(define-public anubis-anti-crawler
+  (package
+    (name "anubis-anti-crawler")
+    (version "1.19.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/TecharoHQ/anubis/releases/download/v"
+                    version "/anubis-src-vendor-npm-" version ".tar.gz"))
+              (sha256
+               (base32
+                "1638q9d0bnlbs93qr3mnawrgyr7m96afyhi5bzgalz7arp93aya9"))))
+    (build-system go-build-system)
+    (arguments
+     (list #:tests? (not (%current-target-system)) ;FIXME
+           #:go go-1.24
+           #:install-source? #f
+           #:import-path "./cmd/anubis"
+           #:build-flags
+           #~(list (string-append
+                    "-ldflags="
+                    " -X github.com/TecharoHQ/anubis.Version="
+                    #$(package-version this-package)))
+           #:modules
+           '(((guix build gnu-build-system) #:prefix gnu:)
+             (guix build go-build-system)
+             (guix build utils))
+           #:phases
+           #~(modify-phases %standard-phases
+               (replace 'unpack
+                 (lambda args
+                   (unsetenv "GO111MODULE")
+                   (apply (assoc-ref gnu:%standard-phases 'unpack) args)))
+               (replace 'install-license-files
+                 (assoc-ref gnu:%standard-phases 'install-license-files))
+               (delete 'check)
+               (add-after 'install 'check
+                 (lambda* (#:key tests? #:allow-other-keys)
+                   (when tests?
+                     (let ((cmd (in-vicinity #$output "bin/anubis")))
+                       (invoke cmd "--help")
+                       (invoke cmd "--version"))))))))
+    (home-page "https://anubis.techaro.lol/")
+    (synopsis "Proof-of-work check to stop crawlers")
+    (description
+     "Anubis checks incoming HTTP requests using one or more challenges in
+order to protect upstream resources from web crawlers.")
+    (license license:expat)
+    (properties '((upstream-name . "anubis")))))
+
 (define-public caddy
   (package
     (name "caddy")
