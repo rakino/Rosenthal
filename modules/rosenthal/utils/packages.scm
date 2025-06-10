@@ -1,6 +1,7 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2015, 2018 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2025 Maxim Cournoyer <maxim.cournoyer@gmail.com>
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal utils packages)
   #:use-module (gnu packages)
@@ -17,15 +18,13 @@
   #:export (rosenthal-patches
             %rosenthal-package-module-path
             all-rosenthal-packages
-            rosenthal-disable-updater?))
 
-;;; Commentary:
-;;;
-;;; This module refines the default value of some parameters from (gnu
-;;; packages) and the syntax/procedures using those.  This allows
-;;; 'search-paths' and friends to work without any user intervention.
-;;;
-;;; Code:
+            rosenthal-disable-updater?
+            delete-package-from-list
+            pkg
+            pkg+out
+            pkgs
+            pkgs+out))
 
 (define %rosenthal-root-directory
   ;; This is like %distro-root-directory from (gnu packages), with adjusted
@@ -101,5 +100,25 @@ packages, excluding superseded packages."
                    ;; Dismiss deprecated packages but keep hidden packages.
                    #:select? (negate package-superseded))))
 
+
+
 (define (rosenthal-disable-updater? p)
   (assq-ref (package-properties p) 'disable-updater?))
+
+(define (delete-package-from-list name lst)
+  "Return a copy of package list LST, removing packages named NAME."
+  (filter (lambda (pkg)
+            (not (string=? name (package-name pkg))))
+          lst))
+
+(define (pkg spec)
+  (specification->package spec))
+
+(define (pkg+out spec)
+  (specification->package+output spec))
+
+(define (pkgs . specs)
+  (map pkg specs))
+
+(define (pkgs+out . specs)
+  (map pkg+out specs))
