@@ -2,7 +2,7 @@
 ;;; Copyright © 2015, 2018 Ludovic Courtès <ludo@gnu.org>
 ;;; Copyright © 2025 Maxim Cournoyer <maxim.cournoyer@gmail.com>
 
-(define-module (rosenthal packages)
+(define-module (rosenthal utils packages)
   #:use-module (gnu packages)
   #:use-module (guix diagnostics)
   #:use-module (guix discovery)

@@ -3,6 +3,6 @@
 ;; SPDX-License-Identifier: CC0-1.0
 
 (use-modules (guix profiles)
-             (rosenthal packages))
+             (rosenthal utils packages))
 
 (manifest (map package->manifest-entry (all-rosenthal-packages)))
