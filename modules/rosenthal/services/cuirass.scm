@@ -44,6 +44,8 @@
   this-cuirass-worker-container-configuration
   (host-name         cuirass-worker-container-host-name)
   (server            cuirass-worker-container-server)
+  (workers           cuirass-worker-container-workers
+                     (default 1))
   (supported-systems cuirass-worker-container-supported-systems
                      (default (list (%current-system)))
                      (thunked))
@@ -66,7 +68,8 @@
 
 (define %cuirass-worker-container-script
   (match-record-lambda <cuirass-worker-container-configuration>
-      (host-name server supported-systems substitute-urls)
+      (host-name server workers supported-systems substitute-urls)
+
     (define cuirass-remote-worker-for-container
       (service-type
        (name 'cuirass-remote-worker)
@@ -95,6 +98,7 @@
                                       %cuirass-remote-worker-accounts)))))
        (description
         "Run the Cuirass remote build worker service.")))
+
     (define os
       (operating-system
         (bootloader
@@ -108,12 +112,12 @@
                  (type "dummy"))
                %base-file-systems))
         (kernel linux-libre-lts)
-
         (host-name host-name)
         (services
          (cons (service cuirass-remote-worker-for-container
                  (cuirass-remote-worker-configuration
                    (cuirass (pkg "cuirass-hako"))
+                   (workers workers)
                    (server server)
                    (systems supported-systems)
                    (publish-port 5558)
