@@ -153,7 +153,8 @@ exec ~a -jar ~a $@~%"
     "Komga is a media server for your comics, mangas, BDs, magazines and
 eBooks.")
    (license license:expat)
-   (properties '((upstream-name . "komga")))))
+   (properties '((upstream-name . "komga")
+                 (disable-updater? . #t)))))
 
 (define-public navidrome-bin
   (package
@@ -179,7 +180,8 @@ eBooks.")
 manage their music collections.  It provides a web interface and is compatible
 with the Subsonic API.")
     (license license:expat)
-    (properties '((upstream-name . "navidrome")))))
+    (properties '((upstream-name . "navidrome")
+                  (disable-updater? . #t)))))
 
 (define-public shadow-tls-bin
   (package
@@ -209,7 +211,8 @@ with the Subsonic API.")
      "Shadow TLS is a proxy to expose real tls handshake to the @acronym{MITM,
 monster-in-the-middle}.")
     (license license:expat)
-    (properties '((upstream-name . "shadow-tls")))))
+    (properties '((upstream-name . "shadow-tls")
+                  (disable-updater? . #t)))))
 
 (define-public sing-box-bin
   (deprecated-package "sing-box-bin" sing-box))
@@ -239,7 +242,8 @@ monster-in-the-middle}.")
      "This package provides @code{wakapi}, a WakaTime-compatible backend for
 coding statistics.")
     (license license:expat)
-    (properties '((upstream-name . "wakapi")))))
+    (properties '((upstream-name . "wakapi")
+                  (disable-updater? . #t)))))
 
 (define-public wakatime-cli-bin
   (package
@@ -265,4 +269,5 @@ coding statistics.")
      "This package provides @command{wakatime-cli}, the command line interface
 to WakaTime, which is used by all WakaTime text editor plugins.")
     (license license:bsd-3)
-    (properties '((upstream-name . "wakatime-cli")))))
+    (properties '((upstream-name . "wakatime-cli")
+                  (disable-updater? . #t)))))

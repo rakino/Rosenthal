@@ -62,7 +62,8 @@ the user to manage services with dependencies and parallel startup.")
          ((#:configure-flags configure-flags)
           #~(append #$configure-flags
                     (list "-Dlibseat-logind=disabled")))))
-      (propagated-inputs '()))))
+      (propagated-inputs '())
+      (properties '((disable-updater? . #t))))))
 
 (define-public pam-dumb-runtime-dir
   (package
@@ -111,4 +112,5 @@ exists and is only writable by root.")
          ((#:configure-flags configure-flags)
           #~(append #$configure-flags
                     (list "-Dlibseat-logind=disabled")))))
-      (propagated-inputs '()))))
+      (propagated-inputs '())
+      (properties '((disable-updater? . #t))))))

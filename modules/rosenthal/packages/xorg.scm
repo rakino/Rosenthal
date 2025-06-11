@@ -51,4 +51,6 @@
 Wayland compositor implementing @code{xdg_wm_base} interface.  This is
 particularly useful for compositors that (understandably) do not want to go
 through implementing support for rootless Xwayland themselves.")
-    (license license:mpl2.0)))
+    (license license:mpl2.0)
+    (properties
+    '((disable-updater? . #t)))))

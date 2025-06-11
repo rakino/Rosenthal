@@ -97,7 +97,8 @@ website owners block unwanted AI crawlers from accessing their sites.")
      "Anubis checks incoming HTTP requests using one or more challenges in
 order to protect upstream resources from web crawlers.")
     (license license:expat)
-    (properties '((upstream-name . "anubis")))))
+    (properties '((upstream-name . "anubis")
+                  (disable-updater? . #t)))))
 
 (define-public caddy
   (package
