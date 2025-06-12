@@ -13,13 +13,12 @@
   #:use-module (gnu packages dns)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages golang-build)
-  #:use-module (gnu packages linux)
-  #:use-module (rosenthal packages golang))
+  #:use-module (gnu packages linux))
 
 (define-public cloudflared
   (package
     (name "cloudflared")
-    (version "2025.5.0")
+    (version "2025.6.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -31,10 +30,10 @@
               ;; (snippet '(delete-file-recursively "vendor"))
               (sha256
                (base32
-                "0faf5mc1b85fzqj9as7lrb9lgxsvybn65vvw94i7mx003vvh8yb6"))))
+                "0sqryzjmllsm0w19axhn3mb3cqpky3a4clf5m7cj9ckbzlw1ydn8"))))
     (build-system go-build-system)
     (arguments
-     (list #:go go-cloudflare
+     (list #:go go-1.24
            #:install-source? #f
            #:import-path "github.com/cloudflare/cloudflared/cmd/cloudflared"
            #:unpack-path "github.com/cloudflare/cloudflared"
