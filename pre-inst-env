@@ -1,0 +1,11 @@
+#!/bin/sh
+# SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
+#
+# SPDX-License-Identifier: CC0-1.0
+
+load_path="$(dirname "$(realpath "$0")")/modules"
+
+export GUILE_LOAD_PATH="${load_path}${GUILE_LOAD_PATH:+:}${GUILE_LOAD_PATH}"
+export GUIX_PACKAGE_PATH="${load_path}${GUIX_PACKAGE_PATH:+:}${GUIX_PACKAGE_PATH}"
+
+exec "$@"

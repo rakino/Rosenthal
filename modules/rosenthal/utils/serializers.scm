@@ -7,9 +7,7 @@
   #:use-module (guix gexp)
   #:use-module (srfi srfi-1)
 
-  #:export (alist?
-
-            path?
+  #:export (path?
             serialize-path
 
             string-or-gexp?
@@ -18,10 +16,6 @@
             gexp-text-config?
             serialize-gexp-text-config)
   #:re-export (interpose))
-
-(define (alist? lst)
-  (every pair? lst))
-
 
 (define path? string?)
 (define (serialize-path field-name val) val)

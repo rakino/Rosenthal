@@ -11,7 +11,7 @@
   #:use-module (guix gexp)
   #:use-module (guix diagnostics)
   #:use-module (guix ui)
-
+  #:use-module (gnu services configuration)
   #:export (ini-serialize
             ini-print
             ini-merge
