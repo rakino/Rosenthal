@@ -15,8 +15,7 @@
   #:use-module (gnu packages golang)
   #:use-module (gnu packages image)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages version-control)
-  #:use-module (rosenthal packages golang))
+  #:use-module (gnu packages version-control))
 
 (define-public ai-robots-txt
   (package
