@@ -5,6 +5,7 @@
 
 (define-module (rosenthal utils packages)
   #:use-module (gnu packages)
+  #:use-module (guix deprecation)
   #:use-module (guix diagnostics)
   #:use-module (guix discovery)
   #:use-module (guix i18n)
@@ -21,10 +22,11 @@
 
             rosenthal-disable-updater?
             delete-package-from-list
-            pkg
-            pkg+out
-            pkgs
-            pkgs+out))
+
+            spec->pkg
+            spec->pkg+out
+            specs->pkgs
+            specs->pkgs+out))
 
 (define %rosenthal-root-directory
   ;; This is like %distro-root-directory from (gnu packages), with adjusted
@@ -111,14 +113,19 @@ packages, excluding superseded packages."
             (not (string=? name (package-name pkg))))
           lst))
 
-(define (pkg spec)
+(define (spec->pkg spec)
   (specification->package spec))
 
-(define (pkg+out spec)
+(define (spec->pkg+out spec)
   (specification->package+output spec))
 
-(define (pkgs . specs)
-  (map pkg specs))
+(define (specs->pkgs . specs)
+  (map spec->pkg specs))
 
-(define (pkgs+out . specs)
-  (map pkg+out specs))
+(define (specs->pkgs+out . specs)
+  (map spec->pkg+out specs))
+
+(define-deprecated/public-alias pkg spec->pkg)
+(define-deprecated/public-alias pkg+out spec->pkg+out)
+(define-deprecated/public-alias pkgs specs->pkgs)
+(define-deprecated/public-alias pkgs+out specs->pkgs+out)

@@ -159,7 +159,7 @@
         (services
          (cons (service cuirass-remote-worker-for-container
                  (cuirass-remote-worker-configuration
-                   (cuirass (pkg "cuirass-hako"))
+                   (cuirass (spec->pkg "cuirass-hako"))
                    (workers workers)
                    (server server)
                    (systems supported-systems)
