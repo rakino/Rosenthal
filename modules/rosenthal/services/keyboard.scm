@@ -5,8 +5,7 @@
 (define-module (rosenthal services keyboard)
   #:use-module (gnu system keyboard)
   #:use-module (gnu home services)
-  #:export (set-xkb-variables
-            home-keyboard-service-type))
+  #:export (home-keyboard-service-type))
 
 (define (set-xkb-variables layout)
   (if layout
