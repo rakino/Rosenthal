@@ -27,6 +27,8 @@
                  (base32
                   "1s9kbav5wbyividn9zncd153h89nil0i9aj9hgxa95q9fy84r23w"))))
       (build-system emacs-build-system)
+      ;; No tests.
+      (arguments (list #:tests? #f))
       (propagated-inputs (list emacs-loop))
       (home-page "https://github.com/Schnouki/caddyfile-mode")
       (synopsis "Emacs major mode for editing Caddy configuration files")
