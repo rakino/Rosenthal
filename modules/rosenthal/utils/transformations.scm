@@ -2,6 +2,7 @@
 ;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal utils transformations)
+  #:use-module (srfi srfi-1)
   #:use-module (guix channels)
   #:use-module (guix gexp)
   #:use-module (gnu system)
@@ -55,7 +56,8 @@
                       (cons %rosenthal-signing-key
                             (guix-configuration-authorized-keys config)))
                      (substitute-urls
-                      `(,@(guix-configuration-substitute-urls config)
-                        ,@(if substitutes?
-                              '("https://ci.boiledscript.com")
-                              '()))))))))))
+                      (delete-duplicates
+                       `(,@(guix-configuration-substitute-urls config)
+                         ,@(if substitutes?
+                               '("https://ci.boiledscript.com")
+                               '())))))))))))
