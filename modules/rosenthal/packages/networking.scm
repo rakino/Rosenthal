@@ -139,7 +139,7 @@ bypass network restrictions." )
 (define-public sing-box
   (package
     (name "sing-box")
-    (version "1.11.13")
+    (version "1.11.14")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -148,7 +148,7 @@ bypass network restrictions." )
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1pp1afwnappzjcqh1ny92xvv4l1aczmax68ywa9kf9fda2al9biy"))))
+                "0h3nwzxk3jlbf6nl1n43mlhsfg2bwxsrd56i9wcdpb1jnd66q08s"))))
     (build-system go-build-system)
     (arguments
      (list
@@ -211,7 +211,7 @@ bypass network restrictions." )
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "1rj34zgr6h1l3z7qanjsaac780h2inh8nbx31js569zyvdxjkb7x"))))
+                "0al5wc5lzzd3qgss30lv174v3airrr1rk0ippbshldinajcwzdsh"))))
       (if (%current-target-system)
           (list this-package)
           '())))
