@@ -21,9 +21,10 @@
                        (session <greetd-tuigreet-session>)
                        system target)
   (match-record session <greetd-tuigreet-session> (tuigreet)
-    (lower-object
-     (program-file "tuigreet-wrapper"
-       #~(execl #$tuigreet #$tuigreet
-                "--issue" "--time" "--user-menu" "--asterisks"
-                "--power-shutdown" "loginctl power-off"
-                "--power-reboot" "loginctl reboot")))))
+    (let ((tuigreet (file-append tuigreet "/bin/tuigreet")))
+      (lower-object
+       (program-file "tuigreet-wrapper"
+         #~(execl #$tuigreet #$tuigreet
+                  "--issue" "--time" "--user-menu" "--asterisks"
+                  "--power-shutdown" "loginctl power-off"
+                  "--power-reboot" "loginctl reboot"))))))
