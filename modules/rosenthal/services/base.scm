@@ -1,0 +1,29 @@
+;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
+
+(define-module (rosenthal services base)
+  #:use-module (guix gexp)
+  #:use-module (guix records)
+  #:use-module (rosenthal utils packages)
+  #:use-module (gnu services base)
+  #:use-module (gnu packages bash)
+  #:export (greetd-tuigreet-session))
+
+(define-record-type* <greetd-tuigreet-session>
+  greetd-tuigreet-session make-greetd-tuigreet-session
+  greetd-tuigreet-session?
+  this-greetd-tuigreet-session
+  (tuigreet greetd-tuigreet-session-tuigreet
+            (default (spec->pkg "tuigreet"))))
+
+(define-gexp-compiler (greetd-tuigreet-session-compiler
+                       (session <greetd-tuigreet-session>)
+                       system target)
+  (match-record session <greetd-tuigreet-session> (tuigreet)
+    (lower-object
+     (program-file "tuigreet-wrapper"
+       #~(execl #$tuigreet #$tuigreet
+                "--issue" "--time" "--user-menu" "--asterisks"
+                "--power-shutdown" "loginctl power-off"
+                "--power-reboot" "loginctl reboot")))))
