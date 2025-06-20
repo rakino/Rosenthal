@@ -163,10 +163,13 @@ extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
                   ;; For tests.
                   (setenv "XDG_RUNTIME_DIR" "/tmp")))
               (add-after 'install 'install-extras
-                (lambda _
+                (lambda* (#:key inputs #:allow-other-keys)
                   (substitute* "resources/niri.desktop"
                     (("niri-session")
-                     (string-append #$output "/bin/niri --session")))
+                     (format #f "~a --dbus-daemon=~a ~a/bin/niri --session"
+                             (search-input-file inputs "bin/dbus-run-session")
+                             (search-input-file inputs "bin/dbus-daemon")
+                             #$output)))
                   (install-file
                    "resources/niri.desktop"
                    (in-vicinity #$output "share/wayland-sessions"))
@@ -177,6 +180,7 @@ extensions, such as @code{wlr-protocols} and @code{plasma-wayland-protocols}.")
     (list pkg-config))
    (inputs
     (cons* clang
+           dbus
            libdisplay-info
            libinput-minimal
            libseat
