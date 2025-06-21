@@ -26,5 +26,5 @@
        (program-file "tuigreet-wrapper"
          #~(execl #$tuigreet #$tuigreet
                   "--issue" "--time" "--user-menu" "--asterisks"
-                  "--power-shutdown" "loginctl power-off"
+                  "--power-shutdown" "loginctl poweroff"
                   "--power-reboot" "loginctl reboot"))))))
