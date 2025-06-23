@@ -51,6 +51,9 @@
             home-swaybg-configuration
             home-swaybg-service-type
 
+            home-theme-configuration
+            home-theme-service-type
+
             home-waybar-configuration
             home-waybar-service-type
 
@@ -408,6 +411,96 @@ configuration {
     (default-value (home-swaybg-configuration))
     (description
      "Run swaybg, a screen wallpaper utility for Wayland compositors.")))
+
+
+;;;
+;;; theme
+;;;
+
+(define-record-type* <home-theme-configuration>
+  home-theme-configuration
+  make-home-theme-configuration
+  home-theme-configuration?
+  this-home-theme-configuration
+  (packages     home-theme-configuration-packages
+                (default '()))
+  (icon-theme   home-theme-configuration-icon-theme
+                (default "Adwaita"))
+  (cursor-theme home-theme-configuration-cursor-theme
+                (default "Adwaita"))
+  (cursor-size  home-theme-configuration-cursor-size
+                (default 24))
+  (key-theme    home-theme-configuration-key-theme
+                (default "Emacs"))
+  ;; Extensions.
+  (environment-variables home-theme-configuration-environment-variables
+                         (default (%home-theme-environment-variables
+                                   this-home-theme-configuration))
+                         (thunked))
+  (profile               home-theme-configuration-profile
+                         (default (%home-theme-profile
+                                   this-home-theme-configuration))
+                         (thunked))
+  (files                 home-theme-configuration-files
+                         (default (%home-theme-files
+                                   this-home-theme-configuration))
+                         (thunked))
+  (xdg-config            home-theme-configuration-xdg-config
+                         (default (%home-theme-xdg-config
+                                   this-home-theme-configuration))
+                         (thunked)))
+
+(define (%home-theme-environment-variables _)
+  '(("QT_QPA_PLATFORMTHEME" . "gtk3")
+    ("QT_WAYLAND_DECORATION" . "adwaita")))
+
+(define %home-theme-profile
+  (match-record-lambda <home-theme-configuration>
+      (packages)
+    (append (specs->pkgs "adwaita-icon-theme"
+                         "hicolor-icon-theme"
+                         "qtwayland")
+            packages)))
+
+(define %home-theme-files
+  (match-record-lambda <home-theme-configuration>
+      (icon-theme)
+    `((".icons/default/index.theme"
+       ,(plain-file "index.theme"
+          (format #f "~
+[icon theme]
+Inherits = ~a~%"
+                  icon-theme))))))
+
+(define %home-theme-xdg-config
+  (match-record-lambda <home-theme-configuration>
+      (icon-theme cursor-theme cursor-size key-theme)
+    `(("gtk-3.0/settings.ini"
+       ,(plain-file "settings.ini"
+          (format #f "~
+[Settings]
+gtk-theme-name = Adwaita
+gtk-icon-theme-name = ~a
+gtk-font-name = Sans 11
+gtk-cursor-theme-name = ~a
+gtk-cursor-theme-size = ~a
+gtk-key-theme-name = ~a~%"
+                  icon-theme cursor-theme cursor-size key-theme))))))
+
+(define home-theme-service-type
+  (service-type
+    (name 'theme)
+    (extensions
+     (list (service-extension home-environment-variables-service-type
+                              home-theme-configuration-environment-variables)
+           (service-extension home-profile-service-type
+                              home-theme-configuration-profile)
+           (service-extension home-files-service-type
+                              home-theme-configuration-files)
+           (service-extension home-xdg-configuration-files-service-type
+                              home-theme-configuration-xdg-config)))
+    (default-value (home-theme-configuration))
+    (description "Set up desktop themes.")))
 
 
 ;;;

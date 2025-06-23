@@ -61,6 +61,7 @@
    (eval . (put 'home-rofi-configuration 'scheme-indent-function 0))
    (eval . (put 'home-socks2http-configuration 'scheme-indent-function 0))
    (eval . (put 'home-swaybg-configuration 'scheme-indent-function 0))
+   (eval . (put 'home-theme-configuration 'scheme-indent-function 0))
    (eval . (put 'home-wakapi-configuration 'scheme-indent-function 0))
    (eval . (put 'home-waybar-configuration 'scheme-indent-function 0))
    (eval . (put 'iwd-configuration 'scheme-indent-function 0))
