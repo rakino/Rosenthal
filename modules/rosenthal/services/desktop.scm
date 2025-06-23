@@ -431,7 +431,7 @@ configuration {
   (cursor-size  home-theme-configuration-cursor-size
                 (default 24))
   (key-theme    home-theme-configuration-key-theme
-                (default "Emacs"))
+                (default "Default"))
   ;; Extensions.
   (environment-variables home-theme-configuration-environment-variables
                          (default (%home-theme-environment-variables
@@ -481,7 +481,7 @@ Inherits = ~a~%"
 [Settings]
 gtk-theme-name = Adwaita
 gtk-icon-theme-name = ~a
-gtk-font-name = Sans 11
+gtk-font-name = Sans
 gtk-cursor-theme-name = ~a
 gtk-cursor-theme-size = ~a
 gtk-key-theme-name = ~a~%"
