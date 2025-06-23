@@ -6,8 +6,11 @@
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (rosenthal utils packages)
+
   #:use-module (gnu services base)
+
   #:use-module (gnu packages bash)
+  #:use-module (rosenthal packages admin)
   #:export (greetd-tuigreet-session))
 
 (define-record-type* <greetd-tuigreet-session>
@@ -15,7 +18,7 @@
   greetd-tuigreet-session?
   this-greetd-tuigreet-session
   (tuigreet greetd-tuigreet-session-tuigreet
-            (default (spec->pkg "tuigreet"))))
+            (default tuigreet)))
 
 (define-gexp-compiler (greetd-tuigreet-session-compiler
                        (session <greetd-tuigreet-session>)

@@ -5,24 +5,29 @@
 (define-module (rosenthal services cuirass)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
+
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (guix store)
   #:use-module (rosenthal utils packages)
-  #:use-module (gnu system)
+
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
+  #:use-module (gnu system)
   #:use-module (gnu system linux-container)
   #:use-module (gnu system file-systems)
   #:use-module (gnu system shadow)
+
   #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services base)
   #:use-module (gnu services cuirass)
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
+
   #:use-module (gnu packages linux)
+  #:use-module (rosenthal packages ci)
   #:export (cuirass-worker-container-service-type
             cuirass-worker-container-configuration
             cuirass-worker-container-configuration?
@@ -159,7 +164,7 @@
         (services
          (cons (service cuirass-remote-worker-for-container
                  (cuirass-remote-worker-configuration
-                   (cuirass (spec->pkg "cuirass-hako"))
+                   (cuirass cuirass/hako)
                    (workers workers)
                    (server server)
                    (systems supported-systems)

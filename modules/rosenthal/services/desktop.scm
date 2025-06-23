@@ -339,7 +339,7 @@ compositor.")))
 configuration {
     icon-theme: \"Qogir\";
 }
-@theme \"" (spec->pkg "rofi") "/share/rofi/themes/fullscreen-preview.rasi\"\n"))
+@theme \"" (spec->pkg "rofi-wayland") "/share/rofi/themes/fullscreen-preview.rasi\"\n"))
 
 
 (define-record-type* <home-rofi-configuration>
