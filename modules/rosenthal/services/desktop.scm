@@ -25,6 +25,8 @@
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
 
+  #:use-module (rosenthal packages xorg)
+
   #:export (%rosenthal-example-emacs-fonts
             %rosenthal-example-emacs-init
 
@@ -288,12 +290,12 @@
 (define %rosenthal-example-niri-config
   (computed-substitution-with-inputs "niri.kdl"
     (local-file "../examples/niri.kdl")
-    (specs->pkgs "alacritty"
-                 "guix-backgrounds"
-                 "light"
-                 "rofi-wayland"
-                 "wireplumber"
-                 "xwayland-satellite")))
+    (cons xwayland-satellite
+          (specs->pkgs "alacritty"
+                       "guix-backgrounds"
+                       "light"
+                       "rofi-wayland"
+                       "wireplumber"))))
 
 (define-record-type* <home-niri-configuration>
   home-niri-configuration
