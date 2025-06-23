@@ -1,0 +1,107 @@
+// -*- mode: jsonc -*-
+// SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
+//
+// SPDX-License-Identifier: CC0-1.0
+
+{
+    "layer": "top",
+    "spacing": 5,
+    "modules-left": [
+        "niri/workspaces",
+        "cpu",
+        "memory",
+        "temperature",
+    ],
+    "modules-center": [
+        "clock",
+    ],
+    "modules-right": [
+        "tray",
+        "wireplumber",
+        "backlight",
+        "battery",
+    ],
+    // left
+    "niri/workspaces": {
+        "all-outputs": true,
+	"format": "{icon}",
+	"format-icons": {
+            "focused": "\uF055",
+	    "active": "\uF192",
+	    "default": "\uF111",
+	}
+    },
+    "cpu": {
+        "format": "CPU {usage}%",
+        "states": {
+            "full": 90,
+        },
+        "interval": 2,
+    },
+    "memory": {
+        "format": "RAM {percentage}%",
+        "states": {
+            "full": 90,
+        },
+        "interval": 2,
+    },
+    "temperature": {
+        "critical-threshold": 80,
+        "format": "{temperatureC}\u00B0C",
+        "interval": 2,
+        "tooltip": false,
+    },
+    // center
+    "clock": {
+        "format": "{:%A, %B %d, %Y (%R)}",
+        "tooltip-format": "<tt><small>{calendar}</small></tt>",
+        "calendar": {
+            "mode"          : "year",
+            "mode-mon-col"  : 3,
+            "weeks-pos"     : "right",
+            "on-scroll"     : 1,
+            "format": {
+                "months":     "<span color='#FFEAD3'><b>{}</b></span>",
+                "days":       "<span color='#ECC6D9'><b>{}</b></span>",
+                "weeks":      "<span color='#99FFDD'><b>W{}</b></span>",
+                "weekdays":   "<span color='#FFCC66'><b>{}</b></span>",
+                "today":      "<span color='#FF6699'><b><u>{}</u></b></span>",
+            }
+        },
+        "actions":  {
+            "on-click-right": "mode",
+            "on-scroll-up": "tz_up",
+            "on-scroll-down": "tz_down",
+            "on-scroll-up": "shift_up",
+            "on-scroll-down": "shift_down",
+        }
+    },
+    // right
+    "tray": {
+        "spacing": 10,
+    },
+    "wireplumber": {
+        "scroll-step": 5,
+        "format": "{icon} {volume}%",
+        "format-icons": ["\uF026", "\uF027", "\uF028"],
+        "format-muted": "Muted {volume}%",
+        "on-click": "$$bin/wpctl$$ set-mute @DEFAULT_AUDIO_SINK@ toggle",
+        "on-click-right": "$$bin/pavucontrol$$",
+    },
+    "backlight": {
+        "on-scroll-down": "$$bin/light$$ -U 5",
+        "on-scroll-up": "$$bin/light$$ -A 5",
+        "format": "{icon} {percent}%",
+        "format-icons": ["\uF186", "\uF0EB"],
+        "tooltip": false,
+    },
+    "battery": {
+        "interval": 60,
+        "states": {
+            "warning": 30,
+            "critical": 15,
+        },
+        "format": "{icon} {capacity}%",
+        "format-icons": ["\uF244", "\uF243", "\uF242", "\uF241", "\uF240"],
+    },
+}
