@@ -27,8 +27,7 @@
 
   #:use-module (rosenthal packages xorg)
 
-  #:export (%rosenthal-example-emacs-fonts
-            %rosenthal-example-emacs-init
+  #:export (%rosenthal-example-emacs-init
 
             home-blueman-applet-configuration
             home-blueman-applet-service-type
@@ -65,11 +64,10 @@
 ;;; Configuration file presets.
 ;;;
 
-(define %rosenthal-example-emacs-fonts
-  (local-file "../examples/emacs/fonts.el"))
-
 (define %rosenthal-example-emacs-init
-  (local-file "../examples/emacs/init.el"))
+  (computed-substitution-with-inputs "init.el"
+    (local-file "../examples/emacs/init.el")
+    (local-file "../examples/emacs" #:recursive? #t)))
 
 
 ;;;

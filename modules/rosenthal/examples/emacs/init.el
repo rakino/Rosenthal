@@ -5,18 +5,14 @@
 
 ;; TODO:
 ;; 1. Configure geiser.  Take a look at guile-studio.
-;; 2. Make use of ‘guix:’ comments.
-
-;;;
-;;; Init
-;;;
+;; 2. Make use of `guix:' comments.
 
 (setopt custom-file (locate-user-emacs-file "custom.el"))
 (if (not (file-exists-p custom-file))
     (make-empty-file custom-file)
   (load custom-file))
 
-(load-file (locate-user-emacs-file "fonts.el"))
+(load-file (locate-user-emacs-file "$$fonts.el$$"))
 
 ;; Tweak garbage collection strategy.
 ;;guix:emacs-gcmh
@@ -32,8 +28,10 @@
 
 (use-package emacs
   :custom
-  (shell-file-name "/bin/sh")          ;Workaround to use fish as login shell.
-  (word-wrap-by-category t))           ;CJK support.
+  ;; Workaround to use fish as login shell.
+  (shell-file-name "/bin/sh")
+  ;; CJK support.
+  (word-wrap-by-category t))
 
 
 ;;;
@@ -167,7 +165,7 @@
   ;; Disable tab indentation.
   (indent-tabs-mode nil)
   :config
-  ;; Avoid re-indenting current line after entering ‘RET’.
+  ;; Avoid re-indenting current line after entering `RET'.
   (setopt electric-indent-inhibit t)
   :hook
   (before-save . delete-trailing-whitespace)
@@ -217,7 +215,9 @@
 ;;guix:emacs-magit
 (use-package magit
   :custom
-  (git-commit-cd-to-toplevel t)
+  (git-commit-cd-to-toplevel t))
+
+(use-package project
   :config
   (add-to-list 'project-switch-commands '(magit-project-status "Magit") t)
   :bind
