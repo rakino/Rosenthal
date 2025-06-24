@@ -67,7 +67,7 @@
 (define %rosenthal-example-emacs-init
   (computed-substitution-with-inputs "init.el"
     (local-file "../examples/emacs/init.el")
-    (local-file "../examples/emacs" #:recursive? #t)))
+    (list (local-file "../examples/emacs" #:recursive? #t))))
 
 
 ;;;
