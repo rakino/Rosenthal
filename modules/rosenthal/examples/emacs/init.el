@@ -8,7 +8,9 @@
     (make-empty-file custom-file)
   (load custom-file))
 
-(load-file "$$fonts.el$$")
+(let ((font-config "$$fonts.el$$"))
+  (when (file-exists-p font-config)
+    (load-file font-config)))
 
 ;; Tweak garbage collection strategy.
 ;;guix:emacs-gcmh
