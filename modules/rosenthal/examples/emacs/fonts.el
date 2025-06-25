@@ -1,3 +1,4 @@
+;;; -*- lexical-binding: t -*-
 ;; SPDX-FileCopyrightText: DogLooksGood <doglooksgood@hotmail.com>
 ;; SPDX-FileCopyrightText: 2022 Nyk Ma <i@nyk.ma>
 ;;

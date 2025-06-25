@@ -3,16 +3,12 @@
 ;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
-;; TODO:
-;; 1. Configure geiser.  Take a look at guile-studio.
-;; 2. Make use of `guix:' comments.
-
 (setopt custom-file (locate-user-emacs-file "custom.el"))
 (if (not (file-exists-p custom-file))
     (make-empty-file custom-file)
   (load custom-file))
 
-(load-file (locate-user-emacs-file "$$fonts.el$$"))
+(load-file "$$fonts.el$$")
 
 ;; Tweak garbage collection strategy.
 ;;guix:emacs-gcmh
@@ -43,8 +39,8 @@
   (blink-cursor-mode nil)
   (browse-url-firefox-program "librewolf")
   (enable-recursive-minibuffers t)
-  ;; Scrolling enhancement.
-  (pixel-scroll-precision-mode t)
+  (inhibit-splash-screen t)
+  (uniquify-buffer-name-style 'forward)
   ;; Exclude unavailable completions.
   (read-extended-command-predicate 'command-completion-default-include-p)
   ;; Case-insensitive completion.
@@ -54,6 +50,9 @@
   :bind
   ([remap list-buffers] . switch-to-buffer)
   :hook
+  (prog-mode . display-line-numbers-mode)
+  ;; Scrolling enhancement.
+  (after-init . pixel-scroll-precision-mode)
   ;; Indicatior for recursive minibuffers.
   (after-init . minibuffer-depth-indicate-mode)
   ;; Save minibuffer history.
@@ -74,9 +73,17 @@
   :hook
   (after-init . menu-bar-mode))
 
-(use-package completion-preview
+;;guix:emacs-corfu
+(use-package corfu
   :custom
-  (global-completion-preview-mode t))
+  ;; Auto-completion.
+  (corfu-auto t)
+  (corfu-auto-delay 0.3)
+  :config
+  ;; Free the `RET' key for less intrusive behavior.
+  (keymap-unset corfu-map "RET")
+  :hook
+  (after-init . global-corfu-mode))
 
 ;;guix:emacs-doom-modeline
 (use-package doom-modeline
@@ -169,8 +176,72 @@
   (setopt electric-indent-inhibit t)
   :hook
   (before-save . delete-trailing-whitespace)
+  ;; Use Ctrl-C/X/Z for copy, cut, paste.
+  (after-init . cua-mode)
   ;; Automatic parenthesis pairing.
   (after-init . electric-pair-mode))
+
+;; Check syntax on the fly.
+;;guix:emacs-flycheck
+(use-package flycheck
+  :hook
+  (after-init . global-flycheck-mode))
+
+;;guix:emacs-flycheck-guile
+(use-package flycheck-guile
+  :after (flycheck geiser-guile))
+
+;;guix:emacs-geiser
+(use-package geiser
+  :custom
+  (geiser-autodoc-identifier-format "%s → %s")
+  (geiser-default-implementation 'guile)
+  (geiser-active-implementation '(guile))
+  (geiser-mode-smart-tab-p t)
+  (geiser-repl-query-on-kill-p nil)
+  :init
+  ;; Context menu on right click.
+  ;; Taken from guile-studio: https://elephly.net/guile-studio/
+  (defun context-menu ()
+    (let ((menu (make-sparse-keymap)))
+      (pcase major-mode
+        ('geiser-repl-mode
+         (define-key menu (vector 'insert-image)
+                     '("Insert image" . geiser--guile-picture-language--pict-from-file))
+         menu)
+        ('scheme-mode
+         (define-key menu (vector 'switch-to-repl)
+                     '("Switch to REPL" . geiser-repl-switch))
+         (define-key menu (vector 'eval-buffer)
+                     '("Evaluate buffer" . geiser-eval-buffer))
+         (define-key menu (vector 'lookup-documentation)
+                     '("Show documentation". geiser-doc-symbol-at-point))
+         menu)
+        (_
+         (mouse-menu-major-mode-map)))))
+  :bind
+  ([mouse-3] . (lambda (event)
+                 (interactive "e")
+                 (mouse-set-point event)
+                 (popup-menu (context-menu)))))
+
+;;guix:emacs-geiser-guile
+(use-package geiser-guile
+  :after (geiser)
+  :config
+  ;; TODO: Make `flycheck-guile' support `guix repl'.
+  (dolist (path
+           (mapcar
+            #'expand-file-name
+            '("~/.config/guix/current/lib/guile/3.0/site-ccache"
+              "~/.config/guix/current/share/guile/site/3.0"
+              "~/.guix-profile/lib/guile/3.0/site-ccache"
+              "~/.guix-profile/share/guile/site/3.0"
+              "~/.guix-home/profile/lib/guile/3.0/site-ccache"
+              "~/.guix-home/profile/share/guile/site/3.0"
+              "/run/current-system/profile/lib/guile/3.0/site-ccache"
+              "/run/current-system/profile/share/guile/site/3.0")))
+    (add-to-list 'geiser-guile-load-path path t)))
 
 ;;guix:emacs-macrostep
 (use-package macrostep
@@ -227,3 +298,18 @@
 ;;guix:emacs-forge
 (use-package forge
   :after (magit))
+
+
+;;;
+;;; Set up initial screen.
+;;;
+
+(progn
+  (setopt initial-scratch-message
+          ";;; Type your Guile program here and evaluate it.\n\n")
+  (scheme-mode)
+  (geiser-repl-switch)
+  (geiser-repl-import-module "(rosenthal)")
+  (geiser-repl-import-module "(nonguix transformations)")
+  (delete-window)
+  (display-splash-screen))
