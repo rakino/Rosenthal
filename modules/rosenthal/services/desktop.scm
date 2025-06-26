@@ -14,6 +14,7 @@
 
   #:use-module (gnu services)
   #:use-module (gnu services base)
+  #:use-module (gnu services configuration)
   #:use-module (gnu services desktop)
   #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
@@ -74,15 +75,12 @@
 ;;; Blueman
 ;;;
 
-(define-record-type* <home-blueman-applet-configuration>
-  home-blueman-applet-configuration
-  make-home-blueman-applet-configuration
-  home-blueman-applet-configuration?
-  this-home-blueman-applet-configuration
-  (blueman home-blueman-applet-configuration-blueman
-           (default (spec->pkg+out "blueman"))))
+(define-configuration/no-serialization home-blueman-applet-configuration
+  (blueman
+   (file-like (spec->pkg+out "blueman"))
+   ""))
 
-(define home-blueman-applet-shepherd-service
+(define %home-blueman-applet-shepherd
   (match-record-lambda <home-blueman-applet-configuration>
       (blueman)
     (list (shepherd-service
@@ -100,7 +98,7 @@
      (list (service-extension home-profile-service-type
                               (compose list home-blueman-applet-configuration-blueman))
            (service-extension home-shepherd-service-type
-                              home-blueman-applet-shepherd-service)))
+                              %home-blueman-applet-shepherd)))
     (default-value (home-blueman-applet-configuration))
     (description "Run blueman applet, a tray applet for managing bluetooth.")))
 
@@ -109,38 +107,32 @@
 ;;; Fcitx5
 ;;;
 
-(define-record-type* <home-fcitx5-configuration>
-  home-fcitx5-configuration
-  make-home-fcitx5-configuration
-  home-fcitx5-configuration?
-  this-home-fcitx5-configuration
-  (fcitx5                home-fcitx5-configuration-fcitx5
-                         (default (spec->pkg   "fcitx5")))
-  (utilities             home-fcitx5-configuration-utilities
-                         (default (specs->pkgs "fcitx5-configtool")))
-  (themes                home-fcitx5-configuration-themes
-                         (default '()))
-  (input-method-editors  home-fcitx5-configuration-input-method-editors
-                         (default '()))
-  (gtk-im-module?        home-fcitx5-configuration-gtk-im-module?
-                         (default #f))
-  (qt-im-module?         home-fcitx5-configuration-qt-im-module?
-                         (default #f))
-  (xim?                  home-fcitx5-configuration-xim?
-                         (default #t))
-  ;; Extensions
-  (environment-variables home-fcitx5-configuration-environment-variables
-                         (default (%home-fcitx5-environment-variables
-                                   this-home-fcitx5-configuration))
-                         (thunked))
-  (profile               home-fcitx5-configuration-profile
-                         (default (%home-fcitx5-profile
-                                   this-home-fcitx5-configuration))
-                         (thunked))
-  (shepherd              home-fcitx5-configuration-shepherd
-                         (default (%home-fcitx5-shepherd
-                                   this-home-fcitx5-configuration))
-                         (thunked)))
+(define list-of-file-likes?
+  (list-of file-like?))
+(define-maybe file-like)
+
+(define-configuration/no-serialization home-fcitx5-configuration
+  (fcitx5
+   (file-like (spec->pkg   "fcitx5"))
+   "")
+  (utilities
+   (list-of-file-likes (specs->pkgs "fcitx5-configtool"))
+   "")
+  (themes
+   (list-of-file-likes '())
+   "")
+  (input-method-editors
+   (list-of-file-likes '())
+   "")
+  (gtk-im-module?
+   (boolean #f)
+   "")
+  (qt-im-module?
+   (boolean #f)
+   "")
+  (xim?
+   (boolean #t)
+   ""))
 
 (define %home-fcitx5-environment-variables
   (match-record-lambda <home-fcitx5-configuration>
@@ -186,11 +178,11 @@
     (name 'fcitx5)
     (extensions
      (list (service-extension home-environment-variables-service-type
-                              home-fcitx5-configuration-environment-variables)
+                              %home-fcitx5-environment-variables)
            (service-extension home-profile-service-type
-                              home-fcitx5-configuration-profile)
+                              %home-fcitx5-profile)
            (service-extension home-shepherd-service-type
-                              home-fcitx5-configuration-shepherd)))
+                              %home-fcitx5-shepherd)))
     (default-value (home-fcitx5-configuration))
     (description "Run fcitx5, an input method framework.")))
 
@@ -199,32 +191,21 @@
 ;;; mako
 ;;;
 
-(define %rosenthal-example-mako-config
-  (local-file "../examples/mako.conf"))
-
-(define-record-type* <home-mako-configuration>
-  home-mako-configuration
-  make-home-mako-configuration
-  home-mako-configuration?
-  this-home-mako-configuration
-  (mako       home-mako-configuration-mako
-              (default (spec->pkg "mako")))
-  (config     home-mako-configuration-config
-              (default %rosenthal-example-mako-config))
-  ;; Extensions.
-  (xdg-config home-mako-configuration-xdg-config
-              (default (%home-mako-xdg-config
-                        this-home-mako-configuration))
-              (thunked))
-  (shepherd   home-mako-configuration-shepherd
-              (default (%home-mako-shepherd
-                        this-home-mako-configuration))
-              (thunked)))
+(define-configuration/no-serialization home-mako-configuration
+  (mako
+   (file-like (spec->pkg "mako"))
+   "")
+  (config
+   maybe-file-like
+   "")
+  )
 
 (define %home-mako-xdg-config
   (match-record-lambda <home-mako-configuration>
       (config)
-    `(("mako/config" ,config))))
+    (if (maybe-value-set? config)
+        `(("mako/config" ,config))
+        '())))
 
 (define %home-mako-shepherd
   (match-record-lambda <home-mako-configuration>
@@ -242,9 +223,9 @@
     (name 'mako)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
-                              home-mako-configuration-xdg-config)
+                              %home-mako-xdg-config)
            (service-extension home-shepherd-service-type
-                              home-mako-configuration-shepherd)))
+                              %home-mako-shepherd)))
     (default-value (home-mako-configuration))
     (description "Run mako, a notification daemon.")))
 
@@ -253,15 +234,12 @@
 ;;; network-manager-applet
 ;;;
 
-(define-record-type* <home-network-manager-applet-configuration>
-  home-network-manager-applet-configuration
-  make-home-network-manager-applet-configuration
-  home-network-manager-applet-configuration?
-  this-home-network-manager-applet-configuration
-  (network-manager-applet home-network-manager-applet-configuration-network-manager-applet
-                          (default (spec->pkg "network-manager-applet"))))
+(define-configuration/no-serialization home-network-manager-applet-configuration
+  (network-manager-applet
+   (file-like (spec->pkg "network-manager-applet"))
+   ""))
 
-(define home-network-manager-applet-shepherd-service
+(define %home-network-manager-applet-shepherd
   (match-record-lambda <home-network-manager-applet-configuration>
       (network-manager-applet)
     (list (shepherd-service
@@ -279,7 +257,7 @@
      (list (service-extension home-profile-service-type
                               (compose list home-network-manager-applet-configuration-network-manager-applet))
            (service-extension home-shepherd-service-type
-                              home-network-manager-applet-shepherd-service)))
+                              %home-network-manager-applet-shepherd)))
     (default-value (home-network-manager-applet-configuration))
     (description "Run nm-applet, a tray applet for managing networks.")))
 
@@ -288,40 +266,24 @@
 ;;; niri
 ;;;
 
-(define %rosenthal-example-niri-config
-  (computed-substitution-with-inputs "niri.kdl"
-    (local-file "../examples/niri.kdl")
-    (cons xwayland-satellite
-          (specs->pkgs "alacritty"
-                       "guix-backgrounds"
-                       "light"
-                       "rofi-wayland"
-                       "wireplumber"))))
-
-(define-record-type* <home-niri-configuration>
-  home-niri-configuration
-  make-home-niri-configuration
-  home-niri-configuration?
-  this-home-niri-configuration
-  (config     home-niri-configuration-config
-              (default %rosenthal-example-niri-config))
-  ;; Extension.
-  (xdg-config home-niri-configuration-xdg-config
-              (default (%home-niri-xdg-config
-                        this-home-niri-configuration))
-              (thunked)))
+(define-configuration/no-serialization home-niri-configuration
+  (config
+   maybe-file-like
+   ""))
 
 (define %home-niri-xdg-config
   (match-record-lambda <home-niri-configuration>
       (config)
-    `(("niri/config.kdl" ,config))))
+    (if (maybe-value-set? config)
+        `(("niri/config.kdl" ,config))
+        '())))
 
 (define home-niri-service-type
   (service-type
     (name 'niri)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
-                              home-niri-configuration-xdg-config)))
+                              %home-niri-xdg-config)))
     (default-value (home-niri-configuration))
     (description
      "Set up configuration file for niri, a scrollable-tiling Wayland
@@ -332,38 +294,24 @@ compositor.")))
 ;;; rofi
 ;;;
 
-(define %rosenthal-example-rofi-config
-  (mixed-text-file "rofi.rasi" "\
-configuration {
-    icon-theme: \"Qogir\";
-}
-@theme \"" (spec->pkg "rofi-wayland") "/share/rofi/themes/fullscreen-preview.rasi\"\n"))
-
-
-(define-record-type* <home-rofi-configuration>
-  home-rofi-configuration
-  make-home-rofi-configuration
-  home-rofi-configuration?
-  this-home-rofi-configuration
-  (config     home-rofi-configuration-config
-              (default %rosenthal-example-rofi-config))
-  ;; Extension.
-  (xdg-config home-rofi-configuration-xdg-config
-              (default (%home-rofi-xdg-config
-                        this-home-rofi-configuration))
-              (thunked)))
+(define-configuration/no-serialization home-rofi-configuration
+  (config
+   maybe-file-like
+   ""))
 
 (define %home-rofi-xdg-config
   (match-record-lambda <home-rofi-configuration>
       (config)
-    `(("rofi/config.rasi" ,config))))
+    (if (maybe-value-set? config)
+        `(("rofi/config.rasi" ,config))
+        '())))
 
 (define home-rofi-service-type
   (service-type
     (name 'rofi)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
-                              home-rofi-configuration-xdg-config)))
+                              %home-rofi-xdg-config)))
     (default-value (home-rofi-configuration))
     (description
      "Set up configuration file for rofi, an application launcher.")))
@@ -373,20 +321,13 @@ configuration {
 ;;; swaybg
 ;;;
 
-(define-record-type* <home-swaybg-configuration>
-  home-swaybg-configuration
-  make-home-swaybg-configuration
-  home-swaybg-configuration?
-  this-home-swaybg-configuration
-  (swaybg     home-swaybg-configuration-swaybg
-              (default (spec->pkg "swaybg")))
-  (background home-swaybg-configuration-background
-              (default (local-file "../examples/wallpaper.jpg")))
-  ;; Extensions.
-  (shepherd   home-swaybg-configuration-shepherd
-              (default (%home-swaybg-shepherd
-                        this-home-swaybg-configuration))
-              (thunked)))
+(define-configuration/no-serialization home-swaybg-configuration
+  (swaybg
+   (file-like (spec->pkg "swaybg"))
+   "")
+  (background
+   (file-like (local-file "../examples/wallpaper.jpg"))
+   ""))
 
 (define %home-swaybg-shepherd
   (match-record-lambda <home-swaybg-configuration>
@@ -405,7 +346,7 @@ configuration {
     (name 'swaybg)
     (extensions
      (list (service-extension home-shepherd-service-type
-                              home-swaybg-configuration-shepherd)))
+                              %home-swaybg-shepherd)))
     (default-value (home-swaybg-configuration))
     (description
      "Run swaybg, a screen wallpaper utility for Wayland compositors.")))
@@ -415,38 +356,22 @@ configuration {
 ;;; theme
 ;;;
 
-(define-record-type* <home-theme-configuration>
-  home-theme-configuration
-  make-home-theme-configuration
-  home-theme-configuration?
-  this-home-theme-configuration
-  (packages     home-theme-configuration-packages
-                (default '()))
-  (icon-theme   home-theme-configuration-icon-theme
-                (default "Adwaita"))
-  (cursor-theme home-theme-configuration-cursor-theme
-                (default "Adwaita"))
-  (cursor-size  home-theme-configuration-cursor-size
-                (default 24))
-  (key-theme    home-theme-configuration-key-theme
-                (default "Default"))
-  ;; Extensions.
-  (environment-variables home-theme-configuration-environment-variables
-                         (default (%home-theme-environment-variables
-                                   this-home-theme-configuration))
-                         (thunked))
-  (profile               home-theme-configuration-profile
-                         (default (%home-theme-profile
-                                   this-home-theme-configuration))
-                         (thunked))
-  (files                 home-theme-configuration-files
-                         (default (%home-theme-files
-                                   this-home-theme-configuration))
-                         (thunked))
-  (xdg-config            home-theme-configuration-xdg-config
-                         (default (%home-theme-xdg-config
-                                   this-home-theme-configuration))
-                         (thunked)))
+(define-configuration/no-serialization home-theme-configuration
+  (packages
+   (list-of-file-likes '())
+   "")
+  (icon-theme
+   (string "Adwaita")
+   "")
+  (cursor-theme
+   (string "Adwaita")
+   "")
+  (cursor-size
+   (number 24)
+   "")
+  (key-theme
+   (string "Default")
+   ""))
 
 (define (%home-theme-environment-variables _)
   '(("QT_QPA_PLATFORMTHEME" . "gtk3")
@@ -465,7 +390,7 @@ configuration {
       (icon-theme)
     `((".icons/default/index.theme"
        ,(plain-file "index.theme"
-          (format #f "~
+          (format #f "\
 [icon theme]
 Inherits = ~a~%"
                   icon-theme))))))
@@ -475,7 +400,7 @@ Inherits = ~a~%"
       (icon-theme cursor-theme cursor-size key-theme)
     `(("gtk-3.0/settings.ini"
        ,(plain-file "settings.ini"
-          (format #f "~
+          (format #f "\
 [Settings]
 gtk-theme-name = Adwaita
 gtk-icon-theme-name = ~a
@@ -490,13 +415,13 @@ gtk-key-theme-name = ~a~%"
     (name 'theme)
     (extensions
      (list (service-extension home-environment-variables-service-type
-                              home-theme-configuration-environment-variables)
+                              %home-theme-environment-variables)
            (service-extension home-profile-service-type
-                              home-theme-configuration-profile)
+                              %home-theme-profile)
            (service-extension home-files-service-type
-                              home-theme-configuration-files)
+                              %home-theme-files)
            (service-extension home-xdg-configuration-files-service-type
-                              home-theme-configuration-xdg-config)))
+                              %home-theme-xdg-config)))
     (default-value (home-theme-configuration))
     (description "Set up desktop themes.")))
 
@@ -505,40 +430,26 @@ gtk-key-theme-name = ~a~%"
 ;;; waybar
 ;;;
 
-(define %rosenthal-example-waybar-config
-  (computed-substitution-with-inputs "config.jsonc"
-    (local-file "../examples/waybar/config.jsonc")
-    (specs->pkgs "light" "pavucontrol" "wireplumber")))
-
-(define %rosenthal-example-waybar-style
-  (local-file "../examples/waybar/style.css"))
-
-(define-record-type* <home-waybar-configuration>
-  home-waybar-configuration
-  make-home-waybar-configuration
-  home-waybar-configuration?
-  this-home-waybar-configuration
-  (waybar     home-waybar-configuration-waybar
-              (default (spec->pkg "waybar")))
-  (config     home-waybar-configuration-config
-              (default %rosenthal-example-waybar-config))
-  (style      home-waybar-configuration-style
-              (default %rosenthal-example-waybar-style))
-  ;; Extensions.
-  (xdg-config home-waybar-configuration-xdg-config
-              (default (%home-waybar-xdg-config
-                        this-home-waybar-configuration))
-              (thunked))
-  (shepherd   home-waybar-configuration-shepherd
-              (default (%home-waybar-shepherd
-                        this-home-waybar-configuration))
-              (thunked)))
+(define-configuration/no-serialization home-waybar-configuration
+  (waybar
+   (file-like (spec->pkg "waybar"))
+   "")
+  (config
+   maybe-file-like
+   "")
+  (style
+   maybe-file-like
+   ""))
 
 (define %home-waybar-xdg-config
   (match-record-lambda <home-waybar-configuration>
       (config style)
-    `(("waybar/config.jsonc" ,config)
-      ("waybar/style.css" ,style))))
+    `(,@(if (maybe-value-set? config)
+            `(("waybar/config.jsonc" ,config))
+            '())
+      ,@(if (maybe-value-set? style)
+            `(("waybar/style.css" ,style))
+            '()))))
 
 (define %home-waybar-shepherd
   (match-record-lambda <home-waybar-configuration>
@@ -556,9 +467,9 @@ gtk-key-theme-name = ~a~%"
     (name 'waybar)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
-                              home-waybar-configuration-xdg-config)
+                              %home-waybar-xdg-config)
            (service-extension home-shepherd-service-type
-                              home-waybar-configuration-shepherd)))
+                              %home-waybar-shepherd)))
     (default-value (home-waybar-configuration))
     (description "Run waybar, a status bar for Wayland compositors.")))
 
