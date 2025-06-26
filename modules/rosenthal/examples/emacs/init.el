@@ -8,7 +8,7 @@
     (make-empty-file custom-file)
   (load custom-file))
 
-(let ((font-config "$$fonts.el$$"))
+(let ((font-config (locate-user-emacs-file "fonts.el")))
   (when (file-exists-p font-config)
     (load-file font-config)))
 
@@ -197,9 +197,8 @@
 (use-package geiser
   :custom
   (geiser-autodoc-identifier-format "%s → %s")
-  (geiser-default-implementation 'guile)
-  (geiser-active-implementation '(guile))
   (geiser-mode-smart-tab-p t)
+  (geiser-mode-start-repl-p t)
   (geiser-repl-query-on-kill-p nil)
   :init
   ;; Context menu on right click.
@@ -207,10 +206,6 @@
   (defun context-menu ()
     (let ((menu (make-sparse-keymap)))
       (pcase major-mode
-        ('geiser-repl-mode
-         (define-key menu (vector 'insert-image)
-                     '("Insert image" . geiser--guile-picture-language--pict-from-file))
-         menu)
         ('scheme-mode
          (define-key menu (vector 'switch-to-repl)
                      '("Switch to REPL" . geiser-repl-switch))
@@ -230,6 +225,9 @@
 ;;guix:emacs-geiser-guile
 (use-package geiser-guile
   :after (geiser)
+  :custom
+  (geiser-active-implementation '(guile))
+  (geiser-default-implementation 'guile)
   :config
   ;; TODO: Make `flycheck-guile' support `guix repl'.
   (dolist (path
@@ -310,7 +308,6 @@
   (setopt initial-scratch-message
           ";;; Type your Guile program here and evaluate it.\n\n")
   (scheme-mode)
-  (geiser-repl-switch)
   (geiser-repl-import-module "(rosenthal)")
   (geiser-repl-import-module "(nonguix transformations)")
   (delete-window)

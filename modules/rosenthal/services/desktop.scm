@@ -28,9 +28,7 @@
 
   #:use-module (rosenthal packages xorg)
 
-  #:export (%rosenthal-example-emacs-init
-
-            home-blueman-applet-configuration
+  #:export (home-blueman-applet-configuration
             home-blueman-applet-service-type
 
             home-fcitx5-configuration
@@ -57,18 +55,9 @@
             home-waybar-configuration
             home-waybar-service-type
 
+            %rosenthal-skeletons
             %rosenthal-desktop-services
             %rosenthal-desktop-home-services))
-
-
-;;;
-;;; Configuration file presets.
-;;;
-
-(define %rosenthal-example-emacs-init
-  (computed-substitution-with-inputs "init.el"
-    (local-file "../examples/emacs/init.el")
-    (list (local-file "../examples/emacs" #:recursive? #t))))
 
 
 ;;;
@@ -472,6 +461,40 @@ gtk-key-theme-name = ~a~%"
                               %home-waybar-shepherd)))
     (default-value (home-waybar-configuration))
     (description "Run waybar, a status bar for Wayland compositors.")))
+
+
+;;;
+;;; Configuration file presets.
+;;;
+
+
+(define %rosenthal-skeletons
+  `((".config/emacs/fonts.el"
+     ,(local-file "../examples/emacs/fonts.el"))
+    (".config/emacs/init.el"
+     ,(local-file "../examples/emacs/init.el"))
+    (".config/foot/foot.ini"
+     ,(plain-file "foot.ini" "font=monospace:size=12\n"))
+    (".config/mako/config"
+     ,(local-file "../examples/mako.conf"))
+    (".config/niri/config.kdl"
+     ,(local-file "../examples/niri.kdl"))
+    (".config/rofi/config.rasi"
+     ,(plain-file "rofi.rasi" "\
+configuration {
+    icon-theme: \"Qogir\";
+}
+@theme \"/run/current-system/profile/share/rofi/themes/fullscreen-preview.rasi\"\n"))
+    (".config/waybar/config.jsonc"
+     ,(local-file "../examples/waybar/config.jsonc"))
+    (".config/waybar/style.css"
+     ,(local-file "../examples/waybar/style.css"))
+    (".config/xfce4/helpers.rc"
+     ,(plain-file "helpers.rc" "TerminalEmulator=rofi-sensible-terminal\n"))
+    ;; Selected from the default skeletons.
+    (".config/gdb/gdbinit" ,%default-gdbinit)
+    (".config/nano/nanorc" ,%default-nanorc)
+    (".guile" ,%default-dotguile)))
 
 
 ;;;

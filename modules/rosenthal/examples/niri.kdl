@@ -338,8 +338,8 @@ binds {
     Mod+Shift+Slash { show-hotkey-overlay; }
 
     // Suggested binds for running programs: terminal, app launcher, screen locker.
-    Mod+T { spawn "$$bin/alacritty$$"; }
-    Mod+D { spawn "$$bin/rofi$$" "-show" "drun"; }
+    Mod+T { spawn "foot"; }
+    Mod+D { spawn "rofi" "-show" "drun"; }
     // Super+Alt+L { spawn "swaylock"; }
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
@@ -348,14 +348,14 @@ binds {
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
-    XF86AudioRaiseVolume allow-when-locked=true { spawn "$$bin/wpctl$$" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
-    XF86AudioLowerVolume allow-when-locked=true { spawn "$$bin/wpctl$$" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
-    XF86AudioMute        allow-when-locked=true { spawn "$$bin/wpctl$$" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
-    XF86AudioMicMute     allow-when-locked=true { spawn "$$bin/wpctl$$" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
+    XF86AudioRaiseVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1+"; }
+    XF86AudioLowerVolume allow-when-locked=true { spawn "wpctl" "set-volume" "@DEFAULT_AUDIO_SINK@" "0.1-"; }
+    XF86AudioMute        allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SINK@" "toggle"; }
+    XF86AudioMicMute     allow-when-locked=true { spawn "wpctl" "set-mute" "@DEFAULT_AUDIO_SOURCE@" "toggle"; }
 
     // Example brightness key mappings for light.
-    XF86MonBrightnessUp   allow-when-locked=true { spawn "$$bin/light$$" "-A" "10"; }
-    XF86MonBrightnessDown allow-when-locked=true { spawn "$$bin/light$$" "-U" "10"; }
+    XF86MonBrightnessUp   allow-when-locked=true { spawn "light" "-A" "10"; }
+    XF86MonBrightnessDown allow-when-locked=true { spawn "light" "-U" "10"; }
 
     Mod+Q { close-window; }
 
@@ -578,7 +578,7 @@ binds {
 
 prefer-no-csd
 spawn-at-startup "sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
-spawn-at-startup "$$bin/xwayland-satellite$$" ":233"
+spawn-at-startup "xwayland-satellite" ":233"
 environment {
     DISPLAY ":233"
 }
