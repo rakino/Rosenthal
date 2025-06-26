@@ -601,6 +601,8 @@ gtk-key-theme-name = ~a~%"
            (bluetooth-configuration
              (auto-enable? #t)))
 
+         (service gvfs-service-type)
+
          ;; Screen lockers for Wayland environment.  No dependencies are pulled
          ;; in since we're using empty files.
          (service screen-locker-service-type
