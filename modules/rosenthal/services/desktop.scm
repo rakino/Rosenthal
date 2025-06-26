@@ -546,21 +546,13 @@ gtk-key-theme-name = ~a~%"
   (identifier-syntax (rosenthal-desktop-services-for-system)))
 
 (define %rosenthal-desktop-home-services
-  (cons* (service home-files-service-type
-           `((".guile" ,%default-dotguile)))
-
-         (service home-xdg-configuration-files-service-type
-           `(("gdb/gdbinit" ,%default-gdbinit)
-             ("nano/nanorc" ,%default-nanorc)))
-
-         (service home-shepherd-service-type
+  (cons* (service home-shepherd-service-type
            (home-shepherd-configuration
              ;; Start by WM to inherit environment variables for graphical session.
              (auto-start? #f)
              (daemonize? #f)))
 
          (service home-dbus-service-type)
-
          (service home-pipewire-service-type)
 
          (service home-blueman-applet-service-type)
