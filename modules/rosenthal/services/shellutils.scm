@@ -45,21 +45,19 @@
 (define %home-atuin-fish
   (match-record-lambda <home-atuin-configuration>
       (atuin shells)
-    (if (member 'fish shells)
-        (home-fish-extension
-          (config
+    (home-fish-extension
+      (config
+       (if (member 'fish shells)
            (list (mixed-text-file "atuin.fish"
-                   atuin "/bin/atuin init fish | source\n")))))))
+                   atuin "/bin/atuin init fish | source\n"))
+           '())))))
 
 (define home-atuin-service-type
   (service-type
     (name 'atuin)
     (extensions
-     `(,@(if %home-atuin-fish
-             (list (service-extension home-fish-service-type
-                                      %home-atuin-fish))
-
-             '())))
+     (list (service-extension home-fish-service-type
+                              %home-atuin-fish)))
     (description "")))
 
 
@@ -78,21 +76,19 @@
 (define %home-direnv-fish
   (match-record-lambda <home-direnv-configuration>
       (direnv shells)
-    (if (member 'fish shells)
-        (home-fish-extension
-          (config
+    (home-fish-extension
+      (config
+       (if (member 'fish shells)
            (list (mixed-text-file "direnv.fish"
-                   direnv "/bin/direnv hook fish | source\n")))))))
+                   direnv "/bin/direnv hook fish | source\n"))
+           '())))))
 
 (define home-direnv-service-type
   (service-type
     (name 'direnv)
     (extensions
-     `(,@(if %home-direnv-fish
-             (list (service-extension home-fish-service-type
-                                      %home-direnv-fish))
-
-             '())))
+     (list (service-extension home-fish-service-type
+                              %home-direnv-fish)))
     (description "")))
 
 
@@ -111,19 +107,17 @@
 (define %home-zoxide-fish
   (match-record-lambda <home-zoxide-configuration>
       (zoxide shells)
-    (if (member 'fish shells)
-        (home-fish-extension
-          (config
+    (home-fish-extension
+      (config
+       (if (member 'fish shells)
            (list (mixed-text-file "zoxide.fish"
-                   zoxide "/bin/zoxide init --cmd cd fish | source\n")))))))
+                   zoxide "/bin/zoxide init --cmd cd fish | source\n"))
+           '())))))
 
 (define home-zoxide-service-type
   (service-type
     (name 'zoxide)
     (extensions
-     `(,@(if %home-zoxide-fish
-             (list (service-extension home-fish-service-type
-                                      %home-zoxide-fish))
-
-             '())))
+     (list (service-extension home-fish-service-type
+                              %home-zoxide-fish)))
     (description "")))
