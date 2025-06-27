@@ -409,9 +409,7 @@
   (match-record-lambda <misskey-configuration>
       (image config data-directory log-file )
     (let ((config-file
-           (mixed-text-file
-            "misskey.yaml"
-            #~(string-append #$@(yaml-serialize config) "\n"))))
+           (mixed-text-file "misskey.yaml" (yaml-serialize config))))
       (list (oci-container-configuration
              (user "misskey")
              (group "docker")
