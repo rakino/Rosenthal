@@ -4,6 +4,7 @@
 
 (define-module (rosenthal services desktop)
   #:use-module (guix gexp)
+  #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (guix utils)
   #:use-module (rosenthal utils file)
@@ -55,6 +56,7 @@
             home-waybar-configuration
             home-waybar-service-type
 
+            %rosenthal-set-keymap-script
             %rosenthal-skeletons
             %rosenthal-desktop-services
             %rosenthal-desktop-home-services))
@@ -467,6 +469,89 @@ gtk-key-theme-name = ~a~%"
 ;;; Configuration file presets.
 ;;;
 
+(define %rosenthal-set-keymap-script
+  (program-file "set-keymap"
+    (with-imported-modules (source-module-closure '((guix build utils)))
+      #~(begin
+          (use-modules (srfi srfi-1)
+                       (srfi srfi-26)
+                       (srfi srfi-37)
+                       (ice-9 match)
+                       (ice-9 popen)
+                       (guix build utils))
+
+          (define* (build-keyboard-layout file layout #:optional variant #:key model options)
+            (define pipe
+              (apply open-pipe* OPEN_READ
+                     #$(file-append (spec->pkg "console-setup") "/bin/ckbcomp")
+                     (string-append "-I" #$(spec->pkg "xkeyboard-config") "/share/X11/xkb")
+                     "-rules" "base"
+                     `(,@(if model
+                             '("-model" ,model)
+                             '())
+                       ,layout
+                       ,(or variant "")
+                       ,(string-join options ","))))
+            (mkdir-p (dirname file))
+            (call-with-output-file file
+              (lambda (output)
+                (dump-port pipe output))))
+
+          (define* (set-keyboard-layout layout #:optional variant #:key model options)
+            (define file-name "/tmp/keymaps/console-keymap")
+            (build-keyboard-layout file-name layout variant #:model model #:options options)
+            (invoke "sudo" #$(file-append (spec->pkg "kbd") "/bin/loadkeys") file-name)
+            (when (getenv "WAYLAND_DISPLAY")
+              (substitute* (in-vicinity (getenv "XDG_CONFIG_HOME") "niri/config.kdl")
+                (("^            (layout|variant|model|options) .*") "")
+                (("^        xkb \\{.*" line)
+                 (string-append
+                  line
+                  (format             #f "            layout ~s~%"  layout)
+                  (if variant (format #f "            variant ~s~%" variant) "")
+                  (if model   (format #f "            model ~s~%"   model)   "")
+                  (format             #f "            options ~s~%" (string-join options ",")))))))
+
+          (define (show-help-and-exit)
+            (display "\
+Usage: set-keymap LAYOUT [VARIANT] [-m MODEL] [-o OPTIONS]
+
+OPTIONS are comma-separated e.g. \"ctrl:nocaps,grp:alt_shift_toggle\"
+
+Examples:
+set-keymap us
+set-keymap us dvorak
+set-keymap us dvorak -o ctrl:nocaps\n")
+            (quit))
+
+          (define (parse-options)
+            (args-fold (cdr (program-arguments))
+                       (list (option '(#\m "model") #t #f
+                                     (lambda (opt name arg result)
+                                       (alist-cons 'model arg result)))
+                             (option '(#\o "options") #t #f
+                                     (lambda (opt name arg result)
+                                       (alist-cons 'options (string-split arg #\,)
+                                                   result)))
+                             (option '("help") #f #f
+                                     (lambda _
+                                       (show-help-and-exit))))
+                       (lambda (opt name arg loads)
+                         (error "Unrecognized option `~A'" name))
+                       (lambda (opt loads) (cons opt loads))
+                       '()))
+
+          (let* ((opts (parse-options))
+                 (model (assoc-ref opts 'model))
+                 (options (or (assoc-ref opts 'options) '()))
+                 (args (remove pair? (reverse opts))))
+            (match args
+              ((layout)
+               (set-keyboard-layout layout #:model model #:options options))
+              ((layout variant)
+               (set-keyboard-layout layout variant #:model model #:options options))
+              (_
+               (show-help-and-exit))))))))
 
 (define %rosenthal-skeletons
   `((".config/emacs/fonts.el"

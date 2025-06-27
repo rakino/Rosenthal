@@ -1,7 +1,7 @@
 // SPDX-FileCopyrightText: 2023-2025 Ivan Molodetskikh <yalterz@gmail.com>
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
-//
+
 // This config is in the KDL format: https://kdl.dev
 // "/-" comments out the following node.
 // Check the wiki for a full description of the configuration:
@@ -12,8 +12,6 @@
 // https://github.com/YaLTeR/niri/wiki/Configuration:-Input
 input {
     keyboard {
-        repeat-delay 300
-        repeat-rate 30
         xkb {
             // You can set rules, model, layout, variant and options.
             // For more information, see xkeyboard-config(7).
@@ -22,6 +20,8 @@ input {
             // layout "us,ru"
             // options "grp:win_space_toggle,compose:ralt,ctrl:nocaps"
         }
+        repeat-delay 300
+        repeat-rate 30
     }
 
     // Next sections include libinput settings.
@@ -252,7 +252,7 @@ layout {
 // Note that running niri as a session supports xdg-desktop-autostart,
 // which may be more convenient to use.
 // See the binds section below for more spawn examples.
-// spawn-at-startup "alacritty" "-e" "fish"
+// spawn-at-startup "foot" "fish"
 
 // Uncomment this line to ask the clients to omit their client-side decorations if possible.
 // If the client will specifically ask for CSD, the request will be honored.
@@ -317,7 +317,7 @@ window-rule {
 
 // Example: enable rounded corners for all windows.
 // (This example rule is commented out with a "/-" in front.)
-window-rule {
+/-window-rule {
     geometry-corner-radius 12
     clip-to-geometry true
 }
@@ -344,7 +344,7 @@ binds {
 
     // You can also use a shell. Do this if you need pipes, multiple commands, etc.
     // Note: the entire command goes as a single argument in the end.
-    // Mod+T { spawn "bash" "-c" "notify-send hello && exec alacritty"; }
+    // Mod+T { spawn "bash" "-c" "notify-send hello && exec foot"; }
 
     // Example volume keys mappings for PipeWire & WirePlumber.
     // The allow-when-locked=true property makes them work even when the session is locked.
@@ -576,9 +576,11 @@ binds {
     Mod+Shift+P { power-off-monitors; }
 }
 
-prefer-no-csd
-spawn-at-startup "sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
+// Rootless Xwayland support
 spawn-at-startup "xwayland-satellite" ":233"
 environment {
     DISPLAY ":233"
 }
+
+// Start user Shepherd
+spawn-at-startup "sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
