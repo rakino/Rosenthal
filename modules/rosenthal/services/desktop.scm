@@ -5,10 +5,13 @@
 (define-module (rosenthal services desktop)
   #:use-module (guix gexp)
   #:use-module (guix modules)
+  #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (guix utils)
   #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils packages)
+
+  #:use-module (guix build-system copy)
 
   #:use-module (gnu system)
   #:use-module (gnu system shadow)
@@ -56,7 +59,7 @@
             home-waybar-configuration
             home-waybar-service-type
 
-            %rosenthal-set-keymap-script
+            %rosenthal-set-keymap
             %rosenthal-skeletons
             %rosenthal-desktop-services
             %rosenthal-desktop-home-services))
@@ -552,6 +555,25 @@ set-keymap us dvorak -o ctrl:nocaps\n")
                (set-keyboard-layout layout variant #:model model #:options options))
               (_
                (show-help-and-exit))))))))
+
+(define %rosenthal-set-keymap
+  (hidden-package
+   (package
+     (name "rosenthal-set-keymap")
+     (version "0.0.0")
+     (source %rosenthal-set-keymap-script)
+     (build-system copy-build-system)
+     (arguments
+      (list
+       #:phases
+       #~(modify-phases %standard-phases
+           (replace 'install
+             (lambda _
+               (install-file "set-keymap" (in-vicinity #$output "bin")))))))
+     (home-page "")
+     (synopsis "")
+     (description "")
+     (license #f))))
 
 (define %rosenthal-skeletons
   `((".config/emacs/fonts.el"
