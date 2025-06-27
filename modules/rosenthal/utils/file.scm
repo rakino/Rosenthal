@@ -32,5 +32,5 @@
           (use-modules (guix build utils))
           (copy-file #$file #$output)
           (substitute* #$output
-            (("[Desktop Entry]" all)
+            (("^\\[Desktop Entry\\].*" all)
              (string-append all "NoDisplay=true\n")))))))
