@@ -40,9 +40,8 @@
                      (fill-column . 72)))
  (scheme-mode
   .
-  (;; Note this next setting will use the current guix as the geiser binary;
-   ;; one working with a local guix checkout may want something different.
-   (geiser-guile-binary . ("guix" "repl"))
+  ((eval . (put 'computed-substitution-with-inputs 'scheme-indent-function 1))
+   (eval . (put 'hidden-desktop-entry 'scheme-indent-function 1))
 
    (eval . (put 'btrbk-configuration 'scheme-indent-function 0))
    (eval . (put 'caddy-configuration 'scheme-indent-function 0))
@@ -80,6 +79,15 @@
    (eval . (put 'smartdns-configuration 'scheme-indent-function 0))
    (eval . (put 'tailscale-configuration 'scheme-indent-function 0))
    (eval . (put 'vaultwarden-configuration 'scheme-indent-function 0))
+ ;; Nonguix
+   ;; Note this next setting will use the current guix as the geiser binary;
+   ;; one working with a local guix checkout may want something different.
+   (geiser-guile-binary . ("guix" "repl"))
+
+   (eval . (put 'with-transformation 'scheme-indent-function 1))
+
+   (eval . (put 'nonguix-container 'scheme-indent-function 0))
+   (eval . (put 'nvidia-configuration 'scheme-indent-function 0))
 
    ;; Below are copied from Guix.
    (indent-tabs-mode . nil)
