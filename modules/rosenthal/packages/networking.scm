@@ -252,7 +252,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.84.2")
+    (version "1.84.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -261,7 +261,7 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1nsf9g95c68hbsals99fqn47w75sa17ayhalk85qi8iv36k2h9km"))
+                "1cdmr6z351i2ammr82gvbs2x3cp9w75q0nzvvk91rsx2khvd8yyh"))
               (modules '((guix build utils)))
               (snippet
                '(begin
