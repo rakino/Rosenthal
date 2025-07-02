@@ -1,23 +1,21 @@
 /* SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space> */
 /* SPDX-License-Identifier: CC0-1.0 */
 
-@define-color bg1    #d2dee9;
-@define-color bg2    #13181b;
+@define-color bg1    #D2DEE9;
+@define-color bg2    #13181B;
 
 @define-color red    #EC7875;
 @define-color green  #A3BE8C;
-@define-color blue   #75A4CD;
 
 /* Execute ‘guix shell python-pywal imagemagick -- wal -nstei <image>’, */
 /* then select colors from ‘~/.cache/wal/colors-waybar.css’. */
-@define-color color0 #d2dee9;
-@define-color color1 #B3C6D3;
-@define-color color2 #97B0C7;
-@define-color color3 #AFB5AE;
-@define-color color4 #d2dee9;
-@define-color color5 #A7BAC9;
-@define-color color6 #C2C2B5;
-@define-color color7 #939ba3;
+@define-color color0 #AFB5AE;
+@define-color color1 #A7BAC9;
+@define-color color2 #B3C6D3;
+@define-color color3 #DBEDF3;
+@define-color color4 #A7BAC9;
+@define-color color5 #C2C2B5;
+@define-color color6 #939BA3;
 
 * {
     font-size: 1.2rem;
@@ -49,9 +47,9 @@ tooltip label {
     margin: 10px 0 0 10px;
 }
 
+#temperature,
 #cpu,
 #memory,
-#temperature,
 #clock,
 #tray,
 #wireplumber,
@@ -62,8 +60,16 @@ tooltip label {
     opacity: 0.95;
 }
 
-#workspaces button {
+#taskbar {
     color: @bg2;
+    background-color: @bg1;
+}
+
+#taskbar.empty {
+    background: transparent;
+}
+
+#taskbar button {
     padding: 0 5px;
 }
 
@@ -101,7 +107,7 @@ tooltip label {
     background-color: @green;
 }
 
-#workspaces {
+#temperature {
     background-color: @color0;
 }
 
@@ -113,22 +119,18 @@ tooltip label {
     background-color: @color2;
 }
 
-#temperature {
+#clock {
     background-color: @color3;
 }
 
-#clock {
+#wireplumber {
     background-color: @color4;
 }
 
-#wireplumber {
+#backlight {
     background-color: @color5;
 }
 
-#backlight {
-    background-color: @color6;
-}
-
 #battery {
-    background-color: @color7;
+    background-color: @color6;
 }

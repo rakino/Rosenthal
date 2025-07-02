@@ -7,10 +7,10 @@
     "layer": "top",
     "spacing": 5,
     "modules-left": [
-        "niri/workspaces",
+        "temperature",
         "cpu",
         "memory",
-        "temperature",
+        "wlr/taskbar",
     ],
     "modules-center": [
         "clock",
@@ -22,14 +22,11 @@
         "battery",
     ],
     // left
-    "niri/workspaces": {
-        "all-outputs": true,
-        "format": "{icon}",
-        "format-icons": {
-            "focused": "\uF055",
-            "active": "\uF192",
-            "default": "\uF111",
-        }
+    "temperature": {
+        "critical-threshold": 80,
+        "format": "{temperatureC}\u00B0C",
+        "interval": 2,
+        "tooltip": false,
     },
     "cpu": {
         "format": "CPU {usage}%",
@@ -45,11 +42,12 @@
         },
         "interval": 2,
     },
-    "temperature": {
-        "critical-threshold": 80,
-        "format": "{temperatureC}\u00B0C",
-        "interval": 2,
-        "tooltip": false,
+    "wlr/taskbar": {
+        "format": "{icon}",
+        "icon-size": 16,
+        "tooltip-format": "{title}",
+        "on-click": "activate",
+        "on-click-middle": "close",
     },
     // center
     "clock": {
