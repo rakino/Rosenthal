@@ -5,6 +5,7 @@
 
 {
     "layer": "top",
+    "height": 36,
     "spacing": 5,
     "modules-left": [
         "temperature",

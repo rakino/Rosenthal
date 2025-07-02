@@ -70,7 +70,10 @@ tooltip label {
 }
 
 #taskbar button {
-    padding: 0 5px;
+    /* https://github.com/Alexays/Waybar/issues/3334 */
+    padding: 0;
+    padding-left: 5px;
+    padding-right: 5px;
 }
 
 #tray menu {
