@@ -186,6 +186,12 @@ bypass network restrictions." )
                "vendor")))
           (replace 'install-license-files
             (assoc-ref gnu:%standard-phases 'install-license-files))
+          (add-after 'unpack 'set-tailscale-default-wireguard-port
+            (lambda _
+              ;; See also: https://tailscale.com/kb/1082/firewall-ports
+              ;; https://github.com/tailscale/tailscale/blob/51c11a864b1241d1cf1a736fbc94b0f8c76da563/cmd/tailscaled/tailscaled.go#L102
+              (substitute* "vendor/github.com/sagernet/tailscale/tsnet/tsnet.go"
+                (("s\\.Port") "41641"))))
           (add-after 'install 'install-extras
             (lambda _
               (let ((sing-box
