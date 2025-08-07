@@ -1,6 +1,6 @@
-;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages password-utils)
   #:use-module (guix gexp)

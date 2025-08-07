@@ -1,6 +1,6 @@
-;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services networking)
   #:use-module (srfi srfi-1)
@@ -21,9 +21,9 @@
             tailscale-configuration
             tailscale-service-type))
 
-;;
-;; iwd
-;;
+;;;
+;;; iwd
+;;;
 
 
 (define %iwd-config-general
@@ -378,9 +378,9 @@ list, power save will be disabled."))
    (description "Run iwd, the iNet wireless daemon.")))
 
 
-;;
-;; Tailscale
-;;
+;;;
+;;; Tailscale
+;;;
 
 
 (define-configuration tailscale-configuration

@@ -1,6 +1,6 @@
-;; SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services web)
   #:use-module (guix gexp)
@@ -125,9 +125,9 @@
 
 
 
-;;
-;; Forgejo
-;;
+;;;
+;;; Forgejo
+;;;
 
 
 (define (file-object? val)
@@ -218,9 +218,9 @@
    (description "Run Forgejo.")))
 
 
-;;
-;; Jellyfin
-;;
+;;;
+;;; Jellyfin
+;;;
 
 
 (define-maybe string)
@@ -362,9 +362,9 @@
    (description "Run Komga.")))
 
 
-;;
-;; Misskey
-;;
+;;;
+;;; Misskey
+;;;
 
 
 (define-configuration misskey-configuration
@@ -512,9 +512,9 @@
    (description "Run Navidrome.")))
 
 
-;;
-;; Vaultwarden
-;;
+;;;
+;;; Vaultwarden
+;;;
 
 
 (define-configuration vaultwarden-configuration

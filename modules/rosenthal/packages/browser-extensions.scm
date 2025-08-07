@@ -1,6 +1,6 @@
-;; SPDX-FileCopyrightText: 2023-2025 Hilton Chain <hako@ultrarare.space>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2023-2025 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages browser-extensions)
   #:use-module (srfi srfi-1)

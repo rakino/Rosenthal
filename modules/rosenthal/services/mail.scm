@@ -1,6 +1,6 @@
-;; SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services mail)
   #:use-module (srfi srfi-26)

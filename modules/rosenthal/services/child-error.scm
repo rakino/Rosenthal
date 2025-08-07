@@ -1,6 +1,6 @@
-;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services child-error)
   #:use-module (guix records)
@@ -42,9 +42,9 @@
             home-socks2http-configuration
             home-socks2http-service-type))
 
-;;
-;; Clash
-;;
+;;;
+;;; Clash
+;;;
 
 
 (define-configuration clash-configuration
@@ -122,9 +122,9 @@
    (description "Run Clash.")))
 
 
-;;
-;; Cloudflare Tunnel
-;;
+;;;
+;;; Cloudflare Tunnel
+;;;
 
 
 (define-maybe string)
@@ -213,9 +213,9 @@ headers.  This can expose sensitive information in your logs.")
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
 
 
-;;
-;; Cloudflare Warp
-;;
+;;;
+;;; Cloudflare Warp
+;;;
 
 
 (define-configuration cloudflare-warp-configuration
@@ -250,9 +250,9 @@ headers.  This can expose sensitive information in your logs.")
    (description "Run warp-svc, the Cloudflare Warp daemon.")))
 
 
-;;
-;; Miniflux
-;;
+;;;
+;;; Miniflux
+;;;
 
 
 (define-maybe string)
@@ -326,9 +326,9 @@ headers.  This can expose sensitive information in your logs.")
    (description "Run Miniflux, a minimalist and opinionated feed reader.")))
 
 
-;;
-;; Wakapi
-;;
+;;;
+;;; Wakapi
+;;;
 
 
 (define-configuration home-wakapi-configuration
@@ -365,9 +365,9 @@ headers.  This can expose sensitive information in your logs.")
    (description "Run Wakapi, a self-hosted WakaTime-compatible backend.")))
 
 
-;;
-;; ShadowTLS
-;;
+;;;
+;;; ShadowTLS
+;;;
 
 
 (define-maybe list-of-strings
@@ -524,9 +524,9 @@ is @code{443} by default")
    (default-value (for-home (shadow-tls-configuration)))))
 
 
-;;
-;; Socks2http
-;;
+;;;
+;;; Socks2http
+;;;
 
 
 (define-configuration home-socks2http-configuration

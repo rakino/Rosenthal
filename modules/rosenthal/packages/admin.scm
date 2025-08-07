@@ -1,7 +1,7 @@
-;; SPDX-FileCopyrightText: 2022, 2025 Hilton Chain <hako@ultrarare.space>
-;; SPDX-FileCopyrightText: 2025 William Goodspeed
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2022, 2025 Hilton Chain <hako@ultrarare.space>
+;;; SPDX-FileCopyrightText: 2025 William Goodspeed
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages admin)
   #:use-module ((guix licenses) #:prefix license:)

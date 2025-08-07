@@ -1,8 +1,8 @@
 ;;; -*- lexical-binding: t -*-
-;; SPDX-FileCopyrightText: DogLooksGood <doglooksgood@hotmail.com>
-;; SPDX-FileCopyrightText: 2022 Nyk Ma <i@nyk.ma>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: DogLooksGood <doglooksgood@hotmail.com>
+;;; SPDX-FileCopyrightText: 2022 Nyk Ma <i@nyk.ma>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 ;; https://github.com/DogLooksGood/meomacs/blob/master/laf.org
 ;; https://github.com/nykma/nema/blob/develop/my-sample/font.el

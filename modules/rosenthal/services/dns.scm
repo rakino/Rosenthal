@@ -1,6 +1,6 @@
-;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
-;;
-;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
+;;;
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services dns)
   #:use-module (guix gexp)
@@ -12,9 +12,9 @@
   #:export (smartdns-configuration
             smartdns-service-type))
 
-;;
-;; Smartdns
-;;
+;;;
+;;; Smartdns
+;;;
 
 
 (define-configuration smartdns-configuration
