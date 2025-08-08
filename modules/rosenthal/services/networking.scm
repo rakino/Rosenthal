@@ -15,8 +15,12 @@
   #:use-module (gnu services configuration)
   #:use-module (gnu services dbus)
   #:use-module (gnu services shepherd)
+  #:use-module (gnu system shadow)
   #:export (iwd-configuration
             iwd-service-type
+
+            sing-box-service-type
+            sing-box-configuration
 
             tailscale-configuration
             tailscale-service-type))
@@ -376,6 +380,81 @@ list, power save will be disabled."))
                              (compose list iwd-configuration-log-file))))
    (default-value (iwd-configuration))
    (description "Run iwd, the iNet wireless daemon.")))
+
+
+;;;
+;;; sing-box
+;;;
+
+(define (file-object? val)
+  (or (string? val)
+      (file-like? val)))
+
+(define-configuration/no-serialization sing-box-configuration
+  (sing-box
+   (file-like sing-box)
+   "")
+  (config-file
+   file-object
+   "")
+  (data-directory
+   (string "/var/lib/sing-box")
+   "")
+  ;; Shepherd
+  (shepherd-provision
+   (list-of-symbols '(sing-box))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '(networking))
+   "")
+  (log-file
+   (string "/var/log/sing-box.log")
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define sing-box-account
+  (list (user-group (name "sing-box") (system? #t))))
+
+(define sing-box-activation
+  (match-record-lambda <sing-box-configuration>
+      (data-directory)
+    #~(begin
+        (use-modules (guix build utils))
+        (mkdir-p #$data-directory))))
+
+(define sing-box-shepherd-service
+  (match-record-lambda <sing-box-configuration>
+      (sing-box data-directory config-file
+       shepherd-provision shepherd-requirement log-file auto-start?)
+    (list (shepherd-service
+            (provision shepherd-provision)
+            (requirement `(user-processes ,@shepherd-requirement))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append sing-box "/bin/sing-box")
+                      "--config" #$config-file
+                      "--directory" #$data-directory
+                      "--disable-color"
+                      "run")
+                #:log-file #$log-file))
+            (stop #~(make-kill-destructor))
+            (auto-start? auto-start?)))))
+
+(define sing-box-service-type
+  (service-type
+    (name 'sing-box)
+    (extensions
+     (list (service-extension account-service-type
+                              (const sing-box-account))
+           (service-extension activation-service-type
+                              sing-box-activation)
+           (service-extension shepherd-root-service-type
+                              sing-box-shepherd-service)
+           (service-extension log-rotation-service-type
+                              (compose list sing-box-configuration-log-file))))
+    (description "")))
 
 
 ;;;
