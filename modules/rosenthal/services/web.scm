@@ -51,6 +51,16 @@
    "")
   (caddyfile
    file-like
+   "")
+  ;; Shepherd
+  (shepherd-provision
+   (list-of-symbols '(caddy))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "")
+  (auto-start?
+   (boolean #t)
    ""))
 
 (define (caddy-accounts config)
@@ -91,22 +101,25 @@
                (chown file (passwd:uid user) (passwd:gid user)))
              (find-files data-dir #:directories? #t)))))))
 
-(define (caddy-shepherd-services config)
-  (list (shepherd-service
-          (provision '(caddy))
-          (requirement '(user-processes loopback))
-          (start
-           #~(make-forkexec-constructor
-              (list "/run/privileged/bin/caddy" "run"
-                    "--environ" "--config" "/etc/caddy/Caddyfile")
-              #:user "caddy"
-              #:group "caddy"
-              #:directory "/var/lib/caddy"
-              #:log-file "/var/log/caddy.log"
-              #:resource-limits '((nofile 1048576 1048576))
-              #:environment-variables '("HOME=/var/lib/caddy")))
-          (stop
-           #~(make-kill-destructor)))))
+(define caddy-shepherd-services
+  (match-record-lambda <caddy-configuration>
+      (shepherd-provision shepherd-requirement auto-start?)
+    (list (shepherd-service
+            (provision shepherd-provision)
+            (requirement `(user-processes loopback ,@shepherd-requirement))
+            (start
+             #~(make-forkexec-constructor
+                (list "/run/privileged/bin/caddy" "run"
+                      "--environ" "--config" "/etc/caddy/Caddyfile")
+                #:user "caddy"
+                #:group "caddy"
+                #:directory "/var/lib/caddy"
+                #:log-file "/var/log/caddy.log"
+                #:resource-limits '((nofile 1048576 1048576))
+                #:environment-variables '("HOME=/var/lib/caddy")))
+            (stop
+             #~(make-kill-destructor))
+            (auto-start? auto-start?)))))
 
 (define caddy-service-type
   (service-type
