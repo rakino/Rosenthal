@@ -39,6 +39,24 @@ editing Caddyfiles, configuration files for @code{caddy}.")
       (properties
        '((disable-updater? . #t))))))
 
+(define-public emacs-eat/hako
+  (package
+    (inherit
+     (package-with-extra-patches emacs-eat
+       (list (origin
+               (method url-fetch)
+               (uri "https://codeberg.org/akib/emacs-eat/pulls/133.patch")
+               (sha256
+                (base32
+                 "0rn2xf2jq9i42ndcd3wxrr5lid8r4kxqiyr84dasv5ihqg8as5d5")))
+             (origin
+               (method url-fetch)
+               (uri "https://codeberg.org/akib/emacs-eat/pulls/228.patch")
+               (sha256
+                (base32
+                 "14d6nvagcri0r687y3m179ijmnad89m5d5dj2rn2p6rpfc5nssr0"))))))
+    (name "emacs-eat-hako")))
+
 (define-public emacs-nftables-mode
   (package
     (name "emacs-nftables-mode")
