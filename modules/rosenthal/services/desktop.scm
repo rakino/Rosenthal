@@ -357,6 +357,9 @@ compositor.")))
   (icon-theme
    (string "Adwaita")
    "")
+  (font
+   (string "Sans")
+   "")
   (cursor-theme
    (string "Adwaita")
    "")
@@ -391,18 +394,18 @@ Inherits = ~a~%"
 
 (define %home-theme-xdg-config
   (match-record-lambda <home-theme-configuration>
-      (icon-theme cursor-theme cursor-size key-theme)
+      (icon-theme font cursor-theme cursor-size key-theme)
     `(("gtk-3.0/settings.ini"
        ,(plain-file "settings.ini"
           (format #f "\
 [Settings]
 gtk-theme-name = Adwaita
 gtk-icon-theme-name = ~a
-gtk-font-name = Sans
+gtk-font-name = ~a
 gtk-cursor-theme-name = ~a
 gtk-cursor-theme-size = ~a
 gtk-key-theme-name = ~a~%"
-                  icon-theme cursor-theme cursor-size key-theme))))))
+                  icon-theme font cursor-theme cursor-size key-theme))))))
 
 (define home-theme-service-type
   (service-type
