@@ -219,7 +219,7 @@ from serving static websites to running dynamic web applications.")
 (define-public hugo
   (package
     (name "hugo")
-    (version "0.148.1")
+    (version "0.148.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -228,7 +228,7 @@ from serving static websites to running dynamic web applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0da6i21ygvcyhphhsdrsn5s9yjk7h9l6mqpdndwyzawsskg1ls0h"))))
+                "1ajv2m07kl6gysvr6qmgb5f36cygqqvj214v5zml0mjx513d10p8"))))
     (build-system go-build-system)
     (arguments
      (list
