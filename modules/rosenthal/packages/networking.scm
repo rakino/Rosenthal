@@ -69,7 +69,7 @@ origin can remain as closed as possible.")
 (define-public mihomo
   (package
     (name "mihomo")
-    (version "1.19.11")
+    (version "1.19.12")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -78,7 +78,7 @@ origin can remain as closed as possible.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1vsy73iian2kk89c40g8q0ndcabcwxvsi4j6h6x4y6dkyafrppcy"))))
+                "1g7v5zdjhkc5gd8ls9z9hmympwnsrlsyjjvxssqpcy09zbmc9fln"))))
     (build-system go-build-system)
     (arguments
      (list
@@ -123,7 +123,7 @@ origin can remain as closed as possible.")
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "1kvhcngcabp43g27d7spz47dm2c8ngzh270cfwz2iy9vmng67xlk"))))
+                "0wdz4811n3wj3ihwq5g7klah16y7g0cdi06bd5crg0ixp579qdjh"))))
       (if (%current-target-system)
           (list this-package)
           '())))
