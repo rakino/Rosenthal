@@ -193,7 +193,7 @@ from serving static websites to running dynamic web applications.")
   (package
     (inherit caddy)
     (name "caddy-hako")
-    (version "2025.06.09-2")
+    (version "2025.08.17-1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -202,7 +202,7 @@ from serving static websites to running dynamic web applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0v3i4rlpvbb1hxppwk58bslrn4i43khp0yr9i48sq74dg3xxcman"))))
+                "07c1yxpyz1sbfs7xy8s32hsw3z4l6rpwz01g8n4lq4xzgavkpqab"))))
     (native-inputs
      (modify-inputs (package-native-inputs caddy)
        (replace "vendored-go-dependencies"
@@ -212,7 +212,7 @@ from serving static websites to running dynamic web applications.")
            (file-name "vendored-go-dependencies")
            (sha256
             (base32
-             "0iv97phpwhp185bryx27vvdm7s6j1w195zdcjmpb7dr20p5l5i1i"))))))
+             "1fdspm2a4574hn4aik5wlli0yp4ih3w2rjyrw3s96n2drk0schqn"))))))
     (home-page "https://git.boiledscript.com/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
