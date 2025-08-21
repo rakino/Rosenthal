@@ -18,13 +18,13 @@
   greetd-tuigreet-session?
   this-greetd-tuigreet-session
   (tuigreet greetd-tuigreet-session-tuigreet
-            (default tuigreet)))
+            (default (spec->pkg "tuigreet"))))
 
 (define-gexp-compiler (greetd-tuigreet-session-compiler
                        (session <greetd-tuigreet-session>)
                        system target)
   (match-record session <greetd-tuigreet-session> (tuigreet)
-    (let ((tuigreet (file-append tuigreet "/bin/tuigreet")))
+    (let ((tuigreet (file-append (spec->pkg "tuigreet") "/bin/tuigreet")))
       (lower-object
        (program-file "tuigreet-wrapper"
          #~(execl #$tuigreet #$tuigreet
