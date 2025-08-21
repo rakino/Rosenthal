@@ -20,57 +20,6 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg))
 
-(define-public rust-pipewire
-  (let ((commit "fd3d8f7861a29c2eeaa4c393402e013578bb36d9")
-        (revision "0"))
-    (package
-      (name "rust-pipewire")
-      (version (git-version "0.8.0" revision commit))
-      (source
-       (origin
-         (method git-fetch)
-         (uri (git-reference
-               (url "https://gitlab.freedesktop.org/pipewire/pipewire-rs.git")
-               (commit commit)))
-         (file-name (git-file-name name version))
-         (sha256
-          (base32 "1hzyhz7xg0mz8a5y9j6yil513p1m610q3j9pzf6q55vdh5mcn79v"))))
-      (build-system cargo-build-system)
-      (arguments
-       (list #:skip-build? #t
-             #:phases
-             #~(modify-phases %standard-phases
-                 ;; Avoid circular dependency.
-                 (add-after 'unpack 'remove-dev-dependencies
-                   (lambda _
-                     (substitute* "libspa/Cargo.toml"
-                       (("^pipewire.*") ""))))
-                 (replace 'package
-                   (lambda* (#:key cargo-package-flags vendor-dir #:allow-other-keys)
-                     (begin
-                       ;;error: invalid inclusion of reserved file name Cargo.toml.orig in package source
-                       (when (file-exists? "Cargo.toml.orig")
-                         (delete-file "Cargo.toml.orig"))
-
-                       (for-each
-                        (lambda (pkg)
-                          (apply invoke "cargo" "package" "--offline" "--package" pkg
-                                 cargo-package-flags)
-                          (for-each
-                           (lambda (crate)
-                             (invoke "tar" "xzf" crate "-C" vendor-dir))
-                           (find-files "target/package" "\\.crate$"))
-                          ((assoc-ref %standard-phases 'patch-cargo-checksums)))
-                        '("libspa-sys" "libspa" "pipewire-sys" "pipewire"))))))))
-      (inputs (rosenthal-cargo-inputs 'rust-pipewire))
-      (home-page "https://pipewire.org/")
-      (synopsis "Rust bindings for PipeWire")
-      (description "This package provides Rust bindings for PipeWire.")
-      (license license:expat)
-      (properties
-       '((hidden? . #t)
-         (disable-updater? . #t))))))
-
 (define-public rust-smithay
   (let ((commit "0cd3345c59f7cb139521f267956a1a4e33248393")
         (revision "0"))
