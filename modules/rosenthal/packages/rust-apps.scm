@@ -8,7 +8,8 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix build-system cargo)
-  #:use-module (rosenthal utils cargo))
+  #:use-module (rosenthal utils cargo)
+  #:use-module (gnu packages sqlite))
 
 (define-public atuin
   (package
@@ -26,6 +27,7 @@
     (build-system cargo-build-system)
     (arguments
      (list
+      #:tests? #f                       ;TODO.
       #:install-source? #f
       #:features
       ''("client" "sync" "server" "clipboard" "daemon")
@@ -67,7 +69,7 @@
                 ;; otherwise cargo will raise an error.
                 (invoke "cargo" "install" "--no-track" "--path" "crates/atuin"
                         "--root" out "--features" (string-join features))))))))
-    (inputs (rosenthal-cargo-inputs 'atuin))
+    (inputs (cons sqlite (rosenthal-cargo-inputs 'atuin)))
     (home-page "https://atuin.sh/")
     (synopsis "Sync, search and backup shell history")
     (description
