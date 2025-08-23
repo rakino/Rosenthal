@@ -1,0 +1,116 @@
+From 6bbddf0346ac4575f447688941d01e7edd0ed2e8 Mon Sep 17 00:00:00 2001
+Message-ID: <6bbddf0346ac4575f447688941d01e7edd0ed2e8.1755929731.git.hako@ultrarare.space>
+From: Hilton Chain <hako@ultrarare.space>
+Date: Sat, 23 Aug 2025 14:07:19 +0800
+Subject: [PATCH] publish: Store cache in a layout identical to API endpoints.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+This allows serving substitutes using a file server.
+
+--8<---------------cut here---------------start------------->8---
+/path/to/publish/cache
+├── hashes
+│   ├── k0pin1y1r0vdkdbg3lwjqc52hpwjbdyb
+│   └── ql2nxr2b587kjydfwivjsnhmqya957bq
+├── nar
+│   ├── none
+│   │   └── k0pin1y1r0vdkdbg3lwjqc52hpwjbdyb-hello-2.12.2.nar
+│   └── zstd
+│       └── ql2nxr2b587kjydfwivjsnhmqya957bq-helix-25.01.1.nar
+├── k0pin1y1r0vdkdbg3lwjqc52hpwjbdyb.narinfo
+└── ql2nxr2b587kjydfwivjsnhmqya957bq.narinfo
+--8<---------------cut here---------------end--------------->8---
+
+Change-Id: I07689f08eef23c5cd4494451678f4e1ad709f1b3
+---
+ guix/scripts/publish.scm | 32 +++++++-------------------------
+ 1 file changed, 7 insertions(+), 25 deletions(-)
+
+diff --git a/guix/scripts/publish.scm b/guix/scripts/publish.scm
+index e9c69336392..e5ac80e0619 100644
+--- a/guix/scripts/publish.scm
++++ b/guix/scripts/publish.scm
+@@ -425,16 +425,12 @@ (define* (render-narinfo store request hash
+ 
+ (define* (nar-cache-file directory item
+                              #:key (compression %no-compression))
+-  (string-append directory "/"
++  (string-append directory "/nar/"
+                  (symbol->string (compression-type compression))
+                  "/" (basename item) ".nar"))
+ 
+-(define* (narinfo-cache-file directory item
+-                             #:key (compression %no-compression))
+-  (string-append directory "/"
+-                 (symbol->string (compression-type compression))
+-                 "/" (basename item)
+-                 ".narinfo"))
++(define* (narinfo-cache-file directory item)
++  (string-append directory "/" (string-take (basename item) 32) ".narinfo"))
+ 
+ (define (hash-part-mapping-cache-file directory hash)
+   (string-append directory "/hashes/" hash))
+@@ -547,9 +543,7 @@ (define* (render-narinfo/cached store request hash
+   (let* ((item         (hash-part->path* store hash cache))
+          (compressions (actual-compressions item compressions))
+          (cached       (and (not (string-null? item))
+-                            (narinfo-cache-file cache item
+-                                                #:compression
+-                                                (first compressions)))))
++                            (narinfo-cache-file cache item))))
+     (cond ((string-null? item)
+            (not-found request #:ttl negative-ttl))
+           ((file-exists? cached)
+@@ -648,8 +642,7 @@ (define* (bake-narinfo+nar cache item
+ 
+     (match compressions
+       ((main others ...)
+-       (let ((narinfo (narinfo-cache-file cache item
+-                                          #:compression main)))
++       (let ((narinfo (narinfo-cache-file cache item)))
+          (with-atomic-file-output narinfo
+            (lambda (port)
+              ;; Open a new connection to the store.  We cannot reuse the main
+@@ -672,8 +665,7 @@ (define* (bake-narinfo+nar cache item
+          ;; atime-based cache eviction considers either all the nars or none
+          ;; of them as candidates.
+          (for-each (lambda (other)
+-                     (let ((other (narinfo-cache-file cache item
+-                                                      #:compression other)))
++                     (let ((other (narinfo-cache-file cache item)))
+                        (link narinfo other)))
+                    others))))))
+ 
+@@ -1043,6 +1035,7 @@ (define (string->compression-type string)
+     ("gzip" 'gzip)
+     ("lzip" 'lzip)
+     ("zstd" 'zstd)
++    ("none" 'none)
+     (_      #f)))
+ 
+ (define (effective-compression requested-type compressions)
+@@ -1140,17 +1133,6 @@ (define* (make-request-handler store
+                                  #:compression compression)))
+                (not-found request)))
+ 
+-          ;; /nar/<store-item>
+-          ((components ... store-item)
+-           (if (nar-path? components)
+-               (if cache
+-                   (render-nar/cached store cache request store-item
+-                                      #:ttl narinfo-ttl
+-                                      #:compression %no-compression)
+-                   (render-nar store request store-item
+-                               #:compression %no-compression))
+-               (not-found request)))
+-
+           (x (not-found request)))
+         (not-found request)))
+ 
+
+base-commit: 73f943fd9f4cc69bd0463e6c64abeb65e060e1da
+-- 
+2.51.0
+
