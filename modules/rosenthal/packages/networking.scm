@@ -257,7 +257,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.84.3")
+    (version "1.86.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -266,13 +266,15 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1cdmr6z351i2ammr82gvbs2x3cp9w75q0nzvvk91rsx2khvd8yyh"))
+                "1l8wqn2pd876cyyhfr9c7ry66jll1mfn4vfxdjdfck9gm6ydz346"))
               (modules '((guix build utils)))
               (snippet
                '(begin
                   (delete-file-recursively "tool")
                   (substitute* "net/tstun/tun_linux.go"
-                    (("/sbin/(modprobe)" _ cmd) cmd))))))
+                    (("/sbin/(modprobe)" _ cmd) cmd))
+                  (substitute* "go.mod"
+                    (("1.24.4") "1.24"))))))
     (build-system go-build-system)
     (arguments
      (list
@@ -368,7 +370,7 @@ a SOCKS5 proxy.")
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "1pbcp946wingy0xw8nc1x0hdj55scndv8kdgzfni0f4hwlq045j0"))))
+                "0l4j763bk2k9pl99rvga1kk828szmjwl7vc9jvrrfq6bj6rd4171"))))
       (if (%current-target-system)
           (list this-package)
           '())))
