@@ -15,10 +15,7 @@
 (define* (go-mod-vendor #:key go)
   (lambda* (src hash-algo hash #:optional name #:key (system (%current-system)))
     (define nss-certs
-      (or (false-if-exception
-           (module-ref (resolve-interface '(gnu packages nss)) 'nss-certs))
-          (false-if-exception
-           (module-ref (resolve-interface '(gnu packages certs)) 'nss-certs))))
+      (module-ref (resolve-interface '(gnu packages nss)) 'nss-certs))
 
     (gexp->derivation
      (or name "vendored-go-dependencies")

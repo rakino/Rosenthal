@@ -15,37 +15,6 @@
 ;;; This file is managed by ‘guix import’.  DO NOT add definitions manually.
 ;;;
 
-(define* (crate-name->package-name name)
-  (downstream-package-name "rust-" name))
-
-(define* (crate-source name version hash #:key (patches '()) (snippet #f))
-  (origin
-    (method url-fetch)
-    (uri (crate-uri name version))
-    (file-name
-     (string-append (crate-name->package-name name) "-" version ".tar.gz"))
-    (sha256 (base32 hash))
-    (modules '((guix build utils)))
-    (patches patches)
-    (snippet snippet)))
-
-(define-syntax define-cargo-inputs
-  (syntax-rules (=>)
-    ((_ lookup inputs ...)
-     (define lookup
-       (let ((table (make-hash-table)))
-         (letrec-syntax ((record
-                          (syntax-rules (=>)
-                            ((_) #t)
-                            ((_ (name => lst) rest (... ...))
-                             (begin
-                               (hashq-set! table 'name (filter identity lst))
-                               (record rest (... ...)))))))
-           (record inputs ...)
-           (lambda (name)
-             "Return the inputs for NAME."
-             (hashq-ref table name))))))))
-
 ;;;
 ;;; Rust dependencies fetched from crates.io and non-workspace development
 ;;; snapshots.
