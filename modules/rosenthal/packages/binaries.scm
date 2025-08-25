@@ -20,6 +20,7 @@
   #:use-module (gnu packages glib)
   #:use-module (gnu packages java)
   #:use-module (gnu packages nss)
+  #:use-module (gnu packages sync)
   #:use-module (rosenthal packages networking)
   #:use-module (rosenthal packages rust-apps)
   #:use-module (rosenthal packages web))
@@ -181,6 +182,29 @@ manage their music collections.  It provides a web interface and is compatible
 with the Subsonic API.")
     (license license:expat)
     (properties '((upstream-name . "navidrome")
+                  (disable-updater? . #t)))))
+
+(define-public rclone-bin
+  (package
+    (inherit rclone)
+    (name "rclone-bin")
+    (version "1.71.0")
+    (source (origin
+              (method url-fetch/zipbomb)
+              (uri (string-append
+                    "https://github.com/rclone/rclone/releases/download/v"
+                    version "/rclone-v" version "-linux-amd64.zip"))
+              (sha256
+               (base32
+                "14wyd767nbk3whgfvblb3kpiyzskcqbq61nh1jq6wbpg6pawznrx"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'((#$(string-append "rclone-v" (package-version this-package)
+                                 "-linux-amd64/rclone")
+                "bin/rclone"))))
+    (supported-systems '("x86_64-linux"))
+    (properties '((upstream-name . "rclone")
                   (disable-updater? . #t)))))
 
 (define-public shadow-tls-bin
