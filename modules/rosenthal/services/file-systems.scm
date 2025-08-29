@@ -1,14 +1,18 @@
-;;; SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
+;;; SPDX-FileCopyrightText: 2024, 2025 Hilton Chain <hako@ultrarare.space>
 ;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services file-systems)
   #:use-module (guix gexp)
   #:use-module (gnu packages backup)
+  #:use-module (gnu packages file-systems)
   #:use-module (rosenthal packages admin)
   #:use-module (gnu services)
+  #:use-module (gnu services base)
   #:use-module (gnu services configuration)
+  #:use-module (gnu services linux)
   #:use-module (gnu services mcron)
+  #:use-module (gnu services shepherd)
   #:use-module (gnu system pam)
   #:export (btrbk-service-type
             btrbk-configuration
@@ -89,3 +93,59 @@
                              (const dumb-runtime-dir-pam-service))))
    (default-value #f)                   ;No default value required.
    (description "Create @code{XDG_RUNTIME_DIR} on login and never remove it.")))
+
+
+;;;
+;;; ZFS
+;;;
+
+
+(define zfs-shepherd-service
+  (list (shepherd-service
+          (provision '(zfs-import))
+          (requirement '(kernel-module-loader))
+          (start
+           #~(make-forkexec-constructor
+              (list #$(file-append zfs "/sbin/zpool") "import" "-a" "-N")))
+          (one-shot? #t))
+        (shepherd-service
+          (provision '(zfs-volumes))
+          (requirement '(zfs-import))
+          (start
+           #~(make-forkexec-constructor
+              (list #$(file-append zfs "/bin/zvol_wait"))))
+          (one-shot? #t))
+        (shepherd-service
+          (provision '(zfs-mount))
+          (requirement '(zfs-import))
+          (start
+           #~(make-forkexec-constructor
+              (list #$(file-append zfs "/sbin/zfs") "mount" "-a" "-l")))
+          (one-shot? #t))
+        (shepherd-service
+          (provision '(file-system-zfs))
+          (requirement '(zfs-mount))
+          (start #~(const #t))
+          (stop
+           #~(make-system-destructor
+              (string-join
+               (list #$(file-append zfs "/sbin/zfs") "unmount" "-a")))))))
+
+(define zfs-service-type
+  (service-type
+    (name 'zfs)
+    (extensions
+     (list (service-extension linux-loadable-module-service-type
+                              (const (list `(,zfs "module"))))
+           (service-extension udev-service-type
+                              (const (list zfs)))
+           (service-extension kernel-module-loader-service-type
+                              (const '("zfs")))
+           (service-extension shepherd-root-service-type
+                              (const zfs-shepherd-service))
+           (service-extension user-processes-service-type
+                              (const '(file-system-zfs)))
+           (service-extension profile-service-type
+                              (const (list zfs)))))
+    (default-value #f)
+    (description "")))
