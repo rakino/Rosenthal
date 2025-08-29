@@ -17,7 +17,9 @@
   #:export (btrbk-service-type
             btrbk-configuration
 
-            dumb-runtime-dir-service-type))
+            dumb-runtime-dir-service-type
+
+            zfs-service-type))
 
 
 ;;;
