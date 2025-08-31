@@ -18,16 +18,22 @@
   greetd-tuigreet-session?
   this-greetd-tuigreet-session
   (tuigreet greetd-tuigreet-session-tuigreet
-            (default (spec->pkg "tuigreet"))))
+            (default (spec->pkg "tuigreet")))
+  (args     greetd-tuigreet-session-args
+            (default '("--issue"
+                       "--time"
+                       "--user-menu"
+                       "--asterisks"
+                       "--remember"
+                       "--remember-session"
+                       "--power-shutdown" "loginctl poweroff"
+                       "--power-reboot" "loginctl reboot"))))
 
 (define-gexp-compiler (greetd-tuigreet-session-compiler
                        (session <greetd-tuigreet-session>)
                        system target)
-  (match-record session <greetd-tuigreet-session> (tuigreet)
-    (let ((tuigreet (file-append (spec->pkg "tuigreet") "/bin/tuigreet")))
+  (match-record session <greetd-tuigreet-session> (tuigreet args)
+    (let ((tuigreet (file-append tuigreet "/bin/tuigreet")))
       (lower-object
        (program-file "tuigreet-wrapper"
-         #~(execl #$tuigreet #$tuigreet
-                  "--issue" "--time" "--user-menu" "--asterisks"
-                  "--power-shutdown" "loginctl poweroff"
-                  "--power-reboot" "loginctl reboot"))))))
+         #~(execl #$tuigreet #$tuigreet #$@args))))))
