@@ -10,8 +10,8 @@
   #:use-module (gnu packages ci))
 
 (define-public cuirass/hako
-  (let ((commit "ccc11de138b5c15990551ad6cc883aeb15a8f80c")
-        (revision "2"))
+  (let ((commit "ba77a7cc44894e959665941121c133b9b3304768")
+        (revision "3"))
     (package
       (inherit cuirass)
       (name "cuirass-hako")
@@ -25,5 +25,5 @@
          (file-name (git-file-name name version))
          (sha256
           (base32
-           "1yxfss23pkr39ymrcw3injqm05aqczhkyjrn79qkfakwi2bqismm"))))
+           "17s1jah2k276klqxcc7yvcl46n4by2s1q4ipi9icssabfpv4s6yp"))))
       (properties '((disable-updater? . #t))))))
