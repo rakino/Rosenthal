@@ -153,6 +153,7 @@ exec ~a -jar ~a $@~%"
    (description
     "Komga is a media server for your comics, mangas, BDs, magazines and
 eBooks.")
+   (supported-systems '("x86_64-linux"))
    (license license:expat)
    (properties '((upstream-name . "komga")
                  (disable-updater? . #t)))))
