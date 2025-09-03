@@ -79,27 +79,22 @@
            (program (file-append caddy "/bin/caddy"))
            (capabilities "cap_net_bind_service=+ep")))))
 
-(define caddy-activation
+(define (caddy-activation config)
+  (with-imported-modules
+      (source-module-closure '((guix build utils)
+                               (gnu build activation)))
+    #~(begin
+        (use-modules (srfi srfi-26)
+                     (guix build utils)
+                     (gnu build activation))
+        (let ((user (getpwnam "caddy")))
+          (mkdir-p/perms "/var/lib/caddy" user #o750)
+          (mkdir-p/perms "/var/log/caddy" user #o755)))))
+
+(define caddy-etc
   (match-record-lambda <caddy-configuration>
       (caddyfile)
-    (with-imported-modules
-        (source-module-closure '((guix build utils)
-                                 (gnu build activation)))
-      #~(begin
-          (use-modules (srfi srfi-26)
-                       (guix build utils)
-                       (gnu build activation))
-          (let* ((config-dir "/etc/caddy")
-                 (data-dir "/var/lib/caddy")
-                 (config-file (in-vicinity config-dir "Caddyfile"))
-                 (user (getpwnam "caddy")))
-            (for-each (cut mkdir-p/perms <> user #o750)
-                      (list config-dir data-dir))
-            (copy-file #$caddyfile config-file)
-            (for-each
-             (lambda (file)
-               (chown file (passwd:uid user) (passwd:gid user)))
-             (find-files data-dir #:directories? #t)))))))
+    `(("caddy/Caddyfile" ,caddyfile))))
 
 (define caddy-shepherd-services
   (match-record-lambda <caddy-configuration>
@@ -119,6 +114,20 @@
                 #:environment-variables '("HOME=/var/lib/caddy")))
             (stop
              #~(make-kill-destructor))
+            (actions
+             (list (shepherd-configuration-action "/etc/caddy/Caddyfile")
+                   (shepherd-action
+                     (name 'reload)
+                     (documentation "Reload Caddy configuration file.")
+                     (procedure
+                      #~(lambda (pid)
+                          (if pid
+                              (begin
+                                (system* "/run/privileged/bin/caddy" "reload"
+                                         "--config" "/etc/caddy/Caddyfile")
+                                (display "Service caddy has been asked to \
+reload its configuration file."))
+                              (display "Service caddy is not running.")))))))
             (auto-start? auto-start?)))))
 
 (define caddy-service-type
@@ -127,10 +136,12 @@
    (extensions
     (list (service-extension account-service-type
                              caddy-accounts)
-          (service-extension privileged-program-service-type
-                             caddy-privileged-programs)
           (service-extension activation-service-type
                              caddy-activation)
+          (service-extension etc-service-type
+                             caddy-etc)
+          (service-extension privileged-program-service-type
+                             caddy-privileged-programs)
           (service-extension shepherd-root-service-type
                              caddy-shepherd-services)))
    (default-value #f)
