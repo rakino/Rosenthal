@@ -28,18 +28,6 @@
 (define license
   (@@ (guix licenses) license))
 
-(define-public atuin-bin
-  (deprecated-package "atuin-bin" atuin))
-
-(define-public hugo-bin
-  (deprecated-package "hugo-bin" hugo))
-
-(define-public mihomo-bin
-  (deprecated-package "mihomo-bin" mihomo))
-
-(define-public clash-meta-bin
-  (deprecated-package "clash-meta-bin" mihomo-bin))
-
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
@@ -238,12 +226,6 @@ monster-in-the-middle}.")
     (license license:expat)
     (properties '((upstream-name . "shadow-tls")
                   (disable-updater? . #t)))))
-
-(define-public sing-box-bin
-  (deprecated-package "sing-box-bin" sing-box))
-
-(define-public tailscale-bin
-  (deprecated-package "tailscale-bin" tailscale))
 
 (define-public wakapi-bin
   (package
