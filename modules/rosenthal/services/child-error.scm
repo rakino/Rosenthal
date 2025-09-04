@@ -49,7 +49,7 @@
 
 (define-configuration clash-configuration
   (clash
-   (file-like mihomo-bin)
+   (file-like mihomo)
    "The clash package.")
 
   (log-file
