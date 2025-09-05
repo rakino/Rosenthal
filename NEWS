@@ -6,6 +6,16 @@
 (channel-news
  (version 0)
 
+ (entry                                 ;2025-09-05
+  (commit "c171b73ae7e66e55b4fc60422bc030c5aade444c")
+  (title (en "Manual intervention required for Caddy service change")
+         (zh "Caddy 服務改動需要人爲干預"))
+  (body (en "@code{caddy-service-type} has switched to @code{etc-service-type}
+to set up Caddy configuration file.  Please remove the existing
+@file{/etc/caddy} directory before system reconfiguration.")
+        (zh "@code{caddy-service-type} 已改爲使用 @code{etc-service-type} 設置
+配置文件。請在重新配置系統前刪除已有的 @file{/etc/caddy} 目錄。")))
+
  (entry                                 ;2024-12-08
   (commit "162defb8388b4099f6ae8699ec8872f845a2481e")
   (title (en "Hyprland upstreamed")
