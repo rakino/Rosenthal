@@ -193,11 +193,11 @@ performance and flexibility, making it suitable for a variety of applications,
 from serving static websites to running dynamic web applications.")
     (license license:asl2.0)))
 
-(define-public caddy/hako
+(define-public caddy/dolly
   (package
     (inherit caddy)
-    (name "caddy-hako")
-    (version "2025.08.17-1")
+    (name "caddy-dolly")
+    (version "2025.09.06-1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -206,7 +206,7 @@ from serving static websites to running dynamic web applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "07c1yxpyz1sbfs7xy8s32hsw3z4l6rpwz01g8n4lq4xzgavkpqab"))))
+                "0ndbjs5f3sz1i73j2rqaln9pykmx26siklavnm43c7qldykydily"))))
     (native-inputs
      (modify-inputs (package-native-inputs caddy)
        (replace "vendored-go-dependencies"
@@ -216,7 +216,7 @@ from serving static websites to running dynamic web applications.")
            (file-name "vendored-go-dependencies")
            (sha256
             (base32
-             "1fdspm2a4574hn4aik5wlli0yp4ih3w2rjyrw3s96n2drk0schqn"))))))
+             "1v8s1fl12hrqm8j51gdablwfg9380babdnzpdhlpv5djgshw8g5n"))))))
     (home-page "https://git.boiledscript.com/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
