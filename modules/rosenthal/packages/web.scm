@@ -18,7 +18,8 @@
   #:use-module (gnu packages image)
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages web)
-  #:use-module (gnu packages version-control))
+  #:use-module (gnu packages version-control)
+  #:use-module (rosenthal packages golang))
 
 (define-public ai-robots-txt
   (package
@@ -105,7 +106,7 @@ order to protect upstream resources from web crawlers.")
 (define-public caddy
   (package
     (name "caddy")
-    (version "2.10.1")
+    (version "2.10.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -114,14 +115,10 @@ order to protect upstream resources from web crawlers.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0h6bnkrqnikyial2d3rvs2ksamwghs837y88qk73sbqahprjakp8"))
-              (modules '((guix build utils)))
-              (snippet '(substitute* "go.mod"
-                          (("^toolchain.*") "")
-                          (("1.25") "1.24")))))
+                "1ygjbvz1ig62r63l6324728nbg6nwbc0vsi5qis5cg2qyils9y1a"))))
     (build-system go-build-system)
     (arguments
-     (list #:go go-1.24
+     (list #:go go-1.25
            #:tests? (not (%current-target-system)) ;TODO: Run test suite.
            #:install-source? #f
            #:import-path
@@ -177,7 +174,7 @@ order to protect upstream resources from web crawlers.")
                        (invoke caddy "version"))))))))
     (native-inputs
      (list (origin
-             (method (go-mod-vendor #:go go-1.24))
+             (method (go-mod-vendor #:go go-1.25))
              (uri (package-source this-package))
              (file-name "vendored-go-dependencies")
              (sha256
