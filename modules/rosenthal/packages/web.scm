@@ -10,10 +10,13 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (rosenthal utils download)
+  #:use-module (rosenthal utils cargo)
+  #:use-module (guix build-system cargo)
   #:use-module (guix build-system copy)
   #:use-module (guix build-system go)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages image)
+  #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages web)
   #:use-module (gnu packages version-control))
 
@@ -376,3 +379,17 @@ looking for a reliable platform to manage their software projects.")
     (license license:gpl3+)
     (properties
      '((disable-updater? . #t)))))
+
+(define-public iocaine/dolly
+  (package
+    (inherit iocaine)
+    (name "iocaine-dolly")
+    (version "2.5.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (crate-uri "iocaine" version))
+       (file-name (string-append name "-" version ".tar.gz"))
+       (sha256
+        (base32 "1x445vnalm323qphxfbfrdzmv9q83h2kybimwm2j39j9p9hj188s"))))
+    (inputs (cons* jemalloc (rosenthal-cargo-inputs 'iocaine)))))
