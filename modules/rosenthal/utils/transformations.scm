@@ -37,27 +37,26 @@
     (operating-system
       (inherit os)
       (services
-       (modify-services (operating-system-user-services os)
-         (guix-service-type
-          config => (guix-configuration
-                     (inherit config)
-                     (channels
-                      (let ((configured-channels
-                             (guix-configuration-channels config)))
-                        (if channel?
-                            (cons %rosenthal-channel
-                                  (or configured-channels %default-channels))
-                            configured-channels)))
-                     (guix
-                      (if guix-source?
-                          (guix-for-channels channels)
-                          (guix-configuration-guix config)))
-                     (authorized-keys
-                      (cons %rosenthal-signing-key
-                            (guix-configuration-authorized-keys config)))
-                     (substitute-urls
-                      (delete-duplicates
-                       `(,@(guix-configuration-substitute-urls config)
-                         ,@(if substitutes?
-                               '("https://ci.boiledscript.com")
-                               '())))))))))))
+       (cons* (simple-service 'guix-moe guix-service-type
+                (guix-extension
+                  (authorized-keys
+                   (list %rosenthal-signing-key))
+                  (substitute-urls
+                   '("https://cache-cdn.guix.moe"))))
+
+              (modify-services (operating-system-user-services os)
+                (guix-service-type
+                 config => (guix-configuration
+                             (inherit config)
+                             (channels
+                              (let ((configured-channels
+                                     (guix-configuration-channels config)))
+                                (if channel?
+                                    (cons %rosenthal-channel
+                                          (or configured-channels
+                                              %default-channels))
+                                    configured-channels)))
+                             (guix
+                              (if guix-source?
+                                  (guix-for-channels channels)
+                                  (guix-configuration-guix config)))))))))))
