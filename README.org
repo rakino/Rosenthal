@@ -3,13 +3,17 @@
 
 #+TITLE: Rosenthal - A certain Guix channel
 
-Rosenthal is a Guix channel (see [[https://guix.gnu.org/manual/devel/en/html_node/Channels.html][Channels]] in /GNU Guix Reference Manual/) created for experiments.  It currently holds some packages and services not ready for upstreaming to [[https://guix.gnu.org/][GNU Guix]].
+Rosenthal is a Guix channel (see [[https://guix.gnu.org/manual/devel/en/html_node/Channels.html][Channels]] in /GNU Guix Reference Manual/)
+created for experiments.  It currently holds some packages and services not
+ready for upstreaming to [[https://guix.gnu.org/][GNU Guix]].
 
-You can use [[https://toys.whereis.social/][toys]] to search packages and services from Rosenthal and other Guix channels.
+You can use [[https://toys.whereis.social/][toys]] to search packages and services from Rosenthal and other Guix
+channels.
 
-Note that all contents in this channel are subject to change and may be deleted **at any time**, please [[https://codeberg.org/hako/Rosenthal/issues][report an issue]] if you are affected.
+Note that all contents in this channel are subject to change and may be deleted
+**at any time**, please [[https://codeberg.org/hako/Rosenthal/issues][report an issue]] if you are affected.
 
-Channel definition:
+Channel specification:
 #+begin_src scheme
   (channel
    (name 'rosenthal)
@@ -22,7 +26,13 @@ Channel definition:
       "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
 #+end_src
 
-For configuration, see [[https://guix.gnu.org/manual/devel/en/html_node/Specifying-Additional-Channels.html][Specifying Additional Channels]], [[https://guix.gnu.org/manual/devel/en/html_node/Customizing-the-System_002dWide-Guix.html][Customizing the System-Wide Guix]] and [[https://guix.gnu.org/manual/devel/en/html_node/Guix-Home-Services.html#index-home_002dchannels_002dservice_002dtype][~home-channels-service-type~]] in /GNU Guix Reference Manual/.
+For configuration, see [[https://guix.gnu.org/manual/devel/en/html_node/Specifying-Additional-Channels.html][Specifying Additional Channels]], [[https://guix.gnu.org/manual/devel/en/html_node/Customizing-the-System_002dWide-Guix.html][Customizing the
+System-Wide Guix]] and [[https://guix.gnu.org/manual/devel/en/html_node/Guix-Home-Services.html#index-home_002dchannels_002dservice_002dtype][~home-channels-service-type~]] in /GNU Guix Reference
+Manual/.
+
+This channel provides substitutes built by [[https://ci.guix.moe/][Guix Moe CI]], see [[https://ultrarare.space/en/posts/guix-build-farm/][its blog post]] for
+setup and more information.  [[https://codeberg.org/hako/Testament/issues][Send a request]] if you'd like to see substitutes
+available for more channels.
 
 Wiki: https://codeberg.org/hako/Rosenthal/wiki
 
