@@ -278,3 +278,29 @@ to WakaTime, which is used by all WakaTime text editor plugins.")
     (license license:bsd-3)
     (properties '((upstream-name . "wakatime-cli")
                   (disable-updater? . #t)))))
+
+(define-public grafana-bin
+  (package
+    (name "grafana-bin")
+    (version "12.1.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://dl.grafana.com/grafana/release/"
+                                  version "/grafana_" version "_" "16903967602"
+                                  "_linux_amd64.tar.gz"))
+              (sha256
+               (base32
+                "056jj4ww1l36y77v9qmqhgsg7lsr328bhp7y48c6l125cal1snl2"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("bin" "bin"))))
+    (synopsis "Platform for monitoring and observability")
+    (description
+     "Grafana allows you to query, visualize, alert on and understand your
+metrics no matter where they are stored.")
+    (home-page "https://grafana.com/")
+    (license license:agpl3)
+    (supported-systems '("x86_64-linux"))
+    (properties '((upstream-name . "grafana")
+                  (disable-updater? . #t)))))
