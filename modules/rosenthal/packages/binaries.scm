@@ -367,3 +367,31 @@ multi-tenant, long-term storage for Prometheus.")
     (supported-systems '("x86_64-linux"))
     (properties '((upstream-name . "mimir")
                   (disable-updater? . #t)))))
+
+(define-public loki-bin
+  (package
+    (name "loki-bin")
+    (version "3.5.4")
+    (source (origin
+              (method url-fetch/zipbomb)
+              (uri (string-append
+                    "https://github.com/grafana/loki/releases/download/v"
+                    version "/loki-linux-amd64.zip"))
+              (sha256
+               (base32
+                "1z1z60ki4zavijw0idpard0xx38q8140wv2hykxb3rikb05z0frk"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("loki-linux-amd64" "bin/loki"))))
+    (synopsis "Log aggregation system")
+    (description
+     "Loki is a horizontally scalable, highly available, multi-tenant log
+aggregation system inspired by Prometheus.  It is designed to be very cost
+effective and easy to operate.  It does not index the contents of the logs, but
+rather a set of labels for each log stream.")
+    (home-page "https://grafana.com/oss/loki/")
+    (license license:agpl3)
+    (supported-systems '("x86_64-linux"))
+    (properties '((upstream-name . "loki")
+                  (disable-updater? . #t)))))
