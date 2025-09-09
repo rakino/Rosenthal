@@ -395,3 +395,41 @@ rather a set of labels for each log stream.")
     (supported-systems '("x86_64-linux"))
     (properties '((upstream-name . "loki")
                   (disable-updater? . #t)))))
+
+(define-public alloy-bin
+  (package
+    (name "alloy-bin")
+    (version "1.10.2")
+    (source (origin
+              (method url-fetch/zipbomb)
+              (uri (string-append
+                    "https://github.com/grafana/alloy/releases/download/v"
+                    version "/alloy-linux-amd64.zip"))
+              (sha256
+               (base32
+                "03hwmnkx2awxlfw3ixplfnwzx7n1x624n1yw6cgky4hhjz13d3i8"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("alloy-linux-amd64" "bin/alloy"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'patch-elf
+                 (lambda* (#:key inputs #:allow-other-keys)
+                   (let ((name "alloy")
+                         (dest (in-vicinity #$output "bin"))
+                         (ld.so (search-input-file inputs #$(glibc-dynamic-linker))))
+                     (with-directory-excursion dest
+                       (invoke "patchelf" "--set-interpreter" ld.so name))))))))
+    (native-inputs (list patchelf))
+    (synopsis
+     "OpenTelemetry Collector distribution with programmable pipelines")
+    (description
+     "Grafana Alloy is an open source OpenTelemetry Collector distribution with
+built-in Prometheus pipelines and support for metrics, logs, traces, and
+profiles.")
+    (home-page "https://grafana.com/oss/alloy-opentelemetry-collector/")
+    (license license:agpl3)
+    (supported-systems '("x86_64-linux"))
+    (properties '((upstream-name . "alloy")
+                  (disable-updater? . #t)))))
