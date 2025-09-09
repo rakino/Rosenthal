@@ -304,3 +304,32 @@ metrics no matter where they are stored.")
     (supported-systems '("x86_64-linux"))
     (properties '((upstream-name . "grafana")
                   (disable-updater? . #t)))))
+
+(define-public prometheus-bin
+  (package
+    (name "prometheus-bin")
+    (version "3.5.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/prometheus/prometheus"
+                                  "/releases/download/v" version
+                                  "/prometheus-" version ".linux-amd64.tar.gz"))
+              (sha256
+               (base32
+                "16pk8s5lsrvzlqsrhdpmrw98nq8vyqa87wm417xjm0kdy9x844g8"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'(("prometheus" "bin/")
+               ("promtool" "bin/")
+               ("prometheus.yml" "etc/"))))
+    (synopsis "Monitoring system and time series database")
+    (description
+     "Prometheus is a systems and service monitoring system.  It collects
+metrics from configured targets at given intervals, evaluates rule expressions,
+displays the results, and can trigger alerts when specified conditions are
+observed.")
+    (home-page "https://prometheus.io/")
+    (license license:asl2.0)
+    (supported-systems '("x86_64-linux"))
+    (properties '((upstream-name . "prometheus")))))
