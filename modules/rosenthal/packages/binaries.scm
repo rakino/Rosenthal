@@ -333,3 +333,37 @@ observed.")
     (license license:asl2.0)
     (supported-systems '("x86_64-linux"))
     (properties '((upstream-name . "prometheus")))))
+
+(define-public mimir-bin
+  (package
+    (name "mimir-bin")
+    (version "2.17.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/grafana/mimir/releases/download/mimir-"
+                    version "/mimir-linux-amd64"))
+              (sha256
+               (base32
+                "1vnrpzwyjz7plzdiih65853ndvg64a9n1x1i7jqr085byhpayp82"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:phases
+           #~(modify-phases %standard-phases
+               (replace 'install
+                 (lambda* (#:key source #:allow-other-keys)
+                   (let ((name "mimir")
+                         (dest (in-vicinity #$output "bin")))
+                     (mkdir-p dest)
+                     (with-directory-excursion dest
+                       (copy-file source name)
+                       (chmod name #o555))))))))
+    (synopsis "Scalable long-term storage for Prometheus")
+    (description
+     "Grafana Mimir provides horizontally scalable, highly available,
+multi-tenant, long-term storage for Prometheus.")
+    (home-page "https://grafana.com/oss/mimir/")
+    (license license:agpl3)
+    (supported-systems '("x86_64-linux"))
+    (properties '((upstream-name . "mimir")
+                  (disable-updater? . #t)))))
