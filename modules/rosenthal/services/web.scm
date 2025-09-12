@@ -123,8 +123,8 @@
                       #~(lambda (pid)
                           (if pid
                               (begin
-                                (system* "/run/privileged/bin/caddy" "reload"
-                                         "--config" "/etc/caddy/Caddyfile")
+                                (invoke "/run/privileged/bin/caddy" "reload"
+                                        "--config" "/etc/caddy/Caddyfile")
                                 (display "Service caddy has been asked to \
 reload its configuration file."))
                               (display "Service caddy is not running.")))))))
