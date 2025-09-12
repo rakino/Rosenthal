@@ -16,11 +16,20 @@
     (computed-file
      name
      #~(begin
-         (use-modules (guix build utils))
+         (use-modules (ice-9 match)
+                      (guix build utils))
          (copy-file #$file #$output)
          (substitute* #$output
            (("\\$\\$([^\\$]+)\\$\\$" _ path)
-            (search-path '#$inputs path)))))))
+            (let loop ((candidates '#$inputs))
+              (if (null? candidates)
+                  (error "file '~a' not found" path)
+                  (match candidates
+                    ((candidate . rest)
+                     (let ((full-path (in-vicinity candidate path)))
+                       (if (file-exists? full-path)
+                           full-path
+                           (loop rest)))))))))))))
 
 (define (file-content file)
   (call-with-input-file (canonicalize-path file) get-string-all))
