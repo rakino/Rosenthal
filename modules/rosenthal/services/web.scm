@@ -26,6 +26,9 @@
             forgejo-configuration
             forgejo-service-type
 
+            iocaine-service-type
+            iocaine-configuration
+
             jellyfin-configuration
             jellyfin-service-type
 
@@ -240,6 +243,91 @@ reload its configuration file."))
                              forgejo-shepherd-service)))
    (default-value (forgejo-configuration))
    (description "Run Forgejo.")))
+
+
+;;;
+;;; Iocaine
+;;;
+
+
+(define-configuration/no-serialization iocaine-configuration
+  (iocaine
+   (file-like iocaine/dolly)
+   "")
+  (config
+   file-object
+   "")
+  (log-file
+   (string "/var/log/iocaine.log")
+   "")
+  (shepherd-provision
+   (list-of-symbols '(iocaine))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '(loopback))
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define iocaine-accounts
+  (list (user-group (name "iocaine") (system? #t))
+        (user-account
+          (name "iocaine")
+          (group "iocaine")
+          (system? #t)
+          (comment "Iocaine user")
+          (home-directory "/var/empty"))))
+
+(define iocaine-etc
+  (match-record-lambda <iocaine-configuration>
+      (config)
+    `(("iocaine/iocaine.toml" ,config))))
+
+(define iocaine-shepherd-service
+  (match-record-lambda <iocaine-configuration>
+      (iocaine log-file shepherd-provision shepherd-requirement auto-start?)
+    (list (shepherd-service
+            (provision shepherd-provision)
+            (requirement (cons 'user-processes shepherd-requirement))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append iocaine "/bin/iocaine")
+                      "--config-file" "/etc/iocaine/iocaine.toml")
+                #:user "iocaine"
+                #:group "iocaine"
+                #:log-file #$log-file))
+            (stop #~(make-kill-destructor))
+            (actions
+             (list (shepherd-configuration-action "/etc/iocaine/iocaine.toml")
+                   (shepherd-action
+                     (name 'test)
+                     (documentation "Test Iocaine configuration file.")
+                     (procedure
+                      #~(lambda (pid)
+                          (if pid
+                              (begin
+                                (invoke #$(file-append iocaine "/bin/iocaine")
+                                        "--config-file" "/etc/iocaine/iocaine.toml"
+                                        "test")
+                                (display "Service iocaine has been asked to \
+test its configuration file."))
+                              (display "Service iocaine is not running.")))))))
+            (auto-start? auto-start?)))))
+
+(define iocaine-service-type
+  (service-type
+   (name 'iocaine)
+   (extensions
+    (list (service-extension account-service-type
+                             (const iocaine-accounts))
+          (service-extension etc-service-type
+                             iocaine-etc)
+          (service-extension shepherd-root-service-type
+                             iocaine-shepherd-service)
+          (service-extension log-rotation-service-type
+                             (compose list iocaine-configuration-log-file))))
+   (description "")))
 
 
 ;;;
