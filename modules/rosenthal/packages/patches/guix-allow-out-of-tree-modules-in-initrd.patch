@@ -1,0 +1,270 @@
+From 4323514d1b259a0dd61572e3c0859fab4250d297 Mon Sep 17 00:00:00 2001
+Message-ID: <4323514d1b259a0dd61572e3c0859fab4250d297.1757725903.git.hako@ultrarare.space>
+From: Brian Cully <bjc@spork.org>
+Date: Sun, 16 Feb 2025 21:52:45 +0900
+Subject: [PATCH] Allow copying of out-of-tree modules to the Linux initrd.
+MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+
+With this patch, modules for ‘initrd-modules’ will not only be searched for in
+the in-tree Linux modules, but also any additional modules specified in
+‘kernel-loadable-modules’.
+
+* gnu/build/linux-modules.scm (find-module-file): Change DIRECTORY argument to
+DIRECTORIES.  Now takes a list of directories to search, rather than a single
+one.
+* gnu/system/linux-initrd.scm (flat-linux-module-directory): change LINUX
+argument to PACKAGES. Now contains a list of file-like objects to search for
+modules.
+(raw-initrd): Add LINUX-EXTRA-MODULE-DIRECTORIES keyword argument.  Pass it
+to (flat-linux-module-directory) along with the selected LINUX package.
+(base-initrd): Add LINUX-EXTRA-MODULE-DIRECTORIES keyword argument.  Pass it
+to (raw-initrd).
+* gnu/system.scm (operating-system-initrd-file): Pass in operating system
+definition's kernel-loadable-modules into (make-initrd) as
+LINUX-EXTRA-MODULE-DIRECTORIES.
+* doc/guix.texi (Initial RAM Disk): Document how out-of-tree modules can be
+used.
+
+Change-Id: Ic39f2abcfabc3ec34a71acce840038396bf9c82e
+Signed-off-by: Maxim Cournoyer <maxim.cournoyer@gmail.com>
+Modified-by: Maxim Cournoyer <maxim.cournoyer@gmail.com>
+Modified-by: Hilton Chain <hako@ultrarare.space>
+---
+ doc/guix.texi               | 15 ++++++++++
+ gnu/build/linux-modules.scm | 23 ++++++++++-----
+ gnu/system.scm              |  2 ++
+ gnu/system/linux-initrd.scm | 58 +++++++++++++++++++++++--------------
+ 4 files changed, 69 insertions(+), 29 deletions(-)
+
+diff --git a/doc/guix.texi b/doc/guix.texi
+index 4ab404dcdb2..3c05428829b 100644
+--- a/doc/guix.texi
++++ b/doc/guix.texi
+@@ -46404,6 +46404,21 @@ Initial RAM Disk
+   (initrd-modules (cons "megaraid_sas" %base-initrd-modules)))
+ @end lisp
+ 
++If a module listed in @code{initrd-modules} is not included in the
++Linux-libre kernel, then its location must be provided via the
++@code{kernel-loadable-modules} list.
++
++As an example, if you need the driver for a Realtek RTL8821CE wireless
++network adapter for mounting the root file system over NFS, your
++configuration might include the following:
++
++@lisp
++(operating-system
++  ;; @dots{}
++  (initrd-modules (cons "8821ce" %base-initrd-modules))
++  (kernel-loadable-modules (list (list rtl8821ce-linux-module "module"))))
++@end lisp
++
+ @defvar %base-initrd-modules
+ This is the list of kernel modules included in the initrd by default.
+ @end defvar
+diff --git a/gnu/build/linux-modules.scm b/gnu/build/linux-modules.scm
+index 32baf6c5259..f45db55f861 100644
+--- a/gnu/build/linux-modules.scm
++++ b/gnu/build/linux-modules.scm
+@@ -246,8 +246,8 @@ (define (file-name->module-name file)
+ '.ko[.gz|.xz|.zst]' and normalizing it."
+   (normalize-module-name (strip-extension (basename file))))
+ 
+-(define (find-module-file directory module)
+-  "Lookup module NAME under DIRECTORY, and return its absolute file name.
++(define (find-module-file directories module)
++  "Lookup module NAME under DIRECTORIES, and return its absolute file name.
+ NAME can be a file name with or without '.ko', or it can be a module name.
+ Raise an error if it could not be found.
+ 
+@@ -255,6 +255,10 @@ (define (find-module-file directory module)
+ module names usually (always?) use underscores as the inter-word separator,
+ whereas file names often, but not always, use hyphens.  Examples:
+ \"usb-storage.ko\", \"serpent_generic.ko\"."
++  ;; For backward compatibility.
++  (define %directories (if (pair? directories)
++                           directories
++                           (list directories)))
+   (define names
+     ;; List of possible file names.  XXX: It would of course be cleaner to
+     ;; have a database that maps module names to file names and vice versa,
+@@ -268,16 +272,19 @@ (define (find-module-file directory module)
+                            (else chr)))
+                        module))))
+ 
+-  (match (find-files directory
+-                     (lambda (file stat)
+-                       (member (strip-extension
+-                                (basename file)) names)))
++  (match (append-map
++          (cut find-files <>
++               (lambda (file _)
++                 (member (strip-extension
++                          (basename file))
++                         names)))
++          %directories)
+     ((file)
+      file)
+     (()
+-     (error "kernel module not found" module directory))
++     (error "kernel module not found" module %directories))
+     ((_ ...)
+-     (error "several modules by that name" module directory))))
++     (error "several modules by that name" module %directories))))
+ 
+ (define* (recursive-module-dependencies files
+                                         #:key (lookup-module dot-ko))
+diff --git a/gnu/system.scm b/gnu/system.scm
+index 78a30646e1b..b709686744d 100644
+--- a/gnu/system.scm
++++ b/gnu/system.scm
+@@ -1380,6 +1380,8 @@ (define (operating-system-initrd-file os)
+                #:linux (operating-system-kernel os)
+                #:linux-modules
+                (operating-system-initrd-modules os)
++               #:linux-extra-module-directories
++               (operating-system-kernel-loadable-modules os)
+                #:mapped-devices mapped-devices
+                #:keyboard-layout (operating-system-keyboard-layout os)))
+ 
+diff --git a/gnu/system/linux-initrd.scm b/gnu/system/linux-initrd.scm
+index 17c2e6f6bfd..978084062b2 100644
+--- a/gnu/system/linux-initrd.scm
++++ b/gnu/system/linux-initrd.scm
+@@ -120,13 +120,19 @@ (define* (expression->initrd exp
+                               `(#:references-graphs (("closure" ,init))))
+                "/initrd.cpio.gz"))
+ 
+-(define (flat-linux-module-directory linux modules)
++(define (flat-linux-module-directory packages modules)
+   "Return a flat directory containing the Linux kernel modules listed in
+-MODULES and taken from LINUX."
++MODULES and taken from PACKAGES."
+   (define imported-modules
+     (source-module-closure '((gnu build linux-modules)
+                              (guix build utils))))
+ 
++  (define package-inputs
++    (map (match-lambda
++           ((p o) (gexp-input p o))
++           (p     (gexp-input p "out")))
++         packages))
++
+   (define build-exp
+     (with-imported-modules imported-modules
+       (with-extensions (list guile-zlib guile-zstd)
+@@ -138,13 +144,17 @@ (define (flat-linux-module-directory linux modules)
+                          (srfi srfi-26)
+                          (ice-9 match))
+ 
+-            (define module-dir
+-              (string-append #$linux "/lib/modules"))
++            (define module-dirs
++              (map (cut string-append <> "/lib/modules")
++                   '#$package-inputs))
+ 
+             (define builtin-modules
+-              (match (find-files module-dir (lambda (file stat)
+-                                              (string=? (basename file)
+-                                                        "modules.builtin")))
++              (match (append-map
++                      (cut find-files <>
++                           (lambda (file stat)
++                             (string=? (basename file)
++                                       "modules.builtin")))
++                      module-dirs)
+                 ((file . _)
+                  (call-with-input-file file
+                    (lambda (port)
+@@ -157,7 +167,7 @@ (define (flat-linux-module-directory linux modules)
+               (lset-difference string=? '#$modules builtin-modules))
+ 
+             (define modules
+-              (let* ((lookup  (cut find-module-file module-dir <>))
++              (let* ((lookup  (cut find-module-file module-dirs <>))
+                      (modules (map lookup modules-to-lookup)))
+                 (append modules
+                         (recursive-module-dependencies
+@@ -192,6 +202,7 @@ (define* (raw-initrd file-systems
+                       #:key
+                       (linux linux-libre)
+                       (linux-modules '())
++                      (linux-extra-module-directories '())
+                       (pre-mount #t)
+                       (mapped-devices '())
+                       (keyboard-layout #f)
+@@ -199,15 +210,16 @@ (define* (raw-initrd file-systems
+                       qemu-networking?
+                       volatile-root?
+                       (on-error 'debug))
+-  "Return as a file-like object a raw initrd, with kernel
+-modules taken from LINUX.  FILE-SYSTEMS is a list of file-systems to be
+-mounted by the initrd, possibly in addition to the root file system specified
+-on the kernel command line via 'root'.  LINUX-MODULES is a list of kernel
+-modules to be loaded at boot time. MAPPED-DEVICES is a list of device
+-mappings to realize before FILE-SYSTEMS are mounted. PRE-MOUNT is a
+-G-expression to evaluate before realizing MAPPED-DEVICES.
+-HELPER-PACKAGES is a list of packages to be copied in the initrd. It may include
+-e2fsck/static or other packages needed by the initrd to check root partition.
++  "Return as a file-like object a raw initrd, with kernel modules taken from
++LINUX.  FILE-SYSTEMS is a list of file-systems to be mounted by the initrd,
++possibly in addition to the root file system specified on the kernel command
++line via 'root'.  LINUX-MODULES is a list of kernel modules to be loaded at
++boot time. LINUX-EXTRA-MODULE-DIRECTORIES is a list of file-like objects which
++will be searched for modules in addition to the linux kernel. MAPPED-DEVICES
++is a list of device mappings to realize before FILE-SYSTEMS are mounted.
++HELPER-PACKAGES is a list of packages to be copied in the initrd. It may
++include e2fsck/static or other packages needed by the initrd to check root
++partition.
+ 
+ When true, KEYBOARD-LAYOUT is a <keyboard-layout> record denoting the desired
+ console keyboard layout.  This is done before MAPPED-DEVICES are set up and
+@@ -244,7 +256,8 @@ (define* (raw-initrd file-systems
+           #~())))
+ 
+   (define kodir
+-    (flat-linux-module-directory linux linux-modules))
++    (flat-linux-module-directory (cons linux linux-extra-module-directories)
++                                 linux-modules))
+ 
+   (expression->initrd
+    (with-imported-modules (source-module-closure
+@@ -392,6 +405,7 @@ (define* (base-initrd file-systems
+                       #:key
+                       (linux linux-libre)
+                       (linux-modules '())
++                      (linux-extra-module-directories '())
+                       (mapped-devices '())
+                       (keyboard-layout #f)
+                       qemu-networking?
+@@ -412,9 +426,10 @@ (define* (base-initrd file-systems
+ QEMU-NETWORKING? and VOLATILE-ROOT? behaves as in raw-initrd.
+ 
+ The initrd is automatically populated with all the kernel modules necessary
+-for FILE-SYSTEMS and for the given options.  Additional kernel
+-modules can be listed in LINUX-MODULES.  They will be added to the initrd, and
+-loaded at boot time in the order in which they appear."
++for FILE-SYSTEMS and for the given options.  Additional kernel modules can be
++listed in LINUX-MODULES.  Additional directories for modules can be listed in
++LINUX-EXTRA-MODULE-DIRECTORIES.  They will be added to the initrd, and loaded
++at boot time in the order in which they appear."
+   (define linux-modules*
+     ;; Modules added to the initrd and loaded from the initrd.
+     `(,@linux-modules
+@@ -434,6 +449,7 @@ (define* (base-initrd file-systems
+   (raw-initrd file-systems
+               #:linux linux
+               #:linux-modules linux-modules*
++              #:linux-extra-module-directories linux-extra-module-directories
+               #:mapped-devices mapped-devices
+               #:helper-packages helper-packages
+               #:keyboard-layout keyboard-layout
+
+base-commit: 6174b135ffa3328fd7ad404b15b1586fc64e5666
+prerequisite-patch-id: f71061d735b69d75799eb03df6215bbcb20d53b2
+prerequisite-patch-id: 88337e68e714f3b1fe0d8e6588a1a4f423251610
+-- 
+2.51.0
+

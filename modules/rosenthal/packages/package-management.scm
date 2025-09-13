@@ -10,12 +10,14 @@
   #:use-module (rosenthal utils packages)
   #:use-module (gnu packages package-management))
 
-(define-public guix/hako
+(define-public guix/dolly
   (package
     (inherit
      (package-with-extra-patches guix
-       (rosenthal-patches "guix-change-publish-cache-storage.patch")))
-    (name "guix-hako")
+       (rosenthal-patches "guix-change-publish-cache-storage.patch"
+                          "guix-allow-out-of-tree-modules-in-initrd.patch"
+                          "guix-wip-zfs-boot-support.patch")))
+    (name "guix-dolly")
     (arguments
      (substitute-keyword-arguments (package-arguments guix)
        ((#:tests? _ #t) #f)
