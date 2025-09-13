@@ -5,11 +5,16 @@
   #:use-module (srfi srfi-1)
   #:use-module (guix channels)
   #:use-module (guix gexp)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
   #:use-module (gnu system)
   #:use-module (gnu services)
   #:use-module (gnu services base)
+  #:use-module (rosenthal services file-systems)
   #:use-module (gnu packages package-management)
-  #:export (rosenthal-transformation-guix))
+  #:use-module (gnu packages file-systems)
+  #:export (rosenthal-transformation-guix
+            rosenthal-transformation-zfs))
 
 
 (define* (rosenthal-transformation-guix #:key (substitutes? #t)
@@ -60,3 +65,21 @@
                               (if guix-source?
                                   (guix-for-channels channels)
                                   (guix-configuration-guix config)))))))))))
+
+;; NOTE: Booting from ZFS requires patching Guix.
+(define* (rosenthal-transformation-zfs #:key boot?)
+  (lambda (os)
+    (operating-system
+      (inherit os)
+      (kernel-loadable-modules
+       `(,@(if boot?
+               `((,(package/inherit zfs
+                     (arguments
+                      (substitute-keyword-arguments (package-arguments zfs)
+                        ((#:linux _ #f) (operating-system-kernel os)))))
+                  "module"))
+               '())
+         ,@(operating-system-kernel-loadable-modules os)))
+      (services
+       (cons* (service zfs-service-type)
+              (operating-system-user-services os))))))
