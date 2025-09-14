@@ -151,7 +151,8 @@
               (directory "/var/lib/grafana"))
           (unless (file-exists? directory)
             (mkdir-p directory)
-            (chown directory (passwd:uid user) (passwd:gid user)))))))
+            (chown directory (passwd:uid user) (passwd:gid user))
+            (chmod directory #o775))))))
 
 (define prometheus-shepherd
   (match-record-lambda <prometheus-configuration>
