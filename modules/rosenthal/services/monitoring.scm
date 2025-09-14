@@ -6,14 +6,19 @@
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (rosenthal utils serializers ini)
+  #:use-module (rosenthal utils serializers yaml)
   #:use-module (gnu system shadow)
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
+  #:use-module (gnu packages guile-xyz)
   #:use-module (rosenthal packages binaries)
   #:export (grafana-service-type
-            grafana-configuration))
+            grafana-configuration
+
+            prometheus-service-type
+            prometheus-configuration))
 
 ;;;
 ;;; Grafana
@@ -85,7 +90,9 @@
                         "server" "--config" #$config-file)
                   #:user "grafana"
                   #:group "grafana"
-                  #:directory #$(file-append grafana "/share/grafana"))))))))
+                  #:directory #$(file-append grafana "/share/grafana")))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?))))))
 
 (define grafana-service-type
   (service-type
@@ -99,4 +106,89 @@
                               grafana-activation)
            (service-extension shepherd-root-service-type
                               grafana-shepherd)))
+    (description "")))
+
+;;;
+;;; prometheus
+;;;
+
+(define-configuration/no-serialization prometheus-configuration
+  (prometheus
+   (file-like prometheus-bin)
+   "")
+  (listen-address
+   (string "0.0.0.0:9090")
+   "")
+  (config
+   yaml-config
+   "")
+  (shepherd-provision
+   (list-of-symbols '(prometheus))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define prometheus-account
+  (lambda _
+    (list (user-group (name "prometheus") (system? #t))
+          (user-account
+            (name "prometheus")
+            (group "prometheus")
+            (system? #t)
+            (comment "Prometheus user")
+            (home-directory "/var/lib/prometheus")))))
+
+(define prometheus-activation
+  (match-record-lambda <prometheus-configuration>
+      (prometheus)
+    #~(begin
+        (use-modules (guix build utils))
+        (let ((user (getpwnam "prometheus"))
+              (directory "/var/lib/grafana"))
+          (unless (file-exists? directory)
+            (mkdir-p directory)
+            (chown directory (passwd:uid user) (passwd:gid user)))))))
+
+(define prometheus-shepherd
+  (match-record-lambda <prometheus-configuration>
+      (prometheus listen-address config shepherd-provision shepherd-requirement auto-start?)
+    (let ((config-file
+           (computed-file "prometheus.yml"
+             (with-extensions (list guile-yamlpp)
+               #~(begin
+                   (use-modules (yamlpp))
+                   (call-with-output-file #$output
+                     (lambda (port)
+                       (let ((emitter (make-yaml-emitter)))
+                         (yaml-emit! emitter '#$config)
+                         (display (yaml-emitter-string emitter) port)))))))))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement `(loopback user-processes ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append prometheus "/bin/prometheus")
+                        (string-append "--config.file=" #$config-file)
+                        (string-append "--web.listen-address=" #$listen-address))
+                  #:user "prometheus"
+                  #:group "prometheus"
+                  #:directory "/var/lib/prometheus"
+                  #:log-file "/var/log/prometheus.log"))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?))))))
+
+(define prometheus-service-type
+  (service-type
+    (name 'prometheus)
+    (extensions
+     (list (service-extension account-service-type
+                              prometheus-account)
+           (service-extension activation-service-type
+                              prometheus-activation)
+           (service-extension shepherd-root-service-type
+                              prometheus-shepherd)))
     (description "")))
