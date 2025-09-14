@@ -1,5 +1,5 @@
-From 06b0653460f4d6b104a2d1a22032978f1423ca4e Mon Sep 17 00:00:00 2001
-Message-ID: <06b0653460f4d6b104a2d1a22032978f1423ca4e.1757757101.git.hako@ultrarare.space>
+From ab4aa6e7bb41fe0f2c64cfb587562b19a7cb44ff Mon Sep 17 00:00:00 2001
+Message-ID: <ab4aa6e7bb41fe0f2c64cfb587562b19a7cb44ff.1757826291.git.hako@ultrarare.space>
 From: Hilton Chain <hako@ultrarare.space>
 Date: Sun, 7 Sep 2025 13:52:57 +0800
 Subject: [PATCH] WIP: ZFS boot support.
@@ -8,10 +8,10 @@ Change-Id: I6579a36d66fcd0a487fe262c9a7c36e51532cb70
 ---
  gnu/build/file-systems.scm  | 21 ++++++++++++++-------
  gnu/build/linux-boot.scm    |  1 +
- gnu/system/file-systems.scm | 26 ++++++++++++++++++--------
+ gnu/system/file-systems.scm | 30 +++++++++++++++++++++---------
  gnu/system/linux-initrd.scm | 25 ++++++++++++++++++++-----
  guix/scripts/system.scm     |  3 ++-
- 5 files changed, 55 insertions(+), 21 deletions(-)
+ 5 files changed, 58 insertions(+), 22 deletions(-)
 
 diff --git a/gnu/build/file-systems.scm b/gnu/build/file-systems.scm
 index c506a4911ff..05d0cb819ae 100644
@@ -58,10 +58,21 @@ index 548e28a1c97..2b577483832 100644
            (else (file-system-label device-string))))
  
 diff --git a/gnu/system/file-systems.scm b/gnu/system/file-systems.scm
-index 4ea8237c70d..d29ecb14fba 100644
+index 4ea8237c70d..c6cf828db21 100644
 --- a/gnu/system/file-systems.scm
 +++ b/gnu/system/file-systems.scm
-@@ -627,18 +627,21 @@ (define (file-system-mount-point-predicate mount-point)
+@@ -372,7 +372,9 @@ (define %pseudo-file-system-types
+   ;; List of know pseudo file system types.  This is used when validating file
+   ;; system definitions.
+   '("binfmt_misc" "cgroup" "cgroup2" "debugfs" "devpts" "devtmpfs" "efivarfs" "fusectl"
+-    "hugetlbfs" "overlay" "proc" "securityfs" "sysfs" "tmpfs" "tracefs" "virtiofs" "xenfs"))
++    "hugetlbfs" "overlay" "proc" "securityfs" "sysfs" "tmpfs" "tracefs" "virtiofs" "xenfs"
++    ;; HACK
++    "zfs"))
+ 
+ (define %fuse-control-file-system
+   ;; Control file system for Linux' file systems in user-space (FUSE).
+@@ -627,18 +629,21 @@ (define (file-system-mount-point-predicate mount-point)
  
  
  ;;;
@@ -91,7 +102,7 @@ index 4ea8237c70d..d29ecb14fba 100644
  
  (define (btrfs-store-subvolume-file-name file-systems)
    "Return the subvolume file name within the Btrfs top level onto which the
-@@ -664,6 +667,13 @@ (define (btrfs-store-subvolume-file-name file-systems)
+@@ -664,6 +669,13 @@ (define (btrfs-store-subvolume-file-name file-systems)
      ;; XXX: Deriving the subvolume name based from a subvolume ID is not
      ;; supported, as we'd need to query the actual file system.
      (or (and=> (assoc-ref options "subvol") prepend-slash/maybe)
