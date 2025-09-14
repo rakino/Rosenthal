@@ -294,7 +294,9 @@ to WakaTime, which is used by all WakaTime text editor plugins.")
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
-           #~'(("bin" "bin"))))
+           #~'(("bin" "bin")
+               ("conf" "share/grafana/")
+               ("public" "share/grafana/"))))
     (synopsis "Platform for monitoring and observability")
     (description
      "Grafana allows you to query, visualize, alert on and understand your
