@@ -9,6 +9,7 @@
   #:use-module (guix deprecation)
   #:use-module (guix packages)
   #:use-module (guix download)
+  #:use-module (guix utils)
   #:use-module (guix build-system copy)
   #:use-module (gnu build icecat-extension)
   #:use-module (gnu packages base)
@@ -435,3 +436,22 @@ profiles.")
     (supported-systems '("x86_64-linux"))
     (properties '((upstream-name . "alloy")
                   (disable-updater? . #t)))))
+
+(define-public alloy-bin-aarch64-linux
+  (package
+    (inherit alloy-bin)
+    (name "alloy-bin-aarch64-linux")
+    (version "1.10.2")
+    (source (origin
+              (method url-fetch/zipbomb)
+              (uri (string-append
+                    "https://github.com/grafana/alloy/releases/download/v"
+                    version "/alloy-linux-arm64.zip"))
+              (sha256
+               (base32
+                "1gnfdhs8rxyn18swy1kv1f2lbsj6abjlhrgaibsj2a87swgcyvjg"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments alloy-bin)
+       ((#:install-plan _ ''())
+        #~'(("alloy-linux-arm64" "bin/alloy")))))
+    (supported-systems '("aarch64-linux"))))
