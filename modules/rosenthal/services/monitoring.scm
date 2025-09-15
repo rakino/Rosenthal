@@ -20,6 +20,9 @@
             loki-service-type
             loki-configuration
 
+            mimir-service-type
+            mimir-configuration
+
             prometheus-service-type
             prometheus-configuration))
 
@@ -189,6 +192,87 @@
                               loki-activation)
            (service-extension shepherd-root-service-type
                               loki-shepherd)))
+    (description "")))
+
+
+;;;
+;;; mimir
+;;;
+
+(define-configuration/no-serialization mimir-configuration
+  (mimir
+   (file-like mimir-bin)
+   "")
+  (config
+   yaml-config
+   "")
+  (shepherd-provision
+   (list-of-symbols '(mimir))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define mimir-account
+  (lambda _
+    (list (user-group (name "mimir") (system? #t))
+          (user-account
+            (name "mimir")
+            (group "mimir")
+            (system? #t)
+            (comment "Mimir user")
+            (home-directory "/var/lib/mimir")))))
+
+(define mimir-activation
+  (lambda _
+    #~(begin
+        (use-modules (guix build utils))
+        (let ((user (getpwnam "mimir"))
+              (directory "/var/lib/mimir"))
+          (unless (file-exists? directory)
+            (mkdir-p directory)
+            (chown directory (passwd:uid user) (passwd:gid user))
+            (chmod directory #o755))))))
+
+(define mimir-shepherd
+  (match-record-lambda <mimir-configuration>
+      (mimir config shepherd-provision shepherd-requirement auto-start?)
+    (let ((config-file
+           (computed-file "mimir.yaml"
+             (with-extensions (list guile-yamlpp)
+               #~(begin
+                   (use-modules (yamlpp))
+                   (call-with-output-file #$output
+                     (lambda (port)
+                       (let ((emitter (make-yaml-emitter)))
+                         (yaml-emit! emitter '#$config)
+                         (display (yaml-emitter-string emitter) port)))))))))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement `(loopback user-processes ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append mimir "/bin/mimir")
+                        (string-append "-config.file=" #$config-file))
+                  #:user "mimir"
+                  #:group "mimir"
+                  #:directory "/var/lib/mimir"))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?))))))
+
+(define mimir-service-type
+  (service-type
+    (name 'mimir)
+    (extensions
+     (list (service-extension account-service-type
+                              mimir-account)
+           (service-extension activation-service-type
+                              mimir-activation)
+           (service-extension shepherd-root-service-type
+                              mimir-shepherd)))
     (description "")))
 
 
