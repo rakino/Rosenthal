@@ -148,7 +148,7 @@
     #~(begin
         (use-modules (guix build utils))
         (let ((user (getpwnam "prometheus"))
-              (directory "/var/lib/grafana"))
+              (directory "/var/lib/prometheus"))
           (unless (file-exists? directory)
             (mkdir-p directory)
             (chown directory (passwd:uid user) (passwd:gid user))
