@@ -14,7 +14,10 @@
   #:use-module (gnu services shepherd)
   #:use-module (gnu packages guile-xyz)
   #:use-module (rosenthal packages binaries)
-  #:export (grafana-service-type
+  #:export (alloy-configuration
+            alloy-service-type
+
+            grafana-service-type
             grafana-configuration
 
             loki-service-type
@@ -26,6 +29,60 @@
             prometheus-service-type
             prometheus-configuration))
 
+;;;
+;;; alloy
+;;;
+
+(define-configuration/no-serialization alloy-configuration
+  (alloy
+   (file-like alloy-bin)
+   "")
+  (config
+   file-like
+   "")
+  (shepherd-provision
+   (list-of-symbols '(alloy))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define alloy-activation
+  (lambda _
+    #~(begin
+        (use-modules (guix build utils))
+        (let ((directory "/var/lib/alloy"))
+          (unless (file-exists? directory)
+            (mkdir-p directory)
+            (chmod directory #o755))))))
+
+(define alloy-shepherd
+  (match-record-lambda <alloy-configuration>
+      (alloy config shepherd-provision shepherd-requirement auto-start?)
+    (list (shepherd-service
+            (provision shepherd-provision)
+            (requirement `(loopback user-processes ,@shepherd-requirement))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append alloy "/bin/alloy") "run" #$config)
+                #:directory "/var/lib/alloy"))
+            (stop #~(make-kill-destructor))
+            (auto-start? auto-start?)))))
+
+(define alloy-service-type
+  (service-type
+    (name 'alloy)
+    (extensions
+     (list (service-extension activation-service-type
+                              alloy-activation)
+           (service-extension shepherd-root-service-type
+                              alloy-shepherd)))
+    (description "")))
+
+
 ;;;
 ;;; Grafana
 ;;;
