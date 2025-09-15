@@ -17,6 +17,9 @@
   #:export (grafana-service-type
             grafana-configuration
 
+            loki-service-type
+            loki-configuration
+
             prometheus-service-type
             prometheus-configuration))
 
@@ -63,8 +66,7 @@
             (password-file database-password-file)))))
 
 (define grafana-activation
-  (match-record-lambda <grafana-configuration>
-      (grafana)
+  (lambda _
     #~(begin
         (use-modules (guix build utils))
         (let ((user (getpwnam "grafana")))
@@ -108,6 +110,88 @@
                               grafana-shepherd)))
     (description "")))
 
+
+;;;
+;;; loki
+;;;
+
+(define-configuration/no-serialization loki-configuration
+  (loki
+   (file-like loki-bin)
+   "")
+  (config
+   yaml-config
+   "")
+  (shepherd-provision
+   (list-of-symbols '(loki))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define loki-account
+  (lambda _
+    (list (user-group (name "loki") (system? #t))
+          (user-account
+            (name "loki")
+            (group "loki")
+            (system? #t)
+            (comment "Loki user")
+            (home-directory "/var/lib/loki")))))
+
+(define loki-activation
+  (lambda _
+    #~(begin
+        (use-modules (guix build utils))
+        (let ((user (getpwnam "loki"))
+              (directory "/var/lib/loki"))
+          (unless (file-exists? directory)
+            (mkdir-p directory)
+            (chown directory (passwd:uid user) (passwd:gid user))
+            (chmod directory #o755))))))
+
+(define loki-shepherd
+  (match-record-lambda <loki-configuration>
+      (loki config shepherd-provision shepherd-requirement auto-start?)
+    (let ((config-file
+           (computed-file "loki.yaml"
+             (with-extensions (list guile-yamlpp)
+               #~(begin
+                   (use-modules (yamlpp))
+                   (call-with-output-file #$output
+                     (lambda (port)
+                       (let ((emitter (make-yaml-emitter)))
+                         (yaml-emit! emitter '#$config)
+                         (display (yaml-emitter-string emitter) port)))))))))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement `(loopback user-processes ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append loki "/bin/loki")
+                        (string-append "-config.file=" #$config-file))
+                  #:user "loki"
+                  #:group "loki"
+                  #:directory "/var/lib/loki"))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?))))))
+
+(define loki-service-type
+  (service-type
+    (name 'loki)
+    (extensions
+     (list (service-extension account-service-type
+                              loki-account)
+           (service-extension activation-service-type
+                              loki-activation)
+           (service-extension shepherd-root-service-type
+                              loki-shepherd)))
+    (description "")))
+
+
 ;;;
 ;;; prometheus
 ;;;
@@ -143,8 +227,7 @@
             (home-directory "/var/lib/prometheus")))))
 
 (define prometheus-activation
-  (match-record-lambda <prometheus-configuration>
-      (prometheus)
+  (lambda _
     #~(begin
         (use-modules (guix build utils))
         (let ((user (getpwnam "prometheus"))
