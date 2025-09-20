@@ -302,7 +302,7 @@ pipelines, Hugo renders a complete site in seconds, often less.")
 (define-public forgejo
   (package
     (name "forgejo")
-    (version "12.0.0")
+    (version "12.0.3")
     ;; TODO: Address npm dependencies and fetch from git.
     (source (origin
               (method url-fetch)
@@ -311,15 +311,11 @@ pipelines, Hugo renders a complete site in seconds, often less.")
                     version "/forgejo-src-" version ".tar.gz"))
               (sha256
                (base32
-                "0g70rag92pbflsmjnsqdrdvykd9nsz67rxi7scf0lff2mcxqfgfr"))
-              (modules '((guix build utils)))
-              ;; Avoid downloading toolchain.
-              (snippet '(substitute* "go.mod"
-                          (("^toolchain.*") "")))))
+                "0x09nwhps70n8rkvgp7mqzr7cyprdn274q7jhkljxna3r3w8qcb5"))))
     (build-system go-build-system)
     (arguments
      (list #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-           #:go go-1.24
+           #:go go-1.25
            #:install-source? #f
            #:import-path "."
            #:build-flags
