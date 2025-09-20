@@ -94,9 +94,6 @@
   (config
    ini-config
    "")
-  (database-password-file
-   string
-   "")
   (shepherd-provision
    (list-of-symbols '(grafana))
    "")
@@ -118,12 +115,10 @@
             (home-directory "/var/lib/grafana")))))
 
 (define grafana-postgresql-role
-  (match-record-lambda <grafana-configuration>
-      (database-password-file)
+  (lambda _
     (list (postgresql-role
             (name "grafana")
-            (create-database? #t)
-            (password-file database-password-file)))))
+            (create-database? #t)))))
 
 (define grafana-activation
   (lambda _
