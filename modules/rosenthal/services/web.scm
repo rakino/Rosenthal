@@ -194,11 +194,13 @@ reload its configuration file."))
 (define forgejo-activation
   #~(begin
       (use-modules (guix build utils))
-      (let ((dir "/var/lib/forgejo")
-            (user (getpwnam "forgejo")))
-        (mkdir-p dir)
-        (chown dir (passwd:uid user) (passwd:gid user))
-        (chmod dir #o750))))
+      (let ((user (getpwnam "forgejo")))
+        (for-each
+         (lambda (dir)
+           (mkdir-p dir)
+           (chown dir (passwd:uid user) (passwd:gid user))
+           (chmod dir #o750))
+         '("/var/lib/forgejo" "/var/log/forgejo")))))
 
 (define forgejo-shepherd-service
   (match-record-lambda <forgejo-configuration>
