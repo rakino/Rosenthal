@@ -68,7 +68,8 @@
             (start
              #~(make-forkexec-constructor
                 (list #$(file-append alloy "/bin/alloy") "run" #$config)
-                #:directory "/var/lib/alloy"))
+                #:directory "/var/lib/alloy"
+                #:log-file "/var/log/alloy.log"))
             (stop #~(make-kill-destructor))
             (auto-start? auto-start?)))))
 
@@ -147,7 +148,8 @@
                         "server" "--config" #$config-file)
                   #:user "grafana"
                   #:group "grafana"
-                  #:directory #$(file-append grafana "/share/grafana")))
+                  #:directory #$(file-append grafana "/share/grafana")
+                  #:log-file "/var/log/grafana.log"))
               (stop #~(make-kill-destructor))
               (auto-start? auto-start?))))))
 
@@ -230,7 +232,8 @@
                         (string-append "-config.file=" #$config-file))
                   #:user "loki"
                   #:group "loki"
-                  #:directory "/var/lib/loki"))
+                  #:directory "/var/lib/loki"
+                  #:log-file "/var/log/loki.log"))
               (stop #~(make-kill-destructor))
               (auto-start? auto-start?))))))
 
@@ -311,7 +314,8 @@
                         (string-append "-config.file=" #$config-file))
                   #:user "mimir"
                   #:group "mimir"
-                  #:directory "/var/lib/mimir"))
+                  #:directory "/var/lib/mimir"
+                  #:log-file "/var/log/mimir.log"))
               (stop #~(make-kill-destructor))
               (auto-start? auto-start?))))))
 
