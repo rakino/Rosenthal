@@ -220,7 +220,7 @@ from serving static websites to running dynamic web applications.")
 (define-public hugo
   (package
     (name "hugo")
-    (version "0.148.2")
+    (version "0.150.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -229,7 +229,7 @@ from serving static websites to running dynamic web applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1ajv2m07kl6gysvr6qmgb5f36cygqqvj214v5zml0mjx513d10p8"))))
+                "1r86klgw82qai664sri90jd3x9my2m61nrj0936z4d4gy4bp0q2d"))))
     (build-system go-build-system)
     (arguments
      (list
@@ -288,7 +288,7 @@ from serving static websites to running dynamic web applications.")
              (file-name "vendored-go-dependencies")
              (sha256
               (base32
-               "00zxki2ps994sy55i3mx5c557vpjba9qi54p7b0vdjlicgxnxhsl")))
+               "1mhx00vsdpjfwqxln866ssdha0c081r15v6032q87hxh70b536iv")))
            (package-source libsass)
            (package-source libwebp)))
     (home-page "https://gohugo.io/")
