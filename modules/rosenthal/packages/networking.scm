@@ -13,7 +13,8 @@
   #:use-module (gnu packages dns)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages golang-build)
-  #:use-module (gnu packages linux))
+  #:use-module (gnu packages linux)
+  #:use-module (rosenthal packages golang))
 
 (define-public cloudflared
   (package
@@ -257,7 +258,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.86.2")
+    (version "1.88.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -266,20 +267,18 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1l8wqn2pd876cyyhfr9c7ry66jll1mfn4vfxdjdfck9gm6ydz346"))
+                "0jgalpb2d912ymph239vxhh947jpsdqc05gf08303b9n5p4zk646"))
               (modules '((guix build utils)))
               (snippet
                '(begin
                   (delete-file-recursively "tool")
                   (substitute* "net/tstun/tun_linux.go"
-                    (("/sbin/(modprobe)" _ cmd) cmd))
-                  (substitute* "go.mod"
-                    (("1.24.4") "1.24"))))))
+                    (("/sbin/(modprobe)" _ cmd) cmd))))))
     (build-system go-build-system)
     (arguments
      (list
       #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-      #:go go-1.24
+      #:go go-1.25
       #:install-source? #f
       #:import-path "."
       #:build-flags
@@ -365,12 +364,12 @@ a SOCKS5 proxy.")
     (native-inputs
      (append
       (list (origin
-              (method (go-mod-vendor #:go go-1.24))
+              (method (go-mod-vendor #:go go-1.25))
               (uri (package-source this-package))
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "0l4j763bk2k9pl99rvga1kk828szmjwl7vc9jvrrfq6bj6rd4171"))))
+                "0aq9qvb1w2chilkq3gmm3r1914yfaasrqmiz8ibbfk14cdskm8gi"))))
       (if (%current-target-system)
           (list this-package)
           '())))
