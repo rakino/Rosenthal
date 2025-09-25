@@ -7,6 +7,7 @@
   #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (gnu packages admin)
+  #:use-module (gnu packages guile-xyz)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
   #:use-module (rosenthal packages binaries)
@@ -19,6 +20,7 @@
   #:use-module (gnu services shepherd)
   #:use-module (gnu system privilege)
   #:use-module (gnu system shadow)
+  #:use-module (rosenthal utils serializers ini)
   #:use-module (rosenthal utils serializers yaml)
   #:export (caddy-configuration
             caddy-service-type
@@ -171,10 +173,9 @@ reload its configuration file."))
   (git-packages
    (list-of-file-likes (list git git-lfs))
    "@code{git} and extension packages to install.")
-  (config-file
-   (file-object "/var/lib/forgejo/app.ini")
-   "Filesystem path or file-like object of Forgejo configuration,
-@file{app.ini}.")
+  (config
+   ini-config
+   "")
   (no-serialization))
 
 (define %forgejo-accounts
@@ -204,30 +205,37 @@ reload its configuration file."))
 
 (define forgejo-shepherd-service
   (match-record-lambda <forgejo-configuration>
-      (forgejo config-file)
-    (list (shepherd-service
-           (documentation "Run Forgejo.")
-           (provision '(forgejo))
-           (requirement '(loopback postgresql))
-           (start
-            #~(make-forkexec-constructor
-               (list #$(file-append forgejo "/bin/forgejo")
-                     "--config" #$config-file)
-               #:user "forgejo"
-               #:group "forgejo"
-               #:log-file "/var/log/forgejo.log"
-               #:environment-variables
-               '("GIT_EXEC_PATH=/run/current-system/profile/libexec/git-core"
-                 "GIT_SSL_CAINFO=/run/current-system/profile/etc/ssl/certs/ca-certificates.crt"
-                 "HOME=/var/lib/forgejo"
-                 "PATH=/run/current-system/profile/bin"
-                 "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
-                 "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")
-               #:resource-limits '((nofile 524288 524288))))
-           (stop
-            #~(make-kill-destructor))
-           (actions
-            (list (shepherd-configuration-action config-file)))))))
+      (forgejo config)
+    (let ((config-file
+           (computed-file "forgejo.ini"
+             (with-extensions (list guile-ini guile-lib guile-smc)
+               #~(begin
+                   (use-modules (srfi srfi-26) (ini))
+                   (call-with-output-file #$output
+                     (cut scm->ini '#$config #:port <>)))))))
+      (list (shepherd-service
+              (documentation "Run Forgejo.")
+              (provision '(forgejo))
+              (requirement '(loopback postgresql))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append forgejo "/bin/forgejo")
+                        "--config" #$config-file)
+                  #:user "forgejo"
+                  #:group "forgejo"
+                  #:log-file "/var/log/forgejo.log"
+                  #:environment-variables
+                  '("GIT_EXEC_PATH=/run/current-system/profile/libexec/git-core"
+                    "GIT_SSL_CAINFO=/run/current-system/profile/etc/ssl/certs/ca-certificates.crt"
+                    "HOME=/var/lib/forgejo"
+                    "PATH=/run/current-system/profile/bin"
+                    "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
+                    "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")
+                  #:resource-limits '((nofile 524288 524288))))
+              (stop
+               #~(make-kill-destructor))
+              (actions
+               (list (shepherd-configuration-action config-file))))))))
 
 (define forgejo-service-type
   (service-type
@@ -243,7 +251,6 @@ reload its configuration file."))
                              (const forgejo-activation))
           (service-extension shepherd-root-service-type
                              forgejo-shepherd-service)))
-   (default-value (forgejo-configuration))
    (description "Run Forgejo.")))
 
 

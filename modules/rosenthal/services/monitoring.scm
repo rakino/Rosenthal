@@ -4,6 +4,7 @@
 
 (define-module (rosenthal services monitoring)
   #:use-module (guix gexp)
+  #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (rosenthal utils serializers ini)
   #:use-module (rosenthal utils serializers yaml)
@@ -137,7 +138,12 @@
   (match-record-lambda <grafana-configuration>
       (grafana config shepherd-provision shepherd-requirement auto-start?)
     (let ((config-file
-           (apply mixed-text-file "grafana.ini" (ini-serialize config))))
+           (computed-file "grafana.ini"
+             (with-extensions (list guile-ini guile-lib guile-smc)
+               #~(begin
+                   (use-modules (srfi srfi-26) (ini))
+                   (call-with-output-file #$output
+                     (cut scm->ini '#$config #:port <>)))))))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback postgresql user-processes
