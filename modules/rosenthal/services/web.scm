@@ -493,7 +493,7 @@ test its configuration file."))
    (string "misskey/misskey:latest")
    "Misskey docker image to use.")
   (config
-   (yaml-config '())
+   yaml-config
    "Alist of Misskey configuration, to be serialized to YAML format.")
   (data-directory
    (string "/var/lib/misskey")
@@ -530,7 +530,15 @@ test its configuration file."))
   (match-record-lambda <misskey-configuration>
       (image config data-directory log-file )
     (let ((config-file
-           (mixed-text-file "misskey.yaml" (yaml-serialize config))))
+           (computed-file "misskey.yaml"
+             (with-extensions (list guile-yamlpp)
+               #~(begin
+                   (use-modules (yamlpp))
+                   (call-with-output-file #$output
+                     (lambda (port)
+                       (let ((emitter (make-yaml-emitter)))
+                         (yaml-emit! emitter '#$config)
+                         (display (yaml-emitter-string emitter) port)))))))))
       (list (oci-container-configuration
              (user "misskey")
              (group "docker")
@@ -558,7 +566,6 @@ test its configuration file."))
                              misskey-activation)
           (service-extension oci-container-service-type
                              misskey-oci-containers)))
-   (default-value (misskey-configuration))
    (description "Run Misskey, an interplanetary microblogging platform.")))
 
 
