@@ -10,8 +10,8 @@
   #:use-module (gnu packages ci))
 
 (define-public cuirass/dolly
-  (let ((commit "6ea7d8d94010a00548968fcc3dd493af383c4000")
-        (revision "1"))
+  (let ((commit "1de99f730b34853930fa5bc5127db4203bb12211")
+        (revision "2"))
     (package
       (inherit cuirass)
       (name "cuirass-dolly")
@@ -24,4 +24,4 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1clzkzclzqfivv7cpwh8r20j8j5nzfnzbf1rrnhcyc1gvlds7blb")))))))
+                  "10anvrd532m01lsdq6hnjn6b15bf19k4drb3igyfnp038r6dfp2z")))))))
