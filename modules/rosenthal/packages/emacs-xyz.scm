@@ -101,31 +101,6 @@ and it's subcommands.")
       (properties
        '((disable-updater? . #t))))))
 
-(define-public emacs-treesit-auto
-  (package
-    (name "emacs-treesit-auto")
-    ;; NOTE: Not tagged, also change commit when updating.
-    (version "1.0.7")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/renzmann/treesit-auto")
-             (commit "016bd286a1ba4628f833a626f8b9d497882ecdf3")))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "03bvam7cpxqp4idhd235n76qdqhsbgw7m2lphy8qqwslbmcq23m4"))))
-    (build-system emacs-build-system)
-    (home-page "https://github.com/renzmann/treesit-auto")
-    (synopsis "Automatically use tree-sitter major modes")
-    (description
-     "@code{treesit-auto} is an Emacs package for automatically using tree-sitter
-major modes and falling back to the original major mode when its tree-sitter
-counterpart is unavailable.")
-    (license license:gpl3+)
-    (properties
-     '((disable-updater? . #t)))))
-
 ;; https://issues.guix.gnu.org/59552
 (define-public emacs-wakatime-mode
   ;; No release since May 5, 2015.
