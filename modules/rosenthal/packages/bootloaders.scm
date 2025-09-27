@@ -126,3 +126,34 @@
 supporting data to their proper locations, before chainloading to the kernel.
 Supports measured and/or verified boot environments.")
     (license license:lgpl2.1+)))
+
+(define-public ukify
+  (package
+    (name "ukify")
+    (version systemd-version)
+    (source systemd-source)
+    (build-system pyproject-build-system)
+    (arguments
+     (list #:phases
+           #~(modify-phases %standard-phases
+               (delete 'check)
+               (replace 'install
+                 (lambda* (#:key inputs #:allow-other-keys)
+                   (let* ((bin (string-append #$output "/bin"))
+                          (file (string-append bin "/ukify"))
+                          (binutils (assoc-ref inputs "binutils"))
+                          (sbsign (assoc-ref inputs "sbsigntools")))
+                     (mkdir-p bin)
+                     (copy-file "src/ukify/ukify.py" file)
+                     (wrap-program file
+                       `("PATH" ":" prefix
+                         (,(string-append binutils "/bin")
+                          ,(string-append sbsign "/bin"))))))))))
+    (inputs (list binutils python-cryptography python-pefile sbsigntools))
+    (native-inputs (list python-setuptools))
+    (home-page "https://systemd.io")
+    (synopsis "Unified kernel image UEFI tool")
+    (description "@command{ukify} joins together a UKI stub, linux kernel, initrd,
+kernel arguments, and optional secure boot signatures into a single, UEFI-bootable
+image.")
+    (license license:lgpl2.1+)))
