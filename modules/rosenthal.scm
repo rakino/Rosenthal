@@ -15,6 +15,9 @@
         (rosenthal utils packages)
         (rosenthal utils transformations)
 
+        (rosenthal bootloader grub)
+        (rosenthal bootloader uki)
+
         (gnu services desktop)
         (gnu services guix)
         (gnu services shepherd)
