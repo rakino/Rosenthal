@@ -1,15 +1,30 @@
-;;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
+;;; SPDX-FileCopyrightText: 2023-2025 Hilton Chain <hako@ultrarare.space>
+;;; Copyright © 2024 Lilah Tascheter <lilah@lunabee.space>
 ;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages bootloaders)
-  #:use-module (guix download)
   #:use-module (guix gexp)
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix utils)
+  #:use-module (guix download)
+  #:use-module (guix git-download)
+  #:use-module (guix build-system meson)
+  #:use-module (guix build-system pyproject)
   #:use-module (gnu packages autotools)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages bootloaders)
-  #:use-module (gnu packages python))
+  #:use-module (gnu packages crypto)
+  #:use-module (gnu packages efi)
+  #:use-module (gnu packages gperf)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages python)
+  #:use-module (gnu packages python-build)
+  #:use-module (gnu packages python-crypto)
+  #:use-module (gnu packages python-xyz)
+  #:export (systemd-stub-name))
 
 ;; Patches obtained from:
 ;; <https://leo3418.github.io/collections/gentoo-config-luks2-grub-systemd/packages.html>
@@ -51,3 +66,63 @@
       (properties
        `(,@(package-properties base)
          (disable-updater? . #t))))))
+
+
+;;;
+;;; Unified Kernel Image support.
+;;;
+
+(define systemd-version "258")
+(define systemd-source
+  (origin
+    (method git-fetch)
+    (uri (git-reference
+           (url "https://github.com/systemd/systemd")
+           (commit (string-append "v" systemd-version))))
+    (file-name (git-file-name "systemd" systemd-version))
+    (sha256
+     (base32
+      "18gnp45gl1154jra6qv95k8y7ny6phdm87yqi5jdq13cadlrklf6"))))
+
+(define (systemd-stub-name)
+  (let ((arch (cond ((target-x86-32?) "ia32")
+                    ((target-x86-64?) "x64")
+                    ((target-arm32?) "arm")
+                    ((target-aarch64?) "aa64")
+                    ((target-riscv64?) "riscv64"))))
+    (string-append "linux" arch ".efi.stub")))
+
+(define-public systemd-stub
+  (package
+    (name "systemd-stub")
+    (version systemd-version)
+    (source systemd-source)
+    (build-system meson-build-system)
+    (arguments
+     (list #:tests? #f
+           #:configure-flags
+           `(list "-Defi=true" "-Dsbat-distro=guix"
+                  "-Dsbat-distro-generation=1" ; package revision!
+                  "-Dsbat-distro-summary=Guix System"
+                  "-Dsbat-distro-url=https://guix.gnu.org"
+                  ,(string-append "-Dsbat-distro-pkgname=" name)
+                  ,(string-append "-Dsbat-distro-version=" version))
+           #:phases
+           #~(let ((stub #$(string-append "src/boot/" (systemd-stub-name))))
+               (modify-phases %standard-phases
+                 (replace 'build
+                   (lambda* (#:key parallel-build? #:allow-other-keys)
+                     (invoke "ninja" stub
+                             "-j" (if parallel-build?
+                                      (number->string (parallel-job-count)) "1"))))
+                 (replace 'install
+                   (lambda _
+                     (install-file stub (string-append #$output "/libexec"))))))))
+    (inputs (list libcap libxcrypt python-pyelftools `(,util-linux "lib")))
+    (native-inputs (list gperf pkg-config python-minimal python-jinja2))
+    (home-page "https://systemd.io/")
+    (synopsis "Unified kernel image UEFI stub")
+    (description "Simple UEFi boot stub that loads a conjoined kernel image and
+supporting data to their proper locations, before chainloading to the kernel.
+Supports measured and/or verified boot environments.")
+    (license license:lgpl2.1+)))
