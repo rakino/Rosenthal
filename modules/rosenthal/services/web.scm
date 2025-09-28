@@ -149,7 +149,6 @@ reload its configuration file."))
                              caddy-privileged-programs)
           (service-extension shepherd-root-service-type
                              caddy-shepherd-services)))
-   (default-value #f)
    (description "")))
 
 
@@ -176,6 +175,9 @@ reload its configuration file."))
   (config
    ini-config
    "")
+  (postgresql-password-file
+   string
+   "")
   (no-serialization))
 
 (define %forgejo-accounts
@@ -187,10 +189,13 @@ reload its configuration file."))
          (comment "Forgejo user")
          (home-directory "/var/lib/forgejo"))))
 
-(define %forgejo-postgresql-role
-  (list (postgresql-role
-         (name "forgejo")
-         (create-database? #t))))
+(define forgejo-postgresql-role
+  (match-record-lambda <forgejo-configuration>
+      (postgresql-password-file)
+    (list (postgresql-role
+            (name "forgejo")
+            (create-database? #t)
+            (password-file postgresql-password-file)))))
 
 (define forgejo-activation
   #~(begin
@@ -244,9 +249,11 @@ reload its configuration file."))
     (list (service-extension account-service-type
                              (const %forgejo-accounts))
           (service-extension postgresql-role-service-type
-                             (const %forgejo-postgresql-role))
+                             forgejo-postgresql-role)
           (service-extension profile-service-type
-                             forgejo-configuration-git-packages)
+                             (lambda (config)
+                               (cons (forgejo-configuration-forgejo config)
+                                     (forgejo-configuration-git-packages config))))
           (service-extension activation-service-type
                              (const forgejo-activation))
           (service-extension shepherd-root-service-type
@@ -501,6 +508,9 @@ test its configuration file."))
   (log-file
    (string "/var/log/misskey.log")
    "Log file to use.")
+  (postgresql-password-file
+   string
+   "")
   (no-serialization))
 
 (define %misskey-accounts
@@ -511,10 +521,13 @@ test its configuration file."))
          (home-directory "/var/empty")
          (shell (file-append shadow "/sbin/nologin")))))
 
-(define %misskey-postgresql-role
-  (list (postgresql-role
-         (name "misskey")
-         (create-database? #t))))
+(define misskey-postgresql-role
+  (match-record-lambda <misskey-configuration>
+      (postgresql-password-file)
+    (list (postgresql-role
+            (name "misskey")
+            (create-database? #t)
+            (password-file postgresql-password-file)))))
 
 (define misskey-activation
   (match-record-lambda <misskey-configuration>
@@ -559,7 +572,7 @@ test its configuration file."))
     (list (service-extension account-service-type
                              (const %misskey-accounts))
           (service-extension postgresql-role-service-type
-                             (const %misskey-postgresql-role))
+                             misskey-postgresql-role)
           (service-extension log-rotation-service-type
                              (compose list misskey-configuration-log-file))
           (service-extension activation-service-type
@@ -667,6 +680,9 @@ test its configuration file."))
   (extra-options
    (alist '())
    "Extra options.")
+  (postgresql-password-file
+   string
+   "")
   (no-serialization))
 
 (define %vaultwarden-accounts
@@ -677,10 +693,13 @@ test its configuration file."))
          (home-directory "/var/empty")
          (shell (file-append shadow "/sbin/nologin")))))
 
-(define %vaultwarden-postgresql-role
-  (list (postgresql-role
-         (name "vaultwarden")
-         (create-database? #t))))
+(define vaultwarden-postgresql-role
+  (match-record-lambda <vaultwarden-configuration>
+      (postgresql-password-file)
+    (list (postgresql-role
+            (name "vaultwarden")
+            (create-database? #t)
+            (password-file postgresql-password-file)))))
 
 (define vaultwarden-activation
   (match-record-lambda <vaultwarden-configuration>
@@ -738,12 +757,11 @@ test its configuration file."))
     (list (service-extension account-service-type
                              (const %vaultwarden-accounts))
           (service-extension postgresql-role-service-type
-                             (const %vaultwarden-postgresql-role))
+                             vaultwarden-postgresql-role)
           (service-extension activation-service-type
                              vaultwarden-activation)
           (service-extension log-rotation-service-type
                              (compose list vaultwarden-configuration-log-file))
           (service-extension oci-container-service-type
                              vaultwarden-oci-containers)))
-   (default-value (vaultwarden-configuration))
    (description "Run Vaultwarden, a Bitwarden compatible server.")))
