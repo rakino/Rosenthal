@@ -27,9 +27,6 @@
             cloudflare-warp-configuration
             cloudflare-warp-service-type
 
-            miniflux-configuration
-            miniflux-service-type
-
             home-wakapi-configuration
             home-wakapi-service-type
 
@@ -248,82 +245,6 @@ headers.  This can expose sensitive information in your logs.")
            (compose list cloudflare-warp-configuration-cloudflare-warp))))
    (default-value (cloudflare-warp-configuration))
    (description "Run warp-svc, the Cloudflare Warp daemon.")))
-
-
-;;;
-;;; Miniflux
-;;;
-
-
-(define-maybe string)
-
-(define-configuration miniflux-configuration
-  (miniflux
-   (file-like miniflux)
-   "The miniflux package.")
-  (log-file
-   (string "/var/log/miniflux.log")
-   "Where the logs go.")
-  (proxy-url
-   maybe-string
-   "Proxy URL to use.")
-  (options
-   (alist '())
-   "Association list of miniflux configuration options.")
-  (no-serialization))
-
-(define %miniflux-accounts
-  (list (user-account
-         (name "miniflux")
-         (group "nogroup")
-         (system? #t)
-         (home-directory "/var/empty")
-         (shell (file-append shadow "/sbin/nologin")))))
-
-(define %miniflux-postgresql-role
-  (list (postgresql-role
-         (name "miniflux")
-         (create-database? #t))))
-
-(define miniflux-shepherd-service
-  (match-record-lambda <miniflux-configuration>
-      (miniflux log-file proxy-url options)
-    (let ((config-file (mixed-text-file
-                        "miniflux.conf"
-                        (apply string-append
-                               (map (lambda (option)
-                                      (format #f "~a=~a~%"
-                                              (car option) (cdr option)))
-                                    options)))))
-      (list (shepherd-service
-             (documentation "Run miniflux.")
-             (provision '(miniflux))
-             (requirement '(postgres user-processes))
-             (start #~(make-forkexec-constructor
-                       (list #$(file-append miniflux "/bin/miniflux")
-                             "-config-file" #$config-file)
-                       #:user "miniflux"
-                       #:group "nogroup"
-                       #:log-file #$log-file
-                       #:environment-variables
-                       '#$(if (maybe-value-set? proxy-url)
-                              (list (string-append "HTTP_PROXY=" proxy-url)
-                                    (string-append "HTTPS_PROXY=" proxy-url))
-                              '())))
-             (stop #~(make-kill-destructor)))))))
-
-(define miniflux-service-type
-  (service-type
-   (name 'miniflux)
-   (extensions
-    (list (service-extension account-service-type
-                             (const %miniflux-accounts))
-          (service-extension postgresql-role-service-type
-                             (const %miniflux-postgresql-role))
-          (service-extension shepherd-root-service-type
-                             miniflux-shepherd-service)))
-   (default-value (miniflux-configuration))
-   (description "Run Miniflux, a minimalist and opinionated feed reader.")))
 
 
 ;;;
