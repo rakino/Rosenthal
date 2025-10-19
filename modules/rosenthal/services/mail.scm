@@ -88,6 +88,9 @@
   (config
    yaml-config
    "")
+  (wait
+   (integer 1)
+   "")
   (shepherd-provision
    (list-of-symbols '(goimapnotify))
    "")
@@ -100,7 +103,7 @@
 
 (define home-goimapnotify-shepherd
   (match-record-lambda <home-goimapnotify-configuration>
-      (goimapnotify config shepherd-provision shepherd-requirement auto-start?)
+      (goimapnotify config wait shepherd-provision shepherd-requirement auto-start?)
     (let ((config-file
            (mixed-text-file "goimapnotify.yaml" (yaml-serialize config))))
       (list (shepherd-service
@@ -109,7 +112,8 @@
               (start
                #~(make-forkexec-constructor
                   (list #$(file-append goimapnotify "/bin/goimapnotify")
-                        "-conf" #$config-file)))
+                        "-conf" #$config-file
+                        "-wait" (number->string #$wait))))
               (stop #~(make-kill-destructor))
               (auto-start? auto-start?))))))
 
