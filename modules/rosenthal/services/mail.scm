@@ -1,16 +1,25 @@
-;;; SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
+;;; SPDX-FileCopyrightText: 2024, 2025 Hilton Chain <hako@ultrarare.space>
 ;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services mail)
   #:use-module (srfi srfi-26)
+  #:use-module (guix gexp)
   #:use-module (guix records)
+  #:use-module (rosenthal utils serializers yaml)
   #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services docker)
+  #:use-module (gnu services shepherd)
+  #:use-module (gnu home services)
+  #:use-module (gnu home services shepherd)
+  #:use-module (gnu packages mail)
   #:export (docker-mailserver-configuration
-            docker-mailserver-service-type))
+            docker-mailserver-service-type
+
+            home-goimapnotify-service-type
+            home-goimapnotify-configuration))
 
 ;;;
 ;;; Docker Mailserver
@@ -66,3 +75,48 @@
                              (compose list docker-mailserver-configuration-log-file))))
    (default-value (docker-mailserver-configuration))
    (description "Run Docker Mailserver.")))
+
+
+;;;
+;;; goimapnotify
+;;;
+
+(define-configuration/no-serialization home-goimapnotify-configuration
+  (goimapnotify
+   (file-like goimapnotify)
+   "")
+  (config
+   yaml-config
+   "")
+  (shepherd-provision
+   (list-of-symbols '(goimapnotify))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define home-goimapnotify-shepherd
+  (match-record-lambda <home-goimapnotify-configuration>
+      (goimapnotify config shepherd-provision shepherd-requirement auto-start?)
+    (let ((config-file
+           (mixed-text-file "goimapnotify.yaml" (yaml-serialize config))))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement shepherd-requirement)
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append goimapnotify "/bin/goimapnotify")
+                        "-conf" #$config-file)))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?))))))
+
+(define home-goimapnotify-service-type
+  (service-type
+   (name 'home-goimapnotify)
+   (extensions
+    (list (service-extension home-shepherd-service-type
+                             home-goimapnotify-shepherd)))
+   (description "")))
