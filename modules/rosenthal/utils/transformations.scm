@@ -67,7 +67,7 @@
                                   (guix-configuration-guix config)))))))))))
 
 ;; NOTE: Booting from ZFS requires patching Guix.
-(define* (rosenthal-transformation-zfs #:key boot?)
+(define* (rosenthal-transformation-zfs #:key boot? (config (zfs-configuration)))
   (lambda (os)
     (operating-system
       (inherit os)
@@ -81,5 +81,5 @@
                '())
          ,@(operating-system-kernel-loadable-modules os)))
       (services
-       (cons* (service zfs-service-type)
+       (cons* (service zfs-service-type config)
               (operating-system-user-services os))))))

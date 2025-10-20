@@ -4,6 +4,7 @@
 
 (define-module (rosenthal services file-systems)
   #:use-module (guix gexp)
+  #:use-module (guix records)
   #:use-module (gnu packages backup)
   #:use-module (gnu packages file-systems)
   #:use-module (rosenthal packages admin)
@@ -19,7 +20,8 @@
 
             dumb-runtime-dir-service-type
 
-            zfs-service-type))
+            zfs-service-type
+            zfs-configuration))
 
 
 ;;;
@@ -101,37 +103,62 @@
 ;;; ZFS
 ;;;
 
+(define-configuration/no-serialization zfs-configuration
+  (volumes?
+   (boolean #f)
+   "")
+  (auto-mount?
+   (boolean #t)
+   ""))
 
-(define zfs-shepherd-service
-  (list (shepherd-service
-          (provision '(zfs-import))
-          (requirement '(kernel-module-loader))
-          (start
-           #~(make-forkexec-constructor
-              (list #$(file-append zfs "/sbin/zpool") "import" "-a" "-N")))
-          (one-shot? #t))
-        (shepherd-service
-          (provision '(zfs-volumes))
-          (requirement '(zfs-import))
-          (start
-           #~(make-forkexec-constructor
-              (list #$(file-append zfs "/bin/zvol_wait"))))
-          (one-shot? #t))
-        (shepherd-service
-          (provision '(zfs-mount))
-          (requirement '(zfs-import))
-          (start
-           #~(make-forkexec-constructor
-              (list #$(file-append zfs "/sbin/zfs") "mount" "-a" "-l")))
-          (one-shot? #t))
-        (shepherd-service
-          (provision '(file-system-zfs))
-          (requirement '(zfs-mount))
-          (start #~(const #t))
-          (stop
-           #~(make-system-destructor
-              (string-join
-               (list #$(file-append zfs "/sbin/zfs") "unmount" "-a")))))))
+(define zfs-shepherd
+  (match-record-lambda <zfs-configuration>
+      (volumes? auto-mount?)
+    (append
+     (list
+      (shepherd-service
+        (provision '(file-system-zfs))
+        (requirement
+         `(zfs-import
+           ,@(if volumes? '(zfs-volumes) '())
+           ,@(if auto-mount? '(zfs-mount) '())))
+        (start #~(const #t))
+        (stop #~(const #f)))
+      (shepherd-service
+        (provision '(zfs-import))
+        (requirement '(kernel-module-loader))
+        (start
+         #~(make-system-constructor
+            (string-join
+             (list #$(file-append zfs "/sbin/zpool") "import" "-a" "-N"))))
+        (stop #~(const #f))))
+     (if volumes?
+         (list
+          (shepherd-service
+            (provision '(zfs-volumes))
+            (requirement '(zfs-import))
+            (start
+             #~(make-system-constructor
+                (string-join
+                 ;; TODO: Patch references within zfs package instead.
+                 (list "PATH=/run/current-system/profile/bin:/run/current-system/profile/sbin"
+                       #$(file-append zfs "/bin/zvol_wait")))))
+            (stop #~(const #f))))
+         '())
+     (if auto-mount?
+         (list
+          (shepherd-service
+            (provision '(zfs-mount))
+            (requirement '(zfs-import))
+            (start
+             #~(make-system-constructor
+                (string-join
+                 (list #$(file-append zfs "/sbin/zfs") "mount" "-a" "-l"))))
+            (stop
+             #~(make-system-destructor
+                (string-join
+                 (list #$(file-append zfs "/sbin/zfs") "unmount" "-a"))))))
+         '()))))
 
 (define zfs-service-type
   (service-type
@@ -144,10 +171,10 @@
            (service-extension kernel-module-loader-service-type
                               (const '("zfs")))
            (service-extension shepherd-root-service-type
-                              (const zfs-shepherd-service))
+                              zfs-shepherd)
            (service-extension user-processes-service-type
                               (const '(file-system-zfs)))
            (service-extension profile-service-type
                               (const (list zfs)))))
-    (default-value #f)
+    (default-value (zfs-configuration))
     (description "")))
