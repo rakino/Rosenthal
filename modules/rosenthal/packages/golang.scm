@@ -20,7 +20,7 @@
   (package
     (inherit go-1.24)
     (name "go")
-    (version "1.25.1")
+    (version "1.25.3")
     (source
      (origin
        (method git-fetch)
@@ -29,7 +29,7 @@
              (commit (string-append "go" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1pc6ybdsd2v6rviylmmdzns3v0ramrcbhn935ikff39shpij4xp4"))))
+        (base32 "037gcrl8nagdsq2kv8irx7n0nijjmlqpz0b0zyj482xz2wzar0fs"))))
     ;; TODO
     (arguments
      (substitute-keyword-arguments (package-arguments go-1.24)
