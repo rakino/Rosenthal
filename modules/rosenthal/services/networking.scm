@@ -107,10 +107,6 @@
    (file-like tailscale)
    "The tailscale package to use.")
 
-  (iptables
-   (file-like iptables-nft)
-   "The iptables package to use.")
-
   (log-file
    (string "/var/log/tailscaled.log")
    "Path to log file.")
@@ -141,32 +137,25 @@ to #f.")
 
 (define tailscale-shepherd-service
   (match-record-lambda <tailscale-configuration>
-      (tailscale iptables log-file socket state-directory
+      (tailscale log-file socket state-directory
                  upload-log? verbosity extra-options)
-    (let ((environment
-           #~(list (string-append "PATH="
-                                  (string-join
-                                   '(#$(file-append iptables "/sbin")
-                                     #$(file-append iproute "/sbin"))
-                                   ":")))))
-      (list (shepherd-service
-             (documentation "Run tailscaled")
-             (provision '(tailscaled))
-             (requirement '(user-processes))
-             (start
-              #~(make-forkexec-constructor
-                 (list
-                  #$(file-append tailscale "/bin/tailscaled")
-                  #$@(if upload-log?
-                         '()
-                         '("-no-logs-no-support"))
-                  "-socket" #$socket
-                  "-statedir" #$state-directory
-                  "-verbose" #$(number->string verbosity)
-                  #$@extra-options)
-                 #:environment-variables #$environment
-                 #:log-file #$log-file))
-             (stop #~(make-kill-destructor)))))))
+    (list (shepherd-service
+            (documentation "Run tailscaled")
+            (provision '(tailscaled))
+            (requirement '(user-processes))
+            (start
+             #~(make-forkexec-constructor
+                (list
+                 #$(file-append tailscale "/bin/tailscaled")
+                 #$@(if upload-log?
+                        '()
+                        '("-no-logs-no-support"))
+                 "-socket" #$socket
+                 "-statedir" #$state-directory
+                 "-verbose" #$(number->string verbosity)
+                 #$@extra-options)
+                #:log-file #$log-file))
+            (stop #~(make-kill-destructor))))))
 
 (define tailscale-service-type
   (service-type
