@@ -72,18 +72,6 @@
 ;;; Unified Kernel Image support.
 ;;;
 
-(define systemd-version "258")
-(define systemd-source
-  (origin
-    (method git-fetch)
-    (uri (git-reference
-           (url "https://github.com/systemd/systemd")
-           (commit (string-append "v" systemd-version))))
-    (file-name (git-file-name "systemd" systemd-version))
-    (sha256
-     (base32
-      "18gnp45gl1154jra6qv95k8y7ny6phdm87yqi5jdq13cadlrklf6"))))
-
 (define (systemd-stub-name)
   (let ((arch (cond ((target-x86-32?) "ia32")
                     ((target-x86-64?) "x64")
@@ -95,8 +83,16 @@
 (define-public systemd-stub
   (package
     (name "systemd-stub")
-    (version systemd-version)
-    (source systemd-source)
+    (version "258")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/systemd/systemd")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name "name" version))
+              (sha256
+               (base32
+                "18gnp45gl1154jra6qv95k8y7ny6phdm87yqi5jdq13cadlrklf6"))))
     (build-system meson-build-system)
     (arguments
      (list #:tests? #f
@@ -130,8 +126,16 @@ Supports measured and/or verified boot environments.")
 (define-public ukify
   (package
     (name "ukify")
-    (version systemd-version)
-    (source systemd-source)
+    (version "258")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/systemd/systemd")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "18gnp45gl1154jra6qv95k8y7ny6phdm87yqi5jdq13cadlrklf6"))))
     (build-system pyproject-build-system)
     (arguments
      (list #:phases
