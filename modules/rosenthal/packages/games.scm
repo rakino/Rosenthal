@@ -21,7 +21,7 @@
 (define-public prismlauncher/dolly
   (package
     (name "prismlauncher-dolly")
-    (version "9.2")
+    (version "9.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -31,7 +31,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "16ra1cb8rc00cd2si3k7qmw8db3g0pf6n15aar60dh7kp9ig8jwb"))))
+                "1xxgyx0z5r3hk3yk4gglbfwvq2qk1j9a0dkrv55j4vrlkni79nrm"))))
     (build-system cmake-build-system)
     (arguments
      `(#:phases
