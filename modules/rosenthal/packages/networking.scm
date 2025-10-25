@@ -319,6 +319,12 @@ a SOCKS5 proxy.")
                    "derpprobe"
                    "tailscaled"
                    "tsidp")))))
+          (add-after 'unpack 'fix-paths
+            (lambda _
+              (substitute* "ssh/tailssh/user.go"
+                (("(\")(/usr/local/bin:/usr/bin:/bin\")" _ prefix suffix)
+                 (format #f "~a/run/current-system/profile/bin:~a"
+                         prefix suffix)))))
           (add-after 'install 'install-extras
             (lambda _
               (symlink (in-vicinity #$output "bin/tailscaled")
