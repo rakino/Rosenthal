@@ -39,7 +39,7 @@ editing Caddyfiles, configuration files for @code{caddy}.")
       (properties
        '((disable-updater? . #t))))))
 
-(define-public emacs-eat/hako
+(define-public emacs-eat/dolly
   (package
     (inherit
      (package-with-extra-patches emacs-eat
@@ -55,7 +55,7 @@ editing Caddyfiles, configuration files for @code{caddy}.")
                (sha256
                 (base32
                  "14d6nvagcri0r687y3m179ijmnad89m5d5dj2rn2p6rpfc5nssr0"))))))
-    (name "emacs-eat-hako")))
+    (name "emacs-eat-dolly")))
 
 (define-public emacs-nftables-mode
   (package
