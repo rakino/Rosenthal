@@ -25,7 +25,7 @@
 
 (define-configuration qbittorrent-configuration
   (qbittorrent
-   (file-like qbittorrent-nox)
+   (file-like qbittorrent-no-x)
    "The qBittorrent package to use, we need @command{qbittorrent-nox}.")
   (webui-port
    (integer 8080)
