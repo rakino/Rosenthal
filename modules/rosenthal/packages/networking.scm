@@ -322,7 +322,21 @@ a SOCKS5 proxy.")
           (add-after 'unpack 'fix-paths
             (lambda _
               (substitute* "ssh/tailssh/user.go"
-                (("(\")(/usr/local/bin:/usr/bin:/bin\")" _ prefix suffix)
+                (((format #f "(\")(~a|~a\")"
+                          (string-join
+                           '("/usr/local/sbin"
+                             "/usr/local/bin"
+                             "/usr/sbin"
+                             "/usr/bin"
+                             "/sbin"
+                             "/bin")
+                           ":")
+                          (string-join
+                           '("/usr/local/bin"
+                             "/usr/bin"
+                             "/bin")
+                           ":"))
+                  _ prefix suffix)
                  (format #f "~a/run/current-system/profile/bin:~a"
                          prefix suffix)))))
           (add-after 'install 'install-extras
