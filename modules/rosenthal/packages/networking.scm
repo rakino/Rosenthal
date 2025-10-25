@@ -258,7 +258,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.88.1")
+    (version "1.90.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -267,7 +267,7 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0jgalpb2d912ymph239vxhh947jpsdqc05gf08303b9n5p4zk646"))
+                "07m76ijcrspmmyncdqvyfsi5nfca0m4gs3bjlzxg3ly7gg9hnfhr"))
               (modules '((guix build utils)))
               (snippet
                '(begin
@@ -369,7 +369,7 @@ a SOCKS5 proxy.")
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "0aq9qvb1w2chilkq3gmm3r1914yfaasrqmiz8ibbfk14cdskm8gi"))))
+                "1g040kwafvwma0ncy8ni86zq13rv8kkz0ybbgji51w5qb3cw4pdd"))))
       (if (%current-target-system)
           (list this-package)
           '())))
