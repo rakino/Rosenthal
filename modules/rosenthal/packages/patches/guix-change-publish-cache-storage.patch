@@ -1,5 +1,5 @@
-From b05b945ef65c401fc499d8be65d2431749b97980 Mon Sep 17 00:00:00 2001
-Message-ID: <b05b945ef65c401fc499d8be65d2431749b97980.1756056002.git.hako@ultrarare.space>
+From 5c0b93219bf5def932dfe4de3288fd09ea557f69 Mon Sep 17 00:00:00 2001
+Message-ID: <5c0b93219bf5def932dfe4de3288fd09ea557f69.1761666722.git.hako@ultrarare.space>
 From: Hilton Chain <hako@ultrarare.space>
 Date: Sat, 23 Aug 2025 14:07:19 +0800
 Subject: [PATCH] publish: Store cache in a layout identical to HTTP endpoints.
@@ -41,14 +41,23 @@ Modified layout:
 
 Change-Id: I07689f08eef23c5cd4494451678f4e1ad709f1b3
 ---
- guix/scripts/publish.scm | 16 +++++-----------
- 1 file changed, 5 insertions(+), 11 deletions(-)
+ guix/scripts/publish.scm | 17 +++++---------
+ tests/publish.scm        | 48 ++++++++++++++++++++--------------------
+ 2 files changed, 30 insertions(+), 35 deletions(-)
 
 diff --git a/guix/scripts/publish.scm b/guix/scripts/publish.scm
-index e9c69336392..62875c926a0 100644
+index 7638bcbd0e..a70a9b730f 100644
 --- a/guix/scripts/publish.scm
 +++ b/guix/scripts/publish.scm
-@@ -307,8 +307,6 @@ (define* (store-item->recutils store-item
+@@ -47,6 +47,7 @@ (define-module (guix scripts publish)
+   #:use-module (guix base32)
+   #:use-module (guix base64)
+   #:use-module (guix config)
++  #:use-module (guix records)
+   #:use-module (gcrypt hash)
+   #:use-module (guix pki)
+   #:use-module (gcrypt pk-crypto)
+@@ -306,8 +307,6 @@ (define* (store-item->recutils store-item
    (let ((url (encode-and-join-uri-path
                `(,@(split-and-decode-uri-path nar-path)
                  ,@(match compression
@@ -57,7 +66,7 @@ index e9c69336392..62875c926a0 100644
                      (($ <compression> type)
                       (list (symbol->string type))))
                  ,(basename store-item)))))
-@@ -425,16 +423,13 @@ (define* (render-narinfo store request hash
+@@ -424,16 +423,13 @@ (define* (render-narinfo store request hash
  
  (define* (nar-cache-file directory item
                               #:key (compression %no-compression))
@@ -77,18 +86,18 @@ index e9c69336392..62875c926a0 100644
  
  (define (hash-part-mapping-cache-file directory hash)
    (string-append directory "/hashes/" hash))
-@@ -534,9 +529,7 @@ (define* (render-narinfo/cached store request hash
+@@ -533,9 +529,7 @@ (define* (render-narinfo/cached store request hash
  requested using POOL."
    (define (delete-entry narinfo)
      ;; Delete NARINFO and the corresponding nar from CACHE.
 -    (let* ((nar     (string-append (string-drop-right narinfo
 -                                                      (string-length ".narinfo"))
 -                                   ".nar"))
-+    (let* ((nar     (string-drop-right narinfo (string-length ".narinfo")))
++    (let* ((nar     (uri-decode (assoc-ref (call-with-input-file narinfo recutils->alist) "URL")))
             (base    (basename narinfo ".narinfo"))
             (hash    (string-take base (string-index base #\-)))
             (mapping (hash-part-mapping-cache-file cache hash)))
-@@ -1043,6 +1036,7 @@ (define (string->compression-type string)
+@@ -1039,6 +1033,7 @@ (define (string->compression-type string)
      ("gzip" 'gzip)
      ("lzip" 'lzip)
      ("zstd" 'zstd)
@@ -96,8 +105,155 @@ index e9c69336392..62875c926a0 100644
      (_      #f)))
  
  (define (effective-compression requested-type compressions)
+diff --git a/tests/publish.scm b/tests/publish.scm
+index 3c80c50d51..52c6f6d10c 100644
+--- a/tests/publish.scm
++++ b/tests/publish.scm
+@@ -173,7 +173,7 @@ (define %gzip-magic-bytes
+                       (canonical-sexp->string
+                        (signed-string unsigned-info))))))
+     (format #f "~aSignature: 1;~a;~a
+-URL: nar/~a
++URL: nar/none/~a
+ Compression: none
+ FileSize: ~a\n"
+             unsigned-info (gethostname) signature
+@@ -223,7 +223,7 @@ (define %gzip-magic-bytes
+                       (canonical-sexp->string
+                        (signed-string unsigned-info))))))
+     (format #f "~aSignature: 1;~a;~a
+-URL: nar/~a
++URL: nar/none/~a
+ Compression: none
+ FileSize: ~a~%"
+             unsigned-info (gethostname) signature
+@@ -332,7 +332,7 @@ (define %gzip-magic-bytes
+               (recutils->alist body)))))
+ 
+ (test-equal "/*.narinfo for a compressed file"
+-  '("none" "nar")          ;compression-less nar
++  '("none" "nar/none")          ;compression-less nar
+   ;; Assume 'guix publish -C' is already running on port 6799.
+   (let* ((item (add-text-to-store %store "fake.tar.gz"
+                                   "This is a fake compressed file."))
+@@ -378,7 +378,7 @@ (define %gzip-magic-bytes
+ (test-equal "custom nar path"
+   ;; Serve nars at /foo/bar/chbouib instead of /nar.
+   (list `(("StorePath" . ,%item)
+-          ("URL" . ,(string-append "foo/bar/chbouib/" (basename %item)))
++          ("URL" . ,(string-append "foo/bar/chbouib/none/" (basename %item)))
+           ("Compression" . "none"))
+         200
+         404)
+@@ -403,7 +403,7 @@ (define %gzip-magic-bytes
+                     (recutils->alist body))
+             (response-code (http-get nar-url))
+             (response-code
+-             (http-get (string-append base "nar/" (basename %item))))))))
++             (http-get (string-append base "nar/none/" (basename %item))))))))
+ 
+ (test-equal "/nar/ with properly encoded '+' sign"
+   "Congrats!"
+@@ -479,10 +479,10 @@ (define %gzip-magic-bytes
+               (part     (store-path-hash-part %item))
+               (url      (string-append base part ".narinfo"))
+               (nar-url  (string-append base "nar/gzip/" (basename %item)))
+-              (cached   (string-append cache "/gzip/" (basename %item)
++              (cached   (string-append cache "/" part
+                                        ".narinfo"))
+-              (nar      (string-append cache "/gzip/"
+-                                       (basename %item) ".nar"))
++              (nar      (string-append cache "/nar/gzip/"
++                                       (basename %item)))
+               (response (http-get url)))
+          (and (= 404 (response-code response))
+ 
+@@ -535,15 +535,15 @@ (define %gzip-magic-bytes
+               (url      (string-append base part ".narinfo"))
+               (nar-url  (cute string-append "nar/" <> "/"
+                               (basename %item)))
+-              (cached   (cute string-append cache "/" <> "/"
+-                              (basename %item) ".narinfo"))
+-              (nar      (cute string-append cache "/" <> "/"
+-                              (basename %item) ".nar"))
++              (cached   (string-append cache "/"
++                              part ".narinfo"))
++              (nar      (cute string-append cache "/nar/" <> "/"
++                              (basename %item)))
+               (response (http-get url)))
+-         (wait-for-file (cached "gzip"))
++         (wait-for-file cached)
+          (let* ((body         (http-get-port url))
+                 (narinfo      (recutils->alist body))
+-                (uncompressed (string-append base "nar/"
++                (uncompressed (string-append base "nar/none/"
+                                              (basename %item))))
+            (and (file-exists? (nar "gzip"))
+                 (file-exists? (nar "lzip"))
+@@ -576,7 +576,7 @@ (define %gzip-magic-bytes
+     (list #t
+           (* 42 3600)                             ;TTL on narinfo
+           `(("StorePath" . ,item)
+-            ("URL" . ,(string-append "nar/" (basename item)))
++            ("URL" . ,(string-append "nar/none/" (basename item)))
+             ("Compression" . "none"))
+           200                                     ;nar/…
+           (* 42 3600)                             ;TTL on nar/…
+@@ -595,10 +595,10 @@ (define %gzip-magic-bytes
+          (let* ((base     "http://localhost:6796/")
+                 (part     (store-path-hash-part item))
+                 (url      (string-append base part ".narinfo"))
+-                (cached   (string-append cache "/none/"
+-                                         (basename item) ".narinfo"))
+-                (nar      (string-append cache "/none/"
+-                                         (basename item) ".nar"))
++                (cached   (string-append cache "/"
++                                         part ".narinfo"))
++                (nar      (string-append cache "/nar/none/"
++                                         (basename item)))
+                 (response (http-get url)))
+            (and (= 404 (response-code response))
+ 
+@@ -607,7 +607,7 @@ (define %gzip-magic-bytes
+                        (body         (http-get-port url))
+                        (compressed   (http-get (string-append base "nar/gzip/"
+                                                               (basename item))))
+-                       (uncompressed (http-get (string-append base "nar/"
++                       (uncompressed (http-get (string-append base "nar/none/"
+                                                               (basename item))))
+                        (narinfo      (recutils->alist body)))
+                   (list (file-exists? nar)
+@@ -650,8 +650,8 @@ (define %gzip-magic-bytes
+               (item     (add-text-to-store %store "random" (random-text)))
+               (part     (store-path-hash-part item))
+               (url      (string-append base part ".narinfo"))
+-              (cached   (string-append cache "/gzip/"
+-                                       (basename item)
++              (cached   (string-append cache "/"
++                                       part
+                                        ".narinfo"))
+               (response (http-get url)))
+          (and (= 200 (response-code response))    ;we're below the threshold
+@@ -676,7 +676,7 @@ (define %gzip-magic-bytes
+               (part     (store-path-hash-part item))
+               (narinfo  (string-append base part ".narinfo"))
+               (nar      (string-append base "nar/gzip/" (basename item)))
+-              (cached   (string-append cache "/gzip/" (basename item)
++              (cached   (string-append cache "/" part
+                                        ".narinfo")))
+          ;; We're below the default cache bypass threshold, so NAR and NARINFO
+          ;; should immediately return 200.  The NARINFO request should trigger
+@@ -712,7 +712,7 @@ (define %gzip-magic-bytes
+               (part     (store-path-hash-part item))
+               (narinfo  (string-append base part ".narinfo"))
+               (nar      (string-append base "nar/gzip/" (basename item)))
+-              (cached   (string-append cache "/gzip/" (basename item)
++              (cached   (string-append cache "/" part
+                                        ".narinfo")))
+          ;; The first response used to be 500 and to terminate the daemon
+          ;; connection as a side effect.
 
-base-commit: 4e2e5c71cbf4a219682e77dfb8b9ac8709461999
+base-commit: 31a211f180fd8246dbf7efb4120236c837faffc8
 -- 
 2.51.0
 

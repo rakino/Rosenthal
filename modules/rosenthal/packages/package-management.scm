@@ -20,6 +20,5 @@
     (name "guix-dolly")
     (arguments
      (substitute-keyword-arguments (package-arguments guix)
-       ((#:tests? _ #t) #f)
        ((#:parallel-build? _ #f) #t)))
     (properties '((disable-updater? . #t)))))
