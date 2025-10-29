@@ -9,6 +9,7 @@
   #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (rosenthal utils download)
+  #:use-module (rosenthal utils packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages dns)
   #:use-module (gnu packages golang)
@@ -258,7 +259,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.90.2")
+    (version "1.90.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -267,7 +268,10 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "07m76ijcrspmmyncdqvyfsi5nfca0m4gs3bjlzxg3ly7gg9hnfhr"))
+                "0rs6db5dfmhiaylkpv85b3xn8n7y612z1vln79m33xgvc708vpni"))
+              (patches
+               (rosenthal-patches
+                "tailscale-set-guix-system-PATH-for-SSH.patch"))
               (modules '((guix build utils)))
               (snippet
                '(begin
@@ -319,26 +323,6 @@ a SOCKS5 proxy.")
                    "derpprobe"
                    "tailscaled"
                    "tsidp")))))
-          (add-after 'unpack 'fix-paths
-            (lambda _
-              (substitute* "ssh/tailssh/user.go"
-                (((format #f "(\")(~a|~a\")"
-                          (string-join
-                           '("/usr/local/sbin"
-                             "/usr/local/bin"
-                             "/usr/sbin"
-                             "/usr/bin"
-                             "/sbin"
-                             "/bin")
-                           ":")
-                          (string-join
-                           '("/usr/local/bin"
-                             "/usr/bin"
-                             "/bin")
-                           ":"))
-                  _ prefix suffix)
-                 (format #f "~a/run/current-system/profile/bin:~a"
-                         prefix suffix)))))
           (add-after 'install 'install-extras
             (lambda _
               (symlink (in-vicinity #$output "bin/tailscaled")

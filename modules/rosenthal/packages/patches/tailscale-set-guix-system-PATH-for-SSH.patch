@@ -1,0 +1,28 @@
+From 06ab33a4317d41953ad167bfabd5b5ff4e001fee Mon Sep 17 00:00:00 2001
+From: Hilton Chain <hako@ultrarare.space>
+Date: Wed, 29 Oct 2025 18:58:27 +0800
+Subject: [PATCH] Set Guix System PATH for Tailscale SSH.
+
+---
+ ssh/tailssh/user.go | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/ssh/tailssh/user.go b/ssh/tailssh/user.go
+index ac92c762a..fccc5cbf5 100644
+--- a/ssh/tailssh/user.go
++++ b/ssh/tailssh/user.go
+@@ -109,9 +109,9 @@ func defaultPathForUser(u *user.User) string {
+ 		return defaultPathForUserOnNixOS(u)
+ 	}
+ 	if isRoot {
+-		return "/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
++		return "/run/privileged/bin:/run/current-system/profile/sbin:/run/current-system/profile/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin"
+ 	}
+-	return "/usr/local/bin:/usr/bin:/bin"
++	return "/run/privileged/bin:/run/current-system/profile/sbin:/run/current-system/profile/bin:/usr/local/bin:/usr/bin:/bin"
+ }
+ 
+ func defaultPathForUserOnNixOS(u *user.User) string {
+-- 
+2.51.0
+
