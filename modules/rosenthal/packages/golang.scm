@@ -15,22 +15,3 @@
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages web)
   #:use-module (gnu packages version-control))
-
-(define-public go-1.25
-  (package
-    (inherit go-1.24)
-    (name "go")
-    (version "1.25.3")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-             (url "https://github.com/golang/go")
-             (commit (string-append "go" version))))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "037gcrl8nagdsq2kv8irx7n0nijjmlqpz0b0zyj482xz2wzar0fs"))))
-    ;; TODO
-    (arguments
-     (substitute-keyword-arguments (package-arguments go-1.24)
-       ((#:tests? _ #t) #f)))))
