@@ -3,23 +3,24 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services web)
-  #:use-module (guix gexp)
-  #:use-module (guix modules)
-  #:use-module (guix records)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages guile-xyz)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
-  #:use-module (rosenthal packages binaries)
-  #:use-module (rosenthal packages web)
-  #:use-module (gnu services)
+  #:use-module (gnu packages web)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services databases)
   #:use-module (gnu services docker)
   #:use-module (gnu services shepherd)
+  #:use-module (gnu services)
   #:use-module (gnu system privilege)
   #:use-module (gnu system shadow)
+  #:use-module (guix gexp)
+  #:use-module (guix modules)
+  #:use-module (guix records)
+  #:use-module (rosenthal packages binaries)
+  #:use-module (rosenthal packages web)
   #:use-module (rosenthal utils serializers ini)
   #:use-module (rosenthal utils serializers yaml)
   #:export (caddy-configuration
@@ -268,7 +269,7 @@ reload its configuration file."))
 
 (define-configuration/no-serialization iocaine-configuration
   (iocaine
-   (file-like iocaine/dolly)
+   (file-like iocaine)
    "")
   (config
    file-object

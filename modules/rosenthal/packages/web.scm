@@ -290,17 +290,3 @@ looking for a reliable platform to manage their software projects.")
     (license license:gpl3+)
     (properties
      '((disable-updater? . #t)))))
-
-(define-public iocaine/dolly
-  (package
-    (inherit iocaine)
-    (name "iocaine-dolly")
-    (version "2.5.0")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (crate-uri "iocaine" version))
-       (file-name (string-append name "-" version ".tar.gz"))
-       (sha256
-        (base32 "1x445vnalm323qphxfbfrdzmv9q83h2kybimwm2j39j9p9hj188s"))))
-    (inputs (cons* jemalloc (rosenthal-cargo-inputs 'iocaine)))))
