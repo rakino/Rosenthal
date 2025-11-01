@@ -110,3 +110,27 @@ to work with the Telegram API, which uses the uncommon AES-IGE mode for it.")
     (description
      "This package provides a Python 3.10+ asyncio Matrix framework.")
     (license license:mpl2.0)))
+
+(define-public python-tulir-telethon
+  (package
+    (name "python-tulir-telethon")
+    (version "1.99.0a6")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/tulir/Telethon")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1z53na08wqhx5fk5z22j1j34vl2q07d1f9knrn9k6r4v2bxw0nds"))))
+    (build-system pyproject-build-system)
+    (arguments (list #:tests? #f))      ;TODO
+    (native-inputs (list python-setuptools python-wheel))
+    (propagated-inputs (list python-cryptg python-pyaes python-rsa))
+    (home-page "https://github.com/tulir/Telethon")
+    (synopsis "Python 3 MTProto API Telegram client library")
+    (description
+     "Telethon is an @code{asyncio} Python 3 MTProto library to interact with
+Telegram's API as a user or through a bot account (bot API alternative).")
+    (license license:expat)))
