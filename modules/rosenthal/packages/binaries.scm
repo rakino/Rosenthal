@@ -131,6 +131,43 @@ host Matrix for your family, friends or company.")
     (license license:asl2.0)
     (properties '((disable-updater? . #t)))))
 
+(define-public tuwunel-bin
+  (package
+    (name "tuwunel-bin")
+    (version "1.4.5")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/matrix-construct/tuwunel"
+                    "/releases/download/v" version "/v" version
+                    "-release-all-x86_64-v1-linux-gnu-tuwunel.zst"))
+              (file-name (string-append name "-" version ".zst"))
+              (sha256
+               (base32
+                "1zmcaqb7hgzpls0crx1rgicqz1pgs4ykgjkzlzsgpbkdrad4jbip"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'((#$(format #f "~a-~a"
+                          (package-name this-package)
+                          (package-version this-package))
+                "bin/tuwunel"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'fix-permission
+                 (lambda _
+                   (chmod (string-append #$output "/bin/tuwunel") #o555))))))
+    (supported-systems '("x86_64-linux"))
+    (synopsis "Matrix homeserver")
+    (description
+     "Tuwunel is a featureful Matrix homeserver you can use instead of Synapse
+with your favorite client, bridge or bot.  It is written entirely in Rust to be
+a scalable, lightweight, low-cost, community-driven alternative covering all but
+the most niche uses.")
+    (home-page "https://matrix-construct.github.io/tuwunel/")
+    (license license:asl2.0)
+    (properties '((disable-updater? . #t)))))
+
 (define-public komga-bin
   (package
    (name "komga-bin")
