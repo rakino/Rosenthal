@@ -3,18 +3,19 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal services mail)
-  #:use-module (srfi srfi-26)
+  #:use-module (gnu home services shepherd)
+  #:use-module (gnu home services)
+  #:use-module (gnu packages mail)
+  #:use-module (gnu services admin)
+  #:use-module (gnu services configuration)
+  #:use-module (gnu services containers)
+  #:use-module (gnu services docker)
+  #:use-module (gnu services shepherd)
+  #:use-module (gnu services)
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (rosenthal utils serializers yaml)
-  #:use-module (gnu services)
-  #:use-module (gnu services admin)
-  #:use-module (gnu services configuration)
-  #:use-module (gnu services docker)
-  #:use-module (gnu services shepherd)
-  #:use-module (gnu home services)
-  #:use-module (gnu home services shepherd)
-  #:use-module (gnu packages mail)
+  #:use-module (srfi srfi-26)
   #:export (docker-mailserver-configuration
             docker-mailserver-service-type
 
@@ -45,32 +46,34 @@
    "List of extra Docker arguments.")
   (no-serialization))
 
-(define docker-mailserver-oci-containers
+(define docker-mailserver-oci
   (match-record-lambda <docker-mailserver-configuration>
       (data-directory log-file shepherd-requirement options extra-arguments)
     (let ((docker-mailserver-path
            (cut string-append data-directory <>)))
-      (list (oci-container-configuration
-             (environment options)
-             (image "ghcr.io/docker-mailserver/docker-mailserver:latest")
-             (provision "docker-mailserver")
-             (requirement shepherd-requirement)
-             (log-file log-file)
-             (network "host")
-             (volumes
-              `((,(docker-mailserver-path "/data") . "/var/mail")
-                (,(docker-mailserver-path "/state") . "/var/mail-state")
-                (,(docker-mailserver-path "/logs") . "/var/log/mail")
-                (,(docker-mailserver-path "/config") . "/tmp/docker-mailserver")
-                ("/etc/localtime" . "/etc/localtime:ro")))
-             (extra-arguments extra-arguments))))))
+      (oci-extension
+        (containers
+         (list (oci-container-configuration
+                 (environment options)
+                 (image "ghcr.io/docker-mailserver/docker-mailserver:latest")
+                 (provision "docker-mailserver")
+                 (requirement shepherd-requirement)
+                 (log-file log-file)
+                 (network "host")
+                 (volumes
+                  `((,(docker-mailserver-path "/data") . "/var/mail")
+                    (,(docker-mailserver-path "/state") . "/var/mail-state")
+                    (,(docker-mailserver-path "/logs") . "/var/log/mail")
+                    (,(docker-mailserver-path "/config") . "/tmp/docker-mailserver")
+                    ("/etc/localtime" . "/etc/localtime:ro")))
+                 (extra-arguments extra-arguments))))))))
 
 (define docker-mailserver-service-type
   (service-type
    (name 'docker-mailserver)
    (extensions
-    (list (service-extension oci-container-service-type
-                             docker-mailserver-oci-containers)
+    (list (service-extension oci-service-type
+                             docker-mailserver-oci)
           (service-extension log-rotation-service-type
                              (compose list docker-mailserver-configuration-log-file))))
    (default-value (docker-mailserver-configuration))

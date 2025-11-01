@@ -10,6 +10,7 @@
   #:use-module (gnu packages web)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
+  #:use-module (gnu services containers)
   #:use-module (gnu services databases)
   #:use-module (gnu services docker)
   #:use-module (gnu services shepherd)
@@ -394,28 +395,30 @@ test its configuration file."))
              (chown directory (passwd:uid user) (passwd:gid user))))
          '#$(list cache-directory config-directory)))))
 
-(define jellyfin-oci-containers
+(define jellyfin-oci
   (match-record-lambda <jellyfin-configuration>
       (cache-directory config-directory
                        proxy-url log-file auto-start? extra-options)
-    (list (oci-container-configuration
-           (user "jellyfin")
-           (group "docker")
-           (environment
-            (if (maybe-value-set? proxy-url)
-                `(("http_proxy" . ,proxy-url)
-                  ("https_proxy" . ,proxy-url))
-                '()))
-           (image "jellyfin/jellyfin:latest")
-           (provision "jellyfin")
-           (log-file log-file)
-           (auto-start? auto-start?)
-           (respawn? #t)
-           (network "host")
-           (volumes
-            `((,cache-directory . "/cache")
-              (,config-directory . "/config")))
-           (extra-arguments extra-options)))))
+    (oci-extension
+      (containers
+       (list (oci-container-configuration
+               (user "jellyfin")
+               (group "docker")
+               (environment
+                (if (maybe-value-set? proxy-url)
+                    `(("http_proxy" . ,proxy-url)
+                      ("https_proxy" . ,proxy-url))
+                    '()))
+               (image "jellyfin/jellyfin:latest")
+               (provision "jellyfin")
+               (log-file log-file)
+               (auto-start? auto-start?)
+               (respawn? #t)
+               (network "host")
+               (volumes
+                `((,cache-directory . "/cache")
+                  (,config-directory . "/config")))
+               (extra-arguments extra-options)))))))
 
 (define jellyfin-service-type
   (service-type
@@ -427,8 +430,8 @@ test its configuration file."))
                              jellyfin-activation)
           (service-extension log-rotation-service-type
                              (compose list jellyfin-configuration-log-file))
-          (service-extension oci-container-service-type
-                             jellyfin-oci-containers)))
+          (service-extension oci-service-type
+                             jellyfin-oci)))
    (default-value (jellyfin-configuration))
    (description "Run Jellyfin, a media system.")))
 
@@ -540,7 +543,7 @@ test its configuration file."))
             (mkdir-p #$data-directory)
             (chown #$data-directory (passwd:uid user) (passwd:gid user)))))))
 
-(define misskey-oci-containers
+(define misskey-oci
   (match-record-lambda <misskey-configuration>
       (image config data-directory log-file )
     (let ((config-file
@@ -553,18 +556,20 @@ test its configuration file."))
                        (let ((emitter (make-yaml-emitter)))
                          (yaml-emit! emitter '#$config)
                          (display (yaml-emitter-string emitter) port)))))))))
-      (list (oci-container-configuration
-             (user "misskey")
-             (group "docker")
-             (image image)
-             (provision "misskey")
-             (requirement '(postgresql redis))
-             (log-file log-file)
-             (respawn? #t)
-             (network "host")
-             (volumes
-              `((,(string-append data-directory "/files") . "/misskey/files")
-                (,config-file . "/misskey/.config/default.yml"))))))))
+      (oci-extension
+        (containers
+         (list (oci-container-configuration
+                 (user "misskey")
+                 (group "docker")
+                 (image image)
+                 (provision "misskey")
+                 (requirement '(postgresql redis))
+                 (log-file log-file)
+                 (respawn? #t)
+                 (network "host")
+                 (volumes
+                  `((,(string-append data-directory "/files") . "/misskey/files")
+                    (,config-file . "/misskey/.config/default.yml"))))))))))
 
 (define misskey-service-type
   (service-type
@@ -578,8 +583,8 @@ test its configuration file."))
                              (compose list misskey-configuration-log-file))
           (service-extension activation-service-type
                              misskey-activation)
-          (service-extension oci-container-service-type
-                             misskey-oci-containers)))
+          (service-extension oci-service-type
+                             misskey-oci)))
    (description "Run Misskey, an interplanetary microblogging platform.")))
 
 
@@ -718,38 +723,40 @@ test its configuration file."))
                 (write-char #\newline port)))
             (chown #$log-file (passwd:uid user) (passwd:gid user)))))))
 
-(define vaultwarden-oci-containers
+(define vaultwarden-oci
   (match-record-lambda <vaultwarden-configuration>
       (admin-token database-url port data-directory log-file proxy-url extra-options)
-    (list (oci-container-configuration
-           (user "vaultwarden")
-           (group "docker")
-           (host-environment
-            `(,@(if (maybe-value-set? admin-token)
-                    `(("ADMIN_TOKEN" . ,admin-token))
-                    '())
-              ("DATABASE_URL" . ,database-url)))
-           (environment
-            `(,@(if (maybe-value-set? proxy-url)
-                    `(("HTTP_PROXY" . ,proxy-url))
-                    '())
-              ("LOG_FILE" . "vaultwarden.log")
-              ("ROCKET_PORT" . ,(number->string port))
-              ("USE_SYSLOG" . "True")
-              ,@extra-options))
-           (image "vaultwarden/server:latest-alpine")
-           (provision "vaultwarden")
-           (requirement '(postgresql))
-           (respawn? #t)
-           (network "host")
-           (volumes
-            `((,data-directory . "/data")
-              (,log-file . "/vaultwarden.log")))
-           (extra-arguments
-            `(,@(if (maybe-value-set? admin-token)
-                    '("--env" "ADMIN_TOKEN")
-                    '())
-              "--env" "DATABASE_URL"))))))
+    (oci-extension
+      (containers
+       (list (oci-container-configuration
+               (user "vaultwarden")
+               (group "docker")
+               (host-environment
+                `(,@(if (maybe-value-set? admin-token)
+                        `(("ADMIN_TOKEN" . ,admin-token))
+                        '())
+                  ("DATABASE_URL" . ,database-url)))
+               (environment
+                `(,@(if (maybe-value-set? proxy-url)
+                        `(("HTTP_PROXY" . ,proxy-url))
+                        '())
+                  ("LOG_FILE" . "vaultwarden.log")
+                  ("ROCKET_PORT" . ,(number->string port))
+                  ("USE_SYSLOG" . "True")
+                  ,@extra-options))
+               (image "vaultwarden/server:latest-alpine")
+               (provision "vaultwarden")
+               (requirement '(postgresql))
+               (respawn? #t)
+               (network "host")
+               (volumes
+                `((,data-directory . "/data")
+                  (,log-file . "/vaultwarden.log")))
+               (extra-arguments
+                `(,@(if (maybe-value-set? admin-token)
+                        '("--env" "ADMIN_TOKEN")
+                        '())
+                  "--env" "DATABASE_URL"))))))))
 
 (define vaultwarden-service-type
   (service-type
@@ -763,6 +770,6 @@ test its configuration file."))
                              vaultwarden-activation)
           (service-extension log-rotation-service-type
                              (compose list vaultwarden-configuration-log-file))
-          (service-extension oci-container-service-type
-                             vaultwarden-oci-containers)))
+          (service-extension oci-service-type
+                             vaultwarden-oci)))
    (description "Run Vaultwarden, a Bitwarden compatible server.")))
