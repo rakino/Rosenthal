@@ -78,3 +78,35 @@
      "This is a small native extension for Python 3 to help libraries that want
 to work with the Telegram API, which uses the uncommon AES-IGE mode for it.")
     (license license:cc0)))
+
+(define-public python-mautrix
+  (package
+    (name "python-mautrix")
+    (version "0.20.8")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/mautrix/python")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1axwcdrs3zws5jgxxxpf7309p6bc8hrwr0jy94yc1km7kqjvq8l2"))))
+    (build-system pyproject-build-system)
+    (native-inputs
+     (list python-aiosqlite
+           python-asyncpg
+           python-olm
+           python-pycryptodome
+           python-pytest
+           python-pytest-asyncio
+           python-ruamel.yaml
+           python-setuptools
+           python-unpaddedbase64))
+    (propagated-inputs
+     (list python-aiohttp python-attrs python-yarl))
+    (home-page "https://github.com/mautrix/python")
+    (synopsis "Python 3 asyncio Matrix framework")
+    (description
+     "This package provides a Python 3.10+ asyncio Matrix framework.")
+    (license license:mpl2.0)))
