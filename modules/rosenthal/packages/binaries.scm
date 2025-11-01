@@ -98,6 +98,39 @@ different needs.")
        (release-monitoring-url
         . "https://pkg.cloudflareclient.com/dists/bookworm/main/binary-amd64/Packages")))))
 
+(define-public conduit-bin
+  (package
+    (name "conduit-bin")
+    (version "0.10.9-0.29aca17")
+    (source (origin
+              (method url-fetch)
+              (uri "https://gitlab.com/famedly/conduit/-/jobs/11609473010/artifacts/raw/x86_64-unknown-linux-musl")
+              (file-name (string-append name "-" version))
+              (sha256
+               (base32
+                "0dqgcp5x6zvvqwiqb9vfw06dkb4ra3z8szn7cplna552h9nxfwh0"))))
+    (build-system copy-build-system)
+    (arguments
+     (list #:install-plan
+           #~'((#$(format #f "~a-~a"
+                          (package-name this-package)
+                          (package-version this-package))
+                "bin/conduit"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'fix-permission
+                 (lambda _
+                   (chmod (string-append #$output "/bin/conduit") #o555))))))
+    (supported-systems '("x86_64-linux"))
+    (synopsis "Matrix homeserver")
+    (description
+     "Conduit aims to be an efficient Matrix homeserver that's easy to set up
+and just works.  You can install it on a mini-computer like the Raspberry Pi to
+host Matrix for your family, friends or company.")
+    (home-page "https://conduit.rs/")
+    (license license:asl2.0)
+    (properties '((disable-updater? . #t)))))
+
 (define-public komga-bin
   (package
    (name "komga-bin")
