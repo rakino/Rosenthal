@@ -126,6 +126,31 @@ to work with the Telegram API, which uses the uncommon AES-IGE mode for it.")
 standard logging module.")
     (license license:expat)))
 
+(define-public python-jaraco-stream
+  (package
+    (name "python-jaraco-stream")
+    (version "3.0.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "jaraco_stream" version))
+       (sha256
+        (base32 "0jwk85k14zb1pvppxy6vnbln8xib7yiwjvmrab42rv91wwl51g72"))))
+    (build-system pyproject-build-system)
+    (native-inputs
+     (list python-pytest
+           python-setuptools
+           python-setuptools-scm
+           python-wheel))
+    (propagated-inputs
+     (list python-more-itertools))
+    (home-page "https://github.com/jaraco/jaraco.stream")
+    (synopsis "Routines for dealing with data streams")
+    (description
+     "This package provides routines for handling streaming data, including a
+set of generators for loading gzip data on the fly.")
+    (license license:expat)))
+
 (define-public python-mautrix
   (package
     (name "python-mautrix")
