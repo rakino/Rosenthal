@@ -12,9 +12,75 @@
   #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (rosenthal packages messaging)
-  #:export (mautrix-telegram-service-type
+  #:export (heisenbridge-service-type
+            heisenbridge-configuration
+
+            mautrix-telegram-service-type
             mautrix-telegram-configuration))
 
+;;;
+;;; Heisenbridge
+;;;
+
+(define-configuration/no-serialization heisenbridge-configuration
+  (heisenbridge
+   (file-like heisenbridge)
+   "")
+  (homeserver
+   (string "http://localhost:8008")
+   "")
+  (config
+   file-like
+   "")
+  (shepherd-provision
+   (list-of-symbols '(heisenbridge))
+   "")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "")
+  (auto-start?
+   (boolean #t)
+   ""))
+
+(define heisenbridge-account
+  (list (user-group (name "heisenbridge") (system? #t))
+        (user-account
+          (name "heisenbridge")
+          (group "heisenbridge")
+          (system? #t)
+          (home-directory "/var/empty"))))
+
+(define heisenbridge-shepherd
+  (match-record-lambda <heisenbridge-configuration>
+      (heisenbridge config homeserver shepherd-provision shepherd-requirement auto-start?)
+    (list (shepherd-service
+            (provision shepherd-provision)
+            (requirement `(user-processes networking ,@shepherd-requirement))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append heisenbridge "/bin/heisenbridge")
+                      "--config" #$config #$homeserver)
+                #:user "heisenbridge"
+                #:group "heisenbridge"
+                #:environment-variables
+                '("PATH=/run/current-system/profile/bin"
+                  "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
+                  "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")))
+            (stop #~(make-kill-destructor))
+            (auto-start? auto-start?)
+            (actions (list (shepherd-configuration-action config)))))))
+
+(define heisenbridge-service-type
+  (service-type
+    (name 'heisenbridge)
+    (extensions
+     (list (service-extension account-service-type
+                              (const heisenbridge-account))
+           (service-extension shepherd-root-service-type
+                              heisenbridge-shepherd)))
+    (description "")))
+
+
 ;;;
 ;;; Mautrix Telegram
 ;;;
