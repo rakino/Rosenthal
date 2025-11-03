@@ -14,6 +14,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rust)
   #:use-module (gnu packages serialization)
+  #:use-module (gnu packages time)
   #:use-module (guix build-system cargo)
   #:use-module (guix build-system pyproject)
   #:use-module (guix build-system python)
@@ -99,6 +100,40 @@ file at build time to reflect the license declared in the license expression.")
      "This is a small native extension for Python 3 to help libraries that want
 to work with the Telegram API, which uses the uncommon AES-IGE mode for it.")
     (license license:cc0)))
+
+(define-public python-irc
+  (package
+    (name "python-irc")
+    (version "20.3.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "irc" version))
+       (sha256
+        (base32 "02r8fb15wb6b9rf4kh3cvs48a4j00slncj71s4g152sdi6pq6sw0"))))
+    (build-system pyproject-build-system)
+    (native-inputs
+     (list python-setuptools
+           python-setuptools-scm
+           python-pytest))
+    (propagated-inputs
+     (list python-jaraco-collections
+           python-jaraco-functools
+           python-jaraco-logging
+           python-jaraco-stream
+           python-jaraco-text
+           python-more-itertools
+           python-pytz
+           python-tempora))
+    (home-page "https://github.com/jaraco/irc")
+    (synopsis "Python Internet Relay Chat protocol library")
+    (description
+     "This library provides a low-level implementation of the @acronym{IRC,
+Internet Relay Chat} protocol for Python.  It provides an event-driven IRC
+client framework.  It has a fairly thorough support for the basic IRC protocol,
+@acronym{CTCP, Client-to-Client Protocol}, and @acronym{DCC, Direct
+Client-to-Client} connections.")
+    (license license:expat)))
 
 (define-public python-jaraco-logging
   (package
