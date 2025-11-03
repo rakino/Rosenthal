@@ -100,6 +100,32 @@ file at build time to reflect the license declared in the license expression.")
 to work with the Telegram API, which uses the uncommon AES-IGE mode for it.")
     (license license:cc0)))
 
+(define-public python-jaraco-logging
+  (package
+    (name "python-jaraco-logging")
+    (version "3.4.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "jaraco_logging" version))
+       (sha256
+        (base32 "1yvmnyq120sqfcbzvqrcjk5a35jqh0fqbvfnn6gfcz27d21xrmp7"))))
+    (build-system pyproject-build-system)
+    (native-inputs
+     (list python-coherent-licensed
+           python-pytest
+           python-setuptools
+           python-setuptools-scm
+           python-wheel))
+    (propagated-inputs
+     (list python-tempora))
+    (home-page "https://github.com/jaraco/jaraco.logging")
+    (synopsis "Python logging facility")
+    (description
+     "This package provides additional facilities to supplement Python's
+standard logging module.")
+    (license license:expat)))
+
 (define-public python-mautrix
   (package
     (name "python-mautrix")
