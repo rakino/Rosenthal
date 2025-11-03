@@ -24,6 +24,27 @@
   #:use-module (guix utils)
   #:use-module (rosenthal utils cargo))
 
+(define-public python-coherent-licensed
+  (package
+    (name "python-coherent-licensed")
+    (version "0.5.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "coherent_licensed" version))
+       (sha256
+        (base32 "0va113rfa0i8sns2if8mnkzwliks0nvlzp1db71klbblrq1i81yq"))))
+    (build-system pyproject-build-system)
+    (native-inputs (list python-flit-core))
+    (home-page "https://pypi.org/project/coherent.licensed/")
+    (synopsis "License management tooling")
+    (description
+     "This library was built for
+@url{https://github.com/coherent-oss/coherent.build, coherent.build} and
+@url{https://blog.jaraco.com/skeleton, skeleton} projects to inject a license
+file at build time to reflect the license declared in the license expression.")
+    (license license:expat)))
+
 (define-public python-cryptg
   (package
     (name "python-cryptg")
