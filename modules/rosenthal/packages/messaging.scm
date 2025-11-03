@@ -7,17 +7,20 @@
   #:use-module (gnu packages crypto)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages monitoring)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-compression)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages serialization)
+  #:use-module (gnu packages video)
   #:use-module (guix build-system pyproject)
   #:use-module (guix gexp)
   #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (guix utils)
+  #:use-module (rosenthal packages animation)
   #:use-module (rosenthal packages python-xyz))
 
 (define-public mautrix-telegram
@@ -39,7 +42,7 @@
            #:phases
            #~(modify-phases %standard-phases
                (add-after 'install 'install-extras
-                 (lambda _
+                 (lambda* (#:key inputs #:allow-other-keys)
                    (let* ((bindir (in-vicinity #$output "bin"))
                           (etcdir (in-vicinity #$output "etc/mautrix-telegram"))
                           (bin (in-vicinity bindir "mautrix-telegram"))
@@ -51,8 +54,13 @@
                        (lambda (port)
                          (format port "~
 #!/bin/sh
-python3 -m mautrix_telegram \"$@\"~%")))
+PATH=~a:~a:$PATH
+~a -m mautrix_telegram \"$@\"~%"
+                                 (dirname (dirname (search-input-file inputs "bin/ffmpeg")))
+                                 (dirname (dirname (search-input-file inputs "bin/lottieconverter")))
+                                 (search-input-file inputs "bin/python3"))))
                      (chmod bin #o555)))))))
+
     (native-inputs
      (list python-setuptools))
     (propagated-inputs
@@ -65,7 +73,10 @@ python3 -m mautrix_telegram \"$@\"~%")))
            python-ruamel.yaml
            python-tulir-telethon))
     (inputs
-     (list python-aiodns
+     (list ffmpeg
+           lottie-converter
+           python
+           python-aiodns
            python-aiosqlite
            python-brotli
            python-olm
