@@ -23,6 +23,39 @@
   #:use-module (rosenthal packages animation)
   #:use-module (rosenthal packages python-xyz))
 
+(define-public heisenbridge
+  (package
+    (name "heisenbridge")
+    (version "1.15.4")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/hifi/heisenbridge")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1viv18bkj0lccr00218xp818i923h1ax7c50kl0yn834axdz6y4l"))))
+    (build-system pyproject-build-system)
+    (arguments (list #:tests? #f))      ;TODO
+    (native-inputs
+     (list python-setuptools))
+    (propagated-inputs
+     (list python-aiohttp
+           python-irc
+           python-mautrix
+           python-ruamel.yaml
+           python-socks))
+    (synopsis "Bouncer-style Matrix IRC bridge")
+    (description
+     "Heisenbridge brings IRC to Matrix by creating an environment where every
+user connects to each network individually like they would with a traditional
+IRC bouncer.  Simplicity is achieved by exposing IRC in the most straightforward
+way as possible where it makes sense so it feels familiar for long time IRC
+users.")
+    (home-page "https://github.com/hifi/heisenbridge")
+    (license license:expat)))
+
 (define-public mautrix-telegram
   (package
     (name "mautrix-telegram")
