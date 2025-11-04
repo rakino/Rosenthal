@@ -15,6 +15,7 @@
   #:use-module (gnu services shepherd)
   #:use-module (gnu packages guile-xyz)
   #:use-module (rosenthal packages binaries)
+  #:use-module (rosenthal utils predicates)
   #:export (alloy-configuration
             alloy-service-type
 
@@ -99,6 +100,12 @@
   (postgresql-password-file
    string
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (shepherd-provision
    (list-of-symbols '(grafana))
    "")
@@ -110,11 +117,16 @@
    ""))
 
 (define grafana-account
-  (lambda _
-    (list (user-group (name "grafana") (system? #t))
+  (match-record-lambda <grafana-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "grafana")
+            (id group-id)
+            (system? #t))
           (user-account
             (name "grafana")
             (group "grafana")
+            (uid user-id)
             (system? #t)
             (comment "Grafana user")
             (home-directory "/var/lib/grafana")))))
@@ -190,6 +202,12 @@
   (config
    yaml-config
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (shepherd-provision
    (list-of-symbols '(loki))
    "")
@@ -201,11 +219,16 @@
    ""))
 
 (define loki-account
-  (lambda _
-    (list (user-group (name "loki") (system? #t))
+  (match-record-lambda <loki-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "loki")
+            (id group-id)
+            (system? #t))
           (user-account
             (name "loki")
             (group "loki")
+            (uid user-id)
             (system? #t)
             (comment "Loki user")
             (home-directory "/var/lib/loki")))))
@@ -272,6 +295,12 @@
   (config
    yaml-config
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (shepherd-provision
    (list-of-symbols '(mimir))
    "")
@@ -283,11 +312,16 @@
    ""))
 
 (define mimir-account
-  (lambda _
-    (list (user-group (name "mimir") (system? #t))
+  (match-record-lambda <mimir-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "mimir")
+            (id group-id)
+            (system? #t))
           (user-account
             (name "mimir")
             (group "mimir")
+            (uid user-id)
             (system? #t)
             (comment "Mimir user")
             (home-directory "/var/lib/mimir")))))
@@ -357,6 +391,12 @@
   (config
    yaml-config
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (shepherd-provision
    (list-of-symbols '(prometheus))
    "")
@@ -368,11 +408,16 @@
    ""))
 
 (define prometheus-account
-  (lambda _
-    (list (user-group (name "prometheus") (system? #t))
+  (match-record-lambda <prometheus-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "prometheus")
+            (id group-id)
+            (system? #t))
           (user-account
             (name "prometheus")
             (group "prometheus")
+            (uid user-id)
             (system? #t)
             (comment "Prometheus user")
             (home-directory "/var/lib/prometheus")))))

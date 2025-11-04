@@ -16,6 +16,7 @@
   #:use-module (gnu services dbus)
   #:use-module (gnu services shepherd)
   #:use-module (gnu system shadow)
+  #:use-module (rosenthal utils predicates)
   #:export (sing-box-service-type
             sing-box-configuration
 
@@ -26,10 +27,6 @@
 ;;; sing-box
 ;;;
 
-(define (file-object? val)
-  (or (string? val)
-      (file-like? val)))
-
 (define-configuration/no-serialization sing-box-configuration
   (sing-box
    (file-like sing-box)
@@ -39,6 +36,10 @@
    "")
   (data-directory
    (string "/var/lib/sing-box")
+   "")
+  ;; Account
+  (group-id
+   (user-and-group-id #f)
    "")
   ;; Shepherd
   (shepherd-provision
@@ -55,7 +56,12 @@
    ""))
 
 (define sing-box-account
-  (list (user-group (name "sing-box") (system? #t))))
+  (match-record-lambda <sing-box-configuration>
+      (group-id)
+    (list (user-group
+            (name "sing-box")
+            (id group-id)
+            (system? #t)))))
 
 (define sing-box-activation
   (match-record-lambda <sing-box-configuration>
@@ -87,7 +93,7 @@
     (name 'sing-box)
     (extensions
      (list (service-extension account-service-type
-                              (const sing-box-account))
+                              sing-box-account)
            (service-extension activation-service-type
                               sing-box-activation)
            (service-extension shepherd-root-service-type

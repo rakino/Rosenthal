@@ -17,6 +17,7 @@
   #:use-module (gnu system shadow)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages networking)
+  #:use-module (rosenthal utils predicates)
   #:use-module (rosenthal utils serializers yaml)
   #:export (clash-configuration
             clash-service-type
@@ -60,14 +61,23 @@
   (config
    (file-like (plain-file "empty" ""))
    "Clash configuration file.")
-
+  ;; Account
+  (group-id
+   (user-and-group-id #f)
+   "")
+  ;; Shepherd
   (shepherd-provision
    (list '(clash))
    "A list of Shepherd service names (symbols) provided by this service.")
   (no-serialization))
 
-(define %clash-accounts
-  (list (user-group (name "clash") (system? #t))))
+(define clash-account
+  (match-record-lambda <clash-configuration>
+      (group-id)
+    (list (user-group
+            (name "clash")
+            (id group-id)
+            (system? #t)))))
 
 (define clash-activation
   (match-record-lambda <clash-configuration>
@@ -112,7 +122,7 @@
           (service-extension activation-service-type
                              clash-activation)
           (service-extension account-service-type
-                             (const %clash-accounts))
+                             clash-account)
           (service-extension log-rotation-service-type
                              (compose list clash-configuration-log-file))))
    (default-value (clash-configuration))
@@ -155,16 +165,23 @@ headers.  This can expose sensitive information in your logs.")
   (extra-options
    (list-of-strings '())
    "List of extra options.")
+  ;; Account
+  (user-id
+   (user-and-group-id #f)
+   "")
   (no-serialization))
 
-(define %cloudflare-tunnel-accounts
-  (list (user-account
-          (name "cloudflared")
-          (group "nogroup")
-          (system? #t)
-          (home-directory "/var/empty")
-          (create-home-directory? #f)
-          (shell (file-append shadow "/sbin/nologin")))))
+(define cloudflare-tunnel-account
+  (match-record-lambda <cloudflare-tunnel-configuration>
+      (user-id)
+    (list (user-account
+            (name "cloudflared")
+            (group "nogroup")
+            (uid user-id)
+            (system? #t)
+            (home-directory "/var/empty")
+            (create-home-directory? #f)
+            (shell (file-append shadow "/sbin/nologin"))))))
 
 (define cloudflare-tunnel-shepherd-service
   (match-record-lambda <cloudflare-tunnel-configuration>
@@ -203,7 +220,7 @@ headers.  This can expose sensitive information in your logs.")
     (list (service-extension shepherd-root-service-type
                              cloudflare-tunnel-shepherd-service)
           (service-extension account-service-type
-                             (const %cloudflare-tunnel-accounts))
+                             cloudflare-tunnel-account)
           (service-extension log-rotation-service-type
                              (compose list cloudflare-tunnel-configuration-log-file))))
    (default-value (cloudflare-tunnel-configuration))

@@ -6,6 +6,7 @@
   #:use-module (ice-9 format)
   #:use-module (guix gexp)
   #:use-module (guix records)
+  #:use-module (rosenthal utils predicates)
   #:use-module (gnu packages admin)
   #:use-module (gnu packages bittorrent)
   #:use-module (gnu services)
@@ -36,17 +37,30 @@
   (extra-options
    (list-of-strings '())
    "List of extra options.")
+  ;; Account
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (no-serialization))
 
-(define %qbittorrent-accounts
-  (list (user-group (name "qbittorrent") (system? #t))
-        (user-account
-         (name "qbittorrent")
-         (group "qbittorrent")
-         (system? #t)
-         (comment "qBittorrent user")
-         (home-directory "/var/empty")
-         (shell (file-append shadow "/sbin/nologin")))))
+(define qbittorrent-account
+  (match-record-lambda <qbittorrent-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "qbittorrent")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "qbittorrent")
+            (group "qbittorrent")
+            (uid user-id)
+            (system? #t)
+            (comment "qBittorrent user")
+            (home-directory "/var/empty")
+            (shell (file-append shadow "/sbin/nologin"))))))
 
 ;; Set default password to adminadmin
 (define %qbittorrent-default-config-file
@@ -106,7 +120,7 @@ WebUI\\Password_PBKDF2=\"@ByteArray(ARQ77eY1NUZaQsuDHbIMCA==:0WMRkYTUWVT9wVvdDtH
           (service-extension activation-service-type
                              qbittorrent-activation)
           (service-extension account-service-type
-                             (const %qbittorrent-accounts))))
+                             qbittorrent-account)))
    (default-value (qbittorrent-configuration))
    (description "Run qBittorrent daemon.")))
 

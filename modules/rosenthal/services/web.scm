@@ -22,6 +22,7 @@
   #:use-module (guix records)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages web)
+  #:use-module (rosenthal utils predicates)
   #:use-module (rosenthal utils serializers ini)
   #:use-module (rosenthal utils serializers yaml)
   #:export (caddy-configuration
@@ -62,6 +63,13 @@
   (caddyfile
    file-like
    "")
+  ;; User
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   ;; Shepherd
   (shepherd-provision
    (list-of-symbols '(caddy))
@@ -73,14 +81,20 @@
    (boolean #t)
    ""))
 
-(define (caddy-accounts config)
-  (list (user-group (name "caddy") (system? #t))
-        (user-account
-         (name "caddy")
-         (group "caddy")
-         (system? #t)
-         (comment "Caddy user")
-         (home-directory "/var/lib/caddy"))))
+(define caddy-accounts
+  (match-record-lambda <caddy-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "caddy")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "caddy")
+            (group "caddy")
+            (uid user-id)
+            (system? #t)
+            (comment "Caddy user")
+            (home-directory "/var/lib/caddy")))))
 
 (define caddy-privileged-programs
   (match-record-lambda <caddy-configuration>
@@ -171,6 +185,14 @@ reload its configuration file."))
   (config
    file-like
    "")
+  ;; Account
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
+  ;; Shepherd
   (auto-start?
    (boolean #t)
    "")
@@ -182,13 +204,19 @@ reload its configuration file."))
    ""))
 
 (define conduit-account
-  (list (user-group (name "conduit") (system? #t))
-        (user-account
-          (name "conduit")
-          (group "conduit")
-          (system? #t)
-          (comment "Conduit user")
-          (home-directory "/var/empty"))))
+  (match-record-lambda <conduit-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "conduit")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "conduit")
+            (group "conduit")
+            (uid user-id)
+            (system? #t)
+            (comment "Conduit user")
+            (home-directory "/var/empty")))))
 
 (define conduit-activation
   (match-record-lambda <conduit-configuration>
@@ -225,7 +253,7 @@ reload its configuration file."))
     (name 'conduit)
     (extensions
      (list (service-extension account-service-type
-                              (const conduit-account))
+                              conduit-account)
            (service-extension activation-service-type
                               conduit-activation)
            (service-extension shepherd-root-service-type
@@ -238,10 +266,6 @@ reload its configuration file."))
 ;;; Forgejo
 ;;;
 
-
-(define (file-object? val)
-  (or (string? val)
-      (file-like? val)))
 
 (define list-of-file-likes?
   (list-of file-like?))
@@ -259,16 +283,28 @@ reload its configuration file."))
   (postgresql-password-file
    string
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (no-serialization))
 
-(define %forgejo-accounts
-  (list (user-group (name "forgejo") (system? #t))
-        (user-account
-         (name "forgejo")
-         (group "forgejo")
-         (system? #t)
-         (comment "Forgejo user")
-         (home-directory "/var/lib/forgejo"))))
+(define forgejo-account
+  (match-record-lambda <forgejo-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "forgejo")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "forgejo")
+            (group "forgejo")
+            (uid user-id)
+            (system? #t)
+            (comment "Forgejo user")
+            (home-directory "/var/lib/forgejo")))))
 
 (define forgejo-postgresql-role
   (match-record-lambda <forgejo-configuration>
@@ -328,7 +364,7 @@ reload its configuration file."))
    (name 'forgejo)
    (extensions
     (list (service-extension account-service-type
-                             (const %forgejo-accounts))
+                             forgejo-account)
           (service-extension postgresql-role-service-type
                              forgejo-postgresql-role)
           (service-extension profile-service-type
@@ -357,6 +393,14 @@ reload its configuration file."))
   (log-file
    (string "/var/log/iocaine.log")
    "")
+  ;; Account
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
+  ;; Shepherd
   (shepherd-provision
    (list-of-symbols '(iocaine))
    "")
@@ -367,14 +411,20 @@ reload its configuration file."))
    (boolean #t)
    ""))
 
-(define iocaine-accounts
-  (list (user-group (name "iocaine") (system? #t))
-        (user-account
-          (name "iocaine")
-          (group "iocaine")
-          (system? #t)
-          (comment "Iocaine user")
-          (home-directory "/var/empty"))))
+(define iocaine-account
+  (match-record-lambda <iocaine-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "iocaine")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "iocaine")
+            (group "iocaine")
+            (uid user-id)
+            (system? #t)
+            (comment "Iocaine user")
+            (home-directory "/var/empty")))))
 
 (define iocaine-etc
   (match-record-lambda <iocaine-configuration>
@@ -417,7 +467,7 @@ test its configuration file."))
    (name 'iocaine)
    (extensions
     (list (service-extension account-service-type
-                             (const iocaine-accounts))
+                             iocaine-account)
           (service-extension etc-service-type
                              iocaine-etc)
           (service-extension shepherd-root-service-type
@@ -447,6 +497,9 @@ test its configuration file."))
   (log-file
    (string "/var/log/jellyfin.log")
    "Path to log file.")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (auto-start?
    (boolean #t)
    "Whether to start automatically.")
@@ -455,13 +508,16 @@ test its configuration file."))
    "List of extra options.")
   (no-serialization))
 
-(define %jellyfin-accounts
-  (list (user-account
-         (name "jellyfin")
-         (group "docker")
-         (system? #t)
-         (home-directory "/var/empty")
-         (shell (file-append shadow "/sbin/nologin")))))
+(define jellyfin-account
+  (match-record-lambda <jellyfin-configuration>
+      (user-id)
+    (list (user-account
+            (name "jellyfin")
+            (group "docker")
+            (uid user-id)
+            (system? #t)
+            (home-directory "/var/empty")
+            (shell (file-append shadow "/sbin/nologin"))))))
 
 (define jellyfin-activation
   (match-record-lambda <jellyfin-configuration>
@@ -504,7 +560,7 @@ test its configuration file."))
    (name 'jellyfin)
    (extensions
     (list (service-extension account-service-type
-                             (const %jellyfin-accounts))
+                             (const jellyfin-account))
           (service-extension activation-service-type
                              jellyfin-activation)
           (service-extension log-rotation-service-type
@@ -527,19 +583,31 @@ test its configuration file."))
   (port
    (integer 25600)
    "Port to listen to for the API and web interface.")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (auto-start?
    (boolean #t)
    "Whether to start automatically.")
   (no-serialization))
 
-(define %komga-accounts
-  (list (user-group (name "komga") (system? #t))
-        (user-account
-         (name "komga")
-         (group "komga")
-         (system? #t)
-         (comment "Komga user")
-         (home-directory "/var/lib/komga"))))
+(define komga-account
+  (match-record-lambda <komga-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "komga")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "komga")
+            (group "komga")
+            (uid user-id)
+            (system? #t)
+            (comment "Komga user")
+            (home-directory "/var/lib/komga")))))
 
 (define komga-shepherd-service
   (match-record-lambda <komga-configuration>
@@ -566,7 +634,7 @@ test its configuration file."))
    (name 'komga)
    (extensions
     (list (service-extension account-service-type
-                             (const %komga-accounts))
+                             komga-account)
           (service-extension shepherd-root-service-type
                              komga-shepherd-service)))
    (default-value (komga-configuration))
@@ -588,6 +656,9 @@ test its configuration file."))
   (data-directory
    (string "/var/lib/misskey")
    "Directory to store @file{files} in.")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (log-file
    (string "/var/log/misskey.log")
    "Log file to use.")
@@ -596,13 +667,16 @@ test its configuration file."))
    "")
   (no-serialization))
 
-(define %misskey-accounts
-  (list (user-account
-         (name "misskey")
-         (group "docker")
-         (system? #t)
-         (home-directory "/var/empty")
-         (shell (file-append shadow "/sbin/nologin")))))
+(define misskey-account
+  (match-record-lambda <misskey-configuration>
+      (user-id)
+    (list (user-account
+            (name "misskey")
+            (group "docker")
+            (uid user-id)
+            (system? #t)
+            (home-directory "/var/empty")
+            (shell (file-append shadow "/sbin/nologin"))))))
 
 (define misskey-postgresql-role
   (match-record-lambda <misskey-configuration>
@@ -655,7 +729,7 @@ test its configuration file."))
    (name 'misskey)
    (extensions
     (list (service-extension account-service-type
-                             (const %misskey-accounts))
+                             misskey-account)
           (service-extension postgresql-role-service-type
                              misskey-postgresql-role)
           (service-extension log-rotation-service-type
@@ -679,6 +753,12 @@ test its configuration file."))
   (ffmpeg
    (file-like ffmpeg)
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (auto-start?
    (boolean #t)
    "")
@@ -687,14 +767,20 @@ test its configuration file."))
    "")
   (no-serialization))
 
-(define %navidrome-accounts
-  (list (user-group (name "navidrome") (system? #t))
-        (user-account
-         (name "navidrome")
-         (group "navidrome")
-         (system? #t)
-         (comment "Navidrome user")
-         (home-directory "/var/lib/navidrome"))))
+(define navidrome-account
+  (match-record-lambda <navidrome-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "navidrome")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "navidrome")
+            (group "navidrome")
+            (uid user-id)
+            (system? #t)
+            (comment "Navidrome user")
+            (home-directory "/var/lib/navidrome")))))
 
 (define navidrome-shepherd-service
   (match-record-lambda <navidrome-configuration>
@@ -731,7 +817,7 @@ test its configuration file."))
    (name 'navidrome)
    (extensions
     (list (service-extension account-service-type
-                             (const %navidrome-accounts))
+                             navidrome-account)
           (service-extension shepherd-root-service-type
                              navidrome-shepherd-service)))
    (default-value (navidrome-configuration))
@@ -768,15 +854,21 @@ test its configuration file."))
   (postgresql-password-file
    string
    "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (no-serialization))
 
-(define %vaultwarden-accounts
-  (list (user-account
-         (name "vaultwarden")
-         (group "docker")
-         (system? #t)
-         (home-directory "/var/empty")
-         (shell (file-append shadow "/sbin/nologin")))))
+(define vaultwarden-account
+  (match-record-lambda <vaultwarden-configuration>
+      (user-id)
+    (list (user-account
+            (name "vaultwarden")
+            (group "docker")
+            (uid user-id)
+            (system? #t)
+            (home-directory "/var/empty")
+            (shell (file-append shadow "/sbin/nologin"))))))
 
 (define vaultwarden-postgresql-role
   (match-record-lambda <vaultwarden-configuration>
@@ -842,7 +934,7 @@ test its configuration file."))
    (name 'vaultwarden)
    (extensions
     (list (service-extension account-service-type
-                             (const %vaultwarden-accounts))
+                             vaultwarden-account)
           (service-extension postgresql-role-service-type
                              vaultwarden-postgresql-role)
           (service-extension activation-service-type

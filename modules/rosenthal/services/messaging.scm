@@ -12,6 +12,7 @@
   #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (rosenthal packages messaging)
+  #:use-module (rosenthal utils predicates)
   #:export (heisenbridge-service-type
             heisenbridge-configuration
 
@@ -32,6 +33,12 @@
   (config
    file-like
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (shepherd-provision
    (list-of-symbols '(heisenbridge))
    "")
@@ -43,12 +50,18 @@
    ""))
 
 (define heisenbridge-account
-  (list (user-group (name "heisenbridge") (system? #t))
-        (user-account
-          (name "heisenbridge")
-          (group "heisenbridge")
-          (system? #t)
-          (home-directory "/var/empty"))))
+  (match-record-lambda <heisenbridge-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "heisenbridge")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "heisenbridge")
+            (group "heisenbridge")
+            (uid user-id)
+            (system? #t)
+            (home-directory "/var/empty")))))
 
 (define heisenbridge-shepherd
   (match-record-lambda <heisenbridge-configuration>
@@ -75,7 +88,7 @@
     (name 'heisenbridge)
     (extensions
      (list (service-extension account-service-type
-                              (const heisenbridge-account))
+                              heisenbridge-account)
            (service-extension shepherd-root-service-type
                               heisenbridge-shepherd)))
     (description "")))
@@ -92,6 +105,12 @@
   (config
    file-like
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
+  (user-id
+   (user-and-group-id #f)
+   "")
   (shepherd-provision
    (list-of-symbols '(mautrix-telegram))
    "")
@@ -103,12 +122,18 @@
    ""))
 
 (define mautrix-telegram-account
-  (list (user-group (name "mautrix") (system? #t))
-        (user-account
-          (name "mautrix-telegram")
-          (group "mautrix")
-          (system? #t)
-          (home-directory "/var/lib/mautrix-telegram"))))
+  (match-record-lambda <mautrix-telegram-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "mautrix-telegram")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "mautrix-telegram")
+            (group "mautrix-telegram")
+            (uid user-id)
+            (system? #t)
+            (home-directory "/var/lib/mautrix-telegram")))))
 
 (define mautrix-telegram-activation
   (with-imported-modules (source-module-closure '((gnu build activation)))
@@ -134,7 +159,7 @@
                 (list #$(file-append mautrix-telegram "/bin/mautrix-telegram")
                       "--no-update" "--config" #$config)
                 #:user "mautrix-telegram"
-                #:group "mautrix"
+                #:group "mautrix-telegram"
                 #:directory "/var/lib/mautrix-telegram"))
             (stop #~(make-kill-destructor))
             (auto-start? auto-start?)
@@ -145,7 +170,7 @@
     (name 'mautrix-telegram)
     (extensions
      (list (service-extension account-service-type
-                              (const mautrix-telegram-account))
+                              mautrix-telegram-account)
            (service-extension activation-service-type
                               (const mautrix-telegram-activation))
            (service-extension postgresql-role-service-type
