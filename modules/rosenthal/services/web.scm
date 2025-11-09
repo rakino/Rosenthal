@@ -560,7 +560,7 @@ test its configuration file."))
    (name 'jellyfin)
    (extensions
     (list (service-extension account-service-type
-                             (const jellyfin-account))
+                             jellyfin-account)
           (service-extension activation-service-type
                              jellyfin-activation)
           (service-extension log-rotation-service-type
