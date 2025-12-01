@@ -1,0 +1,27 @@
+From b6c1341082102ff4416186cca549b5f05efda162 Mon Sep 17 00:00:00 2001
+From: Hilton Chain <hako@ultrarare.space>
+Date: Sun, 30 Nov 2025 12:13:36 +0800
+Subject: [PATCH] templates: Add more forges.
+
+---
+ src/cuirass/templates.scm | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/src/cuirass/templates.scm b/src/cuirass/templates.scm
+index d591705..5518331 100644
+--- a/src/cuirass/templates.scm
++++ b/src/cuirass/templates.scm
+@@ -1526,7 +1526,9 @@ (define %vcs-web-views
+       ("git.guix.gnu.org" ,labhub-url)            ;alias for codeberg.org
+       ("gitlab.com" ,labhub-url)
+       ("gitlab.inria.fr" ,labhub-url)
+-      ("github.com" ,labhub-url))))
++      ("github.com" ,labhub-url)
++      ("git.sr.ht" ,labhub-url)
++      ("git.urspace.moe" ,labhub-url))))
+ 
+ (define %vcs-web-commit-range-views
+   ;; List of host names and corresponding URL to display a commit range.
+-- 
+2.51.2
+

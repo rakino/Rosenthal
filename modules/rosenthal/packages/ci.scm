@@ -7,4 +7,13 @@
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (guix git-download)
+  #:use-module (rosenthal utils packages)
   #:use-module (gnu packages ci))
+
+(define-public cuirass/dolly
+  (package
+    (inherit
+     (package-with-extra-patches cuirass
+       (rosenthal-patches "cuirass-templates-Add-more-forges.patch")))
+    (name "cuirass-dolly")
+    (properties '((disable-updater? . #t)))))
