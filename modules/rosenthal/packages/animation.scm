@@ -46,4 +46,5 @@
       (description "This package provides a simple lottie animation converter.
 Animations can be converted to PNG (with transparency) or GIF.")
       (home-page "https://github.com/sot-tech/LottieConverter")
-      (license license:bsd-3))))
+      (license license:bsd-3)
+      (properties '((disable-updater? . #t))))))
