@@ -21,7 +21,7 @@
 (define-public dinit
   (package
     (name "dinit")
-    (version "0.19.4")
+    (version "0.20.0")
     (source
      (origin
        (method git-fetch)
@@ -30,14 +30,15 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "09k7airphnpg6hmif91d9nfi5fhz40qh52sp8vnrshfy7mhkq571"))))
-    (build-system meson-build-system)
+        (base32 "1bs61i08fnlmpkbz189ks1ljj0569avb51b22fk27mm99msmdjgy"))))
+    (build-system gnu-build-system)
     (arguments
      (list #:configure-flags
-           #~(list "-Dshutdown-prefix=dinit-"
-                   "-Dunit-tests=true"
-                   "-Digr-tests=true"
-                   (string-append "-Ddinit-sbindir=" #$output "/sbin"))
+           #~(list "--shutdown-prefix=dinit-"
+                   (string-append "--sbindir=" #$output "/sbin"))
+           #:make-flags
+           #~(list (string-append "CXX=" #$(cxx-for-target))
+                   "CXX_FOR_BUILD=g++")
            #:phases
            #~(modify-phases %standard-phases
                (add-after 'unpack 'fix-paths
