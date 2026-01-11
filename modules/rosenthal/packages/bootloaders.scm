@@ -83,7 +83,7 @@
 (define-public systemd-stub
   (package
     (name "systemd-stub")
-    (version "258.2")
+    (version "259")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -92,7 +92,7 @@
               (file-name (git-file-name "name" version))
               (sha256
                (base32
-                "0d2jm94sfw7p85qzhc0jmfrxqdzsxlxwgwr4a42f434zsyw9w9fn"))))
+                "1j0f710m6h2vlry6a62q8qhvkv4c4gah6s7n212fi8liqpb1g5cl"))))
     (build-system meson-build-system)
     (arguments
      (list #:tests? #f
