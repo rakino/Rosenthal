@@ -20,12 +20,11 @@
 (define* (rosenthal-transformation-guix #:key (substitutes? #t)
                                         (channel? #t)
                                         (guix-source? #f))
-  (define %rosenthal-signing-key
-    (plain-file "rosenthal.pub" "
-(public-key
- (ecc
-  (curve Ed25519)
-  (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))"))
+  (define %rosenthal-signing-keys
+    (list (plain-file "gokuraku.pub"
+            "(public-key (ecc (curve Ed25519) (q #374EC58F5F2EC0412431723AF2D527AD626B049D657B5633AAAEBC694F3E33F9#)))")
+          (plain-file "nuporta.pub"
+            "(public-key (ecc (curve Ed25519) (q #552F670D5005D7EB6ACF05284A1066E52156B51D75DE3EBD3030CD046675D543#)))")))
 
   (define %rosenthal-channel
     (channel
@@ -44,10 +43,8 @@
       (services
        (cons* (simple-service 'guix-moe guix-service-type
                 (guix-extension
-                  (authorized-keys
-                   (list %rosenthal-signing-key))
-                  (substitute-urls
-                   '("https://cache-cdn.guix.moe"))))
+                  (authorized-keys %rosenthal-signing-keys)
+                  (substitute-urls '("https://cache-cdn.guix.moe"))))
 
               (modify-services (operating-system-user-services os)
                 (guix-service-type
