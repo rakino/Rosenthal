@@ -10,6 +10,7 @@
   #:use-module (rosenthal utils serializers yaml)
   #:use-module (gnu system shadow)
   #:use-module (gnu services)
+  #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
@@ -82,7 +83,9 @@
      (list (service-extension activation-service-type
                               alloy-activation)
            (service-extension shepherd-root-service-type
-                              alloy-shepherd)))
+                              alloy-shepherd)
+           (service-extension log-rotation-service-type
+                              (const '("/var/log/alloy.log")))))
     (description "")))
 
 
@@ -187,7 +190,9 @@
            (service-extension activation-service-type
                               grafana-activation)
            (service-extension shepherd-root-service-type
-                              grafana-shepherd)))
+                              grafana-shepherd)
+           (service-extension log-rotation-service-type
+                              (const '("/var/log/grafana.log")))))
     (description "")))
 
 
@@ -280,7 +285,9 @@
            (service-extension activation-service-type
                               loki-activation)
            (service-extension shepherd-root-service-type
-                              loki-shepherd)))
+                              loki-shepherd)
+           (service-extension log-rotation-service-type
+                              (const '("/var/log/loki.log")))))
     (description "")))
 
 
@@ -373,7 +380,9 @@
            (service-extension activation-service-type
                               mimir-activation)
            (service-extension shepherd-root-service-type
-                              mimir-shepherd)))
+                              mimir-shepherd)
+           (service-extension log-rotation-service-type
+                              (const '("/var/log/mimir.log")))))
     (description "")))
 
 
@@ -470,5 +479,7 @@
            (service-extension activation-service-type
                               prometheus-activation)
            (service-extension shepherd-root-service-type
-                              prometheus-shepherd)))
+                              prometheus-shepherd)
+           (service-extension log-rotation-service-type
+                              (const '("/var/log/prometheus.log")))))
     (description "")))
