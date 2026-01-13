@@ -15,6 +15,7 @@
         (rosenthal utils packages)
         (rosenthal utils transformations)
 
+        (gnu system privilege)
         (rosenthal bootloader grub)
         (rosenthal bootloader uki)
 
