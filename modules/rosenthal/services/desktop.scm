@@ -504,19 +504,24 @@ gtk-key-theme-name = ~a~%"
                 (dump-port pipe output))))
 
           (define* (set-keyboard-layout layout #:optional variant #:key model options)
-            (define file-name "/tmp/keymaps/console-keymap")
+            (define file-name (tmpnam))
             (build-keyboard-layout file-name layout variant #:model model #:options options)
             (invoke "sudo" #$(file-append (spec->pkg "kbd") "/bin/loadkeys") file-name)
-            (when (getenv "WAYLAND_DISPLAY")
-              (substitute* (in-vicinity (getenv "XDG_CONFIG_HOME") "niri/config.kdl")
-                (("^            (layout|variant|model|options) .*") "")
-                (("^        xkb \\{.*" line)
-                 (string-append
-                  line
-                  (format             #f "            layout ~s~%"  layout)
-                  (if variant (format #f "            variant ~s~%" variant) "")
-                  (if model   (format #f "            model ~s~%"   model)   "")
-                  (format             #f "            options ~s~%" (string-join options ",")))))))
+            (false-if-exception
+             (substitute*
+                 (in-vicinity
+                  (if (zero? (getuid))
+                      "/home/live/.config"
+                      (getenv "XDG_CONFIG_HOME"))
+                  "niri/config.kdl")
+               (("^            (layout|variant|model|options) .*") "")
+               (("^        xkb \\{.*" line)
+                (string-append
+                 line
+                 (format             #f "            layout ~s~%"  layout)
+                 (if variant (format #f "            variant ~s~%" variant) "")
+                 (if model   (format #f "            model ~s~%"   model)   "")
+                 (format             #f "            options ~s~%" (string-join options ",")))))))
 
           (define (show-help-and-exit)
             (display "\
