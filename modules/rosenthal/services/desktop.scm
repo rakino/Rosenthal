@@ -586,10 +586,17 @@ set-keymap us dvorak -o ctrl:nocaps\n")
      (license #f))))
 
 (define %rosenthal-skeletons
-  `((".config/emacs/fonts.el"
-     ,(local-file "../examples/emacs/fonts.el"))
-    (".config/emacs/init.el"
+  `((".config/emacs/init.el"
      ,(local-file "../examples/emacs/init.el"))
+    (".config/emacs/fonts.el"
+     ,(local-file "../examples/emacs/fonts.el"))
+    (".config/emacs/interface.el"
+     ,(local-file "../examples/emacs/interface.el"))
+    (".config/emacs/editing.el"
+     ,(local-file "../examples/emacs/editing.el"))
+    (".config/emacs/miscellaneous.el"
+     ,(local-file "../examples/emacs/miscellaneous.el"))
+
     (".config/foot/foot.ini"
      ,(plain-file "foot.ini" "font=monospace:size=12\n"))
     (".config/mako/config"
