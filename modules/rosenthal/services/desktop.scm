@@ -504,7 +504,9 @@ gtk-key-theme-name = ~a~%"
                 (dump-port pipe output))))
 
           (define* (set-keyboard-layout layout #:optional variant #:key model options)
-            (define file-name (tmpnam))
+            (define file-name
+              (port-filename
+               (mkstemp "/tmp/console-keymap.XXXXXX")))
             (build-keyboard-layout file-name layout variant #:model model #:options options)
             (invoke "sudo" #$(file-append (spec->pkg "kbd") "/bin/loadkeys") file-name)
             (false-if-exception
