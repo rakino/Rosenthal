@@ -7,6 +7,9 @@
 ;; https://github.com/DogLooksGood/meomacs/blob/master/laf.org
 ;; https://github.com/nykma/nema/blob/develop/my-sample/font.el
 
+;;guix:font-adobe-source-serif
+;;guix:font-google-noto-emoji
+;;guix:font-sarasa-gothic
 (defvar nema--font-size 12 "Font size")
 (defvar nema-fonts '((sans     . "sans")
                      (serif    . "serif")
