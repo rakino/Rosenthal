@@ -39,7 +39,7 @@
   (setopt initial-scratch-message
           ";;; Type your Guile program here and evaluate it.\n\n")
   (scheme-mode)
+  (geiser-repl-import-module "(nonguix)")
   (geiser-repl-import-module "(rosenthal)")
-  (geiser-repl-import-module "(nonguix transformations)")
   (delete-window)
   (display-splash-screen))

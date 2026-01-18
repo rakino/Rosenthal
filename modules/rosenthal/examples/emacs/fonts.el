@@ -8,10 +8,10 @@
 ;; https://github.com/nykma/nema/blob/develop/my-sample/font.el
 
 (defvar nema--font-size 12 "Font size")
-(defvar nema-fonts '((mono     . "monospace")
-                     (sans     . "sans")
+(defvar nema-fonts '((sans     . "sans")
                      (serif    . "serif")
-                     (cjk      . "Noto Serif CJK SC")
+                     (mono     . "Sarasa Mono CL")
+                     (cjk      . "Sarasa Mono CL")
                      (symbol   . "Noto Color Emoji")
                      (modeline . "Source Serif 4"))
   "Fonts to use.")
