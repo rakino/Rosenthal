@@ -1,5 +1,5 @@
-From 5c0b93219bf5def932dfe4de3288fd09ea557f69 Mon Sep 17 00:00:00 2001
-Message-ID: <5c0b93219bf5def932dfe4de3288fd09ea557f69.1761666722.git.hako@ultrarare.space>
+From 93295096bbc36a79e0e9d738a98b503af260f047 Mon Sep 17 00:00:00 2001
+Message-ID: <93295096bbc36a79e0e9d738a98b503af260f047.1769256978.git.hako@ultrarare.space>
 From: Hilton Chain <hako@ultrarare.space>
 Date: Sat, 23 Aug 2025 14:07:19 +0800
 Subject: [PATCH] publish: Store cache in a layout identical to HTTP endpoints.
@@ -41,12 +41,12 @@ Modified layout:
 
 Change-Id: I07689f08eef23c5cd4494451678f4e1ad709f1b3
 ---
- guix/scripts/publish.scm | 17 +++++---------
+ guix/scripts/publish.scm | 20 ++++++-----------
  tests/publish.scm        | 48 ++++++++++++++++++++--------------------
- 2 files changed, 30 insertions(+), 35 deletions(-)
+ 2 files changed, 31 insertions(+), 37 deletions(-)
 
 diff --git a/guix/scripts/publish.scm b/guix/scripts/publish.scm
-index 7638bcbd0e..a70a9b730f 100644
+index 1143cd29cfd..b8d0c5dc7b3 100644
 --- a/guix/scripts/publish.scm
 +++ b/guix/scripts/publish.scm
 @@ -47,6 +47,7 @@ (define-module (guix scripts publish)
@@ -86,18 +86,21 @@ index 7638bcbd0e..a70a9b730f 100644
  
  (define (hash-part-mapping-cache-file directory hash)
    (string-append directory "/hashes/" hash))
-@@ -533,9 +529,7 @@ (define* (render-narinfo/cached store request hash
+@@ -533,11 +529,8 @@ (define* (render-narinfo/cached store request hash
  requested using POOL."
    (define (delete-entry narinfo)
      ;; Delete NARINFO and the corresponding nar from CACHE.
 -    (let* ((nar     (string-append (string-drop-right narinfo
 -                                                      (string-length ".narinfo"))
 -                                   ".nar"))
+-           (base    (basename narinfo ".narinfo"))
+-           (hash    (string-take base (string-index base #\-)))
 +    (let* ((nar     (uri-decode (assoc-ref (call-with-input-file narinfo recutils->alist) "URL")))
-            (base    (basename narinfo ".narinfo"))
-            (hash    (string-take base (string-index base #\-)))
++           (hash    (basename narinfo ".narinfo"))
             (mapping (hash-part-mapping-cache-file cache hash)))
-@@ -1039,6 +1033,7 @@ (define (string->compression-type string)
+       (delete-file* narinfo)
+       (delete-file* nar)
+@@ -1044,6 +1037,7 @@ (define (string->compression-type string)
      ("gzip" 'gzip)
      ("lzip" 'lzip)
      ("zstd" 'zstd)
@@ -106,7 +109,7 @@ index 7638bcbd0e..a70a9b730f 100644
  
  (define (effective-compression requested-type compressions)
 diff --git a/tests/publish.scm b/tests/publish.scm
-index 3c80c50d51..52c6f6d10c 100644
+index 3c80c50d515..52c6f6d10c4 100644
 --- a/tests/publish.scm
 +++ b/tests/publish.scm
 @@ -173,7 +173,7 @@ (define %gzip-magic-bytes
@@ -253,7 +256,7 @@ index 3c80c50d51..52c6f6d10c 100644
           ;; The first response used to be 500 and to terminate the daemon
           ;; connection as a side effect.
 
-base-commit: 31a211f180fd8246dbf7efb4120236c837faffc8
+base-commit: 5dbab32115de3276f582bcb801fd9f88abe0d397
 -- 
-2.51.0
+2.52.0
 
