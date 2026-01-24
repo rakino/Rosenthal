@@ -166,7 +166,8 @@ a scalable, lightweight, low-cost, community-driven alternative covering all but
 the most niche uses.")
     (home-page "https://matrix-construct.github.io/tuwunel/")
     (license license:asl2.0)
-    (properties '((disable-updater? . #t)))))
+    (properties '((upstream-name . "tuwunel")
+                  (disable-updater? . #t)))))
 
 (define-public komga-bin
   (package
@@ -214,8 +215,7 @@ exec ~a -jar ~a $@~%"
 eBooks.")
    (supported-systems '("x86_64-linux"))
    (license license:expat)
-   (properties '((upstream-name . "komga")
-                 (disable-updater? . #t)))))
+   (properties '((upstream-name . "komga")))))
 
 (define-public navidrome-bin
   (package
@@ -241,8 +241,7 @@ eBooks.")
 manage their music collections.  It provides a web interface and is compatible
 with the Subsonic API.")
     (license license:expat)
-    (properties '((upstream-name . "navidrome")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "navidrome")))))
 
 (define-deprecated-package rclone-bin rclone)
 
@@ -274,8 +273,7 @@ with the Subsonic API.")
      "Shadow TLS is a proxy to expose real tls handshake to the @acronym{MITM,
 monster-in-the-middle}.")
     (license license:expat)
-    (properties '((upstream-name . "shadow-tls")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "shadow-tls")))))
 
 (define-public wakapi-bin
   (package
@@ -299,8 +297,7 @@ monster-in-the-middle}.")
      "This package provides @code{wakapi}, a WakaTime-compatible backend for
 coding statistics.")
     (license license:expat)
-    (properties '((upstream-name . "wakapi")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "wakapi")))))
 
 (define-public wakatime-cli-bin
   (package
@@ -326,8 +323,7 @@ coding statistics.")
      "This package provides @command{wakatime-cli}, the command line interface
 to WakaTime, which is used by all WakaTime text editor plugins.")
     (license license:bsd-3)
-    (properties '((upstream-name . "wakatime-cli")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "wakatime-cli")))))
 
 (define-public grafana-bin
   (package
@@ -417,15 +413,14 @@ multi-tenant, long-term storage for Prometheus.")
     (home-page "https://grafana.com/oss/mimir/")
     (license license:agpl3)
     (supported-systems '("x86_64-linux"))
-    (properties '((upstream-name . "mimir")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "mimir")))))
 
 (define-public loki-bin
   (package
     (name "loki-bin")
     (version "3.5.4")
     (source (origin
-              (method url-fetch/zipbomb)
+              (method url-fetch)
               (uri (string-append
                     "https://github.com/grafana/loki/releases/download/v"
                     version "/loki-linux-amd64.zip"))
@@ -436,6 +431,7 @@ multi-tenant, long-term storage for Prometheus.")
     (arguments
      (list #:install-plan
            #~'(("loki-linux-amd64" "bin/loki"))))
+    (native-inputs (list unzip))
     (synopsis "Log aggregation system")
     (description
      "Loki is a horizontally scalable, highly available, multi-tenant log
@@ -445,15 +441,14 @@ rather a set of labels for each log stream.")
     (home-page "https://grafana.com/oss/loki/")
     (license license:agpl3)
     (supported-systems '("x86_64-linux"))
-    (properties '((upstream-name . "loki")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "loki")))))
 
 (define-public alloy-bin
   (package
     (name "alloy-bin")
     (version "1.10.2")
     (source (origin
-              (method url-fetch/zipbomb)
+              (method url-fetch)
               (uri (string-append
                     "https://github.com/grafana/alloy/releases/download/v"
                     version "/alloy-linux-amd64.zip"))
@@ -473,7 +468,7 @@ rather a set of labels for each log stream.")
                          (ld.so (search-input-file inputs #$(glibc-dynamic-linker))))
                      (with-directory-excursion dest
                        (invoke "patchelf" "--set-interpreter" ld.so name))))))))
-    (native-inputs (list patchelf))
+    (native-inputs (list patchelf unzip))
     (synopsis
      "OpenTelemetry Collector distribution with programmable pipelines")
     (description
@@ -483,8 +478,7 @@ profiles.")
     (home-page "https://grafana.com/oss/alloy-opentelemetry-collector/")
     (license license:agpl3)
     (supported-systems '("x86_64-linux"))
-    (properties '((upstream-name . "alloy")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "alloy")))))
 
 (define-public alloy-bin-aarch64-linux
   (package
@@ -492,7 +486,7 @@ profiles.")
     (name "alloy-bin-aarch64-linux")
     (version "1.10.2")
     (source (origin
-              (method url-fetch/zipbomb)
+              (method url-fetch)
               (uri (string-append
                     "https://github.com/grafana/alloy/releases/download/v"
                     version "/alloy-linux-arm64.zip"))
