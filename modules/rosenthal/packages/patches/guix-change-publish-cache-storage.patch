@@ -1,5 +1,5 @@
-From 93295096bbc36a79e0e9d738a98b503af260f047 Mon Sep 17 00:00:00 2001
-Message-ID: <93295096bbc36a79e0e9d738a98b503af260f047.1769256978.git.hako@ultrarare.space>
+From 4d8509b60d17cc5d242d0bb157beef123dd28923 Mon Sep 17 00:00:00 2001
+Message-ID: <4d8509b60d17cc5d242d0bb157beef123dd28923.1769270645.git.hako@ultrarare.space>
 From: Hilton Chain <hako@ultrarare.space>
 Date: Sat, 23 Aug 2025 14:07:19 +0800
 Subject: [PATCH] publish: Store cache in a layout identical to HTTP endpoints.
@@ -41,12 +41,12 @@ Modified layout:
 
 Change-Id: I07689f08eef23c5cd4494451678f4e1ad709f1b3
 ---
- guix/scripts/publish.scm | 20 ++++++-----------
+ guix/scripts/publish.scm | 21 +++++++-----------
  tests/publish.scm        | 48 ++++++++++++++++++++--------------------
- 2 files changed, 31 insertions(+), 37 deletions(-)
+ 2 files changed, 32 insertions(+), 37 deletions(-)
 
 diff --git a/guix/scripts/publish.scm b/guix/scripts/publish.scm
-index 1143cd29cfd..b8d0c5dc7b3 100644
+index 1143cd29cfd..24b7f40cbd7 100644
 --- a/guix/scripts/publish.scm
 +++ b/guix/scripts/publish.scm
 @@ -47,6 +47,7 @@ (define-module (guix scripts publish)
@@ -86,7 +86,7 @@ index 1143cd29cfd..b8d0c5dc7b3 100644
  
  (define (hash-part-mapping-cache-file directory hash)
    (string-append directory "/hashes/" hash))
-@@ -533,11 +529,8 @@ (define* (render-narinfo/cached store request hash
+@@ -533,11 +529,9 @@ (define* (render-narinfo/cached store request hash
  requested using POOL."
    (define (delete-entry narinfo)
      ;; Delete NARINFO and the corresponding nar from CACHE.
@@ -95,12 +95,13 @@ index 1143cd29cfd..b8d0c5dc7b3 100644
 -                                   ".nar"))
 -           (base    (basename narinfo ".narinfo"))
 -           (hash    (string-take base (string-index base #\-)))
-+    (let* ((nar     (uri-decode (assoc-ref (call-with-input-file narinfo recutils->alist) "URL")))
++    (let* ((path    (uri-decode (assoc-ref (call-with-input-file narinfo recutils->alist) "URL")))
++           (nar     (in-vicinity (dirname narinfo) path))
 +           (hash    (basename narinfo ".narinfo"))
             (mapping (hash-part-mapping-cache-file cache hash)))
        (delete-file* narinfo)
        (delete-file* nar)
-@@ -1044,6 +1037,7 @@ (define (string->compression-type string)
+@@ -1044,6 +1038,7 @@ (define (string->compression-type string)
      ("gzip" 'gzip)
      ("lzip" 'lzip)
      ("zstd" 'zstd)
