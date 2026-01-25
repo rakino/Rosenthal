@@ -484,7 +484,7 @@ profiles.")
   (package
     (inherit alloy-bin)
     (name "alloy-bin-aarch64-linux")
-    (version "1.10.2")
+    (version "1.12.2")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -492,7 +492,7 @@ profiles.")
                     version "/alloy-linux-arm64.zip"))
               (sha256
                (base32
-                "1gnfdhs8rxyn18swy1kv1f2lbsj6abjlhrgaibsj2a87swgcyvjg"))))
+                "08k7dhj8dhdv5w2d6gkny31rp1p51ycd6f0mp5v13iq9w7d4w3bd"))))
     (arguments
      (substitute-keyword-arguments (package-arguments alloy-bin)
        ((#:install-plan _ ''())
