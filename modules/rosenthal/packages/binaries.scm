@@ -134,7 +134,7 @@ host Matrix for your family, friends or company.")
 (define-public tuwunel-bin
   (package
     (name "tuwunel-bin")
-    (version "1.4.5")
+    (version "1.4.9.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -144,7 +144,7 @@ host Matrix for your family, friends or company.")
               (file-name (string-append name "-" version ".zst"))
               (sha256
                (base32
-                "1zmcaqb7hgzpls0crx1rgicqz1pgs4ykgjkzlzsgpbkdrad4jbip"))))
+                "078d978xy84fw42y7wkl97gmfqyfn2j3vhh8k7ywkgh9lhi30mbn"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
