@@ -467,7 +467,8 @@ rather a set of labels for each log stream.")
                          (dest (in-vicinity #$output "bin"))
                          (ld.so (search-input-file inputs #$(glibc-dynamic-linker))))
                      (with-directory-excursion dest
-                       (invoke "patchelf" "--set-interpreter" ld.so name))))))))
+                       (invoke "patchelf" "--set-interpreter" ld.so name)
+                       (chmod name #o555))))))))
     (native-inputs (list patchelf unzip))
     (synopsis
      "OpenTelemetry Collector distribution with programmable pipelines")
