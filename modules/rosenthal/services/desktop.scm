@@ -64,6 +64,7 @@
 
             %rosenthal-set-keymap
             %rosenthal-skeletons
+            %rosenthal-desktop-services-gdm
             %rosenthal-desktop-services
             %rosenthal-desktop-home-services))
 
@@ -653,37 +654,8 @@ configuration {
 ;;; Service presets.
 ;;;
 
-(define* (rosenthal-desktop-services-for-system
-          #:optional (system (or (%current-target-system)
-                                 (%current-system))))
-  (define %display-manager-service-type
-    (if (string-prefix? "x86_64" system)
-        gdm-service-type
-        sddm-service-type))
-
-  (define %term-font
-    (file-append (spec->pkg "font-terminus") "/share/consolefonts/ter-132n"))
-
-  (cons* (service greetd-service-type
-           (greetd-configuration
-             (greeter-supplementary-groups '("video" "input"))
-             (terminals
-              (map (lambda (x)
-                     (greetd-terminal-configuration
-                       (terminal-vt (number->string x))
-                       (terminal-switch (eqv? 1 x))
-                       (default-session-command
-                         (cond
-                          ((eqv? 1 x)
-                           (greetd-tuigreet-session))
-                          (else
-                           (greetd-agreety-session
-                             (command
-                              (greetd-user-session
-                                (command #~(getenv "SHELL"))))))))))
-                   (iota 6 1)))))
-
-         (service bluetooth-service-type
+(define %rosenthal-desktop-services-gdm
+  (cons* (service bluetooth-service-type
            (bluetooth-configuration
              (auto-enable? #t)))
 
@@ -706,16 +678,44 @@ configuration {
          (simple-service 'backlight udev-service-type (specs->pkgs "light"))
 
          (modify-services %desktop-services
-           (delete mingetty-service-type)
-           (delete %display-manager-service-type)
-           (delete screen-locker-service-type)
-
            ;; Use a font suitable for HiDPI monitors.
            (console-font-service-type
             _ => (map (lambda (num)
                         (cons (string-append "tty" (number->string num))
-                              %term-font))
+                              (file-append (spec->pkg "font-terminus")
+                                           "/share/consolefonts/ter-132n")))
                       (iota 6 1))))))
+
+(define* (rosenthal-desktop-services-for-system
+          #:optional (system (or (%current-target-system)
+                                 (%current-system))))
+  (define %display-manager-service-type
+    (if (string-prefix? "x86_64" system)
+        gdm-service-type
+        sddm-service-type))
+
+  (cons* (service greetd-service-type
+           (greetd-configuration
+             (greeter-supplementary-groups '("video" "input"))
+             (terminals
+              (map (lambda (x)
+                     (greetd-terminal-configuration
+                       (terminal-vt (number->string x))
+                       (terminal-switch (eqv? 1 x))
+                       (default-session-command
+                         (cond
+                          ((eqv? 1 x)
+                           (greetd-tuigreet-session))
+                          (else
+                           (greetd-agreety-session
+                             (command
+                              (greetd-user-session
+                                (command #~(getenv "SHELL"))))))))))
+                   (iota 6 1)))))
+
+         (modify-services %rosenthal-desktop-services-gdm
+           (delete mingetty-service-type)
+           (delete %display-manager-service-type))))
 
 (define-syntax %rosenthal-desktop-services
   (identifier-syntax (rosenthal-desktop-services-for-system)))
