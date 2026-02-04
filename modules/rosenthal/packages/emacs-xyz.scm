@@ -57,6 +57,28 @@ editing Caddyfiles, configuration files for @code{caddy}.")
                  "14d6nvagcri0r687y3m179ijmnad89m5d5dj2rn2p6rpfc5nssr0"))))))
     (name "emacs-eat-dolly")))
 
+(define-public emacs-isearch-mb
+  (package
+    (name "emacs-isearch-mb")
+    (version "0.8")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://elpa.gnu.org/packages/isearch-mb-"
+                           version ".tar"))
+       (sha256
+        (base32 "1b4929vr5gib406p51zcvq1ysmzvnz6bs1lqwjp517kzp6r4gc5y"))))
+    (build-system emacs-build-system)
+    (home-page "https://github.com/astoff/isearch-mb")
+    (synopsis "Control @code{isearch} from the minibuffer")
+    (description
+     "This Emacs package provides an alternative @code{isearch} UI based on the
+minibuffer.  This allows editing the search string in arbitrary ways without any
+special maneuver.  Unlike standard @code{isearch}, cursor motion commands do not
+end the search.  Moreover, the search status information in the echo area and
+some keybindings are slightly simplified.")
+    (license license:gpl3+)))
+
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
         (revision "0"))
