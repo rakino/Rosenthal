@@ -30,6 +30,7 @@
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
 
+  #:use-module (rosenthal packages wm)
   #:use-module (rosenthal packages xorg)
 
   #:export (home-blueman-applet-configuration
@@ -46,6 +47,8 @@
 
             home-niri-configuration
             home-niri-service-type
+
+            home-noctalia-shell-service-type
 
             home-rofi-configuration
             home-rofi-service-type
@@ -282,6 +285,31 @@
     (description
      "Set up configuration file for niri, a scrollable-tiling Wayland
 compositor.")))
+
+
+;;;
+;;; Noctalia
+;;;
+
+(define %home-noctalia-shell-shepherd
+  (list (shepherd-service
+          (documentation "Start noctalia-shell.")
+          (provision '(noctalia-shell))
+          (start
+           #~(make-forkexec-constructor
+              (list #$(file-append noctalia-shell "/bin/noctalia-shell"))))
+          (stop #~(make-kill-destructor)))))
+
+(define home-noctalia-shell-service-type
+  (service-type
+    (name 'noctalia-shell)
+    (extensions
+     (list (service-extension home-shepherd-service-type
+                              (const %home-noctalia-shell-shepherd))
+           (service-extension home-profile-service-type
+                              (const (list noctalia-shell)))))
+    (default-value #f)
+    (description "")))
 
 
 ;;;
