@@ -113,6 +113,7 @@ exec ~a --path ~a/share/noctalia-shell \"$@\"~%"
            network-manager
            python-minimal
            qtbase
+           qtwayland
            quickshell
            which
            wlsunset))
