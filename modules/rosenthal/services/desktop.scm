@@ -702,7 +702,4 @@ configuration {
          (service home-dbus-service-type)
          (service home-pipewire-service-type)
 
-         (service home-blueman-applet-service-type)
-         (service home-network-manager-applet-service-type)
-
          %base-home-services))
