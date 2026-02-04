@@ -83,13 +83,17 @@ exec ~a --path ~a/share/noctalia-shell \"$@\"~%"
                             "bin/fastfetch"
                             "bin/fc-list"
                             "bin/find"
+                            "bin/getent"
                             "bin/git"
+                            "bin/grep"
                             "bin/ls"
                             "bin/nmcli"
                             "bin/python3"
                             "bin/sh"
                             "bin/which"
-                            "bin/wlsunset"))))
+                            "bin/wl-paste"
+                            "bin/wlsunset"
+                            "bin/wtype"))))
                 (chmod script #o555)
                 (install-file script (in-vicinity #$output "bin")))))
           (add-after 'make-wrapper 'qt-wrap
@@ -108,6 +112,8 @@ exec ~a --path ~a/share/noctalia-shell \"$@\"~%"
            findutils
            fontconfig
            git-minimal
+           glibc
+           grep
            guile-3.0
            imagemagick
            network-manager
@@ -116,7 +122,9 @@ exec ~a --path ~a/share/noctalia-shell \"$@\"~%"
            qtwayland
            quickshell
            which
-           wlsunset))
+           wl-clipboard
+           wlsunset
+           wtype))
     (home-page "https://noctalia.dev/")
     (synopsis "Wayland desktop shell")
     (description
