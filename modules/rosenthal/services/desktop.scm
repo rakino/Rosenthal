@@ -727,7 +727,17 @@ configuration {
              (auto-start? #f)
              (daemonize? #f)))
 
-         (service home-dbus-service-type)
+         ;; NOTE: The environment variable set by ‘home-dbus-service-type’ will
+         ;; prevent GNOME from starting when using above Shepherd configuration.
+         ;; Replace ‘home-dbus-service-type’, expecting the session bus will be
+         ;; started elsewhere.  See also:
+         ;; https://codeberg.org/guix/guix/issues/5899#issuecomment-10208485
+         (simple-service 'dbus home-shepherd-service-type
+           (list (shepherd-service
+                   (provision '(dbus))
+                   (start #~(const #t))
+                   (stop #~(const #f)))))
+
          (service home-pipewire-service-type)
 
          %base-home-services))
