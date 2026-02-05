@@ -84,6 +84,17 @@
   :bind
   ("C-c e" . macrostep-expand))
 
+;;guix:emacs-macrostep-geiser
+(use-package macrostep-geiser
+  :after (geiser-mode)
+  :hook
+  (geiser-mode . macrostep-geiser-setup))
+
+(use-package macrostep-geiser
+  :after (geiser-repl)
+  :hook
+  (geiser-repl-mode . macrostep-geiser-setup))
+
 ;;guix:emacs-puni
 (use-package puni
   :hook
