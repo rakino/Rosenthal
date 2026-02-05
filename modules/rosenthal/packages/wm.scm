@@ -59,6 +59,11 @@
         (guix build utils))
       #:phases
       #~(modify-phases %standard-phases
+          (add-after 'unpack 'patch-references
+            (lambda* (#:key inputs #:allow-other-keys)
+              (substitute* "Services/Power/IdleInhibitorService.qml"
+                (("systemd-inhibit")
+                 (search-input-file inputs "bin/elogind-inhibit")))))
           (add-after 'install 'make-wrapper
             (lambda* (#:key inputs #:allow-other-keys)
               (let ((script "noctalia-shell"))
@@ -108,6 +113,7 @@ exec ~a --path ~a/share/noctalia-shell \"$@\"~%"
            cava
            cliphist
            coreutils-minimal
+           elogind
            fastfetch
            findutils
            fontconfig
