@@ -56,6 +56,7 @@
             home-niri-configuration
             home-niri-service-type
 
+            home-noctalia-shell-configuration
             home-noctalia-shell-service-type
 
             home-rofi-configuration
@@ -300,24 +301,31 @@ compositor.")))
 ;;; Noctalia
 ;;;
 
+(define-configuration/no-serialization home-noctalia-shell-configuration
+  (noctalia-shell
+   (file-like noctalia-shell)
+   "File-like object to provide @command{/bin/noctalia-shell}."))
+
 (define %home-noctalia-shell-shepherd
-  (list (shepherd-service
-          (documentation "Start noctalia-shell.")
-          (provision '(noctalia-shell))
-          (start
-           #~(make-forkexec-constructor
-              (list #$(file-append noctalia-shell "/bin/noctalia-shell"))))
-          (stop #~(make-kill-destructor)))))
+  (match-record-lambda <home-noctalia-shell-configuration>
+      (noctalia-shell)
+    (list (shepherd-service
+            (documentation "Start noctalia-shell.")
+            (provision '(noctalia-shell))
+            (start
+             #~(make-forkexec-constructor
+                (list #$(file-append noctalia-shell "/bin/noctalia-shell"))))
+            (stop #~(make-kill-destructor))))))
 
 (define home-noctalia-shell-service-type
   (service-type
     (name 'noctalia-shell)
     (extensions
      (list (service-extension home-shepherd-service-type
-                              (const %home-noctalia-shell-shepherd))
+                              %home-noctalia-shell-shepherd)
            (service-extension home-profile-service-type
-                              (const (list noctalia-shell)))))
-    (default-value #f)
+                              (compose list home-noctalia-shell-configuration-noctalia-shell))))
+    (default-value (home-noctalia-shell-configuration))
     (description "")))
 
 
