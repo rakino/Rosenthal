@@ -9,6 +9,7 @@
 
   #:use-module (gnu services base)
 
+  #:use-module (gnu packages admin)
   #:use-module (gnu packages bash)
   #:use-module (rosenthal packages admin)
   #:export (greetd-tuigreet-session))
@@ -18,7 +19,7 @@
   greetd-tuigreet-session?
   this-greetd-tuigreet-session
   (tuigreet greetd-tuigreet-session-tuigreet
-            (default (spec->pkg "tuigreet")))
+            (default tuigreet))
   (args     greetd-tuigreet-session-args
             (default '("--issue"
                        "--time"

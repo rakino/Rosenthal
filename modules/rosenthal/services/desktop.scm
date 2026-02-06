@@ -30,6 +30,14 @@
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
 
+  #:use-module (gnu packages fcitx5)
+  #:use-module (gnu packages fonts)
+  #:use-module (gnu packages gnome)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages networking)
+  #:use-module (gnu packages qt)
+  #:use-module (gnu packages wm)
+  #:use-module (gnu packages xorg)
   #:use-module (rosenthal packages wm)
   #:use-module (rosenthal packages xorg)
 
@@ -75,7 +83,7 @@
 
 (define-configuration/no-serialization home-blueman-applet-configuration
   (blueman
-   (file-like (spec->pkg+out "blueman"))
+   (file-like blueman)
    ""))
 
 (define %home-blueman-applet-shepherd
@@ -111,10 +119,10 @@
 
 (define-configuration/no-serialization home-fcitx5-configuration
   (fcitx5
-   (file-like (spec->pkg   "fcitx5"))
+   (file-like fcitx5)
    "")
   (utilities
-   (list-of-file-likes (specs->pkgs "fcitx5-configtool"))
+   (list-of-file-likes (list fcitx5-configtool))
    "")
   (themes
    (list-of-file-likes '())
@@ -153,10 +161,10 @@
             themes
             input-method-editors
             (if gtk-im-module?
-                (list (spec->pkg "fcitx5-gtk"))
+                (list fcitx5-gtk)
                 '())
             (if qt-im-module?
-                (list (spec->pkg "fcitx5-qt"))
+                (list fcitx5-qt)
                 '()))))
 
 (define %home-fcitx5-shepherd
@@ -191,7 +199,7 @@
 
 (define-configuration/no-serialization home-mako-configuration
   (mako
-   (file-like (spec->pkg "mako"))
+   (file-like mako)
    "")
   (config
    maybe-file-like
@@ -234,7 +242,7 @@
 
 (define-configuration/no-serialization home-network-manager-applet-configuration
   (network-manager-applet
-   (file-like (spec->pkg "network-manager-applet"))
+   (file-like network-manager-applet)
    ""))
 
 (define %home-network-manager-applet-shepherd
@@ -346,7 +354,7 @@ compositor.")))
 
 (define-configuration/no-serialization home-swaybg-configuration
   (swaybg
-   (file-like (spec->pkg "swaybg"))
+   (file-like swaybg)
    "")
   (background
    (file-like (local-file "../examples/wallpaper.jpg"))
@@ -406,10 +414,10 @@ compositor.")))
 (define %home-theme-profile
   (match-record-lambda <home-theme-configuration>
       (packages)
-    (append (specs->pkgs "adwaita-icon-theme"
-                         "hicolor-icon-theme"
-                         "qtwayland")
-            packages)))
+    (cons* adwaita-icon-theme
+           hicolor-icon-theme
+           qtwayland
+           packages)))
 
 (define %home-theme-files
   (match-record-lambda <home-theme-configuration>
@@ -458,7 +466,7 @@ gtk-key-theme-name = ~a~%"
 
 (define-configuration/no-serialization home-waybar-configuration
   (waybar
-   (file-like (spec->pkg "waybar"))
+   (file-like waybar)
    "")
   (config
    maybe-file-like
@@ -518,8 +526,8 @@ gtk-key-theme-name = ~a~%"
           (define* (build-keyboard-layout file layout #:optional variant #:key model options)
             (define pipe
               (apply open-pipe* OPEN_READ
-                     #$(file-append (spec->pkg "console-setup") "/bin/ckbcomp")
-                     (string-append "-I" #$(spec->pkg "xkeyboard-config") "/share/X11/xkb")
+                     #$(file-append console-setup)
+                     (string-append "-I" #$xkeyboard-config "/share/X11/xkb")
                      "-rules" "base"
                      `(,@(if model
                              '("-model" ,model)
@@ -537,7 +545,7 @@ gtk-key-theme-name = ~a~%"
               (port-filename
                (mkstemp "/tmp/console-keymap.XXXXXX")))
             (build-keyboard-layout file-name layout variant #:model model #:options options)
-            (invoke "sudo" #$(file-append (spec->pkg "kbd") "/bin/loadkeys") file-name)
+            (invoke "sudo" #$(file-append kbd "/bin/loadkeys") file-name)
             (false-if-exception
              (substitute*
                  (in-vicinity
@@ -675,14 +683,14 @@ configuration {
              (using-setuid? #f)))
 
          ;; Add udev rules for backlight control.
-         (simple-service 'backlight udev-service-type (specs->pkgs "light"))
+         (simple-service 'backlight udev-service-type (list light))
 
          (modify-services %desktop-services
            ;; Use a font suitable for HiDPI monitors.
            (console-font-service-type
             _ => (map (lambda (num)
                         (cons (string-append "tty" (number->string num))
-                              (file-append (spec->pkg "font-terminus")
+                              (file-append font-terminus
                                            "/share/consolefonts/ter-132n")))
                       (iota 6 1))))))
 

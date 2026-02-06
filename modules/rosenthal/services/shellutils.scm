@@ -18,6 +18,8 @@
 
   #:use-module (gnu home services shells)
 
+  #:use-module (gnu packages rust-apps)
+  #:use-module (gnu packages shellutils)
   #:use-module (rosenthal packages rust-apps)
 
   #:export (home-fish-plugin-atuin-service-type
@@ -75,7 +77,7 @@
 
 (define-configuration/no-serialization home-direnv-configuration
   (direnv
-   (file-like (spec->pkg "direnv"))
+   (file-like direnv)
    "")
   (shells
    list
@@ -109,7 +111,7 @@
 
 (define-configuration/no-serialization home-zoxide-configuration
   (zoxide
-   (file-like (spec->pkg "zoxide"))
+   (file-like zoxide)
    "")
   (shells
    list
