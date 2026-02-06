@@ -21,6 +21,7 @@
   #:use-module (gnu services base)
   #:use-module (gnu services configuration)
   #:use-module (gnu services desktop)
+  #:use-module (gnu services pm)
   #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
   #:use-module (rosenthal services base)
@@ -689,6 +690,8 @@ configuration {
              (auto-enable? #t)))
 
          (service gvfs-service-type)
+
+         (service power-profiles-daemon-service-type)
 
          ;; Screen lockers for Wayland environment.  No dependencies are pulled
          ;; in since we're using empty files.
