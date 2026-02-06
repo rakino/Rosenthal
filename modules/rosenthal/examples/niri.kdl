@@ -631,7 +631,7 @@ binds {
 
 
 // Start user Shepherd
-spawn-at-startup "sh" "-c" "pgrep --uid $USER shepherd > /dev/null || shepherd"
+spawn-at-startup "shepherd"
 
 overview {
     backdrop-color "#D2DEE9"
