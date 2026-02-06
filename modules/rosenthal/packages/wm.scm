@@ -48,7 +48,7 @@
     (arguments
      (list
       #:install-plan
-      #~'(("." "share/noctalia-shell"))
+      #~'(("." "etc/xdg/quickshell/noctalia-shell"))
       #:imported-modules
       `((guix build qt-utils)
         ,@%copy-build-system-modules)
@@ -71,7 +71,7 @@
                   (lambda ()
                     (format #t "~
 #!~a
-exec ~a --path ~a/share/noctalia-shell \"$@\"~%"
+exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
                             (search-input-file inputs "bin/sh")
                             (search-input-file inputs "bin/quickshell")
                             #$output)))
