@@ -8,6 +8,7 @@
   #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (guix utils)
+  #:use-module (guix deprecation)
   #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils packages)
 
@@ -73,8 +74,12 @@
 
             %rosenthal-set-keymap
             %rosenthal-skeletons
-            %rosenthal-desktop-services-gdm
-            %rosenthal-desktop-services
+            %rosenthal-desktop-services/gdm
+            %rosenthal-desktop-services/tuigreet
+
+            %rosenthal-desktop-services-gdm ;deprecated
+            %rosenthal-desktop-services     ;deprecated
+
             %rosenthal-desktop-home-services))
 
 
@@ -670,7 +675,15 @@ configuration {
 ;;; Service presets.
 ;;;
 
-(define %rosenthal-desktop-services-gdm
+(define* (base-rosenthal-desktop-services
+          #:optional (system (or (%current-target-system)
+                                 (%current-system))))
+
+  (define %display-manager-service-type
+    (if (string-prefix? "x86_64" system)
+        gdm-service-type
+        sddm-service-type))
+
   (cons* (service bluetooth-service-type
            (bluetooth-configuration
              (auto-enable? #t)))
@@ -694,6 +707,7 @@ configuration {
          (simple-service 'backlight udev-service-type (list light))
 
          (modify-services %desktop-services
+           (delete %display-manager-service-type)
            ;; Use a font suitable for HiDPI monitors.
            (console-font-service-type
             _ => (map (lambda (num)
@@ -702,14 +716,14 @@ configuration {
                                            "/share/consolefonts/ter-132n")))
                       (iota 6 1))))))
 
-(define* (rosenthal-desktop-services-for-system
-          #:optional (system (or (%current-target-system)
-                                 (%current-system))))
-  (define %display-manager-service-type
-    (if (string-prefix? "x86_64" system)
-        gdm-service-type
-        sddm-service-type))
+(define-syntax %rosenthal-desktop-services/base
+  (identifier-syntax (base-rosenthal-desktop-services)))
 
+(define %rosenthal-desktop-services/gdm
+  (cons* (service gdm-service-type)
+         %rosenthal-desktop-services/base))
+
+(define %rosenthal-desktop-services/tuigreet
   (cons* (service greetd-service-type
            (greetd-configuration
              (greeter-supplementary-groups '("video" "input"))
@@ -728,13 +742,11 @@ configuration {
                               (greetd-user-session
                                 (command #~(getenv "SHELL"))))))))))
                    (iota 6 1)))))
+         (modify-services %rosenthal-desktop-services/base
+           (delete mingetty-service-type))))
 
-         (modify-services %rosenthal-desktop-services-gdm
-           (delete mingetty-service-type)
-           (delete %display-manager-service-type))))
-
-(define-syntax %rosenthal-desktop-services
-  (identifier-syntax (rosenthal-desktop-services-for-system)))
+(define-deprecated %rosenthal-desktop-services-gdm %rosenthal-desktop-services/gdm)
+(define-deprecated %rosenthal-desktop-services %rosenthal-desktop-services/tuigreet)
 
 (define %rosenthal-desktop-home-services
   (cons* (service home-shepherd-service-type
