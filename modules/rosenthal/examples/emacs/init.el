@@ -25,10 +25,10 @@
   ;; Workaround to use fish as login shell.
   (shell-file-name "/bin/sh"))
 
-(load-file (locate-user-emacs-file "fonts.el"))
-(load-file (locate-user-emacs-file "interface.el"))
-(load-file (locate-user-emacs-file "editing.el"))
-(load-file (locate-user-emacs-file "miscellaneous.el"))
+(load-file (locate-user-emacs-file "init-fonts.el"))
+(load-file (locate-user-emacs-file "init-interface.el"))
+(load-file (locate-user-emacs-file "init-editing.el"))
+(load-file (locate-user-emacs-file "init-miscellaneous.el"))
 
 
 ;;;

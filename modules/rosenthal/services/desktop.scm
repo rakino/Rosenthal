@@ -617,14 +617,14 @@ set-keymap us dvorak -o ctrl:nocaps\n")
 (define %rosenthal-skeletons
   `((".config/emacs/init.el"
      ,(local-file "../examples/emacs/init.el"))
-    (".config/emacs/fonts.el"
-     ,(local-file "../examples/emacs/fonts.el"))
-    (".config/emacs/interface.el"
-     ,(local-file "../examples/emacs/interface.el"))
-    (".config/emacs/editing.el"
-     ,(local-file "../examples/emacs/editing.el"))
-    (".config/emacs/miscellaneous.el"
-     ,(local-file "../examples/emacs/miscellaneous.el"))
+    (".config/emacs/init-fonts.el"
+     ,(local-file "../examples/emacs/init-fonts.el"))
+    (".config/emacs/init-interface.el"
+     ,(local-file "../examples/emacs/init-interface.el"))
+    (".config/emacs/init-editing.el"
+     ,(local-file "../examples/emacs/init-editing.el"))
+    (".config/emacs/init-miscellaneous.el"
+     ,(local-file "../examples/emacs/init-miscellaneous.el"))
 
     (".config/foot/foot.ini"
      ,(plain-file "foot.ini" "font=monospace:size=12\n"))
