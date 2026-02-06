@@ -122,9 +122,7 @@
           (service-extension activation-service-type
                              clash-activation)
           (service-extension account-service-type
-                             clash-account)
-          (service-extension log-rotation-service-type
-                             (compose list clash-configuration-log-file))))
+                             clash-account)))
    (default-value (clash-configuration))
    (description "Run Clash.")))
 
@@ -220,9 +218,7 @@ headers.  This can expose sensitive information in your logs.")
     (list (service-extension shepherd-root-service-type
                              cloudflare-tunnel-shepherd-service)
           (service-extension account-service-type
-                             cloudflare-tunnel-account)
-          (service-extension log-rotation-service-type
-                             (compose list cloudflare-tunnel-configuration-log-file))))
+                             cloudflare-tunnel-account)))
    (default-value (cloudflare-tunnel-configuration))
    (description "Run cloudflared, the Cloudflare Tunnel daemon.")))
 

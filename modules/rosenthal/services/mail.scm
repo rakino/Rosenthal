@@ -73,9 +73,7 @@
    (name 'docker-mailserver)
    (extensions
     (list (service-extension oci-service-type
-                             docker-mailserver-oci)
-          (service-extension log-rotation-service-type
-                             (compose list docker-mailserver-configuration-log-file))))
+                             docker-mailserver-oci)))
    (default-value (docker-mailserver-configuration))
    (description "Run Docker Mailserver.")))
 

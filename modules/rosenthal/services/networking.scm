@@ -97,9 +97,7 @@
            (service-extension activation-service-type
                               sing-box-activation)
            (service-extension shepherd-root-service-type
-                              sing-box-shepherd-service)
-           (service-extension log-rotation-service-type
-                              (compose list sing-box-configuration-log-file))))
+                              sing-box-shepherd-service)))
     (description "")))
 
 
@@ -170,8 +168,6 @@ to #f.")
     (list (service-extension shepherd-root-service-type
                              tailscale-shepherd-service)
           (service-extension profile-service-type
-                             (compose list tailscale-configuration-tailscale))
-          (service-extension log-rotation-service-type
-                             (compose list tailscale-configuration-log-file))))
+                             (compose list tailscale-configuration-tailscale))))
    (default-value (tailscale-configuration))
    (description "Run tailscaled.")))

@@ -471,9 +471,7 @@ test its configuration file."))
           (service-extension etc-service-type
                              iocaine-etc)
           (service-extension shepherd-root-service-type
-                             iocaine-shepherd-service)
-          (service-extension log-rotation-service-type
-                             (compose list iocaine-configuration-log-file))))
+                             iocaine-shepherd-service)))
    (description "")))
 
 
@@ -563,8 +561,6 @@ test its configuration file."))
                              jellyfin-account)
           (service-extension activation-service-type
                              jellyfin-activation)
-          (service-extension log-rotation-service-type
-                             (compose list jellyfin-configuration-log-file))
           (service-extension oci-service-type
                              jellyfin-oci)))
    (default-value (jellyfin-configuration))
@@ -732,8 +728,6 @@ test its configuration file."))
                              misskey-account)
           (service-extension postgresql-role-service-type
                              misskey-postgresql-role)
-          (service-extension log-rotation-service-type
-                             (compose list misskey-configuration-log-file))
           (service-extension activation-service-type
                              misskey-activation)
           (service-extension oci-service-type
@@ -939,8 +933,6 @@ test its configuration file."))
                              vaultwarden-postgresql-role)
           (service-extension activation-service-type
                              vaultwarden-activation)
-          (service-extension log-rotation-service-type
-                             (compose list vaultwarden-configuration-log-file))
           (service-extension oci-service-type
                              vaultwarden-oci)))
    (description "Run Vaultwarden, a Bitwarden compatible server.")))

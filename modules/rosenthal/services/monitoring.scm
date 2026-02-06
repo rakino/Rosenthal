@@ -83,9 +83,7 @@
      (list (service-extension activation-service-type
                               alloy-activation)
            (service-extension shepherd-root-service-type
-                              alloy-shepherd)
-           (service-extension log-rotation-service-type
-                              (const '("/var/log/alloy.log")))))
+                              alloy-shepherd)))
     (description "")))
 
 
@@ -190,9 +188,7 @@
            (service-extension activation-service-type
                               grafana-activation)
            (service-extension shepherd-root-service-type
-                              grafana-shepherd)
-           (service-extension log-rotation-service-type
-                              (const '("/var/log/grafana.log")))))
+                              grafana-shepherd)))
     (description "")))
 
 
@@ -285,9 +281,7 @@
            (service-extension activation-service-type
                               loki-activation)
            (service-extension shepherd-root-service-type
-                              loki-shepherd)
-           (service-extension log-rotation-service-type
-                              (const '("/var/log/loki.log")))))
+                              loki-shepherd)))
     (description "")))
 
 
@@ -380,9 +374,7 @@
            (service-extension activation-service-type
                               mimir-activation)
            (service-extension shepherd-root-service-type
-                              mimir-shepherd)
-           (service-extension log-rotation-service-type
-                              (const '("/var/log/mimir.log")))))
+                              mimir-shepherd)))
     (description "")))
 
 
@@ -479,7 +471,5 @@
            (service-extension activation-service-type
                               prometheus-activation)
            (service-extension shepherd-root-service-type
-                              prometheus-shepherd)
-           (service-extension log-rotation-service-type
-                              (const '("/var/log/prometheus.log")))))
+                              prometheus-shepherd)))
     (description "")))
