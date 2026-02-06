@@ -318,9 +318,11 @@ compositor.")))
     (list (shepherd-service
             (documentation "Start noctalia-shell.")
             (provision '(noctalia-shell))
+            (modules '((shepherd support)))
             (start
              #~(make-forkexec-constructor
-                (list #$(file-append noctalia-shell "/bin/noctalia-shell"))))
+                (list #$(file-append noctalia-shell "/bin/noctalia-shell"))
+                #:log-file (in-vicinity %user-log-dir "noctalia-shell.log")))
             (stop #~(make-kill-destructor))))))
 
 (define home-noctalia-shell-service-type
