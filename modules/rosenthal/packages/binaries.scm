@@ -3,6 +3,7 @@
 
 (define-module (rosenthal packages binaries)
   ;; Guile builtins
+  #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   ;; Utilities
   #:use-module (gnu build icecat-extension)
@@ -11,6 +12,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix utils)
+  #:use-module (rosenthal utils packages)
   ;; Guix origin methods
   #:use-module (guix download)
   ;; Guix build systems
@@ -447,9 +449,15 @@ rather a set of labels for each log stream.")
     (supported-systems '("x86_64-linux"))
     (properties '((upstream-name . "loki")))))
 
-(define-public alloy-bin
+
+;;;
+;;; alloy
+;;;
+
+(define-public %alloy-source-x86_64-linux
   (package
-    (name "alloy-bin")
+    (inherit %binary-source)
+    (name "alloy")
     (version "1.13.0")
     (source (origin
               (method url-fetch)
@@ -458,37 +466,12 @@ rather a set of labels for each log stream.")
                     version "/alloy-linux-amd64.zip"))
               (sha256
                (base32
-                "0xy986hgzbpq7yq0h9c364ki3j9z21wj6097f1dkk8722ycq0khy"))))
-    (build-system copy-build-system)
-    (arguments
-     (list #:install-plan
-           #~'(("alloy-linux-amd64" "bin/alloy"))
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'install 'patch-elf
-                 (lambda* (#:key inputs #:allow-other-keys)
-                   (let ((name "alloy")
-                         (dest (in-vicinity #$output "bin"))
-                         (ld.so (search-input-file inputs #$(glibc-dynamic-linker))))
-                     (with-directory-excursion dest
-                       (invoke "patchelf" "--set-interpreter" ld.so name)
-                       (chmod name #o555))))))))
-    (native-inputs (list patchelf unzip))
-    (synopsis
-     "OpenTelemetry Collector distribution with programmable pipelines")
-    (description
-     "Grafana Alloy is an open source OpenTelemetry Collector distribution with
-built-in Prometheus pipelines and support for metrics, logs, traces, and
-profiles.")
-    (home-page "https://grafana.com/oss/alloy-opentelemetry-collector/")
-    (license license:agpl3)
-    (supported-systems '("x86_64-linux"))
-    (properties '((upstream-name . "alloy")))))
+                "0xy986hgzbpq7yq0h9c364ki3j9z21wj6097f1dkk8722ycq0khy"))))))
 
-(define-public alloy-bin-aarch64-linux
+(define-public %alloy-source-aarch64-linux
   (package
-    (inherit alloy-bin)
-    (name "alloy-bin-aarch64-linux")
+    (inherit %binary-source)
+    (name "alloy")
     (version "1.13.0")
     (source (origin
               (method url-fetch)
@@ -497,9 +480,79 @@ profiles.")
                     version "/alloy-linux-arm64.zip"))
               (sha256
                (base32
-                "1pxnjzygm2mylipf6cjkqxm4k3i9vnm7v80avxbhv8400p3aszqk"))))
+                "1pxnjzygm2mylipf6cjkqxm4k3i9vnm7v80avxbhv8400p3aszqk"))))))
+
+(define-public alloy-bin
+  (package
+    (name "alloy-bin")
+    (version (package-version %alloy-source-x86_64-linux))
+    (source #f)
+    (build-system copy-build-system)
     (arguments
-     (substitute-keyword-arguments (package-arguments alloy-bin)
-       ((#:install-plan _ ''())
-        #~'(("alloy-linux-arm64" "bin/alloy")))))
-    (supported-systems '("aarch64-linux"))))
+     (let ((binary-source
+            (match (or (%current-target-system)
+                       (%current-system))
+              ((? target-aarch64?)
+               (package-source %alloy-source-aarch64-linux))
+              (_
+               (package-source %alloy-source-x86_64-linux)))))
+       (list
+        #:install-plan
+        (match (or (%current-target-system)
+                   (%current-system))
+          ((? target-aarch64?)
+           #~'(("alloy-linux-arm64" "bin/alloy")))
+          (_
+           #~'(("alloy-linux-amd64" "bin/alloy"))))
+        #:modules
+        '((ice-9 match)
+          (guix build copy-build-system)
+          (guix build utils))
+        #:phases
+        #~(modify-phases %standard-phases
+            (replace 'unpack
+              (lambda _
+                ((assoc-ref %standard-phases 'unpack)
+                 #:source #+binary-source)))
+            (add-after 'install 'patch-elf
+              (lambda _
+                (let ((name "alloy")
+                      (dest (in-vicinity #$output "bin"))
+                      (ld.so #$(file-append glibc (glibc-dynamic-linker))))
+                  (with-directory-excursion dest
+                    (invoke "patchelf" "--set-interpreter" ld.so name)
+                    (chmod name #o555)))))
+            (add-after 'patch-elf 'install-extras
+              (lambda* (#:key native-inputs inputs #:allow-other-keys)
+                (let ((alloy
+                       (if #$(%current-target-system)
+                           (search-input-file (or native-inputs inputs)
+                                              "bin/alloy")
+                           (in-vicinity #$output "bin/alloy"))))
+                  (for-each
+                   (match-lambda
+                     ((shell . file)
+                      (mkdir-p (in-vicinity #$output (dirname file)))
+                      (with-output-to-file (in-vicinity #$output file)
+                        (lambda ()
+                          (invoke alloy "completion" shell)))))
+                   '(("bash" . "share/bash-completion/completions/alloy")
+                     ("fish" . "share/fish/vendor_completions.d/alloy.fish")
+                     ("zsh"  . "share/zsh/site-functions/_alloy"))))))))))
+    (native-inputs
+     (append (if (%current-target-system)
+                 (list this-package)
+                 '())
+             (list patchelf unzip)))
+    (supported-systems '("x86_64-linux" "aarch64-linux"))
+    (home-page "https://grafana.com/oss/alloy-opentelemetry-collector/")
+    (synopsis
+     "OpenTelemetry Collector distribution with programmable pipelines")
+    (description
+     "Grafana Alloy is an open source OpenTelemetry Collector distribution with
+built-in Prometheus pipelines and support for metrics, logs, traces, and
+profiles.")
+    (license license:agpl3)
+    (properties '((disable-updater? . #t)))))
+
+(define-deprecated-package alloy-bin-aarch64-linux alloy-bin)
