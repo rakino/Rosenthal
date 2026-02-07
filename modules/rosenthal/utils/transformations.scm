@@ -2,15 +2,20 @@
 ;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal utils transformations)
+  ;; Guile builtins
   #:use-module (srfi srfi-1)
+  ;; Utilities
   #:use-module (guix channels)
   #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (guix utils)
+  ;; Guix System
   #:use-module (gnu system)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services base)
   #:use-module (rosenthal services file-systems)
+  ;; Guix packages
   #:use-module (gnu packages package-management)
   #:use-module (gnu packages file-systems)
   #:export (rosenthal-transformation-guix

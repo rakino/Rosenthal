@@ -1,13 +1,16 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages rust-crates)
+  ;; Utilities
   #:use-module (guix packages)
   #:use-module (guix utils)
+  ;; Guix origin methods
   #:use-module (guix download)
   #:use-module (guix git-download)
+  ;; Guix build systems
   #:use-module (guix build-system cargo)
+  ;; Guix packages
   #:use-module (rosenthal packages wm)
   #:export (lookup-cargo-inputs))
 

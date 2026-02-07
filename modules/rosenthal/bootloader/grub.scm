@@ -1,10 +1,11 @@
-;;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2023 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal bootloader grub)
+  ;; Guix System - bootloaders
   #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
+  ;; Guix packages
   #:use-module (rosenthal packages bootloaders)
   #:export (grub-efi-luks2-bootloader
             grub-efi-luks2-removable-bootloader))

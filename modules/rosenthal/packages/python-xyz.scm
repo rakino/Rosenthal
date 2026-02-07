@@ -1,9 +1,21 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages python-xyz)
+  ;; Utilities
+  #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
+  #:use-module (rosenthal utils cargo)
+  ;; Guix build systems
+  #:use-module (guix build-system cargo)
+  #:use-module (guix build-system pyproject)
+  #:use-module (guix build-system python)
+  ;; Guix origin methods
+  #:use-module (guix download)
+  #:use-module (guix git-download)
+  ;; Guix packages
   #:use-module (gnu packages check)
   #:use-module (gnu packages crypto)
   #:use-module (gnu packages databases)
@@ -14,16 +26,7 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rust)
   #:use-module (gnu packages serialization)
-  #:use-module (gnu packages time)
-  #:use-module (guix build-system cargo)
-  #:use-module (guix build-system pyproject)
-  #:use-module (guix build-system python)
-  #:use-module (guix download)
-  #:use-module (guix gexp)
-  #:use-module (guix git-download)
-  #:use-module (guix packages)
-  #:use-module (guix utils)
-  #:use-module (rosenthal utils cargo))
+  #:use-module (gnu packages time))
 
 (define-public python-coherent-licensed
   (package

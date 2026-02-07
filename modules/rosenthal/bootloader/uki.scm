@@ -3,11 +3,15 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal bootloader uki)
+  ;; Guile builtins
   #:use-module (srfi srfi-1)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix utils)
+  ;; Guix System - bootloaders
   #:use-module (gnu bootloader)
+  ;; Guix packages
   #:use-module (rosenthal packages bootloaders)
   #:export (uefi-uki-removable-bootloader))
 

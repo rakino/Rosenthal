@@ -1,18 +1,21 @@
-;;; SPDX-FileCopyrightText: Copyright © 2023 Miguel Ángel Moreno <mail@migalmoreno.com>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © Copyright © 2023 Miguel Ángel Moreno <mail@migalmoreno.com>
 
 (define-module (rosenthal utils serializers yaml)
-  #:use-module (rosenthal utils serializers)
-  #:use-module (gnu home services utils)
-  #:use-module (gnu services configuration)
+  ;; Guile builtins
+  #:use-module (ice-9 format)
+  #:use-module (ice-9 match)
+  #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-43)
+  ;; Utilities
   #:use-module (guix diagnostics)
   #:use-module (guix gexp)
   #:use-module (guix ui)
-  #:use-module (ice-9 match)
-  #:use-module (ice-9 format)
-  #:use-module (srfi srfi-1)
-  #:use-module (srfi srfi-43)
+  #:use-module (rosenthal utils serializers)
+  ;; Guix System - services
+  #:use-module (gnu services configuration)
+  ;; Guix Home - services
+  #:use-module (gnu home services utils)
   #:export (yaml-print
             yaml-config?
             yaml-serialize

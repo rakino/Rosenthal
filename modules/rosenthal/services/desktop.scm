@@ -1,22 +1,22 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services desktop)
+  ;; Utilities
+  #:use-module (guix deprecation)
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (guix utils)
-  #:use-module (guix deprecation)
   #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils packages)
-
+  ;; Guix build systems
   #:use-module (guix build-system copy)
-
+  ;; Guix System
   #:use-module (gnu system)
   #:use-module (gnu system shadow)
-
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services base)
   #:use-module (gnu services configuration)
@@ -25,13 +25,13 @@
   #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
   #:use-module (rosenthal services base)
-
+  ;; Guix Home - services
   #:use-module (gnu home)
   #:use-module (gnu home services)
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
-
+  ;; Guix packages
   #:use-module (gnu packages fcitx5)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages gnome)
@@ -41,8 +41,6 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xorg)
   #:use-module (rosenthal packages wm)
-  #:use-module (rosenthal packages xorg)
-
   #:export (home-blueman-applet-configuration
             home-blueman-applet-service-type
 

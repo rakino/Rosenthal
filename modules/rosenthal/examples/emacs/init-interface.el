@@ -1,7 +1,4 @@
 ;;; -*- lexical-binding: t -*-
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
-;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (use-package emacs
   :custom

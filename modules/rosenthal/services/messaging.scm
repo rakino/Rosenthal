@@ -1,18 +1,21 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services messaging)
-  #:use-module (gnu services configuration)
-  #:use-module (gnu services databases)
-  #:use-module (gnu services shepherd)
-  #:use-module (gnu services)
-  #:use-module (gnu system shadow)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix records)
-  #:use-module (rosenthal packages messaging)
   #:use-module (rosenthal utils predicates)
+  ;; Guix System
+  #:use-module (gnu system shadow)
+  ;; Guix System - services
+  #:use-module (gnu services)
+  #:use-module (gnu services configuration)
+  #:use-module (gnu services databases)
+  #:use-module (gnu services shepherd)
+  ;; Guix packages
+  #:use-module (rosenthal packages messaging)
   #:export (heisenbridge-service-type
             heisenbridge-configuration
 

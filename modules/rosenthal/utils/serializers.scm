@@ -1,12 +1,13 @@
-;;; SPDX-FileCopyrightText: Copyright © 2022 Andrew Tropin <andrew@trop.in>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © Copyright © 2022 Andrew Tropin <andrew@trop.in>
 
 (define-module (rosenthal utils serializers)
-  #:use-module (gnu services configuration)
-  #:use-module (guix gexp)
+  ;; Guile builtins
   #:use-module (srfi srfi-1)
-
+  ;; Utilities
+  #:use-module (guix gexp)
+  ;; Guix System - services
+  #:use-module (gnu services configuration)
   #:export (path?
             serialize-path
 

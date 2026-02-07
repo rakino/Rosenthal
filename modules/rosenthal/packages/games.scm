@@ -1,13 +1,17 @@
+;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2022 Cairn <cairn@pm.me>
 ;;; Copyright © 2025 Carmine Margiotta <accounts@cmargiotta.net>
 ;;; Copyright © 2025 Noah Evans <noah@nevans.me>
-;;; SPDX-License-Identifier: GPL-3.0-or-later
 
 (define-module (rosenthal packages games)
+  ;; Utilities
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
+  ;; Guix origin methods
   #:use-module (guix git-download)
+  ;; Guix build systems
   #:use-module (guix build-system cmake)
+  ;; Guix packages
   #:use-module (gnu packages bash)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages gl)

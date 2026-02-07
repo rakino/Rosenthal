@@ -4,7 +4,10 @@
 ;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal utils packages)
-  #:use-module (gnu packages)
+  ;; Guile builtins
+  #:use-module (ice-9 match)
+  #:use-module (srfi srfi-34)
+  ;; Utilities
   #:use-module (guix deprecation)
   #:use-module (guix diagnostics)
   #:use-module (guix discovery)
@@ -12,8 +15,8 @@
   #:use-module (guix memoization)
   #:use-module (guix packages)
   #:use-module (guix ui)
-  #:use-module (ice-9 match)
-  #:use-module (srfi srfi-34)
+  ;; Guix packages
+  #:use-module (gnu packages)
   #:replace (%patch-path
              search-patch)
   #:export (rosenthal-patches

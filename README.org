@@ -1,5 +1,5 @@
-# SPDX-FileCopyrightText: 2022, 2024, 2025-2026 Hilton Chain <hako@ultrarare.space>
 # SPDX-License-Identifier: CC0-1.0
+# Copyright © 2022, 2024, 2025-2026 Hilton Chain <hako@ultrarare.space>
 #+TITLE: Rosenthal - A certain Guix channel
 #+html: <a href="https://ci.guix.moe/jobset/rosenthal"><img src="https://ci.guix.moe/jobset/rosenthal/badge.svg?type=1"></a>
 

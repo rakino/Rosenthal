@@ -1,17 +1,21 @@
-;;; SPDX-FileCopyrightText: 2023-2024 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2023-2024 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages binaries)
+  ;; Guile builtins
   #:use-module (srfi srfi-1)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix gexp)
-  #:use-module (guix deprecation)
-  #:use-module (guix packages)
-  #:use-module (guix download)
-  #:use-module (guix utils)
-  #:use-module (guix build-system copy)
+  ;; Utilities
   #:use-module (gnu build icecat-extension)
+  #:use-module (guix deprecation)
+  #:use-module (guix gexp)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
+  ;; Guix origin methods
+  #:use-module (guix download)
+  ;; Guix build systems
+  #:use-module (guix build-system copy)
+  ;; Guix packages
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bootstrap)

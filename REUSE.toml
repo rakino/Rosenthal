@@ -1,6 +1,25 @@
 version = 1
 
 [[annotations]]
+path = [
+        ".guix-authorizations",
+        ".guix-channel",
+        "pre-inst-env",
+       ]
+SPDX-FileCopyrightText = ""
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["modules/**"]
+SPDX-FileCopyrightText = ""
+SPDX-License-Identifier = "GPL-3.0-or-later"
+
+[[annotations]]
+path = ["modules/rosenthal/examples/**"]
+SPDX-FileCopyrightText = ""
+SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
 path = ["modules/rosenthal/examples/wallpaper.jpg"]
 SPDX-FileCopyrightText = "Copyright © 2023 Hilton Chain <hako@ultrarare.space>"
 SPDX-License-Identifier = "CC-BY-SA-4.0"

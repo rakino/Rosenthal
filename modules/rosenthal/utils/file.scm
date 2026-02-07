@@ -2,7 +2,9 @@
 ;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal utils file)
+  ;; Guile builtins
   #:use-module (ice-9 textual-ports)
+  ;; Utilities
   #:use-module (guix gexp)
   #:export (computed-substitution-with-inputs
             file-content

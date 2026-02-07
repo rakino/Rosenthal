@@ -1,20 +1,23 @@
-;;; SPDX-FileCopyrightText: 2024, 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2024, 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services file-systems)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix records)
-  #:use-module (gnu packages backup)
-  #:use-module (gnu packages file-systems)
-  #:use-module (rosenthal packages admin)
+  ;; Guix System
+  #:use-module (gnu system pam)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services base)
   #:use-module (gnu services configuration)
   #:use-module (gnu services linux)
   #:use-module (gnu services mcron)
   #:use-module (gnu services shepherd)
-  #:use-module (gnu system pam)
+  ;; Guix packages
+  #:use-module (gnu packages backup)
+  #:use-module (gnu packages file-systems)
+  #:use-module (rosenthal packages admin)
   #:export (btrbk-service-type
             btrbk-configuration
 

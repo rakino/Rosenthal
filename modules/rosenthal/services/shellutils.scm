@@ -1,27 +1,26 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services shellutils)
+  ;; Guile builtins
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
-
+  ;; Utilities
   #:use-module (guix deprecation)
   #:use-module (guix diagnostics)
   #:use-module (guix gexp)
   #:use-module (guix i18n)
   #:use-module (guix records)
   #:use-module (rosenthal utils packages)
-
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
-
+  ;; Guix Home - services
   #:use-module (gnu home services shells)
-
+  ;; Guix packages
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages shellutils)
   #:use-module (rosenthal packages rust-apps)
-
   #:export (home-fish-plugin-atuin-service-type
             home-atuin-configuration
 

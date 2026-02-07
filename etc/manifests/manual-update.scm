@@ -1,6 +1,5 @@
-;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;
 ;; SPDX-License-Identifier: CC0-1.0
+;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (use-modules (guix packages)
              (guix profiles)

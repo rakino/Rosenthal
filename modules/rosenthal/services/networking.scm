@@ -1,22 +1,26 @@
-;;; SPDX-FileCopyrightText: 2023 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2023 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services networking)
-  #:use-module (srfi srfi-1)
+  ;; Guile builtins
   #:use-module (ice-9 match)
+  #:use-module (srfi srfi-1)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix records)
-  #:use-module (gnu packages linux)
-  #:use-module (gnu packages networking)
-  #:use-module (rosenthal packages networking)
+  #:use-module (rosenthal utils predicates)
+  ;; Guix System
+  #:use-module (gnu system shadow)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services dbus)
   #:use-module (gnu services shepherd)
-  #:use-module (gnu system shadow)
-  #:use-module (rosenthal utils predicates)
+  ;; Guix packages
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages networking)
+  #:use-module (rosenthal packages networking)
   #:export (sing-box-service-type
             sing-box-configuration
 

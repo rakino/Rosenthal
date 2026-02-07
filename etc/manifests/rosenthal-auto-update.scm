@@ -1,7 +1,6 @@
-;;; SPDX-FileCopyrightText: 2024-2025 Ludovic Courtès <ludo@gnu.org>
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2024-2025 Ludovic Courtès <ludo@gnu.org>
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (use-modules (guix memoization)
              (guix packages)

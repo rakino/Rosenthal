@@ -1,14 +1,16 @@
-;;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2022, 2023 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services dns)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix records)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
-  #:use-module (gnu packages dns)
   #:use-module (gnu services shepherd)
+  ;; Guix packages
+  #:use-module (gnu packages dns)
   #:export (smartdns-configuration
             smartdns-service-type))
 

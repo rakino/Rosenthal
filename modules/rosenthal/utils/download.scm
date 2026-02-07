@@ -1,10 +1,11 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal utils download)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix packages)
+  ;; Guix build systems
   #:use-module (guix build-system gnu)
   #:export (go-mod-vendor))
 

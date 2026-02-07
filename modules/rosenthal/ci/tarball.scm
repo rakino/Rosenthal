@@ -1,18 +1,20 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal ci tarball)
+  ;; Guile builtins
   #:use-module (srfi srfi-1)
+  ;; Utilities
+  #:use-module (gnu ci)
+  #:use-module (gnu compression)
   #:use-module (guix derivations)
   #:use-module (guix gexp)
   #:use-module (guix monads)
   #:use-module (guix packages)
   #:use-module (guix profiles)
-  #:use-module (guix store)
   #:use-module (guix scripts pack)
-  #:use-module (gnu ci)
-  #:use-module (gnu compression)
+  #:use-module (guix store)
+  ;; Guix packages
   #:use-module (rosenthal packages package-management)
   #:export (cuirass-jobs))
 

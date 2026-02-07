@@ -1,13 +1,15 @@
-;;; SPDX-FileCopyrightText: 2022-2024 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2022-2024 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages dns)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix build-system copy)
+  ;; Utilities
   #:use-module (guix gexp)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  ;; Guix origin methods
   #:use-module (guix git-download)
-  #:use-module (guix packages))
+  ;; Guix build systems
+  #:use-module (guix build-system copy))
 
 (define-public dnsmasq-china-list
   ;; No version.

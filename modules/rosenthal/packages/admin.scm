@@ -1,18 +1,21 @@
-;;; SPDX-FileCopyrightText: 2022, 2025 Hilton Chain <hako@ultrarare.space>
-;;; SPDX-FileCopyrightText: 2025 William Goodspeed
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2022, 2025 Hilton Chain <hako@ultrarare.space>
+;;; Copyright © 2025 William Goodspeed
 
 (define-module (rosenthal packages admin)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix git-download)
+  ;; Utilities
   #:use-module (guix gexp)
+  #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (rosenthal utils cargo)
+  ;; Guix origin methods
+  #:use-module (guix git-download)
+  ;; Guix build systems
   #:use-module (guix build-system cargo)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system meson)
+  ;; Guix packages
   #:use-module (gnu packages admin)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages m4)

@@ -1,20 +1,25 @@
-;;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2022, 2023 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services bittorrent)
+  ;; Guile builtins
   #:use-module (ice-9 format)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (rosenthal utils predicates)
-  #:use-module (gnu packages admin)
-  #:use-module (gnu packages bittorrent)
+  ;; Guix System
+  #:use-module (gnu system shadow)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
   #:use-module (gnu services shepherd)
+  ;; Guix Home - services
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
-  #:use-module (gnu system shadow)
+  ;; Guix packages
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages bittorrent)
   #:export (qbittorrent-configuration
             qbittorrent-service-type
             home-qbittorrent-service-type))

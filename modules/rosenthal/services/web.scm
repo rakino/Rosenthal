@@ -1,30 +1,33 @@
-;;; SPDX-FileCopyrightText: 2024 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2024 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services web)
-  #:use-module (gnu packages admin)
-  #:use-module (gnu packages guile-xyz)
-  #:use-module (gnu packages version-control)
-  #:use-module (gnu packages video)
-  #:use-module (gnu packages web)
+  ;; Utilities
+  #:use-module (guix gexp)
+  #:use-module (guix modules)
+  #:use-module (guix records)
+  #:use-module (rosenthal utils predicates)
+  #:use-module (rosenthal utils serializers ini)
+  #:use-module (rosenthal utils serializers yaml)
+  ;; Guix System
+  #:use-module (gnu system privilege)
+  #:use-module (gnu system shadow)
+  ;; Guix System - services
+  #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services containers)
   #:use-module (gnu services databases)
   #:use-module (gnu services docker)
   #:use-module (gnu services shepherd)
-  #:use-module (gnu services)
-  #:use-module (gnu system privilege)
-  #:use-module (gnu system shadow)
-  #:use-module (guix gexp)
-  #:use-module (guix modules)
-  #:use-module (guix records)
+  ;; Guix packages
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages guile-xyz)
+  #:use-module (gnu packages version-control)
+  #:use-module (gnu packages video)
+  #:use-module (gnu packages web)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages web)
-  #:use-module (rosenthal utils predicates)
-  #:use-module (rosenthal utils serializers ini)
-  #:use-module (rosenthal utils serializers yaml)
   #:export (caddy-configuration
             caddy-service-type
 

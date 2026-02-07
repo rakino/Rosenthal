@@ -1,14 +1,17 @@
-;;; SPDX-FileCopyrightText: 2022-2024 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2022-2024 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages emacs-xyz)
-  #:use-module ((guix licenses) #:prefix license:)
-  #:use-module (guix build-system emacs)
+  ;; Utilities
   #:use-module (guix gexp)
+  #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  ;; Guix origin methods
   #:use-module (guix download)
   #:use-module (guix git-download)
-  #:use-module (guix packages)
+  ;; Guix build systems
+  #:use-module (guix build-system emacs)
+  ;; Guix packages
   #:use-module (gnu packages emacs-xyz))
 
 (define-public emacs-caddyfile-mode

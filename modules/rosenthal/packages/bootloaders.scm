@@ -1,17 +1,20 @@
-;;; SPDX-FileCopyrightText: 2023-2025 Hilton Chain <hako@ultrarare.space>
-;;; Copyright © 2024 Lilah Tascheter <lilah@lunabee.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2023-2025 Hilton Chain <hako@ultrarare.space>
+;;; Copyright © 2024 Lilah Tascheter <lilah@lunabee.space>
 
 (define-module (rosenthal packages bootloaders)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix utils)
+  ;; Guix origin methods
   #:use-module (guix download)
   #:use-module (guix git-download)
+  ;; Guix build systems
   #:use-module (guix build-system meson)
   #:use-module (guix build-system pyproject)
+  ;; Guix packages
   #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bootloaders)

@@ -1,24 +1,28 @@
-;;; SPDX-FileCopyrightText: 2022, 2023 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2022, 2023 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services child-error)
-  #:use-module (guix records)
+  ;; Utilities
   #:use-module (guix gexp)
-  #:use-module (gnu home services)
-  #:use-module (gnu home services shepherd)
-  #:use-module (gnu packages admin)
-  #:use-module (gnu packages web)
+  #:use-module (guix records)
+  #:use-module (rosenthal utils predicates)
+  #:use-module (rosenthal utils serializers yaml)
+  ;; Guix System
+  #:use-module (gnu system shadow)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
-  #:use-module (gnu system shadow)
+  ;; Guix Home - services
+  #:use-module (gnu home services)
+  #:use-module (gnu home services shepherd)
+  ;; Guix packages
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages web)
   #:use-module (rosenthal packages binaries)
   #:use-module (rosenthal packages networking)
-  #:use-module (rosenthal utils predicates)
-  #:use-module (rosenthal utils serializers yaml)
   #:export (clash-configuration
             clash-service-type
 

@@ -1,9 +1,10 @@
-;;; SPDX-FileCopyrightText: 2021 Andrew Tropin <andrew@trop.in>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2021 Andrew Tropin <andrew@trop.in>
 
 (define-module (rosenthal services keyboard)
+  ;; Guix System
   #:use-module (gnu system keyboard)
+  ;; Guix Home - services
   #:use-module (gnu home services)
   #:export (home-keyboard-service-type))
 

@@ -1,22 +1,25 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services monitoring)
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix records)
+  #:use-module (rosenthal utils predicates)
   #:use-module (rosenthal utils serializers ini)
   #:use-module (rosenthal utils serializers yaml)
+  ;; Guix System
   #:use-module (gnu system shadow)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
+  ;; Guix packages
   #:use-module (gnu packages guile-xyz)
   #:use-module (rosenthal packages binaries)
-  #:use-module (rosenthal utils predicates)
   #:export (alloy-configuration
             alloy-service-type
 

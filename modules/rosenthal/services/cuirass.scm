@@ -1,31 +1,32 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services cuirass)
+  ;; Guile builtins
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
-
+  ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix records)
   #:use-module (guix store)
   #:use-module (rosenthal utils packages)
-
-  #:use-module (gnu bootloader)
-  #:use-module (gnu bootloader grub)
+  ;; Guix System
   #:use-module (gnu system)
   #:use-module (gnu system linux-container)
   #:use-module (gnu system file-systems)
   #:use-module (gnu system shadow)
-
+  ;; Guix System - bootloaders
+  #:use-module (gnu bootloader)
+  #:use-module (gnu bootloader grub)
+  ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services base)
   #:use-module (gnu services cuirass)
   #:use-module (gnu services databases)
   #:use-module (gnu services shepherd)
-
+  ;; Guix packages
   #:use-module (gnu packages linux)
   #:use-module (rosenthal packages ci)
   #:export (cuirass-worker-container-service-type

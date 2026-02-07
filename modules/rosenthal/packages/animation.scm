@@ -1,18 +1,20 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages animation)
+  ;; Utilities
+  #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
+  ;; Guix origin methods
+  #:use-module (guix git-download)
+  ;; Guix build systems
+  #:use-module (guix build-system cmake)
+  ;; Guix packages
   #:use-module (gnu packages animation)
   #:use-module (gnu packages compression)
-  #:use-module (gnu packages image)
-  #:use-module (guix build-system cmake)
-  #:use-module (guix gexp)
-  #:use-module (guix git-download)
-  #:use-module (guix packages)
-  #:use-module (guix utils))
-
+  #:use-module (gnu packages image))
 
 (define-public lottie-converter
   (let ((commit "3ad34af7bbcf9197fda782a5832b18b72a3bb939")

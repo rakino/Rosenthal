@@ -2,6 +2,7 @@
 ;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal utils predicates)
+  ;; Utilities
   #:use-module (guix gexp)
   #:export (file-object?
             user-and-group-id?))

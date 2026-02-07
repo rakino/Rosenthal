@@ -1,21 +1,25 @@
-;;; SPDX-FileCopyrightText: 2024, 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2024, 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services mail)
-  #:use-module (gnu home services shepherd)
-  #:use-module (gnu home services)
-  #:use-module (gnu packages mail)
+  ;; Guile builtins
+  #:use-module (srfi srfi-26)
+  ;; Utilities
+  #:use-module (guix gexp)
+  #:use-module (guix records)
+  #:use-module (rosenthal utils serializers yaml)
+  ;; Guix System - services
+  #:use-module (gnu services)
   #:use-module (gnu services admin)
   #:use-module (gnu services configuration)
   #:use-module (gnu services containers)
   #:use-module (gnu services docker)
   #:use-module (gnu services shepherd)
-  #:use-module (gnu services)
-  #:use-module (guix gexp)
-  #:use-module (guix records)
-  #:use-module (rosenthal utils serializers yaml)
-  #:use-module (srfi srfi-26)
+  ;; Guix Home - services
+  #:use-module (gnu home services)
+  #:use-module (gnu home services shepherd)
+  ;; Guix packages
+  #:use-module (gnu packages mail)
   #:export (docker-mailserver-configuration
             docker-mailserver-service-type
 

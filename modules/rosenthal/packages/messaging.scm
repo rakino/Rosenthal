@@ -1,9 +1,17 @@
-;;; SPDX-FileCopyrightText: 2025 Hilton Chain <hako@ultrarare.space>
-;;;
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
+;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages messaging)
+  ;; Utilities
+  #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix packages)
+  #:use-module (guix utils)
+  ;; Guix origin methods
+  #:use-module (guix git-download)
+  ;; Guix build systems
+  #:use-module (guix build-system pyproject)
+  ;; Guix packages
   #:use-module (gnu packages crypto)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages monitoring)
@@ -15,11 +23,6 @@
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages video)
-  #:use-module (guix build-system pyproject)
-  #:use-module (guix gexp)
-  #:use-module (guix git-download)
-  #:use-module (guix packages)
-  #:use-module (guix utils)
   #:use-module (rosenthal packages animation)
   #:use-module (rosenthal packages python-xyz))
 
