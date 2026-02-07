@@ -1,17 +1,13 @@
-# SPDX-FileCopyrightText: 2022, 2024, 2025 Hilton Chain <hako@ultrarare.space>
+# SPDX-FileCopyrightText: 2022, 2024, 2025-2026 Hilton Chain <hako@ultrarare.space>
 # SPDX-License-Identifier: CC0-1.0
-
 #+TITLE: Rosenthal - A certain Guix channel
-
 #+html: <a href="https://ci.guix.moe/jobset/rosenthal"><img src="https://ci.guix.moe/jobset/rosenthal/badge.svg?type=1"></a>
 
-Rosenthal is a Guix channel (see [[https://guix.gnu.org/manual/devel/en/html_node/Channels.html][Channels]] in /GNU Guix Reference Manual/) created for experiments.  It currently holds some packages and services not ready for upstreaming to [[https://guix.gnu.org/][GNU Guix]].
+Rosenthal is a [[https://guix.gnu.org/manual/devel/en/html_node/Channels.html][Guix channel]] created for experiments.  It currently holds some
+packages and services not ready for upstreaming.
 
-Substitutes for this channel are available via [[https://ci.guix.moe/][Guix Moe CI]], see [[https://ultrarare.space/en/posts/guix-build-farm/][its blog post]] for setup and more information.  [[https://codeberg.org/hako/Testament/issues][Send a request]] if you'd like to see substitutes available for more channels.
-
-You can use [[https://toys.whereis.social/][toys]] to search packages and services from Rosenthal and other Guix channels.
-
-Note that all contents in this channel are subject to change and may be deleted **at any time**, please [[https://codeberg.org/hako/Rosenthal/issues][report an issue]] if you are affected.
+NOTE: everything in this channel is subject to change and may be deleted **at
+any time**, please [[https://codeberg.org/hako/Rosenthal/issues][report an issue]] if you are affected.
 
 Channel specification:
 #+begin_src scheme
@@ -26,4 +22,8 @@ Channel specification:
        "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
 #+end_src
 
-For configuration, see [[https://guix.gnu.org/manual/devel/en/html_node/Specifying-Additional-Channels.html][Specifying Additional Channels]], [[https://guix.gnu.org/manual/devel/en/html_node/Customizing-the-System_002dWide-Guix.html][Customizing the System-Wide Guix]] and [[https://guix.gnu.org/manual/devel/en/html_node/Guix-Home-Services.html#index-home_002dchannels_002dservice_002dtype][~home-channels-service-type~]] in /GNU Guix Reference Manual/.
+You can use [[https://toys.whereis.social/][Toys]] to search packages, services and public symbols from Rosenthal
+and other Guix channels.
+
+[[https://guix.gnu.org/manual/devel/en/html_node/Substitutes.html][Substitutes]] (pre-built package binaries) for this channel are available via [[https://guix.moe/][Guix
+Moe]]'s infrastructure.
