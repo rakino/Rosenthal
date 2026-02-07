@@ -261,7 +261,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.92.5")
+    (version "1.94.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -270,7 +270,7 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0i96m98ambmb532isi44qzzh7qm16lg78k5y6pdg2l0x3zxq6ijb"))
+                "0n5k8adplcffjwlpiy35nrklc0sf9ms18zlilcis5g1s3kdh4klf"))
               (patches
                (rosenthal-patches
                 "tailscale-set-guix-system-PATH-for-SSH.patch"))
@@ -375,7 +375,7 @@ a SOCKS5 proxy.")
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "1j1bnlqk4k098vj31ylj5b7iwd18di84m7zacrlc5aclrif9554c"))))
+                "04zzwizns5a5wvwpa1a82jg0l641fnk3schffrpqi3qi84x17qsr"))))
       (if (%current-target-system)
           (list this-package)
           '())))
