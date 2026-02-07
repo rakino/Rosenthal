@@ -450,7 +450,7 @@ rather a set of labels for each log stream.")
 (define-public alloy-bin
   (package
     (name "alloy-bin")
-    (version "1.12.2")
+    (version "1.13.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -458,7 +458,7 @@ rather a set of labels for each log stream.")
                     version "/alloy-linux-amd64.zip"))
               (sha256
                (base32
-                "0fknk73z13a3jic6q3gmnwcgzz51jplikmg3xaz08217khpqh4kx"))))
+                "0xy986hgzbpq7yq0h9c364ki3j9z21wj6097f1dkk8722ycq0khy"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
