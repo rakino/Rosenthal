@@ -17,6 +17,7 @@
   #:use-module (guix ui)
   ;; Guix packages
   #:use-module (gnu packages)
+  #:use-module (gnu packages base)
   #:replace (%patch-path
              search-patch)
   #:export (rosenthal-patches
@@ -29,7 +30,9 @@
             spec->pkg
             spec->pkg+out
             specs->pkgs
-            specs->pkgs+out))
+            specs->pkgs+out
+
+            %binary-source))
 
 (define %rosenthal-root-directory
   ;; This is like %distro-root-directory from (gnu packages), with adjusted
@@ -132,3 +135,14 @@ packages, excluding superseded packages."
 (define-deprecated/public-alias pkg+out spec->pkg+out)
 (define-deprecated/public-alias pkgs specs->pkgs)
 (define-deprecated/public-alias pkgs+out specs->pkgs+out)
+
+
+;;;
+;;; Binary packages.
+;;;
+
+(define %binary-source
+  (hidden-package
+   (package
+     (inherit hello)
+     (supported-systems '()))))
