@@ -224,7 +224,7 @@ eBooks.")
 (define-public navidrome-bin
   (package
     (name "navidrome-bin")
-    (version "0.59.0")
+    (version "0.60.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -232,7 +232,7 @@ eBooks.")
                     version "/navidrome_" version "_linux_amd64.tar.gz"))
               (sha256
                (base32
-                "1fn8hj6hm72nsyw69l5asqd1hm13z564ikk9v7nzg417553asx0h"))))
+                "13877bkjxgk2n7ws6zq02p3iqkryhbw3bswzfns0qlgzn0kv09ik"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
