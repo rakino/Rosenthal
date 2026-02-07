@@ -176,7 +176,7 @@ the most niche uses.")
 (define-public komga-bin
   (package
    (name "komga-bin")
-   (version "1.23.6")
+   (version "1.24.1")
    (source (origin
              (method url-fetch)
              (uri (string-append
@@ -184,7 +184,7 @@ the most niche uses.")
                    "/komga-" version ".jar"))
              (sha256
               (base32
-               "01mkhdxd2gh75g46381j5c4frys1bq5rywmb700ma5bdy7vd8k9i"))))
+               "085jh6fi29yayr15zl4wmarx893bmhi3dsdwsvpnq5y5x89nq65g"))))
    (build-system copy-build-system)
    (arguments
     (list #:install-plan
