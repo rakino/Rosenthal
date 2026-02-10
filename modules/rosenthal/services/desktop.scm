@@ -37,6 +37,7 @@
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages networking)
+  #:use-module (gnu packages polkit)
   #:use-module (gnu packages qt)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xorg)
@@ -58,6 +59,8 @@
 
             home-noctalia-shell-configuration
             home-noctalia-shell-service-type
+
+            home-polkit-gnome-service-type
 
             home-rofi-configuration
             home-rofi-service-type
@@ -332,6 +335,28 @@ compositor.")))
            (service-extension home-profile-service-type
                               (compose list home-noctalia-shell-configuration-noctalia-shell))))
     (default-value (home-noctalia-shell-configuration))
+    (description "")))
+
+
+;;;
+;;; polkit-gnome
+;;;
+
+(define (%home-polkit-gnome-shepherd _)
+  (list (shepherd-service
+          (provision '(polkit-gnome))
+          (start
+           #~(make-forkexec-constructor
+              (list #$(file-append polkit-gnome "/libexec/polkit-gnome-authentication-agent-1"))))
+          (stop #~(make-kill-destructor)))))
+
+(define home-polkit-gnome-service-type
+  (service-type
+    (name 'home-polkit-gnome)
+    (extensions
+     (list (service-extension home-shepherd-service-type
+                              %home-polkit-gnome-shepherd)))
+    (default-value #f)
     (description "")))
 
 
