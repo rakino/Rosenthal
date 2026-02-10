@@ -3,6 +3,15 @@
         "darkMode": false,
         "predefinedScheme": "Nord"
     },
+    "osd": {
+        "enabled": true,
+        "enabledTypes": [
+            0,
+            1,
+            2,
+            3
+        ]
+    },
     "wallpaper": {
         "enabled": false
     }
