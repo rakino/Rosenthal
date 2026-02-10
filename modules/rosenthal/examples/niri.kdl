@@ -639,14 +639,13 @@ debug {
   honor-xdg-activation-with-invalid-serial
 }
 
-// Needed for Emacs in the installer.
+// Emacs has a window height > 100% whening using CSD.
 prefer-no-csd
 
-// Needed for WezTerm in the installer.
+// Keep WezTerm maximized so that the installer won't be resized.
 window-rule {
     match app-id="org.wezfurlong.wezterm"
-    default-column-width { proportion 0.5; }
-    default-window-height { proportion 1.0; }
+    open-maximized true
 }
 
 // Background color to match the wallpaper.

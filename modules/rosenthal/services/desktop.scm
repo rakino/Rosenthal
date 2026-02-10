@@ -679,6 +679,8 @@ set-keymap us dvorak -o ctrl:nocaps\n")
      ,(local-file "../examples/noctalia-shell/shell-state.json"))
     (".config/noctalia/settings.json"
      ,(local-file "../examples/noctalia-shell/settings.json"))
+    (".config/wezterm/wezterm.lua"
+     ,(local-file "../examples/wezterm.lua"))
     (".config/xfce4/helpers.rc"
      ,(plain-file "helpers.rc" "TerminalEmulator=open-wezterm-here\n"))
 
