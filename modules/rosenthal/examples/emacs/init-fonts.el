@@ -3,10 +3,11 @@
 ;;guix:font-adobe-source-serif
 ;;guix:font-google-noto-emoji
 ;;guix:font-sarasa-gothic
+;;guix:font-victor-mono
 (defvar nema--font-size 12 "Font size")
 (defvar nema-fonts '((sans     . "sans")
                      (serif    . "serif")
-                     (mono     . "Sarasa Mono CL")
+                     (mono     . "Victor Mono")
                      (cjk      . "Sarasa Mono CL")
                      (symbol   . "Noto Color Emoji")
                      (modeline . "Source Serif 4"))
