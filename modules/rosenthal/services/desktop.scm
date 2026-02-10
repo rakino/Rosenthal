@@ -681,7 +681,7 @@ configuration {
                                  (%current-system))))
 
   (define %display-manager-service-type
-    (if (string-prefix? "x86_64" system)
+    (if (target-64bit? system)
         gdm-service-type
         sddm-service-type))
 
