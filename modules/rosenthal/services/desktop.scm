@@ -540,7 +540,7 @@ gtk-key-theme-name = ~a~%"
           (define* (build-keyboard-layout file layout #:optional variant #:key model options)
             (define pipe
               (apply open-pipe* OPEN_READ
-                     #$(file-append console-setup)
+                     #$(file-append console-setup "/bin/ckbcomp")
                      (string-append "-I" #$xkeyboard-config "/share/X11/xkb")
                      "-rules" "base"
                      `(,@(if model
@@ -649,7 +649,7 @@ set-keymap us dvorak -o ctrl:nocaps\n")
      ,(local-file "../examples/emacs/init-miscellaneous.el"))
 
     (".config/foot/foot.ini"
-     ,(plain-file "foot.ini" "font=monospace:size=12\n"))
+     ,(local-file "../examples/foot/foot.ini"))
     (".config/mako/config"
      ,(local-file "../examples/mako.conf"))
     (".config/niri/config.kdl"
