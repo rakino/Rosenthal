@@ -648,24 +648,15 @@ set-keymap us dvorak -o ctrl:nocaps\n")
     (".config/emacs/init-miscellaneous.el"
      ,(local-file "../examples/emacs/init-miscellaneous.el"))
 
-    (".config/foot/foot.ini"
-     ,(local-file "../examples/foot/foot.ini"))
-    (".config/mako/config"
-     ,(local-file "../examples/mako.conf"))
     (".config/niri/config.kdl"
      ,(local-file "../examples/niri.kdl"))
-    (".config/rofi/config.rasi"
-     ,(plain-file "rofi.rasi" "\
-configuration {
-    icon-theme: \"Qogir\";
-}
-@theme \"/run/current-system/profile/share/rofi/themes/fullscreen-preview.rasi\"\n"))
-    (".config/waybar/config.jsonc"
-     ,(local-file "../examples/waybar/config.jsonc"))
-    (".config/waybar/style.css"
-     ,(local-file "../examples/waybar/style.css"))
+    (".cache/noctalia/shell-state.json"
+     ,(local-file "../examples/noctalia-shell/shell-state.json"))
+    (".config/noctalia/settings.json"
+     ,(local-file "../examples/noctalia-shell/settings.json"))
     (".config/xfce4/helpers.rc"
-     ,(plain-file "helpers.rc" "TerminalEmulator=rofi-sensible-terminal\n"))
+     ,(plain-file "helpers.rc" "TerminalEmulator=open-wezterm-here\n"))
+
     ;; Selected from the default skeletons.
     (".config/gdb/gdbinit" ,%default-gdbinit)
     (".config/nano/nanorc" ,%default-nanorc)
