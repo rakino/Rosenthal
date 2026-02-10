@@ -626,9 +626,29 @@ binds {
 }
 
 
-// Start user Shepherd
+// Start user Shepherd.
 spawn-at-startup "shepherd"
 
+// Noctalia shell.
+window-rule {
+    geometry-corner-radius 20
+    clip-to-geometry true
+}
+
+debug {
+  honor-xdg-activation-with-invalid-serial
+}
+
+// Needed for Emacs in the installer.
+prefer-no-csd
+
+// Needed for WezTerm in the installer.
+window-rule {
+    match app-id="org.wezfurlong.wezterm"
+    default-column-width { proportion 0.5; }
+    default-window-height { proportion 1; }}
+
+// Background color to match the wallpaper.
 overview {
     backdrop-color "#D2DEE9"
 }
