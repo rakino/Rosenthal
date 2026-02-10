@@ -646,7 +646,8 @@ prefer-no-csd
 window-rule {
     match app-id="org.wezfurlong.wezterm"
     default-column-width { proportion 0.5; }
-    default-window-height { proportion 1; }}
+    default-window-height { proportion 1.0; }
+}
 
 // Background color to match the wallpaper.
 overview {
