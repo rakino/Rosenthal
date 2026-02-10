@@ -12,6 +12,41 @@
             3
         ]
     },
+    "sessionMenu": {
+        "countdownDuration": 10000,
+        "enableCountdown": true,
+        "largeButtonsLayout": "single-row",
+        "largeButtonsStyle": true,
+        "position": "center",
+        "powerOptions": [
+            {
+                "action": "lock",
+                "enabled": false
+            },
+            {
+                "action": "suspend",
+                "enabled": false
+            },
+            {
+                "action": "hibernate",
+                "enabled": false
+            },
+            {
+                "action": "reboot",
+                "enabled": true
+            },
+            {
+                "action": "logout",
+                "enabled": false
+            },
+            {
+                "action": "shutdown",
+                "enabled": true
+            }
+        ],
+        "showHeader": true,
+        "showNumberLabels": true
+    },
     "wallpaper": {
         "enabled": false
     }
