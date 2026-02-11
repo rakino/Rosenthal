@@ -1,3 +1,5 @@
+;;; -*- mode: scheme -*-
+
 ;; info "(guix) Channels"
 ;; https://guix.gnu.org/manual/devel/en/html_node/Channels.html
 
