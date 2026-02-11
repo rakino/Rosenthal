@@ -662,7 +662,10 @@ set-keymap us dvorak -o ctrl:nocaps\n")
      (license #f))))
 
 (define %rosenthal-skeletons
-  `((".config/emacs/init.el"
+  `((".config/autostart/shepherd.desktop"
+     ,(local-file "../examples/shepherd.desktop"))
+
+    (".config/emacs/init.el"
      ,(local-file "../examples/emacs/init.el"))
     (".config/emacs/init-fonts.el"
      ,(local-file "../examples/emacs/init-fonts.el"))
