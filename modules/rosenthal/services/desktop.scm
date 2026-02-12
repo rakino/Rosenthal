@@ -662,33 +662,35 @@ set-keymap us dvorak -o ctrl:nocaps\n")
      (license #f))))
 
 (define %rosenthal-skeletons
-  (let ((dot (lambda (dir file)
-               (cons
-                (string-append "." dir "/" file)
-                (local-file (string-append "../examples/dot-" dir "/" file))))))
-    `((".config/emacs/init.el"
-       ,(local-file "../examples/emacs/init.el"))
-      (".config/emacs/init-fonts.el"
-       ,(local-file "../examples/emacs/init-fonts.el"))
-      (".config/emacs/init-interface.el"
-       ,(local-file "../examples/emacs/init-interface.el"))
-      (".config/emacs/init-editing.el"
-       ,(local-file "../examples/emacs/init-editing.el"))
-      (".config/emacs/init-miscellaneous.el"
-       ,(local-file "../examples/emacs/init-miscellaneous.el"))
+  `((".config/emacs/init.el"
+     ,(local-file "../examples/emacs/init.el"))
+    (".config/emacs/init-fonts.el"
+     ,(local-file "../examples/emacs/init-fonts.el"))
+    (".config/emacs/init-interface.el"
+     ,(local-file "../examples/emacs/init-interface.el"))
+    (".config/emacs/init-editing.el"
+     ,(local-file "../examples/emacs/init-editing.el"))
+    (".config/emacs/init-miscellaneous.el"
+     ,(local-file "../examples/emacs/init-miscellaneous.el"))
 
-      ,(dot "config" "autostart/shepherd.desktop")
-      ,(dot "config" "niri/config.kdl")
-      ,(dot "config" "noctalia/settings.json")
-      ,(dot "config" "wezterm/wezterm.lua")
-      ,(dot "config" "xfce4/helpers.rc")
-      ;; Prevent Noctalia shell initial screen.
-      ,(dot "cache" "noctalia/shell-state.json")
+    (".config/autostart/shepherd.desktop"
+     ,(local-file "../examples/dot-config/autostart/shepherd.desktop"))
+    (".config/niri/config.kdl"
+     ,(local-file "../examples/dot-config/niri/config.kdl"))
+    (".config/noctalia/settings.json"
+     ,(local-file "../examples/dot-config/noctalia/settings.json"))
+    (".config/wezterm/wezterm.lua"
+     ,(local-file "../examples/dot-config/wezterm/wezterm.lua"))
+    (".config/xfce4/helpers.rc"
+     ,(local-file "../examples/dot-config/xfce4/helpers.rc"))
+    ;; Prevent Noctalia shell initial screen.
+    (".cache/noctalia/shell-state.json"
+     ,(local-file "../examples/dot-cache/noctalia/shell-state.json"))
 
-      ;; Selected from the default skeletons.
-      (".config/gdb/gdbinit" ,%default-gdbinit)
-      (".config/nano/nanorc" ,%default-nanorc)
-      (".guile" ,%default-dotguile))))
+    ;; Selected from the default skeletons.
+    (".config/gdb/gdbinit" ,%default-gdbinit)
+    (".config/nano/nanorc" ,%default-nanorc)
+    (".guile" ,%default-dotguile)))
 
 
 ;;;
