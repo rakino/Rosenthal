@@ -3,6 +3,12 @@
         "darkMode": false,
         "predefinedScheme": "Nord"
     },
+    "dock": {
+        "displayMode": "exclusive",
+        "enabled": true,
+        "position": "left",
+        "size": 2
+    },
     "osd": {
         "enabled": true,
         "enabledTypes": [
