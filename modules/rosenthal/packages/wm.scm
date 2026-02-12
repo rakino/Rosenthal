@@ -17,6 +17,7 @@
   #:use-module (gnu packages audio)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
+  #:use-module (gnu packages calendar)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gl)
@@ -37,7 +38,7 @@
 (define-public noctalia-shell
   (package
     (name "noctalia-shell")
-    (version "4.4.0")
+    (version "4.4.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -46,7 +47,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0p0gp8sqmv4xd696nrhbiln61wkgiyzyz7kjbqx6fs9kqc3i0wyf"))))
+                "1bcllxzpc3viyxizv9qqckbzxgsgsdki8pp60cns4nwzk89q4yp4"))))
     (build-system copy-build-system)
     (arguments
      (list
@@ -94,6 +95,7 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
                             "bin/getent"
                             "bin/git"
                             "bin/grep"
+                            "bin/khal"
                             "bin/ls"
                             "bin/nmcli"
                             "bin/python3"
@@ -125,6 +127,7 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
            grep
            guile-3.0
            imagemagick
+           khal
            network-manager
            python-minimal
            qtbase
