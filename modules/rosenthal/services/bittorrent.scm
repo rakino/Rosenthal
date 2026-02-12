@@ -156,7 +156,7 @@ WebUI\\Password_PBKDF2=\"@ByteArray(ARQ77eY1NUZaQsuDHbIMCA==:0WMRkYTUWVT9wVvdDtH
 
 (define home-qbittorrent-service-type
   (service-type
-   (name 'qbittorrent)
+   (name 'home-qbittorrent)
    (extensions
     (list (service-extension home-activation-service-type
                              (const home-qbittorrent-activation))

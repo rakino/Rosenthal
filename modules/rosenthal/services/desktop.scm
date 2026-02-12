@@ -107,7 +107,7 @@
 
 (define home-blueman-applet-service-type
   (service-type
-    (name 'blueman-applet)
+    (name 'home-blueman-applet)
     (extensions
      (list (service-extension home-profile-service-type
                               (compose list home-blueman-applet-configuration-blueman))
@@ -189,7 +189,7 @@
 
 (define home-fcitx5-service-type
   (service-type
-    (name 'fcitx5)
+    (name 'home-fcitx5)
     (extensions
      (list (service-extension home-environment-variables-service-type
                               %home-fcitx5-environment-variables)
@@ -234,7 +234,7 @@
 
 (define home-mako-service-type
   (service-type
-    (name 'mako)
+    (name 'home-mako)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
                               %home-mako-xdg-config)
@@ -266,7 +266,7 @@
 
 (define home-network-manager-applet-service-type
   (service-type
-    (name 'network-manager-applet)
+    (name 'home-network-manager-applet)
     (extensions
      (list (service-extension home-profile-service-type
                               (compose list home-network-manager-applet-configuration-network-manager-applet))
@@ -294,7 +294,7 @@
 
 (define home-niri-service-type
   (service-type
-    (name 'niri)
+    (name 'home-niri)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
                               %home-niri-xdg-config)))
@@ -328,7 +328,7 @@ compositor.")))
 
 (define home-noctalia-shell-service-type
   (service-type
-    (name 'noctalia-shell)
+    (name 'home-noctalia-shell)
     (extensions
      (list (service-extension home-shepherd-service-type
                               %home-noctalia-shell-shepherd)
@@ -378,7 +378,7 @@ compositor.")))
 
 (define home-rofi-service-type
   (service-type
-    (name 'rofi)
+    (name 'home-rofi)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
                               %home-rofi-xdg-config)))
@@ -413,7 +413,7 @@ compositor.")))
 
 (define home-swaybg-service-type
   (service-type
-    (name 'swaybg)
+    (name 'home-swaybg)
     (extensions
      (list (service-extension home-shepherd-service-type
                               %home-swaybg-shepherd)))
@@ -485,7 +485,7 @@ gtk-key-theme-name = ~a~%"
 
 (define home-theme-service-type
   (service-type
-    (name 'theme)
+    (name 'home-theme)
     (extensions
      (list (service-extension home-environment-variables-service-type
                               %home-theme-environment-variables)
@@ -537,7 +537,7 @@ gtk-key-theme-name = ~a~%"
 
 (define home-waybar-service-type
   (service-type
-    (name 'waybar)
+    (name 'home-waybar)
     (extensions
      (list (service-extension home-xdg-configuration-files-service-type
                               %home-waybar-xdg-config)

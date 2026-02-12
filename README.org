@@ -22,7 +22,7 @@ Channel specification:
        "13E7 6CD6 E649 C28C 3385  4DF5 5E5A A665 6149 17F7"))))
 #+end_src
 
-You can use [[https://toys.whereis.social/][Toys]] to search packages, services and public symbols from Rosenthal
+You can use [[https://toys.whereis.social/?search=&channel=rosenthal][Toys]] to search packages, services and public symbols from Rosenthal
 and other Guix channels.
 
 [[https://guix.gnu.org/manual/devel/en/html_node/Substitutes.html][Substitutes]] (pre-built package binaries) for this channel are available via [[https://guix.moe/][Guix

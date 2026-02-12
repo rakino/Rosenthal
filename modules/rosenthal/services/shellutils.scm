@@ -59,7 +59,7 @@
 
 (define home-fish-plugin-atuin-service-type
   (service-type
-    (name 'atuin)
+    (name 'home-atuin)
     (extensions
      (list (service-extension home-fish-service-type
                               %home-atuin-fish)))
@@ -93,7 +93,7 @@
 
 (define home-fish-plugin-direnv-service-type
   (service-type
-    (name 'direnv)
+    (name 'home-direnv)
     (extensions
      (list (service-extension home-fish-service-type
                               %home-direnv-fish)))
@@ -127,7 +127,7 @@
 
 (define home-fish-plugin-zoxide-service-type
   (service-type
-    (name 'zoxide)
+    (name 'home-zoxide)
     (extensions
      (list (service-extension home-fish-service-type
                               %home-zoxide-fish)))
