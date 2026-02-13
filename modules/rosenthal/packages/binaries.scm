@@ -506,14 +506,9 @@ rather a set of labels for each log stream.")
            (delete 'check)
            (replace 'install
              (lambda _
-               (let ((src
-                      (match #$(or (and=> (%current-target-system)
-                                          platform-target->system)
-                                   (%current-system))
-                        ("aarch64-linux"
-                         "alloy-linux-arm64")
-                        (_
-                         "alloy-linux-amd64")))
+               (let ((src #$(mapping-for-system
+                             '(("x86_64-linux"  . "alloy-linux-amd64")
+                               ("aarch64-linux" . "alloy-linux-arm64"))))
                      (dst (in-vicinity #$output "bin/alloy")))
                  (mkdir-p (dirname dst))
                  (copy-file src dst))))
