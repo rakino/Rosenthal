@@ -11,6 +11,7 @@
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
+  #:use-module (guix platform)
   #:use-module (guix utils)
   #:use-module (rosenthal utils packages)
   ;; Guix origin methods
@@ -483,76 +484,67 @@ rather a set of labels for each log stream.")
                 "1pxnjzygm2mylipf6cjkqxm4k3i9vnm7v80avxbhv8400p3aszqk"))))))
 
 (define-public alloy-bin
-  (package
-    (name "alloy-bin")
-    (version (package-version %alloy-source-x86_64-linux))
-    (source #f)
-    (build-system copy-build-system)
-    (arguments
-     (let ((binary-source
-            (match (or (%current-target-system)
-                       (%current-system))
-              ((? target-aarch64?)
-               (package-source %alloy-source-aarch64-linux))
-              (_
-               (package-source %alloy-source-x86_64-linux)))))
-       (list
-        #:install-plan
-        (match (or (%current-target-system)
-                   (%current-system))
-          ((? target-aarch64?)
-           #~'(("alloy-linux-arm64" "bin/alloy")))
-          (_
-           #~'(("alloy-linux-amd64" "bin/alloy"))))
-        #:modules
-        '((ice-9 match)
-          (guix build copy-build-system)
-          (guix build utils))
-        #:phases
-        #~(modify-phases %standard-phases
-            (replace 'unpack
-              (lambda _
-                ((assoc-ref %standard-phases 'unpack)
-                 #:source #+binary-source)))
-            (add-after 'install 'patch-elf
-              (lambda _
-                (let ((name "alloy")
-                      (dest (in-vicinity #$output "bin"))
-                      (ld.so #$(file-append glibc (glibc-dynamic-linker))))
-                  (with-directory-excursion dest
-                    (invoke "patchelf" "--set-interpreter" ld.so name)
-                    (chmod name #o555)))))
-            (add-after 'patch-elf 'install-extras
-              (lambda* (#:key native-inputs inputs #:allow-other-keys)
-                (let ((alloy
-                       (if #$(%current-target-system)
-                           (search-input-file (or native-inputs inputs)
-                                              "bin/alloy")
-                           (in-vicinity #$output "bin/alloy"))))
-                  (for-each
-                   (match-lambda
-                     ((shell . file)
-                      (mkdir-p (in-vicinity #$output (dirname file)))
-                      (with-output-to-file (in-vicinity #$output file)
-                        (lambda ()
-                          (invoke alloy "completion" shell)))))
-                   '(("bash" . "share/bash-completion/completions/alloy")
-                     ("fish" . "share/fish/vendor_completions.d/alloy.fish")
-                     ("zsh"  . "share/zsh/site-functions/_alloy"))))))))))
-    (native-inputs
-     (append (if (%current-target-system)
-                 (list this-package)
-                 '())
-             (list patchelf unzip)))
-    (supported-systems '("x86_64-linux" "aarch64-linux"))
-    (home-page "https://grafana.com/oss/alloy-opentelemetry-collector/")
-    (synopsis
-     "OpenTelemetry Collector distribution with programmable pipelines")
-    (description
-     "Grafana Alloy is an open source OpenTelemetry Collector distribution with
+  (binary-package
+   `(("x86_64-linux"  . ,%alloy-source-x86_64-linux)
+     ("aarch64-linux" . ,%alloy-source-aarch64-linux))
+   (package
+     (name "alloy-bin")
+     (version "")
+     (source #f)
+     (build-system copy-build-system)
+     (arguments
+      (list
+       #:install-plan
+       (match (or (and=> (%current-target-system) platform-target->system)
+                  (%current-system))
+         ("aarch64-linux"
+          #~'(("alloy-linux-arm64" "bin/alloy")))
+         (_
+          #~'(("alloy-linux-amd64" "bin/alloy"))))
+       #:modules
+       '((ice-9 match)
+         (guix build copy-build-system)
+         (guix build utils))
+       #:phases
+       #~(modify-phases %standard-phases
+           (add-after 'install 'patch-elf
+             (lambda _
+               (let ((name "alloy")
+                     (dest (in-vicinity #$output "bin"))
+                     (ld.so #$(file-append glibc (glibc-dynamic-linker))))
+                 (with-directory-excursion dest
+                   (invoke "patchelf" "--set-interpreter" ld.so name)
+                   (chmod name #o555)))))
+           (add-after 'patch-elf 'install-extras
+             (lambda* (#:key native-inputs inputs #:allow-other-keys)
+               (let ((alloy
+                      (if #$(%current-target-system)
+                          (search-input-file (or native-inputs inputs)
+                                             "bin/alloy")
+                          (in-vicinity #$output "bin/alloy"))))
+                 (for-each
+                  (match-lambda
+                    ((shell . file)
+                     (mkdir-p (in-vicinity #$output (dirname file)))
+                     (with-output-to-file (in-vicinity #$output file)
+                       (lambda ()
+                         (invoke alloy "completion" shell)))))
+                  '(("bash" . "share/bash-completion/completions/alloy")
+                    ("fish" . "share/fish/vendor_completions.d/alloy.fish")
+                    ("zsh"  . "share/zsh/site-functions/_alloy")))))))))
+     (native-inputs
+      (append (if (%current-target-system)
+                  (list this-package)
+                  '())
+              (list patchelf unzip)))
+     (supported-systems '("x86_64-linux" "aarch64-linux"))
+     (home-page "https://grafana.com/oss/alloy-opentelemetry-collector/")
+     (synopsis
+      "OpenTelemetry Collector distribution with programmable pipelines")
+     (description
+      "Grafana Alloy is an open source OpenTelemetry Collector distribution with
 built-in Prometheus pipelines and support for metrics, logs, traces, and
 profiles.")
-    (license license:agpl3)
-    (properties '((disable-updater? . #t)))))
+     (license license:agpl3))))
 
 (define-deprecated-package alloy-bin-aarch64-linux alloy-bin)
