@@ -17,6 +17,7 @@
   ;; Guix origin methods
   #:use-module (guix download)
   ;; Guix build systems
+  #:use-module (guix build-system gnu)
   #:use-module (guix build-system copy)
   ;; Guix packages
   #:use-module (gnu packages base)
@@ -491,37 +492,47 @@ rather a set of labels for each log stream.")
      (name "alloy-bin")
      (version "")
      (source #f)
-     (build-system copy-build-system)
+     (build-system gnu-build-system)
      (arguments
       (list
-       #:install-plan
-       (match (or (and=> (%current-target-system) platform-target->system)
-                  (%current-system))
-         ("aarch64-linux"
-          #~'(("alloy-linux-arm64" "bin/alloy")))
-         (_
-          #~'(("alloy-linux-amd64" "bin/alloy"))))
        #:modules
-       '((ice-9 match)
-         (guix build copy-build-system)
-         (guix build utils))
+       `((ice-9 match)
+         ,@%default-gnu-modules)
        #:phases
        #~(modify-phases %standard-phases
-           (add-after 'install 'patch-elf
+           (delete 'bootstrap)
+           (delete 'configure)
+           (delete 'build)
+           (delete 'check)
+           (replace 'install
              (lambda _
-               (let ((name "alloy")
+               (let ((src
+                      (match #$(or (and=> (%current-target-system)
+                                          platform-target->system)
+                                   (%current-system))
+                        ("aarch64-linux"
+                         "alloy-linux-arm64")
+                        (_
+                         "alloy-linux-amd64")))
+                     (dst (in-vicinity #$output "bin/alloy")))
+                 (mkdir-p (dirname dst))
+                 (copy-file src dst))))
+           (add-after 'install 'patch-elf
+             (lambda* (#:key inputs #:allow-other-keys)
+               (let ((ld.so (search-input-file inputs #$(glibc-dynamic-linker)))
                      (dest (in-vicinity #$output "bin"))
-                     (ld.so #$(file-append glibc (glibc-dynamic-linker))))
+                     (name "alloy"))
                  (with-directory-excursion dest
                    (invoke "patchelf" "--set-interpreter" ld.so name)
                    (chmod name #o555)))))
            (add-after 'patch-elf 'install-extras
-             (lambda* (#:key native-inputs inputs #:allow-other-keys)
+             (lambda* (#:key native-inputs inputs outputs #:allow-other-keys)
                (let ((alloy
-                      (if #$(%current-target-system)
-                          (search-input-file (or native-inputs inputs)
-                                             "bin/alloy")
-                          (in-vicinity #$output "bin/alloy"))))
+                      (search-input-file
+                       (if #$(%current-target-system)
+                           native-inputs
+                           outputs)
+                       "bin/alloy")))
                  (for-each
                   (match-lambda
                     ((shell . file)
