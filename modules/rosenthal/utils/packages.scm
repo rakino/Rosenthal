@@ -11,10 +11,13 @@
   #:use-module (guix deprecation)
   #:use-module (guix diagnostics)
   #:use-module (guix discovery)
+  #:use-module (guix gexp)
   #:use-module (guix i18n)
   #:use-module (guix memoization)
   #:use-module (guix packages)
+  #:use-module (guix platform)
   #:use-module (guix ui)
+  #:use-module (guix utils)
   ;; Guix packages
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
@@ -32,7 +35,9 @@
             specs->pkgs
             specs->pkgs+out
 
-            %binary-source))
+            %binary-source
+            binary-package
+            mapping-for-system))
 
 (define %rosenthal-root-directory
   ;; This is like %distro-root-directory from (gnu packages), with adjusted
@@ -150,3 +155,28 @@ packages, excluding superseded packages."
      (synopsis "Binary package source (internal use)")
      (description "")
      (license #f))))
+
+(define* (mapping-for-system mapping #:optional (default-system "x86_64-linux"))
+  (let ((system
+         (or (and=> (%current-target-system) platform-target->system)
+             (%current-system))))
+    (or (assoc-ref mapping system)
+        (assoc-ref mapping default-system))))
+
+(define* (binary-package source-mapping p #:optional (default-system "x86_64-linux"))
+  (package
+    (inherit p)
+    (version (package-version (assoc-ref source-mapping default-system)))
+    (source #f)
+    (arguments
+     (substitute-keyword-arguments (package-arguments p)
+       ((#:phases phases #~%standard-phases)
+        #~(modify-phases #$phases
+            (replace 'unpack
+              (lambda _
+                ((assoc-ref %standard-phases 'unpack)
+                 #:source
+                 #+(package-source (mapping-for-system source-mapping)))))))))
+    (properties
+     (cons '(disable-updater? . #t)
+           (package-properties p)))))
