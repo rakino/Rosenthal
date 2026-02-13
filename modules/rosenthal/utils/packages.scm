@@ -145,4 +145,8 @@ packages, excluding superseded packages."
   (hidden-package
    (package
      (inherit hello)
-     (supported-systems '()))))
+     (supported-systems '())
+     (home-page "")
+     (synopsis "Binary package source (internal use)")
+     (description "")
+     (license #f))))
