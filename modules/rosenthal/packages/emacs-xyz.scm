@@ -82,6 +82,28 @@ end the search.  Moreover, the search status information in the echo area and
 some keybindings are slightly simplified.")
     (license license:gpl3+)))
 
+(define-public emacs-kdl-mode
+  (let ((commit "2d849e298199f490e4894c01764a8a83decd704a")
+        (revision "0"))
+    (package
+      (name "emacs-kdl-mode")
+      (version (git-version "0.0.1" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/taquangtrung/emacs-kdl-mode")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "18va5ipay9grbv84kwq9ji4dn1sabnzydj4hb1mjd9mbbibw1wg4"))))
+      (build-system emacs-build-system)
+      (arguments (list #:tests? #f))    ;No tests.
+      (home-page "https://github.com/taquangtrung/emacs-kdl-mode")
+      (synopsis "Emacs major mode for editing files in the KDL document language")
+      (description "")
+      (license license:gpl3+))))
+
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
         (revision "0"))
