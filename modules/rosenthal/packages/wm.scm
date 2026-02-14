@@ -25,6 +25,7 @@
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gtk)
   #:use-module (gnu packages guile)
+  #:use-module (gnu packages hardware)
   #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages llvm)
@@ -89,6 +90,7 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
                             "bin/cava"
                             "bin/cliphist"
                             "bin/convert"
+                            "bin/ddcutil"
                             "bin/fastfetch"
                             "bin/fc-list"
                             "bin/find"
@@ -118,6 +120,7 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
            cava
            cliphist
            coreutils-minimal
+           ddcutil
            elogind
            fastfetch
            findutils
