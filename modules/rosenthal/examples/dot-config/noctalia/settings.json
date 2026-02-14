@@ -1,7 +1,6 @@
 {
     "appLauncher": {
-        "terminalCommand": "wezterm start --",
-        "viewMode": "grid"
+        "terminalCommand": "wezterm start --"
     },
     "colorSchemes": {
         "darkMode": false,
