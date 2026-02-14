@@ -312,6 +312,17 @@ compositor.")))
    (file-like noctalia-shell)
    "File-like object to provide @command{/bin/noctalia-shell}."))
 
+;; Create ~/.config/noctalia directory, otherwise Noctalia shell won't show up
+;; on initial startup.
+(define (%home-noctalia-shell-activation _)
+  (with-imported-modules (source-module-closure '((guix build utils)))
+    #~(begin
+        (use-modules (guix build utils))
+        (let ((xdg-config-home
+               (or (getenv "XDG_CONFIG_HOME")
+                   (in-vicinity (getenv "HOME") ".config"))))
+          (mkdir-p (in-vicinity xdg-config-home "noctalia"))))))
+
 (define %home-noctalia-shell-shepherd
   (match-record-lambda <home-noctalia-shell-configuration>
       (noctalia-shell)
@@ -329,10 +340,12 @@ compositor.")))
   (service-type
     (name 'home-noctalia-shell)
     (extensions
-     (list (service-extension home-shepherd-service-type
-                              %home-noctalia-shell-shepherd)
-           (service-extension home-profile-service-type
-                              (compose list home-noctalia-shell-configuration-noctalia-shell))))
+     (list (service-extension home-profile-service-type
+                              (compose list home-noctalia-shell-configuration-noctalia-shell))
+           (service-extension home-activation-service-type
+                              %home-noctalia-shell-activation)
+           (service-extension home-shepherd-service-type
+                              %home-noctalia-shell-shepherd)))
     (default-value (home-noctalia-shell-configuration))
     (description "")))
 
