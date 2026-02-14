@@ -35,6 +35,7 @@
   #:use-module (gnu packages fcitx5)
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages gnome)
+  #:use-module (gnu packages guile)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages networking)
   #:use-module (gnu packages polkit)
@@ -587,7 +588,20 @@ gtk-key-theme-name = ~a~%"
      ,(local-file "../examples/dot-config/xfce4/helpers.rc"))
     ;; Prevent Noctalia shell initial screen.
     (".cache/noctalia/shell-state.json"
-     ,(local-file "../examples/dot-cache/noctalia/shell-state.json"))
+     ,(computed-file "noctalia-shell-state.json"
+        (with-extensions (list guile-json-4)
+          #~(begin
+              (use-modules (json))
+              (call-with-output-file #$output
+                (lambda (port)
+                  (scm->json
+                   `(("changelogState"
+                      ("lastSeenVersion"
+                       . ,(string-append "v" #$(package-version noctalia-shell))))
+                     ("telemetry"
+                      ("instanceId" . "")))
+                   port
+                   #:pretty #t)))))))
 
     ;; Selected from the default skeletons.
     (".config/gdb/gdbinit" ,%default-gdbinit)
