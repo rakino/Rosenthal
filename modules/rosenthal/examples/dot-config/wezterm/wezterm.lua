@@ -1,12 +1,8 @@
--- Keep WezTerm maximized so that the installer won't be resized.
--- https://wezterm.org/config/lua/gui-events/gui-startup.html
 local wezterm = require 'wezterm'
-local mux = wezterm.mux
-local config = {}
+local config = wezterm.config_builder()
 
-wezterm.on('gui-startup', function(cmd)
-  local tab, pane, window = mux.spawn_window(cmd or {})
-  window:gui_window():maximize()
-end)
+-- Use Xwayland in the LiveCD so that we can change keyboard layout when
+-- WezTerm is running.
+config.enable_wayland = false
 
 return config
