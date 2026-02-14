@@ -69,6 +69,9 @@
               (substitute* "Services/Power/IdleInhibitorService.qml"
                 (("systemd-inhibit")
                  (search-input-file inputs "bin/elogind-inhibit")))))
+          (add-after 'unpack 'reduce-output-size
+            (lambda _
+              (delete-file-recursively "Assets/Screenshots")))
           (add-after 'install 'make-wrapper
             (lambda* (#:key inputs #:allow-other-keys)
               (let ((script "noctalia-shell"))
