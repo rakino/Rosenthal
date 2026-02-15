@@ -1,0 +1,230 @@
+;;; -*- mode: scheme -*-
+
+(use-modules (gnu)
+             (nonguix)
+             (rosenthal)
+             (rosenthal services keyboard)
+             (rosenthal services shellutils)
+             (gnu home services fontutils)
+             (gnu home services shells)
+             (gnu packages fcitx5)
+             (gnu packages gnome-xyz)
+             (gnu packages shells))
+
+(define %my-keyboard-layout
+  (keyboard-layout "us"))
+
+(define %my-user
+  (user-account
+    (name "alice")
+    ;; Initial password: test
+    ;; Generated using:
+    ;; echo "test" | guix shell openssl -- openssl passwd -6 -stdin
+    (password "$6$/KCO8Hq.mcvOg5IW$1r4sExgrmhKulz.0fhWGn3CYtLFYvcDPw8rJSxXET3O1uwuEZTcILcTQJ2eE8kDiBw/30.C7H3.xHISQo5CWj0")
+    (group "users")
+    (supplementary-groups '("wheel" "audio" "video"))
+    (shell (file-append fish "/bin/fish"))))
+
+(define %my-home
+  (home-environment
+    (packages (specifications->packages
+               '(;; File manager.
+                 "exo"
+                 "file-roller"
+                 "thunar"
+                 "thunar-archive-plugin"
+                 "thunar-media-tags-plugin"
+                 "thunar-volman"
+                 "tumbler"
+
+                 ;; Web browser.
+                 "librewolf"
+                 "ublock-origin-icecat"
+
+                 ;; Text editors, see also `%rosenthal-skeletons'.
+                 "emacs-pgtk"
+                 "neovim"
+
+                 "emacs-corfu"
+                 "emacs-daemons"
+                 "emacs-doom-modeline"
+                 "emacs-envrc"
+                 "emacs-flycheck"
+                 "emacs-flycheck-guile"
+                 "emacs-forge"
+                 "emacs-gcmh"
+                 "emacs-geiser"
+                 "emacs-geiser-guile"
+                 "emacs-helpful"
+                 "emacs-hl-todo"
+                 "emacs-macrostep"
+                 "emacs-macrostep-geiser"
+                 "emacs-magit"
+                 "emacs-mwim"
+                 "emacs-no-littering"
+                 "emacs-orderless"
+                 "emacs-puni"
+                 "emacs-rainbow-delimiters"
+                 "emacs-vertico"
+
+                 ;; Fonts, see also `home-fontconfig-service-type'.
+                 "font-adobe-source-serif"
+                 "font-google-noto"
+                 "font-google-noto-emoji"
+                 "font-nerd-symbols"
+                 "font-sarasa-gothic"
+                 "font-victor-mono"
+                 )))
+    (services
+     (cons* (service home-fish-service-type)
+            (service home-keyboard-service-type %my-keyboard-layout)
+
+            (service home-noctalia-shell-service-type)
+            (service home-polkit-gnome-service-type)
+
+            ;; Default cursor theme.
+            (service home-theme-service-type
+              (home-theme-configuration
+                (packages (list qogir-icon-theme))
+                (icon-theme "Qogir")
+                (cursor-theme "Qogir")))
+
+            ;; Input method.
+            (service home-fcitx5-service-type
+              (home-fcitx5-configuration
+                (gtk-im-module? #t)
+                (qt-im-module? #t)
+                (themes
+                 (list fcitx5-material-color-theme))
+                (input-method-editors
+                 (list fcitx5-anthy
+                       fcitx5-chewing
+                       fcitx5-chinese-addons
+                       fcitx5-hangul
+                       fcitx5-rime
+                       fcitx5-skk
+                       fcitx5-unikey))))
+
+            ;; Font config.
+            (simple-service 'extra-fontconfig home-fontconfig-service-type
+              (let ((sans  "Noto Sans")
+                    (serif "Noto Serif")
+                    (mono  "Victor Mono")
+                    (emoji "Noto Color Emoji"))
+                `((alias
+                   (family "sans-serif")
+                   (prefer
+                    (family ,sans)
+                    (family ,emoji)))
+                  (alias
+                   (family "serif")
+                   (prefer
+                    (family ,serif)
+                    (family ,emoji)))
+                  (alias
+                   (family "monospace")
+                   (prefer
+                    (family ,mono)
+                    (family ,emoji)))
+
+                  ,@(map (lambda (name)
+                           `(alias
+                             (family ,name)
+                             (prefer
+                              (family ,sans)
+                              (family "sans-serif"))))
+                         '("BlinkMacSystemFont"
+                           "-apple-system"
+                           "system-ui"
+                           "ui-sans-serif"))
+                  (alias
+                   (family "ui-serif")
+                   (prefer
+                    (family ,serif)
+                    (family "serif")))
+                  (alias
+                   (family "ui-monospace")
+                   (prefer
+                    (family ,mono)
+                    (family "monospace"))))))
+
+            %rosenthal-desktop-home-services))))
+
+(define %my-os
+  (operating-system
+    (host-name "antelope")
+    (timezone "Europe/Paris")
+    (locale "en_US.utf8")
+    (keyboard-layout %my-keyboard-layout)
+
+    (kernel linux)
+    (firmware (cons* linux-firmware %base-firmware))
+
+    ;; Use the UEFI variant of GRUB with the EFI System
+    ;; Partition mounted on /boot/efi.
+    (bootloader
+      (bootloader-configuration
+        (bootloader grub-efi-bootloader)
+        (targets '("/boot/efi"))
+        (keyboard-layout %my-keyboard-layout)))
+
+    ;; Assume the target root file system is labelled "my-root",
+    ;; and the EFI System Partition has UUID 1234-ABCD.
+    (file-systems
+     (cons* (file-system
+              (device (file-system-label "my-root"))
+              (mount-point "/")
+              (type "ext4"))
+            (file-system
+              (device (uuid "1234-ABCD" 'fat))
+              (mount-point "/boot/efi")
+              (type "vfat"))
+            %base-file-systems))
+
+    (skeletons %rosenthal-skeletons)
+
+    (users
+     (cons* %my-user
+            (user-account
+              (inherit %root-account)
+              ;; Don't initialize password for root.
+              (password #f))
+            %base-user-accounts))
+
+    (packages
+     (append (specifications->packages
+              '(;; CLI utilities.
+                "curl"
+                "fd"
+                "git"
+                "gnupg"
+                "mosh"
+                "ncurses"
+                "ripgrep"
+                "rsync"
+                "unzip"
+
+                ;; Desktop, see also `%rosenthal-skeletons'.
+                "niri"
+                "dconf"
+                "wl-clipboard"
+                "xdg-desktop-portal-gnome"
+                "xdg-desktop-portal-gtk"
+                "xdg-utils"
+                "imv"                ;image viewer
+                "wezterm"            ;terminal emulator
+                "xwayland-satellite" ;rootless XWayland support
+                ))
+             %base-packages))
+
+    (services
+     (cons* (service guix-home-service-type
+              `((,(user-account-name %my-user) ,%my-home)))
+
+            %rosenthal-desktop-services/tuigreet))))
+
+((compose
+  ;; (nonguix-transformation-nvidia)
+  (nonguix-transformation-guix)
+  (rosenthal-transformation-guix))
+ %my-os)
