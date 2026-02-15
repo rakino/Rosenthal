@@ -1,0 +1,5 @@
+# The default Ctrl+Space has conflict with Emacs, change it to Super+Space.
+[Hotkey/TriggerKeys]
+0=Super+space
+1=Zenkaku_Hankaku
+2=Hangul
