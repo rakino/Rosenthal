@@ -36,6 +36,7 @@
   #:use-module (gnu packages fonts)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages guile)
+  #:use-module (gnu packages hardware)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages networking)
   #:use-module (gnu packages polkit)
@@ -645,6 +646,7 @@ gtk-key-theme-name = ~a~%"
 
          ;; Add udev rules for backlight control.
          (simple-service 'backlight udev-service-type (list light))
+         (simple-service 'backlight-external udev-service-type (list ddcutil))
 
          (modify-services %desktop-services
            (delete %display-manager-service-type)
