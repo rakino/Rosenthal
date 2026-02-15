@@ -77,6 +77,7 @@
             home-waybar-service-type
 
             %rosenthal-skeletons
+            %rosenthal-skeletons-installer
             %rosenthal-desktop-services/gdm
             %rosenthal-desktop-services/tuigreet
 
@@ -581,12 +582,19 @@ gtk-key-theme-name = ~a~%"
      ,(local-file "../examples/dot-config/autostart/shepherd.desktop"))
     (".config/niri/config.kdl"
      ,(local-file "../examples/dot-config/niri/config.kdl"))
-    (".config/noctalia/settings.json"
+    (".config/xfce4/helpers.rc"
+     ,(local-file "../examples/dot-config/xfce4/helpers.rc"))
+
+    ;; Selected from the default skeletons.
+    (".config/gdb/gdbinit" ,%default-gdbinit)
+    (".config/nano/nanorc" ,%default-nanorc)
+    (".guile" ,%default-dotguile)))
+
+(define %rosenthal-skeletons-installer
+  `((".config/noctalia/settings.json"
      ,(local-file "../examples/dot-config/noctalia/settings.json"))
     (".config/wezterm/wezterm.lua"
      ,(local-file "../examples/dot-config/wezterm/wezterm.lua"))
-    (".config/xfce4/helpers.rc"
-     ,(local-file "../examples/dot-config/xfce4/helpers.rc"))
     ;; Prevent Noctalia shell initial screen.
     (".cache/noctalia/shell-state.json"
      ,(computed-file "noctalia-shell-state.json"
@@ -603,11 +611,7 @@ gtk-key-theme-name = ~a~%"
                       ("instanceId" . "")))
                    port
                    #:pretty #t)))))))
-
-    ;; Selected from the default skeletons.
-    (".config/gdb/gdbinit" ,%default-gdbinit)
-    (".config/nano/nanorc" ,%default-nanorc)
-    (".guile" ,%default-dotguile)))
+    ,@%rosenthal-skeletons))
 
 
 ;;;
