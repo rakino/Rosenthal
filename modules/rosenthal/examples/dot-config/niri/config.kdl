@@ -266,12 +266,10 @@ layout {
 }
 
 // Add lines like this to spawn processes at startup.
-// Note that running niri as a session supports xdg-desktop-autostart,
-// which may be more convenient to use.
 // See the binds section below for more spawn examples.
 
-// This line starts waybar, a commonly used bar for Wayland compositors.
-// spawn-at-startup "waybar"
+// Start user Shepherd for Guix Home.
+spawn-at-startup "shepherd"
 
 // To run a shell command (with variables, pipes, etc.), use spawn-sh-at-startup:
 // spawn-sh-at-startup "qs -c ~/source/qs/MyAwesomeShell"
@@ -286,7 +284,7 @@ hotkey-overlay {
 // Additionally, clients will be informed that they are tiled, removing some client-side rounded corners.
 // This option will also fix border/focus ring drawing behind some semitransparent windows.
 // After enabling or disabling this, you need to restart the apps for this to take effect.
-// prefer-no-csd
+prefer-no-csd
 
 // You can change the path where screenshots are saved.
 // A ~ at the front will be expanded to the home directory.
@@ -311,14 +309,13 @@ animations {
 // Find more information on the wiki:
 // https://yalter.github.io/niri/Configuration:-Window-Rules
 
-// Work around WezTerm's initial configure bug
-// by setting an empty default-column-width.
+// Keep WezTerm maximized so that the installer won't be resized.
 window-rule {
     // This regular expression is intentionally made as specific as possible,
     // since this is the default config, and we want no false positives.
     // You can get away with just app-id="wezterm" if you want.
     match app-id=r#"^org\.wezfurlong\.wezterm$"#
-    default-column-width {}
+    open-maximized true
 }
 
 // Open the Firefox picture-in-picture player as floating by default.
@@ -327,6 +324,10 @@ window-rule {
     // - host Firefox (app-id is "firefox")
     // - Flatpak Firefox (app-id is "org.mozilla.firefox")
     match app-id=r#"firefox$"# title="^Picture-in-Picture$"
+    open-floating true
+}
+window-rule {
+    match app-id=r#"librewolf$"# title="^Picture-in-Picture$"
     open-floating true
 }
 
@@ -342,11 +343,20 @@ window-rule {
     // block-out-from "screencast"
 }
 
-// Example: enable rounded corners for all windows.
-// (This example rule is commented out with a "/-" in front.)
-/-window-rule {
-    geometry-corner-radius 12
+// Enable rounded corners for all windows.
+// For Noctalia shell.
+window-rule {
+    geometry-corner-radius 20
     clip-to-geometry true
+}
+
+debug {
+  honor-xdg-activation-with-invalid-serial
+}
+
+// Background color to match the wallpaper.
+overview {
+    backdrop-color "#D2DEE9"
 }
 
 binds {
@@ -622,32 +632,4 @@ binds {
     // Powers off the monitors. To turn them back on, do any input like
     // moving the mouse or pressing any other key.
     Mod+Shift+P { power-off-monitors; }
-}
-
-
-// Start user Shepherd.
-spawn-at-startup "shepherd"
-
-// Noctalia shell.
-window-rule {
-    geometry-corner-radius 20
-    clip-to-geometry true
-}
-
-debug {
-  honor-xdg-activation-with-invalid-serial
-}
-
-// Emacs has a window height > 100% whening using CSD.
-prefer-no-csd
-
-// Keep WezTerm maximized so that the installer won't be resized.
-window-rule {
-    match app-id="org.wezfurlong.wezterm"
-    open-maximized true
-}
-
-// Background color to match the wallpaper.
-overview {
-    backdrop-color "#D2DEE9"
 }
