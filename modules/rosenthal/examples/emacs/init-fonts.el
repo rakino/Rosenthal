@@ -1,5 +1,7 @@
 ;;; -*- lexical-binding: t -*-
 
+;; https://github.com/nykma/nema/blob/develop/my-sample/font.el
+
 ;;guix:font-adobe-source-serif
 ;;guix:font-google-noto-emoji
 ;;guix:font-sarasa-gothic

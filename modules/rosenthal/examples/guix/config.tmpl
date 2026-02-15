@@ -18,9 +18,8 @@
   (user-account
     (name "alice")
     ;; Initial password: test
-    ;; Generated using:
-    ;; echo "test" | guix shell openssl -- openssl passwd -6 -stdin
-    (password "$6$/KCO8Hq.mcvOg5IW$1r4sExgrmhKulz.0fhWGn3CYtLFYvcDPw8rJSxXET3O1uwuEZTcILcTQJ2eE8kDiBw/30.C7H3.xHISQo5CWj0")
+    ;; Change your password via `passwd' after logged in.
+    (password (crypt "test" "$6$abc"))
     (group "users")
     (supplementary-groups '("wheel" "audio" "video"))
     (shell (file-append fish "/bin/fish"))))
@@ -106,7 +105,7 @@
                        fcitx5-unikey))))
 
             ;; Font config.
-            (simple-service 'extra-fontconfig home-fontconfig-service-type
+            (simple-service 'extend-fontconfig home-fontconfig-service-type
               (let ((sans  "Noto Sans")
                     (serif "Noto Serif")
                     (mono  "Victor Mono")
