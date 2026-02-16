@@ -6,6 +6,7 @@
    "emacs-doom-modeline"
    "emacs-edit-indirect"                ;for emacs-markdown-mode.
    "emacs-envrc"
+   "emacs-evil"
    "emacs-fish-mode"
    "emacs-flycheck"
    "emacs-flycheck-guile"
