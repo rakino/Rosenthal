@@ -30,13 +30,8 @@
   :custom
   (fringe-mode 0)
   (modus-themes-italic-constructs t)
-  (scroll-bar-mode nil)
-  (tool-bar-mode nil)
-  (tooltip-mode nil)
   :config
-  (load-theme 'modus-operandi-tinted :no-confirm)
-  :hook
-  (after-init . menu-bar-mode))
+  (load-theme 'modus-operandi-tinted :no-confirm))
 
 (use-package corfu
   :custom
