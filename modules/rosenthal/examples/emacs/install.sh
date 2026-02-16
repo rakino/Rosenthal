@@ -1,7 +1,4 @@
 #!/bin/sh
-
-grep --recursive --no-filename '^;;guix:' . |
-    sed --regexp-extended 's/^;;guix:(.*)/"\1"/g' |
-    xargs guix install emacs-pgtk
-
-[[ ! -e ~/.config/emacs/init.el ]] && cp --recursive . ~/.config/emacs
+dir="$(dirname "$(realpath "$0")")"
+[[ ! -e ~/.config/emacs/init.el ]] && cp --recursive "$dir/." ~/.config/emacs
+guix package --install --manifest="$dir/manifest.scm" --dry-run

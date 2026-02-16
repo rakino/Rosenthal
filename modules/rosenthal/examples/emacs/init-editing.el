@@ -17,16 +17,13 @@
   (after-init . electric-pair-mode))
 
 ;; Check syntax on the fly.
-;;guix:emacs-flycheck
 (use-package flycheck
   :hook
   (after-init . global-flycheck-mode))
 
-;;guix:emacs-flycheck-guile
 (use-package flycheck-guile
   :after (flycheck geiser-guile))
 
-;;guix:emacs-geiser
 (use-package geiser
   :custom
   (geiser-autodoc-identifier-format "%s → %s")
@@ -55,7 +52,6 @@
                  (mouse-set-point event)
                  (popup-menu (context-menu)))))
 
-;;guix:emacs-geiser-guile
 (use-package geiser-guile
   :after (geiser)
   :custom
@@ -76,12 +72,10 @@
               "/run/current-system/profile/share/guile/site/3.0")))
     (add-to-list 'geiser-guile-load-path path t)))
 
-;;guix:emacs-macrostep
 (use-package macrostep
   :bind
   ("C-c e" . macrostep-expand))
 
-;;guix:emacs-macrostep-geiser
 (use-package macrostep-geiser
   :after (geiser-mode)
   :hook
@@ -92,7 +86,6 @@
   :hook
   (geiser-repl-mode . macrostep-geiser-setup))
 
-;;guix:emacs-puni
 (use-package puni
   :hook
   ((eval-expression-minibuffer-setup nxml-mode prog-mode sgml-mode tex-mode)

@@ -38,7 +38,6 @@
   :hook
   (after-init . menu-bar-mode))
 
-;;guix:emacs-corfu
 (use-package corfu
   :custom
   ;; Auto-completion.
@@ -50,7 +49,6 @@
   :hook
   (after-init . global-corfu-mode))
 
-;;guix:emacs-doom-modeline
 (use-package doom-modeline
   :custom
   (doom-modeline-icon nil)
@@ -58,7 +56,6 @@
   :hook
   (after-init . doom-modeline-mode))
 
-;;guix:emacs-helpful
 (use-package helpful
   :bind
   ([remap describe-function] . helpful-callable)
@@ -68,7 +65,6 @@
   ([remap describe-symbol]   . helpful-symbol)
   ("C-c C-d" . helpful-at-point))
 
-;;guix:emacs-hl-todo
 (use-package hl-todo
   :custom
   (hl-todo-highlight-punctuation ":")
@@ -82,13 +78,11 @@
   (regexp-search-ring-max 200)
   (search-ring-max 200))
 
-;;guix:emacs-mwim
 (use-package mwim
   :bind
   ([remap move-beginning-of-line] . mwim-beginning)
   ([remap move-end-of-line] . mwim-end))
 
-;;guix:emacs-orderless
 (use-package orderless
   :custom
   (completion-styles '(orderless basic))
@@ -101,12 +95,10 @@
   :hook
   (after-init . show-paren-mode))
 
-;;guix:emacs-rainbow-delimiters
 (use-package rainbow-delimiters
   :hook
   (prog-mode . rainbow-delimiters-mode))
 
-;;guix:emacs-vertico
 (use-package vertico
   :hook
   (after-init . vertico-mode))

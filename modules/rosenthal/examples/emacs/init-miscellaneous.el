@@ -1,6 +1,5 @@
 ;;; -*- lexical-binding: t -*-
 
-;;guix:emacs-daemons
 (use-package daemons
   :custom
   (daemons-list-fill-frame t))
@@ -18,12 +17,10 @@
   (dired-create-destination-dirs-on-trailing-dirsep t)
   (dired-vc-rename-file t))
 
-;;guix:emacs-envrc
 (use-package envrc
   :hook
   (after-init . envrc-global-mode))
 
-;;guix:emacs-magit
 (use-package magit
   :custom
   (git-commit-cd-to-toplevel t))
@@ -35,6 +32,5 @@
   (:map project-prefix-map
         ("m" . magit-project-status)))
 
-;;guix:emacs-forge
 (use-package forge
   :after (magit))

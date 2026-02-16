@@ -6,13 +6,11 @@
   (load custom-file))
 
 ;; Tweak garbage collection strategy.
-;;guix:emacs-gcmh
 (use-package gcmh
   :config
   (gcmh-mode 1))
 
 ;; Set default storage locations for various packages.
-;;guix:emacs-no-littering
 (use-package no-littering
   :config
   (no-littering-theme-backups))
