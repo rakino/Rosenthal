@@ -43,11 +43,12 @@
   ;; Auto-completion.
   (corfu-auto t)
   (corfu-auto-delay 0.3)
-  :config
-  ;; Free the `RET' key for less intrusive behavior.
-  (keymap-unset corfu-map "RET")
   :hook
-  (after-init . global-corfu-mode))
+  (after-init . global-corfu-mode)
+  :bind
+  ;; Free the `RET' key for less intrusive behavior.
+  (:map corfu-map
+        ("RET" . nil)))
 
 (use-package doom-modeline
   :custom
