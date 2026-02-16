@@ -1,9 +1,5 @@
 ;;; -*- lexical-binding: t -*-
 
-(use-package daemons
-  :custom
-  (daemons-list-fill-frame t))
-
 (use-package dired
   :custom
   (dired-listing-switches

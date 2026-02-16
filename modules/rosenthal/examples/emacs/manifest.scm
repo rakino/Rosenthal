@@ -3,7 +3,6 @@
 (specifications->manifest
  '("emacs-pgtk"
    "emacs-corfu"
-   "emacs-daemons"
    "emacs-doom-modeline"
    "emacs-envrc"
    "emacs-flycheck"
