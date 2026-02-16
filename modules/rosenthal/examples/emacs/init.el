@@ -32,7 +32,10 @@
 
 (progn
   (setopt initial-scratch-message
-          ";;; Type your Guile program here and evaluate it.\n\n")
+          "\
+;;; Type your Guile program here and evaluate it.
+;;; `M-x cua-mode' to use Ctrl-C/X/Z for copy, cut, paste.
+\n")
   (scheme-mode)
   (geiser-repl-import-module "(gnu)")
   (geiser-repl-import-module "(nonguix)")

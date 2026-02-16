@@ -11,8 +11,6 @@
   (setopt electric-indent-inhibit t)
   :hook
   (before-save . delete-trailing-whitespace)
-  ;; Use Ctrl-C/X/Z for copy, cut, paste.
-  (after-init . cua-mode)
   ;; Automatic parenthesis pairing.
   (after-init . electric-pair-mode))
 
