@@ -648,8 +648,7 @@ gtk-key-theme-name = ~a~%"
              (using-setuid? #f)))
 
          ;; Add udev rules for backlight control.
-         (simple-service 'backlight udev-service-type (list light))
-         (simple-service 'backlight-external udev-service-type (list ddcutil))
+         (simple-service 'backlight udev-service-type (list ddcutil light))
 
          (modify-services %desktop-services
            (delete %display-manager-service-type)
