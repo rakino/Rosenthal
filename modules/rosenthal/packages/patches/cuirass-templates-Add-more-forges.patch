@@ -1,14 +1,14 @@
-From b6c1341082102ff4416186cca549b5f05efda162 Mon Sep 17 00:00:00 2001
+From f45f42fe17a0037ce3b8c4f22537f257338734e5 Mon Sep 17 00:00:00 2001
 From: Hilton Chain <hako@ultrarare.space>
 Date: Sun, 30 Nov 2025 12:13:36 +0800
 Subject: [PATCH] templates: Add more forges.
 
 ---
- src/cuirass/templates.scm | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+ src/cuirass/templates.scm | 16 +++++++++++++---
+ 1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/src/cuirass/templates.scm b/src/cuirass/templates.scm
-index d591705..5518331 100644
+index 1cf7ebf..2ee29fa 100644
 --- a/src/cuirass/templates.scm
 +++ b/src/cuirass/templates.scm
 @@ -1526,7 +1526,9 @@ (define %vcs-web-views
@@ -22,6 +22,32 @@ index d591705..5518331 100644
  
  (define %vcs-web-commit-range-views
    ;; List of host names and corresponding URL to display a commit range.
+@@ -1541,7 +1543,13 @@ (define %vcs-web-commit-range-views
+                        (if (string-suffix? ".git" repository-url)
+                            (string-drop-right repository-url 4)
+                            repository-url)
+-                       "/compare/" commit1 ".." commit2))))
++                       "/compare/" commit1 ".." commit2)))
++        (sourcehut-url (lambda (repository-url _ commit2)
++                         (string-append
++                          (if (string-suffix? ".git" repository-url)
++                              (string-drop-right repository-url 4)
++                              repository-url)
++                          "/log/?from=" commit2))))
+    `(("git.savannah.gnu.org"
+       ,(lambda (repository-url commit1 commit2)
+          (string-append (string-replace-substring repository-url
+@@ -1552,7 +1560,9 @@ (define %vcs-web-commit-range-views
+      ("git.guix.gnu.org" ,github-url)             ;alias for codeberg.org
+      ("gitlab.com" ,gitlab-url)
+      ("gitlab.inria.fr" ,gitlab-url)
+-     ("github.com" ,github-url))))
++     ("github.com" ,github-url)
++     ("git.sr.ht" ,sourcehut-url)
++     ("git.urspace.moe" ,github-url))))
+ 
+ (define* (commit-hyperlink url commit
+                            #:optional (text commit))
 -- 
-2.51.2
+2.52.0
 
