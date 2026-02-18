@@ -75,11 +75,7 @@
       (inherit os)
       (kernel-loadable-modules
        `(,@(if boot?
-               `((,(package/inherit zfs
-                     (arguments
-                      (substitute-keyword-arguments (package-arguments zfs)
-                        ((#:linux _ #f) (operating-system-kernel os)))))
-                  "module"))
+               `((,zfs "module"))
                '())
          ,@(operating-system-kernel-loadable-modules os)))
       (services
