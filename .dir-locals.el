@@ -42,6 +42,7 @@
   .
   ((eval . (put 'computed-substitution-with-inputs 'scheme-indent-function 1))
    (eval . (put 'hidden-desktop-entry 'scheme-indent-function 1))
+   (eval . (put 'modify-services/by-name 'scheme-indent-function 1))
 
    (eval . (put 'btrbk-configuration 'scheme-indent-function 0))
    (eval . (put 'caddy-configuration 'scheme-indent-function 0))
