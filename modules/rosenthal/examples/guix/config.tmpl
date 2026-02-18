@@ -27,7 +27,18 @@
 (define %my-home
   (home-environment
     (packages (specifications->packages
-               '(;; File manager.
+               '(;; Desktop, see also `%rosenthal-skeletons'.
+                 "niri"
+                 "dconf"
+                 "wl-clipboard"
+                 "xdg-desktop-portal-gnome"
+                 "xdg-desktop-portal-gtk"
+                 "xdg-utils"
+                 "imv"                ;image viewer
+                 "wezterm"            ;terminal emulator
+                 "xwayland-satellite" ;rootless XWayland support
+
+                 ;; File manager.
                  "exo"
                  "file-roller"
                  "thunar"
@@ -46,7 +57,7 @@
 
                  "emacs-corfu"
                  "emacs-doom-modeline"
-                 "emacs-edit-indirect"                ;for emacs-markdown-mode.
+                 "emacs-edit-indirect"  ;for emacs-markdown-mode
                  "emacs-envrc"
                  "emacs-evil"
                  "emacs-fish-mode"
@@ -77,8 +88,7 @@
                  "font-google-noto-emoji"
                  "font-nerd-symbols"
                  "font-sarasa-gothic"
-                 "font-victor-mono"
-                 )))
+                 "font-victor-mono")))
     (services
      (cons* (service home-fish-service-type)
             (service home-keyboard-service-type %my-keyboard-layout)
@@ -199,26 +209,15 @@
      (append (specifications->packages
               '(;; CLI utilities.
                 "curl"
-                "fd"
+                "file"
                 "git"
                 "gnupg"
                 "mosh"
                 "ncurses"
-                "ripgrep"
                 "rsync"
                 "unzip"
-
-                ;; Desktop, see also `%rosenthal-skeletons'.
-                "niri"
-                "dconf"
-                "wl-clipboard"
-                "xdg-desktop-portal-gnome"
-                "xdg-desktop-portal-gtk"
-                "xdg-utils"
-                "imv"                ;image viewer
-                "wezterm"            ;terminal emulator
-                "xwayland-satellite" ;rootless XWayland support
-                ))
+                ;; Provide Wayland session for the login manager.
+                "niri"))
              %base-packages))
 
     (services
