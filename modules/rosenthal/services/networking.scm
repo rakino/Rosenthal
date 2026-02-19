@@ -5,6 +5,7 @@
   ;; Guile builtins
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-26)
   ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix records)
@@ -17,16 +18,73 @@
   #:use-module (gnu services configuration)
   #:use-module (gnu services dbus)
   #:use-module (gnu services shepherd)
+  ;; Guix Home - services
+  #:use-module (gnu home services)
+  #:use-module (gnu home services shepherd)
   ;; Guix packages
+  #:use-module (gnu packages admin)
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages networking)
   #:use-module (rosenthal packages networking)
-  #:export (sing-box-service-type
+  #:export (network-online-service-type
+            home-network-online-service-type
+
+            sing-box-service-type
             sing-box-configuration
 
             tailscale-configuration
             tailscale-service-type))
 
+
+;;;
+;;; network-online (https://codeberg.org/guix/guix/issues/838#issue-1886438)
+;;;
+
+(define* (%network-online-shepherd _ #:key home-service?)
+  (list (shepherd-service
+          (requirement (if home-service? '() '(networking)))
+          (provision '(network-online))
+          (documentation "Wait for the network to come up.")
+          (one-shot? #t)
+          (start
+           #~(lambda _
+               (let ((timeout #$(file-append coreutils-minimal "/bin/timeout"))
+                     (sh #$(file-append bash-minimal "/bin/sh"))
+                     (ping (if #$home-service?
+                               "ping"
+                               #$(file-append inetutils "/bin/ping"))))
+                 (zero?
+                  (system* timeout "60" sh "-c"
+                           (format #f "\
+  until ~a -qc1 -W1 example.org
+  do
+      sleep 1
+  done"
+                                   ping)))))))))
+
+(define network-online-service-type
+  (service-type
+    (name 'network-online)
+    (extensions
+     (list (service-extension shepherd-root-service-type
+                              %network-online-shepherd)))
+    (default-value #f)
+    (description "Wait for the network to come up.")))
+
+(define home-network-online-service-type
+  (service-type
+    (inherit network-online-service-type)
+    (name 'home-network-online)
+    (extensions
+     (list (service-extension home-shepherd-service-type
+                              (cut %network-online-shepherd <> #:home-service? #t))))))
+
+(define-service-type-mapping
+  network-online-service-type => home-network-online-service-type)
+
+
 ;;;
 ;;; sing-box
 ;;;

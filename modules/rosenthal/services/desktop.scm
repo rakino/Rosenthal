@@ -25,6 +25,7 @@
   #:use-module (gnu services sddm)
   #:use-module (gnu services xorg)
   #:use-module (rosenthal services base)
+  #:use-module (rosenthal services networking)
   ;; Guix Home - services
   #:use-module (gnu home)
   #:use-module (gnu home services)
@@ -626,7 +627,9 @@ gtk-key-theme-name = ~a~%"
         gdm-service-type
         sddm-service-type))
 
-  (cons* (service bluetooth-service-type
+  (cons* (service network-online-service-type)
+
+         (service bluetooth-service-type
            (bluetooth-configuration
              (auto-enable? #t)))
 
@@ -698,6 +701,8 @@ gtk-key-theme-name = ~a~%"
              ;; Start by WM to inherit environment variables for graphical session.
              (auto-start? #f)
              (daemonize? #f)))
+
+         (service home-network-online-service-type)
 
          ;; NOTE: The environment variable set by ‘home-dbus-service-type’ will
          ;; prevent GNOME from starting when using above Shepherd configuration.
