@@ -39,7 +39,7 @@
 (define-public noctalia-shell
   (package
     (name "noctalia-shell")
-    (version "4.4.3")
+    (version "4.5.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -48,7 +48,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1bcllxzpc3viyxizv9qqckbzxgsgsdki8pp60cns4nwzk89q4yp4"))))
+                "1syqsml49jfjpngi7b099jcggp66lrls0ha6w5daqd5xhd2z94v3"))))
     (build-system copy-build-system)
     (arguments
      (list

@@ -51,6 +51,11 @@
             {
                 "action": "shutdown",
                 "enabled": true
+            },
+            {
+                "action": "rebootToUefi",
+                "command": "loginctl reboot --firmware-setup",
+                "enabled": true
             }
         ],
         "showHeader": true,
