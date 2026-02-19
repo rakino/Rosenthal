@@ -587,10 +587,7 @@ gtk-key-theme-name = ~a~%"
     (".config/xfce4/helpers.rc"
      ,(local-file "../examples/dot-config/xfce4/helpers.rc"))
 
-    ;; Selected from the default skeletons.
-    (".config/gdb/gdbinit" ,%default-gdbinit)
-    (".config/nano/nanorc" ,%default-nanorc)
-    (".guile" ,%default-dotguile)))
+    ,@(default-skeletons)))
 
 (define %rosenthal-skeletons-installer
   `((".config/noctalia/settings.json"
