@@ -54,8 +54,11 @@
       (atuin)
     (home-fish-extension
       (config
-       (list (mixed-text-file "atuin.fish"
-               atuin "/bin/atuin init fish | source\n"))))))
+       (list (mixed-text-file "atuin.fish" "\
+status is-interactive
+and begin
+    " atuin "/bin/atuin init fish | source
+end\n"))))))
 
 (define home-fish-plugin-atuin-service-type
   (service-type
@@ -88,8 +91,11 @@
       (direnv)
     (home-fish-extension
       (config
-       (list (mixed-text-file "direnv.fish"
-               direnv "/bin/direnv hook fish | source\n"))))))
+       (list (mixed-text-file "direnv.fish" "\
+status is-interactive
+and begin
+    " direnv "/bin/direnv hook fish | source
+end\n"))))))
 
 (define home-fish-plugin-direnv-service-type
   (service-type
@@ -122,8 +128,11 @@
       (zoxide)
     (home-fish-extension
       (config
-       (list (mixed-text-file "zoxide.fish"
-               zoxide "/bin/zoxide init --cmd cd fish | source\n"))))))
+       (list (mixed-text-file "zoxide.fish" "\
+status is-interactive
+and begin
+    " zoxide "/bin/zoxide init --cmd cd fish | source
+end\n"))))))
 
 (define home-fish-plugin-zoxide-service-type
   (service-type
