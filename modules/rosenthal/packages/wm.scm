@@ -125,7 +125,7 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
            coreutils-minimal
            ddcutil
            elogind
-           fastfetch
+           fastfetch-minimal
            findutils
            fontconfig
            git-minimal
