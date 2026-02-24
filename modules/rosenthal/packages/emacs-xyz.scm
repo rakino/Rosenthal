@@ -102,7 +102,8 @@ some keybindings are slightly simplified.")
       (home-page "https://github.com/taquangtrung/emacs-kdl-mode")
       (synopsis "Emacs major mode for editing files in the KDL document language")
       (description "")
-      (license license:gpl3+))))
+      (license license:gpl3+)
+      (properties '((disable-updater? . #t))))))
 
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
