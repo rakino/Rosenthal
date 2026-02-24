@@ -1,7 +1,9 @@
 ;; SPDX-License-Identifier: CC0-1.0
 ;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
 
-(use-modules (guix profiles)
+(use-modules (guix packages)
+             (guix profiles)
              (rosenthal utils packages))
 
-(manifest (map package->manifest-entry (all-rosenthal-packages)))
+(manifest (map package->manifest-entry
+               (filter supported-package? (all-rosenthal-packages))))
