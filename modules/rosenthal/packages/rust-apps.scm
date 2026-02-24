@@ -17,7 +17,7 @@
 (define-public atuin
   (package
     (name "atuin")
-    (version "18.9.0")
+    (version "18.12.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -26,7 +26,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "026acssbzz01xfzl3acq56szzpyh76dzwp2m8z1pi29hlmbnyfli"))))
+                "0gm7b4xzvks3fs0i6ijaajq47djr0ydfyac32c2liqdvikq0ncm2"))))
     (build-system cargo-build-system)
     (arguments
      (list
