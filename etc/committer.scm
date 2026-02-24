@@ -5,7 +5,7 @@
 ;;; Copyright © 2020, 2021, 2022, 2023 Ricardo Wurmus <rekado@elephly.net>
 ;;; Copyright © 2021 Sarah Morgensen <iskarian@mgsn.dev>
 ;;; Copyright © 2021 Xinglu Chen <public@yoctocell.xyz>
-;;; Copyright © 2022 Maxim Cournoyer <maxim.cournoyer@gmail.com>
+;;; Copyright © 2022 Maxim Cournoyer <maxim@guixotic.coop>
 
 ;;; Commentary:
 
@@ -267,37 +267,43 @@ corresponding to the top-level definition containing the staged changes."
   (define variable-name
     (second old))
   (define version
-    (and=> ((xpath:node-or
+    (match ((xpath:node-or
              (xpath:sxpath '(*any* *any* package version *any*))
              ;; For let binding
              (xpath:sxpath '(*any* *any* (*any*) package version *any*)))
             (cons '*TOP* new))
-           first))
-  (format port
-          "rosenthal: ~a: Update to ~a.~%~%* ~a (~a): Update to ~a.~%"
-          variable-name version file-name variable-name version)
+      (() #f)
+      ((version . rest) version)))
+  (if version
+      (format port
+              "rosenthal: ~a: Update to ~a.~%~%* ~a (~a): Update to ~a.~%"
+              variable-name version file-name variable-name version)
+      (format port
+              "rosenthal: ~a: Update.~%~%* ~a (~a): Update.~%"
+              variable-name file-name variable-name))
   (for-each (lambda (field)
               (let ((old-values (get-values old field))
                     (new-values (get-values new field)))
                 (or (equal? old-values new-values)
                     (let ((removed (lset-difference equal? old-values new-values))
                           (added (lset-difference equal? new-values old-values)))
-                      (format port
-                              "[~a]: ~a~%" field
-                              (break-string
-                               ;; A dependency can be a list of (pkg output).
-                               (match (list (map object->string removed)
-                                            (map object->string added))
-                                 ((() added)
-                                  (format #f "Add ~a."
-                                          (listify added)))
-                                 ((removed ())
-                                  (format #f "Remove ~a."
-                                          (listify removed)))
-                                 ((removed added)
-                                  (format #f "Remove ~a; add ~a."
-                                          (listify removed)
-                                          (listify added))))))))))
+                      (unless (and (null? added) (null? removed))
+                        (format port
+                                "[~a]: ~a~%" field
+                                (break-string
+                                 ;; A dependency can be a list of (pkg output).
+                                 (match (list (map object->string removed)
+                                              (map object->string added))
+                                   ((() added)
+                                    (format #f "Add ~a."
+                                            (listify added)))
+                                   ((removed ())
+                                    (format #f "Remove ~a."
+                                            (listify removed)))
+                                   ((removed added)
+                                    (format #f "Remove ~a; add ~a."
+                                            (listify removed)
+                                            (listify added)))))))))))
             '(inputs propagated-inputs native-inputs)))
 
 (define* (add-commit-message file-name variable-name
