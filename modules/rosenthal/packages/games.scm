@@ -12,20 +12,27 @@
   ;; Guix build systems
   #:use-module (guix build-system cmake)
   ;; Guix packages
+  #:use-module (gnu packages aidc)
+  #:use-module (gnu packages backup)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages gl)
   #:use-module (gnu packages java)
   #:use-module (gnu packages kde-frameworks)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages markup)
+  #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages pulseaudio)
   #:use-module (gnu packages qt)
+  #:use-module (gnu packages sdl)
   #:use-module (gnu packages xorg))
 
 ;; Copied from Guix Gaming Channels
 (define-public prismlauncher/dolly
   (package
     (name "prismlauncher-dolly")
-    (version "9.4")
+    (version "10.0.5")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -35,7 +42,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1xxgyx0z5r3hk3yk4gglbfwvq2qk1j9a0dkrv55j4vrlkni79nrm"))))
+                "0phmnc0fhzcw7dw35ldx3r387wxa3sjbcvq5yzy9dh9myg1ik6c6"))))
     (build-system cmake-build-system)
     (arguments
      `(#:phases
@@ -58,23 +65,31 @@
                                             "/lib"))
                            '("libx11" "libxext" "libxcursor"
                              "libxrandr" "libxxf86vm" "pulseaudio" "mesa")))))))))))
-    (native-inputs (list extra-cmake-modules))
-    (inputs (list bash-minimal ; for wrap-program
-                  zlib
-                  qtbase
-                  qt5compat
-                  qtnetworkauth
-                  qtwayland
-                  qtsvg
-                  xrandr
-                  libx11
-                  libxext
-                  libxcursor
-                  libxrandr
-                  libxxf86vm
-                  pulseaudio
-                  mesa
-                  `(,openjdk17 "jdk")))
+    (native-inputs
+     (list extra-cmake-modules
+           pkg-config))
+    (inputs
+     (list bash-minimal ; for wrap-program
+           cmark
+           gamemode
+           libarchive
+           libx11
+           libxcursor
+           libxext
+           libxrandr
+           libxxf86vm
+           mesa
+           `(,openjdk17 "jdk")
+           pulseaudio
+           qrencode
+           qt5compat
+           qtbase
+           qtnetworkauth
+           qtsvg
+           qtwayland
+           tomlplusplus
+           xrandr
+           zlib))
     (home-page "https://prismlauncher.org/")
     (synopsis "Free, open source launcher for Minecraft")
     (description
