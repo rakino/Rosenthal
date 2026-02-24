@@ -421,7 +421,8 @@ multi-tenant, long-term storage for Prometheus.")
     (home-page "https://grafana.com/oss/mimir/")
     (license license:agpl3)
     (supported-systems '("x86_64-linux"))
-    (properties '((upstream-name . "mimir")))))
+    (properties '((upstream-name . "mimir")
+                  (disable-updater? . #t)))))
 
 (define-public loki-bin
   (package
