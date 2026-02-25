@@ -297,7 +297,6 @@ headers.  This can expose sensitive information in your logs.")
    (extensions
     (list (service-extension home-shepherd-service-type
                              home-wakapi-shepherd-service)))
-   (default-value (home-wakapi-configuration))
    (description "Run Wakapi, a self-hosted WakaTime-compatible backend.")))
 
 
