@@ -597,20 +597,12 @@ gtk-key-theme-name = ~a~%"
      ,(local-file "../examples/dot-config/wezterm/wezterm.lua"))
     ;; Prevent Noctalia shell initial screen.
     (".cache/noctalia/shell-state.json"
-     ,(computed-file "noctalia-shell-state.json"
-        (with-extensions (list guile-json-4)
-          #~(begin
-              (use-modules (json))
-              (call-with-output-file #$output
-                (lambda (port)
-                  (scm->json
-                   `(("changelogState"
-                      ("lastSeenVersion"
-                       . ,(string-append "v" #$(package-version noctalia-shell))))
-                     ("telemetry"
-                      ("instanceId" . "")))
-                   port
-                   #:pretty #t)))))))
+     ,(json-file "noctalia-shell-state.json"
+        #~'(("changelogState"
+             ("lastSeenVersion"
+              . #$(string-append "v" (package-version noctalia-shell))))
+            ("telemetry"
+             ("instanceId" . "")))))
     ,@%rosenthal-skeletons))
 
 

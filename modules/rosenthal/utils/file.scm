@@ -7,12 +7,14 @@
   ;; Utilities
   #:use-module (guix gexp)
   ;; Guix packages
+  #:use-module (gnu packages guile)
   #:use-module (gnu packages guile-xyz)
   #:export (computed-substitution-with-inputs
             file-content
             hidden-desktop-entry
 
             ini-file
+            json-file
             yaml-file))
 
 ;; XXX: ‘substitute*’ doesn't fully support Unicode:
@@ -66,6 +68,17 @@ format."
           (use-modules (srfi srfi-26) (ini))
           (call-with-output-file #$output
             (cut scm->ini #$exp #:port <>))))))
+
+;; https://github.com/aconchillo/guile-json
+(define (json-file name exp)
+  "Return file-like object NAME, serialized from G-expression EXP in JSON
+format."
+  (computed-file name
+    (with-extensions (list guile-json-4)
+      #~(begin
+          (use-modules (srfi srfi-26) (json))
+          (call-with-output-file #$output
+            (cut scm->json #$exp <> #:pretty #t))))))
 
 ;; https://gitlab.com/yorgath/guile-yamlpp
 (define (yaml-file name exp)
