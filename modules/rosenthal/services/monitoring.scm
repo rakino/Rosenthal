@@ -8,7 +8,6 @@
   #:use-module (guix records)
   #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils predicates)
-  #:use-module (rosenthal utils serializers yaml)
   ;; Guix System
   #:use-module (gnu system shadow)
   ;; Guix System - services

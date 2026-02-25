@@ -5,8 +5,8 @@
   ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix records)
+  #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils predicates)
-  #:use-module (rosenthal utils serializers yaml)
   ;; Guix System
   #:use-module (gnu system shadow)
   ;; Guix System - services
@@ -274,16 +274,14 @@ headers.  This can expose sensitive information in your logs.")
    (file-like wakapi-bin)
    "The wakapi package.")
   (config
-   (yaml-config '())
+   gexp
    "Association list of Wakapi configurations.")
   (no-serialization))
 
 (define home-wakapi-shepherd-service
   (match-record-lambda <home-wakapi-configuration>
       (wakapi config)
-    (let ((config-file (mixed-text-file
-                        "wakapi.yaml"
-                        #~(string-append #$@(yaml-serialize config) "\n"))))
+    (let ((config-file (yaml-file "wakapi.yaml" config)))
       (list (shepherd-service
              (documentation "Run wakapi.")
              (provision '(wakapi))
