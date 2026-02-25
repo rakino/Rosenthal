@@ -6,8 +6,8 @@
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix records)
+  #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils predicates)
-  #:use-module (rosenthal utils serializers ini)
   #:use-module (rosenthal utils serializers yaml)
   ;; Guix System
   #:use-module (gnu system shadow)
@@ -99,7 +99,7 @@
    (file-like grafana-bin)
    "")
   (config
-   ini-config
+   gexp
    "")
   (postgresql-password-file
    string
@@ -158,13 +158,7 @@
 (define grafana-shepherd
   (match-record-lambda <grafana-configuration>
       (grafana config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file
-           (computed-file "grafana.ini"
-             (with-extensions (list guile-ini guile-lib guile-smc)
-               #~(begin
-                   (use-modules (srfi srfi-26) (ini))
-                   (call-with-output-file #$output
-                     (cut scm->ini '#$config #:port <>)))))))
+    (let ((config-file (ini-file "grafana.ini" config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback postgresql user-processes

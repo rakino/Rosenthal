@@ -6,8 +6,8 @@
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix records)
+  #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils predicates)
-  #:use-module (rosenthal utils serializers ini)
   #:use-module (rosenthal utils serializers yaml)
   ;; Guix System
   #:use-module (gnu system privilege)
@@ -281,7 +281,7 @@ reload its configuration file."))
    (list-of-file-likes (list git git-lfs))
    "@code{git} and extension packages to install.")
   (config
-   ini-config
+   gexp
    "")
   (postgresql-password-file
    string
@@ -331,13 +331,7 @@ reload its configuration file."))
 (define forgejo-shepherd-service
   (match-record-lambda <forgejo-configuration>
       (forgejo config)
-    (let ((config-file
-           (computed-file "forgejo.ini"
-             (with-extensions (list guile-ini guile-lib guile-smc)
-               #~(begin
-                   (use-modules (srfi srfi-26) (ini))
-                   (call-with-output-file #$output
-                     (cut scm->ini '#$config #:port <>)))))))
+    (let ((config-file (ini-file "forgejo.ini" config)))
       (list (shepherd-service
               (documentation "Run Forgejo.")
               (provision '(forgejo))

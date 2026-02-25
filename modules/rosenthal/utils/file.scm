@@ -6,9 +6,13 @@
   #:use-module (ice-9 textual-ports)
   ;; Utilities
   #:use-module (guix gexp)
+  ;; Guix packages
+  #:use-module (gnu packages guile-xyz)
   #:export (computed-substitution-with-inputs
             file-content
-            hidden-desktop-entry))
+            hidden-desktop-entry
+
+            ini-file))
 
 ;; XXX: ‘substitute*’ doesn't fully support Unicode:
 ;; https://codeberg.org/guix/guix/src/commit/a88d6a45e422cede96d57d7a953439dc27c6a50c/guix/build/utils.scm#L964
@@ -45,3 +49,19 @@
           (substitute* #$output
             (("^\\[Desktop Entry\\].*" all)
              (string-append all "NoDisplay=true\n")))))))
+
+
+;;;
+;;; Serializers.
+;;;
+
+;; https://github.com/artyom-poptsov/guile-ini
+(define (ini-file name exp)
+  "Return file-like object NAME, serialized from G-expression EXP in INI
+format."
+  (computed-file name
+    (with-extensions (list guile-ini guile-lib guile-smc)
+      #~(begin
+          (use-modules (srfi srfi-26) (ini))
+          (call-with-output-file #$output
+            (cut scm->ini #$exp #:port <>))))))
