@@ -644,7 +644,7 @@ test its configuration file."))
    (string "misskey/misskey:latest")
    "Misskey docker image to use.")
   (config
-   yaml-config
+   gexp
    "Alist of Misskey configuration, to be serialized to YAML format.")
   (data-directory
    (string "/var/lib/misskey")
@@ -692,16 +692,7 @@ test its configuration file."))
 (define misskey-oci
   (match-record-lambda <misskey-configuration>
       (image config data-directory log-file )
-    (let ((config-file
-           (computed-file "misskey.yaml"
-             (with-extensions (list guile-yamlpp)
-               #~(begin
-                   (use-modules (yamlpp))
-                   (call-with-output-file #$output
-                     (lambda (port)
-                       (let ((emitter (make-yaml-emitter)))
-                         (yaml-emit! emitter '#$config)
-                         (display (yaml-emitter-string emitter) port)))))))))
+    (let ((config-file (yaml-file "misskey.yaml" config)))
       (oci-extension
         (containers
          (list (oci-container-configuration

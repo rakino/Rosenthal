@@ -198,7 +198,7 @@
    (file-like loki-bin)
    "")
   (config
-   yaml-config
+   gexp
    "")
   (group-id
    (user-and-group-id #f)
@@ -245,16 +245,7 @@
 (define loki-shepherd
   (match-record-lambda <loki-configuration>
       (loki config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file
-           (computed-file "loki.yaml"
-             (with-extensions (list guile-yamlpp)
-               #~(begin
-                   (use-modules (yamlpp))
-                   (call-with-output-file #$output
-                     (lambda (port)
-                       (let ((emitter (make-yaml-emitter)))
-                         (yaml-emit! emitter '#$config)
-                         (display (yaml-emitter-string emitter) port)))))))))
+    (let ((config-file (yaml-file "loki.yaml" config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback user-processes ,@shepherd-requirement))
@@ -291,7 +282,7 @@
    (file-like mimir-bin)
    "")
   (config
-   yaml-config
+   gexp
    "")
   (group-id
    (user-and-group-id #f)
@@ -338,16 +329,7 @@
 (define mimir-shepherd
   (match-record-lambda <mimir-configuration>
       (mimir config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file
-           (computed-file "mimir.yaml"
-             (with-extensions (list guile-yamlpp)
-               #~(begin
-                   (use-modules (yamlpp))
-                   (call-with-output-file #$output
-                     (lambda (port)
-                       (let ((emitter (make-yaml-emitter)))
-                         (yaml-emit! emitter '#$config)
-                         (display (yaml-emitter-string emitter) port)))))))))
+    (let ((config-file (yaml-file "mimir.yaml" config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback user-processes ,@shepherd-requirement))
@@ -387,7 +369,7 @@
    (string "0.0.0.0:9090")
    "")
   (config
-   yaml-config
+   gexp
    "")
   (group-id
    (user-and-group-id #f)
@@ -434,16 +416,7 @@
 (define prometheus-shepherd
   (match-record-lambda <prometheus-configuration>
       (prometheus listen-address config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file
-           (computed-file "prometheus.yml"
-             (with-extensions (list guile-yamlpp)
-               #~(begin
-                   (use-modules (yamlpp))
-                   (call-with-output-file #$output
-                     (lambda (port)
-                       (let ((emitter (make-yaml-emitter)))
-                         (yaml-emit! emitter '#$config)
-                         (display (yaml-emitter-string emitter) port)))))))))
+    (let ((config-file (yaml-file "prometheus.yml" config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback user-processes ,@shepherd-requirement))

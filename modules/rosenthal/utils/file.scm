@@ -12,7 +12,8 @@
             file-content
             hidden-desktop-entry
 
-            ini-file))
+            ini-file
+            yaml-file))
 
 ;; XXX: ‘substitute*’ doesn't fully support Unicode:
 ;; https://codeberg.org/guix/guix/src/commit/a88d6a45e422cede96d57d7a953439dc27c6a50c/guix/build/utils.scm#L964
@@ -65,3 +66,17 @@ format."
           (use-modules (srfi srfi-26) (ini))
           (call-with-output-file #$output
             (cut scm->ini #$exp #:port <>))))))
+
+;; https://gitlab.com/yorgath/guile-yamlpp
+(define (yaml-file name exp)
+  "Return file-like object NAME, serialized from G-expression EXP in YAML
+format."
+  (computed-file name
+    (with-extensions (list guile-yamlpp)
+      #~(begin
+          (use-modules (yamlpp))
+          (call-with-output-file #$output
+            (lambda (port)
+              (let ((emitter (make-yaml-emitter)))
+                (yaml-emit! emitter #$exp)
+                (display (yaml-emitter-string emitter) port))))))))
