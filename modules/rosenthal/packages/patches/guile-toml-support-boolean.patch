@@ -1,0 +1,37 @@
+From 2f7e3c6f46233f9c9159fac61ca4121fe342107f Mon Sep 17 00:00:00 2001
+From: Hilton Chain <hako@ultrarare.space>
+Date: Thu, 26 Feb 2026 09:57:51 +0800
+Subject: [PATCH] builder: Support boolean value.
+
+* toml/builder.scm (toml-build-boolean): New procedure.
+(toml-build-value): Use it.
+---
+ toml/builder.scm | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
+
+diff --git a/toml/builder.scm b/toml/builder.scm
+index f6bdcea..3531c6f 100644
+--- a/toml/builder.scm
++++ b/toml/builder.scm
+@@ -74,6 +74,9 @@
+                                (else (string c))))
+                             (string->list s))))
+ 
++(define (toml-build-boolean b port)
++  (put-string port (if b "true" "false")))
++
+ (define (toml-build-string s port)
+   (define quote-type (if (or
+                           (string-contains s "\\")
+@@ -198,7 +201,7 @@
+        (scm port #:key (newline? #t) (inline? #f))
+      (cond
+       ;; ((eq? scm null) (toml-build-null port))
+-      ;; ((boolean? scm) (toml-build-boolean scm port))
++      ((boolean? scm) (toml-build-boolean scm port))
+       ;; ((symbol? scm) (toml-build-string (symbol->string scm) port))
+ 
+       ;; TODO float (nan, inf)
+-- 
+2.52.0
+
