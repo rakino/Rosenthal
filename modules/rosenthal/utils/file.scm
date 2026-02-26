@@ -9,12 +9,14 @@
   ;; Guix packages
   #:use-module (gnu packages guile)
   #:use-module (gnu packages guile-xyz)
+  #:use-module (rosenthal packages guile-xyz)
   #:export (computed-substitution-with-inputs
             file-content
             hidden-desktop-entry
 
             ini-file
             json-file
+            toml-file
             yaml-file))
 
 ;; XXX: ‘substitute*’ doesn't fully support Unicode:
@@ -79,6 +81,19 @@ format."
           (use-modules (srfi srfi-26) (json))
           (call-with-output-file #$output
             (cut scm->json #$exp <> #:pretty #t))))))
+
+;; https://github.com/hylophile/guile-toml
+;; TODO: TOML writing support is incomplete.
+;; See https://github.com/hylophile/guile-toml/blob/main/toml/builder.scm.
+(define (toml-file name exp)
+  "Return file-like object NAME, serialized from G-expression EXP in TOML
+format."
+  (computed-file name
+    (with-extensions (list guile-json-4 guile-toml)
+      #~(begin
+          (use-modules (srfi srfi-26) (toml))
+          (call-with-output-file #$output
+            (cut scm->toml #$exp <>))))))
 
 ;; https://gitlab.com/yorgath/guile-yamlpp
 (define (yaml-file name exp)

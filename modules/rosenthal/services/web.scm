@@ -185,7 +185,7 @@ reload its configuration file."))
    (string "/var/lib/conduit")
    "")
   (config
-   file-like
+   gexp
    "")
   ;; Account
   (group-id
@@ -235,20 +235,21 @@ reload its configuration file."))
 (define conduit-shepherd
   (match-record-lambda <conduit-configuration>
       (conduit config auto-start? shepherd-provision shepherd-requirement)
-    (list (shepherd-service
-            (provision shepherd-provision)
-            (requirement `(networking user-processes ,@shepherd-requirement))
-            (start
-             #~(make-forkexec-constructor
-                (list #$conduit)
-                #:user "conduit"
-                #:group "conduit"
-                #:log-file "/var/log/conduit.log"
-                #:environment-variables
-                (list (string-append "CONDUIT_CONFIG=" #$config))))
-            (stop #~(make-kill-destructor))
-            (actions
-             (list (shepherd-configuration-action config)))))))
+    (let ((config-file (toml-file "conduit.toml" config)))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement `(networking user-processes ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$conduit)
+                  #:user "conduit"
+                  #:group "conduit"
+                  #:log-file "/var/log/conduit.log"
+                  #:environment-variables
+                  (list (string-append "CONDUIT_CONFIG=" #$config-file))))
+              (stop #~(make-kill-destructor))
+              (actions
+               (list (shepherd-configuration-action config-file))))))))
 
 (define conduit-service-type
   (service-type
@@ -384,7 +385,7 @@ reload its configuration file."))
    (file-like iocaine)
    "")
   (config
-   file-object
+   gexp
    "")
   (log-file
    (string "/var/log/iocaine.log")
@@ -425,7 +426,7 @@ reload its configuration file."))
 (define iocaine-etc
   (match-record-lambda <iocaine-configuration>
       (config)
-    `(("iocaine/iocaine.toml" ,config))))
+    `(("iocaine/iocaine.toml" ,(toml-file "iocaine.toml" config)))))
 
 (define iocaine-shepherd-service
   (match-record-lambda <iocaine-configuration>
@@ -743,8 +744,8 @@ test its configuration file."))
   (auto-start?
    (boolean #t)
    "")
-  (extra-config
-   (string "")
+  (config
+   (gexp #~'())
    "")
   (no-serialization))
 
@@ -765,14 +766,13 @@ test its configuration file."))
 
 (define navidrome-shepherd-service
   (match-record-lambda <navidrome-configuration>
-      (navidrome ffmpeg auto-start? extra-config)
+      (navidrome ffmpeg auto-start? config)
     (let ((config-file
-           (mixed-text-file
-            "navidrome.toml"
-            "DataFolder = '/var/lib/navidrome'\n"
-            "CacheFolder = '/var/lib/navidrome/cache'\n"
-            "EnableInsightsCollector = false\n"
-            extra-config)))
+           (toml-file "navidrome.toml"
+             #~`(("DataFolder" . "/var/lib/navidrome")
+                 ("CacheFolder" . "/var/lib/navidrome/cache")
+                 ("EnableInsightsCollector" . #f)
+                 ,@#$config))))
       (list (shepherd-service
              (documentation "Run Navidrome.")
              (provision '(navidrome))
