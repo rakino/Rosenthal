@@ -78,31 +78,30 @@
                             current-label)
                     (unless (null? old-labels)
                       (format port "~%/GNU system, old configurations...~%"))
-                    (false-if-exception
-                     (let loop ((count 1)
-                                (labels old-labels)
-                                (args old-args))
-                       (let* ((image-name (format #f "OLD-~a.EFI" count)))
-                         (unless (null? labels)
-                           (with-exception-handler
-                               (lambda _
-                                 (false-if-exception (delete-file image-name))
-                                 (exit))
-                             (lambda ()
-                               (when (< (free-disk-space ".") minbytes)
-                                 (raise-exception 'insuffcient-disk-space))
-                               (apply invoke/quiet
-                                      ukify "build" "--output" image-name
-                                      (first args))
-                               (format port "~
+                    (let loop ((count 1)
+                               (labels old-labels)
+                               (args old-args))
+                      (let* ((image-name (format #f "OLD-~a.EFI" count)))
+                        (unless (null? labels)
+                          (with-exception-handler
+                              (lambda _
+                                (false-if-exception (delete-file image-name))
+                                (exit))
+                            (lambda ()
+                              (when (< (free-disk-space ".") minbytes)
+                                (raise-exception 'insuffcient-disk-space))
+                              (apply invoke/quiet
+                                     ukify "build" "--output" image-name
+                                     (first args))
+                              (format port "~
 //~a
   protocol: efi
   path: boot():/EFI/Guix/OLD-~a.EFI~%"
-                                       (first labels)
-                                       count)))
-                           (loop (1+ count)
-                                 (cdr labels)
-                                 (cdr args))))))))))
+                                      (first labels)
+                                      count)))
+                          (loop (1+ count)
+                                (cdr labels)
+                                (cdr args)))))))))
             (rename-file (in-vicinity limine-directory "limine.conf.tmp")
                          (in-vicinity limine-directory "limine.conf")))))))
 
