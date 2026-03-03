@@ -17,6 +17,7 @@
         (gnu system privilege)
         (rosenthal bootloader grub)
         (rosenthal bootloader uki)
+        (rosenthal bootloader limine)
 
         (gnu services desktop)
         (gnu services guix)
