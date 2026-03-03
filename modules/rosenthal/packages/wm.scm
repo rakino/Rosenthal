@@ -40,7 +40,7 @@
 (define-public noctalia-shell
   (package
     (name "noctalia-shell")
-    (version "4.5.0")
+    (version "4.6.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -49,7 +49,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1syqsml49jfjpngi7b099jcggp66lrls0ha6w5daqd5xhd2z94v3"))))
+                "12plnkf46ncw9cx5mh2di23jvwd0hbxayr5bjlaj9blz63r10cjs"))))
     (build-system copy-build-system)
     (arguments
      (list
@@ -136,10 +136,10 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
            imagemagick
            khal
            network-manager
+           noctalia-qs
            python-minimal
            qtbase
            qtwayland
-           quickshell
            which
            wl-clipboard
            wlsunset
