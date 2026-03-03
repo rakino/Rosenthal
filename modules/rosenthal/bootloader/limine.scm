@@ -56,7 +56,7 @@
                  (limine-directory (in-vicinity directory "EFI/BOOT"))
                  (guix-directory (in-vicinity directory "EFI/Guix")))
             (for-each mkdir-p (list limine-directory guix-directory))
-            (install-file #$limine limine-directory)
+            ;; Install unified kernel images and generate Limine configuration.
             (call-with-output-file (in-vicinity limine-directory "limine.conf.tmp")
               (lambda (port)
                 (let* ((ukify #$(file-append ukify "/bin/ukify"))
@@ -78,32 +78,36 @@
                             current-label)
                     (unless (null? old-labels)
                       (format port "~%/GNU system, old configurations...~%"))
-                    (let loop ((count 1)
-                               (labels old-labels)
-                               (args old-args))
-                      (let* ((image-name (format #f "OLD-~a.EFI" count)))
-                        (unless (null? labels)
-                          (with-exception-handler
-                              (lambda _
-                                (false-if-exception (delete-file image-name))
-                                (exit))
-                            (lambda ()
-                              (when (< (free-disk-space ".") minbytes)
-                                (raise-exception 'insuffcient-disk-space))
-                              (apply invoke/quiet
-                                     ukify "build" "--output" image-name
-                                     (first args))
-                              (format port "~
+                    (false-if-exception
+                     (let loop ((count 1)
+                                (labels old-labels)
+                                (args old-args))
+                       (let* ((image-name (format #f "OLD-~a.EFI" count)))
+                         (unless (null? labels)
+                           (with-exception-handler
+                               (lambda _
+                                 (false-if-exception (delete-file image-name))
+                                 ;; Exit loop.
+                                 (loop 0 '() '()))
+                             (lambda ()
+                               (when (< (free-disk-space ".") minbytes)
+                                 (raise-exception 'insuffcient-disk-space))
+                               (apply invoke/quiet
+                                      ukify "build" "--output" image-name
+                                      (first args))
+                               (format port "~
 //~a
   protocol: efi
   path: boot():/EFI/Guix/OLD-~a.EFI~%"
-                                      (first labels)
-                                      count)))
-                          (loop (1+ count)
-                                (cdr labels)
-                                (cdr args)))))))))
-            (rename-file (in-vicinity limine-directory "limine.conf.tmp")
-                         (in-vicinity limine-directory "limine.conf")))))))
+                                       (first labels)
+                                       count)))
+                           (loop (1+ count)
+                                 (cdr labels)
+                                 (cdr args))))))))
+                (rename-file (in-vicinity limine-directory "limine.conf.tmp")
+                             (in-vicinity limine-directory "limine.conf"))
+                ;; Finally, install Limine.
+                (install-file #$limine limine-directory))))))))
 
 (define install-limine-efi
   #~(lambda (bootloader target mount-point)
