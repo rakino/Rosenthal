@@ -13,42 +13,43 @@
   #:use-module (gnu bootloader)
   ;; Guix packages
   #:use-module (rosenthal packages bootloaders)
-  #:export (uefi-uki-removable-bootloader))
+  #:export (menu-entry->ukify-args
+            uefi-uki-removable-bootloader))
 
 (define script-path "/boot/install-uki.scm")
 
+(define (menu-entry->ukify-args entry)
+  (let* ((label     (menu-entry-label entry))
+         (linux     (menu-entry-linux entry))
+         (initrd    (menu-entry-initrd entry))
+         (arguments (menu-entry-linux-arguments entry)))
+    #~(list "--os-release" #$label
+            "--linux" #$linux
+            "--initrd" #$initrd
+            "--cmdline" (string-join (list #$@arguments))
+            "--stub"
+            #$(file-append systemd-stub "/libexec/" (systemd-stub-name)))))
+
 (define (uefi-uki-configuration-file config entries . rest)
-
-  (define (menu-entry->ukify-args entry)
-    (let* ((label     (menu-entry-label entry))
-           (linux     (menu-entry-linux entry))
-           (initrd    (menu-entry-initrd entry))
-           (arguments (menu-entry-linux-arguments entry))
-           (boot (bootloader-configuration-bootloader config))
-           (stub (bootloader-package boot)))
-      #~(list "--os-release" #$label
-              "--linux" #$linux
-              "--initrd" #$initrd
-              "--cmdline" (string-join (list #$@arguments))
-              "--stub" #$(file-append stub "/libexec/" (systemd-stub-name)))))
-
   (program-file "install-uki"
     (with-imported-modules (source-module-closure '((guix build utils)))
       #~(begin
-          (use-modules (srfi srfi-1)
+          (use-modules (ice-9 match)
                        (guix build utils))
-          (let* ((ukify #$(file-append ukify "/bin/ukify"))
+          (let* ((directory (second (command-line)))
                  (installation-path
-                  (format #f "~a/EFI/BOOT/BOOT~a.EFI"
-                          (second (command-line))
-                          #$(cond
-                             ((target-x86-32?) "IA32")
-                             ((target-x86-64?) "X64")
-                             ((target-arm32?) "ARM")
-                             ((target-aarch64?) "AA64")
-                             ((target-riscv64?) "RISCV64")))))
+                  (in-vicinity
+                   directory
+                   #$(format #f "/EFI/BOOT/BOOT~a.EFI"
+                             (cond
+                              ((target-x86-32?) "IA32")
+                              ((target-x86-64?) "X64")
+                              ((target-arm32?) "ARM")
+                              ((target-aarch64?) "AA64")
+                              ((target-riscv64?) "RISCV64"))))))
             (mkdir-p (dirname installation-path))
-            (apply invoke ukify "build" "--output" installation-path
+            (apply invoke #$(file-append ukify "/bin/ukify")
+                   "build" "--output" installation-path
                    #$(menu-entry->ukify-args (first entries))))))))
 
 (define install-uefi-uki
