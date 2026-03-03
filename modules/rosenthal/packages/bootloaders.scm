@@ -3,6 +3,7 @@
 ;;; Copyright © 2024 Lilah Tascheter <lilah@lunabee.space>
 
 (define-module (rosenthal packages bootloaders)
+  #:use-module (srfi srfi-26)
   ;; Utilities
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
@@ -12,6 +13,7 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   ;; Guix build systems
+  #:use-module (guix build-system gnu)
   #:use-module (guix build-system meson)
   #:use-module (guix build-system pyproject)
   ;; Guix packages
@@ -19,6 +21,8 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages bootloaders)
   #:use-module (gnu packages crypto)
+  #:use-module (gnu packages assembly)
+  #:use-module (gnu packages mtools)
   #:use-module (gnu packages efi)
   #:use-module (gnu packages gperf)
   #:use-module (gnu packages linux)
@@ -69,6 +73,56 @@
       (properties
        `(,@(package-properties base)
          (disable-updater? . #t))))))
+
+(define-public limine
+  (package
+    (name "limine")
+    (version "10.8.2")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://codeberg.org/Limine/Limine/releases/download/v"
+                    version "/limine-" version ".tar.xz"))
+              (sha256
+               (base32
+                "1y7qi39ryy8gwv25n0wv68dy1q1gzh0syn4z3psfrl7px98m5ikd"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list #:tests? #f
+           #:configure-flags
+           #~(list (string-append
+                    "TOOLCHAIN_FOR_TARGET="
+                    #$(or (and=> (%current-target-system)
+                                 (cut string-append <> "-"))
+                          ""))
+                   (string-append "--prefix=" #$output)
+                   #$@(if (target-x86?)
+                          '("--enable-bios-cd"
+                            "--enable-bios-pxe"
+                            "--enable-bios"
+                            "--enable-uefi-ia32")
+                          '())
+                   #$@(if (target-x86-64?)
+                          '("--enable-uefi-x86-64")
+                          '())
+                   #$@(if (target-aarch64?)
+                          '("--enable-uefi-aarch64")
+                          '())
+                   #$@(if (target-riscv64?)
+                          '("--enable-uefi-riscv64")
+                          '())
+                   #$@(if (target-loongarch64?)
+                          '("--enable-uefi-loongarch64")
+                          '()))
+           #:make-flags
+           #~(list "SHELL=sh")))
+    (native-inputs (list mtools nasm))
+    (home-page "https://codeberg.org/Limine/Limine")
+    (synopsis "Multiprotocol bootloader and boot manager")
+    (description
+     "Limine is a multiprotocol bootloader and boot manager.  It's also used as
+the reference implementation for the Limine boot protocol.")
+    (license license:bsd-2)))
 
 
 ;;;
