@@ -30,6 +30,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages pkg-config)
+  #:use-module (gnu packages polkit)
   #:use-module (gnu packages python)
   #:use-module (gnu packages qt)
   #:use-module (gnu packages version-control)
@@ -151,3 +152,23 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
 supporting various Wayland compositors like @code{niri}, @code{hyprland}, and
 @code{sway}.")
     (license license:expat)))
+
+(define-public noctalia-qs
+  (package
+    (inherit quickshell)
+    (name "noctalia-qs")
+    (version "0.0.4")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+              (url "https://github.com/noctalia-dev/noctalia-qs")
+              (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0gyk951pk946dib3rdsgk7nzxwxvghjvp26rs5f32x6a8g8ww1fm"))))
+    (inputs
+     (modify-inputs (package-inputs quickshell)
+       (prepend glib polkit)))
+    (home-page "https://noctalia.dev/")
+    (synopsis "QtQuick-based desktop shell toolkit (Noctalia fork)")))
