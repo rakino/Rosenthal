@@ -1,0 +1,20 @@
+diff --git a/src/main.cpp b/src/main.cpp
+index 18898d7..6426354 100644
+--- a/src/main.cpp
++++ b/src/main.cpp
+@@ -49,6 +49,7 @@ namespace {
+         QCommandLineOption optDaemon(QStringList{"daemon", "d"}, "Run as daemon (polkit agent + IPC server).");
+         QCommandLineOption optKeyring(QStringList{"keyring"}, "Run as keyring prompter (GCR replacement).");
+         QCommandLineOption optPinentry(QStringList{"pinentry"}, "Run as GPG pinentry.");
++        QCommandLineOption optDisplay(QStringList{"display"}, "");
+ 
+         // CLI options (for interacting with running daemon)
+         QCommandLineOption optPing(QStringList{"ping"}, "Check if the daemon is reachable.");
+@@ -60,6 +61,7 @@ namespace {
+         parser.addOption(optDaemon);
+         parser.addOption(optKeyring);
+         parser.addOption(optPinentry);
++        parser.addOption(optDisplay);
+         parser.addOption(optPing);
+         parser.addOption(optNext);
+         parser.addOption(optRespond);
