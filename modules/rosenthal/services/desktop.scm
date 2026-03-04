@@ -44,6 +44,7 @@
   #:use-module (gnu packages qt)
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xorg)
+  #:use-module (rosenthal packages authentication)
   #:use-module (rosenthal packages wm)
   #:export (home-blueman-applet-configuration
             home-blueman-applet-service-type
@@ -63,6 +64,7 @@
             home-noctalia-shell-configuration
             home-noctalia-shell-service-type
 
+            home-bb-auth-service-type
             home-polkit-gnome-service-type
 
             home-rofi-configuration
@@ -352,6 +354,28 @@ compositor.")))
                               %home-noctalia-shell-shepherd)))
     (default-value (home-noctalia-shell-configuration))
     (description "")))
+
+
+;;;
+;;; bb-auth
+;;;
+
+(define (%home-bb-auth-shepherd _)
+  (list (shepherd-service
+          (provision '(bb-auth))
+          (start
+           #~(make-forkexec-constructor
+              (list #$(file-append bb-auth "/libexec/bb-auth") "--daemon")))
+          (stop #~(make-kill-destructor)))))
+
+(define home-bb-auth-service-type
+  (service-type
+    (name 'home-bb-auth)
+    (extensions
+     (list (service-extension home-shepherd-service-type
+                              %home-bb-auth-shepherd)))
+    (default-value #f)
+    (description "Run @command{bb-auth} daemon.")))
 
 
 ;;;
