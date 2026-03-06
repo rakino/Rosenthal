@@ -6,6 +6,7 @@
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
+  #:use-module (guix utils)
   ;; Guix origin methods
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -13,6 +14,30 @@
   #:use-module (guix build-system emacs)
   ;; Guix packages
   #:use-module (gnu packages emacs-xyz))
+
+(define-public emacs-arei/dolly
+  (let* ((commit "c348103a4562e183a3c094dc945fc2af8bf0b704")
+         (revision "0"))
+    (package
+      (inherit emacs-arei)
+      (name "emacs-arei-dolly")
+      (version (git-version "0.9.6" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+                (url "https://git.sr.ht/~abcdw/emacs-arei")
+                (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32
+           "0h0fxybdb23cyx4xqz4axyp4sbqi2bqcvcwqin74l59wmfwpz0rr"))))
+      (arguments
+       (substitute-keyword-arguments (package-arguments emacs-arei)
+         ((#:lisp-directory _ #f) "lisp")))
+      (propagated-inputs
+       (modify-inputs (package-propagated-inputs emacs-arei)
+         (prepend emacs-consult))))))
 
 (define-public emacs-caddyfile-mode
   (let ((commit "fc41148f5a7eb320f070666f046fb9d88cf17680")
