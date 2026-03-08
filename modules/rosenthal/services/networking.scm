@@ -51,6 +51,7 @@
           (start
            #~(lambda _
                (let ((timeout #$(file-append coreutils-minimal "/bin/timeout"))
+                     (sleep #$(file-append coreutils-minimal "/bin/sleep"))
                      (sh #$(file-append bash-minimal "/bin/sh"))
                      (ping (if #$home-service?
                                "ping"
@@ -60,9 +61,10 @@
                            (format #f "\
   until ~a -qc1 -W1 example.org
   do
-      sleep 1
+      ~a 1
   done"
-                                   ping)))))))))
+                                   ping
+                                   sleep)))))))))
 
 (define network-online-service-type
   (service-type
