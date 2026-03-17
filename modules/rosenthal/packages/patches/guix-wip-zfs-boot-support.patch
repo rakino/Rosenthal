@@ -1,55 +1,48 @@
-From ab4aa6e7bb41fe0f2c64cfb587562b19a7cb44ff Mon Sep 17 00:00:00 2001
-Message-ID: <ab4aa6e7bb41fe0f2c64cfb587562b19a7cb44ff.1757826291.git.hako@ultrarare.space>
+From 1067857a13a015602c9bc8c5cf0aa81e7869739c Mon Sep 17 00:00:00 2001
+Message-ID: <1067857a13a015602c9bc8c5cf0aa81e7869739c.1773748638.git.hako@ultrarare.space>
 From: Hilton Chain <hako@ultrarare.space>
 Date: Sun, 7 Sep 2025 13:52:57 +0800
 Subject: [PATCH] WIP: ZFS boot support.
 
 Change-Id: I6579a36d66fcd0a487fe262c9a7c36e51532cb70
 ---
- gnu/build/file-systems.scm  | 21 ++++++++++++++-------
+ gnu/build/file-systems.scm  | 14 ++++++++++----
  gnu/build/linux-boot.scm    |  1 +
  gnu/system/file-systems.scm | 30 +++++++++++++++++++++---------
  gnu/system/linux-initrd.scm | 25 ++++++++++++++++++++-----
  guix/scripts/system.scm     |  3 ++-
- 5 files changed, 58 insertions(+), 22 deletions(-)
+ 5 files changed, 54 insertions(+), 19 deletions(-)
 
 diff --git a/gnu/build/file-systems.scm b/gnu/build/file-systems.scm
-index c506a4911ff..05d0cb819ae 100644
+index 33b035aa967..7a863afd1ea 100644
 --- a/gnu/build/file-systems.scm
 +++ b/gnu/build/file-systems.scm
-@@ -1173,13 +1173,20 @@ (define (canonicalize-device-spec spec)
+@@ -1226,10 +1226,16 @@ (define (canonicalize-device-spec spec)
  
    (match spec
      ((? string?)
--     (if (or (string-contains spec ":/") ;nfs
--             (and (>= (string-length spec) 2)
--                  (equal? (string-take spec 2) "//")) ;cifs
--             (string=? spec "none"))
--         spec                  ; do not resolve NFS / CIFS / tmpfs devices
+-     (if (string-prefix? "/dev/" spec)
 -         ;; Nothing to do, but wait until SPEC shows up.
--         (resolve identity spec identity)))
+-         (resolve device-exists? spec identity)
+-         spec)) ; do not resolve NFS / CIFS / tmpfs devices
 +     (cond
-+      ((or (string-contains spec ":/") ;nfs
-+           (and (>= (string-length spec) 2)
-+                (equal? (string-take spec 2) "//")) ;cifs
-+           (string=? spec "none"))
-+       ;; Do not resolve NFS / CIFS / tmpfs devices.
-+       spec)
-+      ((and (>= (string-length spec) 4)
-+            (string=? (string-take spec 4) "zfs:"))
++      ((string-prefix? "/dev/" spec)
++       ;; Nothing to do, but wait until SPEC shows up.
++       (resolve device-exists? spec identity))
++      ((string-prefix? "zfs:" spec)
 +       ;; "zfs:zpool/dataset" => "zpool/dataset"
 +       (string-drop spec 4))
 +      (else
-+       ;; Nothing to do, but wait until SPEC shows up.
-+       (resolve identity spec identity))))
++       ;; Do not resolve NFS / CIFS / tmpfs devices
++       spec)))
      ((? file-system-label?)
       ;; Resolve the label.
       (resolve find-partition-by-label
 diff --git a/gnu/build/linux-boot.scm b/gnu/build/linux-boot.scm
-index 548e28a1c97..2b577483832 100644
+index e0743eae55a..f0085f74962 100644
 --- a/gnu/build/linux-boot.scm
 +++ b/gnu/build/linux-boot.scm
-@@ -523,6 +523,7 @@ (define* (boot-system #:key
+@@ -542,6 +542,7 @@ (define* (boot-system #:key
      ;; So check for all four.
      (cond ((string-prefix? "/" device-string) device-string)
            ((string-contains device-string ":/") device-string) ; nfs-root
@@ -58,7 +51,7 @@ index 548e28a1c97..2b577483832 100644
            (else (file-system-label device-string))))
  
 diff --git a/gnu/system/file-systems.scm b/gnu/system/file-systems.scm
-index 4ea8237c70d..c6cf828db21 100644
+index f83b67c4770..00c611eaa97 100644
 --- a/gnu/system/file-systems.scm
 +++ b/gnu/system/file-systems.scm
 @@ -372,7 +372,9 @@ (define %pseudo-file-system-types
@@ -72,7 +65,7 @@ index 4ea8237c70d..c6cf828db21 100644
  
  (define %fuse-control-file-system
    ;; Control file system for Linux' file systems in user-space (FUSE).
-@@ -627,18 +629,21 @@ (define (file-system-mount-point-predicate mount-point)
+@@ -628,18 +630,21 @@ (define (file-system-mount-point-predicate mount-point)
  
  
  ;;;
@@ -102,7 +95,7 @@ index 4ea8237c70d..c6cf828db21 100644
  
  (define (btrfs-store-subvolume-file-name file-systems)
    "Return the subvolume file name within the Btrfs top level onto which the
-@@ -664,6 +669,13 @@ (define (btrfs-store-subvolume-file-name file-systems)
+@@ -665,6 +670,13 @@ (define (btrfs-store-subvolume-file-name file-systems)
      ;; XXX: Deriving the subvolume name based from a subvolume ID is not
      ;; supported, as we'd need to query the actual file system.
      (or (and=> (assoc-ref options "subvol") prepend-slash/maybe)
@@ -117,7 +110,7 @@ index 4ea8237c70d..c6cf828db21 100644
                  (&message
                   (message "The store is on a Btrfs subvolume, but the \
 diff --git a/gnu/system/linux-initrd.scm b/gnu/system/linux-initrd.scm
-index 978084062b2..8bd4a4a7850 100644
+index a9dabde7a32..3f0d8fc9f30 100644
 --- a/gnu/system/linux-initrd.scm
 +++ b/gnu/system/linux-initrd.scm
 @@ -249,11 +249,25 @@ (define* (raw-initrd file-systems
@@ -153,7 +146,7 @@ index 978084062b2..8bd4a4a7850 100644
      (flat-linux-module-directory (cons linux linux-extra-module-directories)
 @@ -364,6 +378,7 @@ (define file-system-type-modules
                      ("jfs" => '("jfs"))
-                     ("f2fs" => '("f2fs" "crc32_generic"))
+                     ("f2fs" => '("f2fs" "crc32_cryptoapi"))
                      ("xfs" => '("xfs"))
 +                    ("zfs" => '("zfs"))
                      (else '())))
@@ -174,11 +167,9 @@ index 8a56f1cc63d..75a5bb1d5f1 100644
  
    (define uuid
 
-base-commit: 6174b135ffa3328fd7ad404b15b1586fc64e5666
-prerequisite-patch-id: f71061d735b69d75799eb03df6215bbcb20d53b2
-prerequisite-patch-id: 88337e68e714f3b1fe0d8e6588a1a4f423251610
-prerequisite-patch-id: 466ade9e99cc152f8e9a33c742a4954ade466c25
-prerequisite-patch-id: d66207367fc491f6569100503cd9df98b6888560
+base-commit: aeeb8be0e27b4109eb2be27efe6bb7b2aa50e003
+prerequisite-patch-id: 0362b1fd022cc44cfa7181eda3d5dfea669519a3
+prerequisite-patch-id: 813f6928b0d005ee2b7a441c93b1a6f9472a3483
 -- 
-2.51.0
+2.52.0
 
