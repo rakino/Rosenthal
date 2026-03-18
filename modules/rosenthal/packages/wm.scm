@@ -157,7 +157,7 @@ supporting various Wayland compositors like @code{niri}, @code{hyprland}, and
   (package
     (inherit quickshell)
     (name "noctalia-qs")
-    (version "0.0.4")
+    (version "0.0.8")
     (source
      (origin
        (method git-fetch)
@@ -166,7 +166,7 @@ supporting various Wayland compositors like @code{niri}, @code{hyprland}, and
               (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "0gyk951pk946dib3rdsgk7nzxwxvghjvp26rs5f32x6a8g8ww1fm"))))
+        (base32 "0pyakmaq2bwdhnnqnrsqm9g1mjf5spij6hsvmlw058kxj8xkbbd4"))))
     (inputs
      (modify-inputs (package-inputs quickshell)
        (prepend glib polkit)))
