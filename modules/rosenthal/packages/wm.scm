@@ -40,7 +40,7 @@
 (define-public noctalia-shell
   (package
     (name "noctalia-shell")
-    (version "4.6.6")
+    (version "4.7.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -49,7 +49,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "132jkz4pfs7wkx26qvdshhxl0vd3bfpxnyd2qaf8gr84b1ma9jxd"))))
+                "0qylp37xrb71c3a5fr55a5zr7ibb4nd87jkdw01l54ij15jrdqxd"))))
     (build-system copy-build-system)
     (arguments
      (list
@@ -91,7 +91,6 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
                                    (cut search-input-file inputs <>))
                           '("bin/bluetoothctl"
                             "bin/brightnessctl"
-                            "bin/cava"
                             "bin/cliphist"
                             "bin/convert"
                             "bin/ddcutil"
@@ -121,7 +120,6 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
      (list bash-minimal
            bluez
            brightnessctl
-           cava
            cliphist
            coreutils-minimal
            ddcutil
