@@ -2,23 +2,12 @@
 ;;; Copyright © 2023 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal bootloader grub)
+  ;; Utilities
+  #:use-module (guix deprecation)
   ;; Guix System - bootloaders
-  #:use-module (gnu bootloader)
   #:use-module (gnu bootloader grub)
-  ;; Guix packages
-  #:use-module (rosenthal packages bootloaders)
   #:export (grub-efi-luks2-bootloader
             grub-efi-luks2-removable-bootloader))
 
-(define grub-efi-luks2-bootloader
-  (bootloader
-   (inherit grub-efi-bootloader)
-   ;; NOTE: Don't change the name.  Generation switching code only knows
-   ;; bootloaders defined in (gnu bootloader grub).
-   (name 'grub-efi)
-   (package grub-efi-luks2)))
-
-(define grub-efi-luks2-removable-bootloader
-  (bootloader
-   (inherit grub-efi-removable-bootloader)
-   (package grub-efi-luks2)))
+(define-deprecated/alias grub-efi-luks2-bootloader grub-efi-bootloader)
+(define-deprecated/alias grub-efi-luks2-removable-bootloader grub-efi-removable-bootloader)
