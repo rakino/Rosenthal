@@ -139,6 +139,7 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
            noctalia-qs
            python-minimal
            qtbase
+           qtmultimedia
            qtwayland
            which
            wl-clipboard
