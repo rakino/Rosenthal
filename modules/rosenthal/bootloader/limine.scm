@@ -64,7 +64,8 @@
                        (current-args  (first (list #$@ukify-args)))
                        (old-labels    (cdr   '#$labels))
                        (old-args      (cdr   (list #$@ukify-args))))
-                  (format port "timeout: 5~%")
+                  (format port "\
+timeout: 5~%")
                   (with-directory-excursion guix-directory
                     (for-each delete-file (find-files "." "^OLD-[0-9]+\\.EFI$"))
                     (apply invoke/quiet ukify "build" "--output" "CURRENT.EFI"
@@ -75,7 +76,8 @@
   path: boot():/EFI/Guix/CURRENT.EFI~%"
                             current-label)
                     (unless (null? old-labels)
-                      (format port "~%/GNU system, old configurations...~%"))
+                      (format port "
+/GNU system, old configurations...~%"))
                     (false-if-exception
                      (let loop ((count 1)
                                 (labels old-labels)
