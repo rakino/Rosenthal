@@ -59,17 +59,16 @@ the user to manage services with dependencies and parallel startup.")
     (license license:asl2.0)))
 
 (define-public libseat-sans-logind
-  (let ((base libseat))
-    (package
-      (inherit base)
-      (name "libseat-sans-logind")
-      (arguments
-       (substitute-keyword-arguments (package-arguments base)
-         ((#:configure-flags configure-flags)
-          #~(append #$configure-flags
-                    (list "-Dlibseat-logind=disabled")))))
-      (propagated-inputs '())
-      (properties '((disable-updater? . #t))))))
+  (package
+    (inherit libseat)
+    (name "libseat-sans-logind")
+    (arguments
+     (substitute-keyword-arguments arguments
+       ((#:configure-flags configure-flags)
+        #~(append #$configure-flags
+                  (list "-Dlibseat-logind=disabled")))))
+    (propagated-inputs '())
+    (properties '((disable-updater? . #t)))))
 
 (define-public pam-dumb-runtime-dir
   (package
@@ -109,14 +108,13 @@ exists and is only writable by root.")
     (license license:bsd-0)))
 
 (define-public seatd-sans-logind
-  (let ((base seatd))
-    (package
-      (inherit base)
-      (name "seatd-sans-logind")
-      (arguments
-       (substitute-keyword-arguments (package-arguments base)
-         ((#:configure-flags configure-flags)
-          #~(append #$configure-flags
-                    (list "-Dlibseat-logind=disabled")))))
-      (propagated-inputs '())
-      (properties '((disable-updater? . #t))))))
+  (package
+    (inherit seatd)
+    (name "seatd-sans-logind")
+    (arguments
+     (substitute-keyword-arguments arguments
+       ((#:configure-flags configure-flags)
+        #~(append #$configure-flags
+                  (list "-Dlibseat-logind=disabled")))))
+    (propagated-inputs '())
+    (properties '((disable-updater? . #t)))))

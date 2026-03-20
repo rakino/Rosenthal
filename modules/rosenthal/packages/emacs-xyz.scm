@@ -33,10 +33,10 @@
           (base32
            "0h0fxybdb23cyx4xqz4axyp4sbqi2bqcvcwqin74l59wmfwpz0rr"))))
       (arguments
-       (substitute-keyword-arguments (package-arguments emacs-arei)
+       (substitute-keyword-arguments arguments
          ((#:lisp-directory _ #f) "lisp")))
       (propagated-inputs
-       (modify-inputs (package-propagated-inputs emacs-arei)
+       (modify-inputs propagated-inputs
          (prepend emacs-consult))))))
 
 (define-public emacs-caddyfile-mode

@@ -207,7 +207,7 @@ from serving static websites to running dynamic web applications.")
                (base32
                 "14vpk4939v67jiapl8yn3a2v0sfzblaajlzcqfqii2xcb3a290j3"))))
     (native-inputs
-     (modify-inputs (package-native-inputs caddy)
+     (modify-inputs native-inputs
        (replace "vendored-go-dependencies"
          (origin
            (method (go-mod-vendor #:go go-1.25))

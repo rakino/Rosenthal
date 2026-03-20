@@ -15,7 +15,7 @@
       (inherit base)
       (name "busybox-static")
       (arguments
-       (substitute-keyword-arguments (package-arguments base)
+       (substitute-keyword-arguments arguments
          ((#:phases phases)
           #~(modify-phases #$phases
               (add-after 'configure 'static-build

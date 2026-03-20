@@ -17,11 +17,11 @@
       (inherit dropbear)
       (name "dropbear-static")
       (arguments
-       (substitute-keyword-arguments (package-arguments base)
+       (substitute-keyword-arguments arguments
          ((#:configure-flags flags)
           #~(append #$flags (list "--enable-static")))))
       (inputs
-       (modify-inputs (package-inputs base)
+       (modify-inputs inputs
          (append `(,zlib "static"))
          (replace "libtomcrypt" `(,libtomcrypt "static"))
          (replace "libtommath" `(,libtommath "static"))))

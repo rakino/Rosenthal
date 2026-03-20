@@ -167,7 +167,7 @@ supporting various Wayland compositors like @code{niri}, @code{hyprland}, and
        (sha256
         (base32 "0pyakmaq2bwdhnnqnrsqm9g1mjf5spij6hsvmlw058kxj8xkbbd4"))))
     (inputs
-     (modify-inputs (package-inputs quickshell)
+     (modify-inputs inputs
        (prepend glib polkit)))
     (home-page "https://noctalia.dev/")
     (synopsis "QtQuick-based desktop shell toolkit (Noctalia fork)")))

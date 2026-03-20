@@ -169,7 +169,7 @@ packages, excluding superseded packages."
     (version (package-version (assoc-ref source-mapping default-system)))
     (source #f)
     (arguments
-     (substitute-keyword-arguments (package-arguments p)
+     (substitute-keyword-arguments arguments
        ((#:phases phases #~%standard-phases)
         #~(modify-phases #$phases
             (replace 'unpack

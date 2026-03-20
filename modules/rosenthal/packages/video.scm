@@ -15,12 +15,12 @@
       (inherit base)
       (name "libva-nox")
       (arguments
-       (substitute-keyword-arguments (package-arguments base)
+       (substitute-keyword-arguments arguments
          ((#:configure-flags configure-flags)
           #~(append #$configure-flags (list "--disable-glx")))
          ((#:phases _) #~%standard-phases)))
       (inputs
-       (modify-inputs (package-inputs base)
+       (modify-inputs inputs
          (delete "libx11" "libxext" "libxfixes")))
       (properties
        `(,@(package-properties base)

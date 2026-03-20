@@ -20,6 +20,6 @@
                           "guix-wip-zfs-boot-support.patch")))
     (name "guix-dolly")
     (arguments
-     (substitute-keyword-arguments (package-arguments guix)
+     (substitute-keyword-arguments arguments
        ((#:parallel-build? _ #f) #t)))
     (properties '((disable-updater? . #t)))))
