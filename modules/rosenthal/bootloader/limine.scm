@@ -60,8 +60,6 @@
             (call-with-output-file (in-vicinity limine-directory "limine.conf.tmp")
               (lambda (port)
                 (let* ((ukify #$(file-append ukify "/bin/ukify"))
-                       (script-path (first args))
-                       (minbytes (* 2 (stat:size (stat script-path))))
                        (current-label (first '#$labels))
                        (current-args  (first (list #$@ukify-args)))
                        (old-labels    (cdr   '#$labels))
@@ -86,12 +84,10 @@
                          (unless (null? labels)
                            (with-exception-handler
                                (lambda _
-                                 (false-if-exception (delete-file image-name))
+                                 (delete-file image-name)
                                  ;; Exit loop.
                                  (loop 0 '() '()))
                              (lambda ()
-                               (when (< (free-disk-space ".") minbytes)
-                                 (raise-exception 'insuffcient-disk-space))
                                (apply invoke/quiet
                                       ukify "build" "--output" image-name
                                       (first args))
