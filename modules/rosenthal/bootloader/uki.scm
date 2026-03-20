@@ -48,7 +48,7 @@
                               ((target-aarch64?) "AA64")
                               ((target-riscv64?) "RISCV64"))))))
             (mkdir-p (dirname installation-path))
-            (apply invoke #$(file-append ukify "/bin/ukify")
+            (apply invoke/quiet #$(file-append ukify "/bin/ukify")
                    "build" "--output" installation-path
                    #$(menu-entry->ukify-args (first entries))))))))
 

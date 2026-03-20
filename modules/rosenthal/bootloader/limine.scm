@@ -67,7 +67,7 @@
                   (format port "timeout: 5~%")
                   (with-directory-excursion guix-directory
                     (for-each delete-file (find-files "." "^OLD-[0-9]+\\.EFI$"))
-                    (apply invoke ukify "build" "--output" "CURRENT.EFI"
+                    (apply invoke/quiet ukify "build" "--output" "CURRENT.EFI"
                            current-args)
                     (format port "
 /~a
