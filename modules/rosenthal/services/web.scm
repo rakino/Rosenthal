@@ -225,7 +225,7 @@ reload its configuration file."))
       (database-path)
     (with-imported-modules (source-module-closure '((guix build utils)))
       #~(begin
-          (use-modules '((guix build utils)))
+          (use-modules (guix build utils))
           (let ((user (getpwnam "conduit"))
                 (directory #$database-path))
             (mkdir-p directory)
