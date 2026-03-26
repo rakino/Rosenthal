@@ -81,6 +81,7 @@
 
             %rosenthal-skeletons
             %rosenthal-skeletons-installer
+            %rosenthal-desktop-services/base
             %rosenthal-desktop-services/gdm
             %rosenthal-desktop-services/tuigreet
 
