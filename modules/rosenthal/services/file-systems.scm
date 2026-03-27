@@ -107,16 +107,34 @@
 ;;;
 
 (define-configuration/no-serialization zfs-configuration
+  (zfs
+   (file-like zfs)
+   "ZFS package to use.")
+  (kernel-has-zfs-module?
+   (boolean #f)
+   "Whether or not ZFS modules have already been built into the kernel.")
   (volumes?
    (boolean #f)
-   "")
+   "Wait for ZFS volumes.")
   (auto-mount?
    (boolean #t)
-   ""))
+   "Mount all available ZFS file systems."))
 
-(define zfs-shepherd
+(define zfs-linux-loadable-module-service
   (match-record-lambda <zfs-configuration>
-      (volumes? auto-mount?)
+      (zfs kernel-has-zfs-module?)
+    (if kernel-has-zfs-module?
+        '()
+        (list `(,zfs "module")))))
+
+(define add-zfs-package
+  (match-record-lambda <zfs-configuration>
+      (zfs)
+    (list zfs)))
+
+(define zfs-shepherd-service
+  (match-record-lambda <zfs-configuration>
+      (zfs volumes? auto-mount?)
     (append
      (list
       (shepherd-service
@@ -168,16 +186,16 @@
     (name 'zfs)
     (extensions
      (list (service-extension linux-loadable-module-service-type
-                              (const (list `(,zfs "module"))))
+                              zfs-linux-loadable-module-service)
            (service-extension udev-service-type
-                              (const (list zfs)))
+                              add-zfs-package)
            (service-extension kernel-module-loader-service-type
                               (const '("zfs")))
            (service-extension shepherd-root-service-type
-                              zfs-shepherd)
+                              zfs-shepherd-service)
            (service-extension user-processes-service-type
                               (const '(file-system-zfs)))
            (service-extension profile-service-type
-                              (const (list zfs)))))
+                              add-zfs-package)))
     (default-value (zfs-configuration))
     (description "")))
