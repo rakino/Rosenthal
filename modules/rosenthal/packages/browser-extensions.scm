@@ -13,12 +13,14 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   ;; Guix build systems
-  #:use-module (guix build-system copy))
+  #:use-module (guix build-system copy)
+  ;; Guix packages
+  #:use-module (gnu packages compression))
 
-(define-public bitwarden
+(define bitwarden
   (package
     (name "bitwarden")
-    (version "2025.6.1")
+    (version "2026.2.0")
     (source (origin
               (method url-fetch/zipbomb)
               (uri (string-append "https://github.com/bitwarden/clients"
@@ -26,7 +28,7 @@
                                   "/dist-firefox-" version ".zip"))
               (sha256
                (base32
-                "1yx9f1adh6swbzf24rj621vgccvi8gl7hi8q4r9ccv5qq4zq3f53"))))
+                "1l2mabgbxf2jdsgd56fbalzszjkxp03cxba1r15vgvdlgmkif5cl"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
