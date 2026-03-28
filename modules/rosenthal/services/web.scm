@@ -142,18 +142,7 @@
              #~(make-kill-destructor))
             (actions
              (list (shepherd-configuration-action "/etc/caddy/Caddyfile")
-                   (shepherd-action
-                     (name 'reload)
-                     (documentation "Reload Caddy configuration file.")
-                     (procedure
-                      #~(lambda (pid)
-                          (if pid
-                              (begin
-                                (invoke "/run/privileged/bin/caddy" "reload"
-                                        "--config" "/etc/caddy/Caddyfile")
-                                (display "Service caddy has been asked to \
-reload its configuration file."))
-                              (display "Service caddy is not running.")))))))
+                   (shepherd-signal-action 'reload SIGUSR1)))
             (auto-start? auto-start?)))))
 
 (define caddy-service-type
