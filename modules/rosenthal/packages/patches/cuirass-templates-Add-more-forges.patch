@@ -1,4 +1,4 @@
-From f45f42fe17a0037ce3b8c4f22537f257338734e5 Mon Sep 17 00:00:00 2001
+From 90bf62f411590cc0b813e6f62c3a0ef89cf17d1f Mon Sep 17 00:00:00 2001
 From: Hilton Chain <hako@ultrarare.space>
 Date: Sun, 30 Nov 2025 12:13:36 +0800
 Subject: [PATCH] templates: Add more forges.
@@ -8,7 +8,7 @@ Subject: [PATCH] templates: Add more forges.
  1 file changed, 13 insertions(+), 3 deletions(-)
 
 diff --git a/src/cuirass/templates.scm b/src/cuirass/templates.scm
-index 1cf7ebf..2ee29fa 100644
+index 1cf7ebf..042d46a 100644
 --- a/src/cuirass/templates.scm
 +++ b/src/cuirass/templates.scm
 @@ -1526,7 +1526,9 @@ (define %vcs-web-views
@@ -18,7 +18,7 @@ index 1cf7ebf..2ee29fa 100644
 -      ("github.com" ,labhub-url))))
 +      ("github.com" ,labhub-url)
 +      ("git.sr.ht" ,labhub-url)
-+      ("git.urspace.moe" ,labhub-url))))
++      ("git.guix.moe" ,labhub-url))))
  
  (define %vcs-web-commit-range-views
    ;; List of host names and corresponding URL to display a commit range.
@@ -44,7 +44,7 @@ index 1cf7ebf..2ee29fa 100644
 -     ("github.com" ,github-url))))
 +     ("github.com" ,github-url)
 +     ("git.sr.ht" ,sourcehut-url)
-+     ("git.urspace.moe" ,github-url))))
++     ("git.guix.moe" ,github-url))))
  
  (define* (commit-hyperlink url commit
                             #:optional (text commit))

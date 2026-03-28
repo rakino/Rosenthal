@@ -200,7 +200,7 @@ from serving static websites to running dynamic web applications.")
     (source (origin
               (method git-fetch)
               (uri (git-reference
-                    (url "https://git.urspace.moe/hako/caddy.git")
+                    (url "https://git.guix.moe/hako/caddy.git")
                     (commit version)))
               (file-name (git-file-name name version))
               (sha256
@@ -216,7 +216,7 @@ from serving static websites to running dynamic web applications.")
            (sha256
             (base32
              "03k5cjnkpy3ar79rs3p01lm0b6x4ypf7ixzindcv858gdyncq5pb"))))))
-    (home-page "https://git.urspace.moe/hako/caddy")
+    (home-page "https://git.guix.moe/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
 (define-public forgejo
