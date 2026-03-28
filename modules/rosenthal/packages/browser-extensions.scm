@@ -100,10 +100,10 @@ results are added in a sidebar next to search engine results.")
        `(,@(alist-delete 'hidden? (package-properties base))
          (disable-updater? . #t))))))
 
-(define-public ohmyech
+(define ohmyech
   (package
     (name "ohmyech")
-    (version "1.1")
+    (version "1.2")
     (properties
      '((addon-id . "{46b8ab0b-8adf-4e43-ad67-acef5a8d45c9}")
        (hidden? . #t)
@@ -112,11 +112,11 @@ results are added in a sidebar next to search engine results.")
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/27justin/ohmyech")
-                    (commit "ec7935d500a9d354776586e25261cef3595c40c7")))
+                    (commit "aa0cf4cc5c4bcb6ce508d8a4e7ee4c95c2e63cbe")))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1mrbm8c8z9zpfrs0qk5qj64f35p7c5lrxfn3nhda0ar0b2rv6593"))
+                "1cqgfv2q7shisi9ijac5s85xy9q2rz9f9hxwq3q41vfgrcvd8zng"))
               (modules '((guix build utils)))
               (snippet
                #~(substitute* "manifest.json"
