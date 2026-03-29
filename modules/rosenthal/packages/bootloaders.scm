@@ -39,7 +39,7 @@
 (define-public limine
   (package
     (name "limine")
-    (version "10.8.2")
+    (version "11.1.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -47,7 +47,7 @@
                     version "/limine-" version ".tar.xz"))
               (sha256
                (base32
-                "1y7qi39ryy8gwv25n0wv68dy1q1gzh0syn4z3psfrl7px98m5ikd"))))
+                "02940hw882h0hflvkkjaxbcf715kqa6rikx4i2d11vg2qy8i53mm"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? #f
