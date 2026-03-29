@@ -19,7 +19,7 @@
 (define-public sops
   (package
     (name "sops")
-    (version "3.12.1")
+    (version "3.12.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -28,10 +28,10 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1z3m1smcbyshrfw2h2rmnvy9pcwjv7q9hd79kffnf4qxzsp3m4zb"))))
+                "01w67iv0v9hnxgaklixk871dwnhyhllm3zz36iiwqsd19d5rllfm"))))
     (build-system go-build-system)
     (arguments
-     (list #:go go-1.24
+     (list #:go go-1.26
            #:install-source? #f
            #:import-path "./cmd/sops"
            #:build-flags
@@ -56,12 +56,12 @@
                  (assoc-ref gnu:%standard-phases 'install-license-files)))))
     (native-inputs
      (list (origin
-             (method (go-mod-vendor #:go go-1.24))
+             (method (go-mod-vendor #:go go-1.26))
              (uri (package-source this-package))
              (file-name "vendored-go-dependencies")
              (sha256
               (base32
-               "04gnkz3w1ckxq1dccwvwrbar30nc79b8rbj0smsmvc6g9x99ay3n")))))
+               "1gd5kpiqizrab7fbhzhwj5lm1b6wmpvwpvnrwwz0xkfn6hqwj1qy")))))
     (home-page "https://getsops.io/")
     (synopsis "Simple and flexible tool for managing secrets")
     (description
