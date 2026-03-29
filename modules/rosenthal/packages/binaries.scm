@@ -343,21 +343,30 @@ to WakaTime, which is used by all WakaTime text editor plugins.")
 (define-public grafana-bin
   (package
     (name "grafana-bin")
-    (version "12.1.1")
+    (version "12.4.2")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://dl.grafana.com/grafana/release/"
-                                  version "/grafana_" version "_" "16903967602"
-                                  "_linux_amd64.tar.gz"))
+                                  version "/grafana_" version "_"
+                                  "23531306697_linux_amd64.tar.gz"))
               (sha256
                (base32
-                "056jj4ww1l36y77v9qmqhgsg7lsr328bhp7y48c6l125cal1snl2"))))
+                "07sr78wi5nqlsx1nfj87bzgq29hcflqm6r5f5xcn9gq3m00b4h7j"))))
     (build-system copy-build-system)
     (arguments
-     (list #:install-plan
+     (list #:tests? (not (%current-target-system))
+           #:install-plan
            #~'(("bin" "bin")
                ("conf" "share/grafana/")
-               ("public" "share/grafana/"))))
+               ("public" "share/grafana/"))
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'install 'check
+                 (lambda* (#:key tests? outputs #:allow-other-keys)
+                   (let ((cmd (search-input-file outputs "bin/grafana")))
+                     (when tests?
+                       (invoke cmd "--help")
+                       (invoke cmd "--version"))))))))
     (synopsis "Platform for monitoring and observability")
     (description
      "Grafana allows you to query, visualize, alert on and understand your
