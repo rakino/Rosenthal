@@ -84,7 +84,8 @@
     (description
      "Limine is a multiprotocol bootloader and boot manager.  It's also used as
 the reference implementation for the Limine boot protocol.")
-    (license license:bsd-2)))
+    (license license:bsd-2)
+    (properties '((disable-updater? . #t)))))
 
 
 ;;;

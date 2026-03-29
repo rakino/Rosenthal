@@ -44,4 +44,5 @@
       (home-page "https://github.com/hylophile/guile-toml")
       (synopsis "TOML module for GNU Guile")
       (description "")
-      (license license:gpl3+))))
+      (license license:gpl3+)
+      (properties '((disable-updater? . #t))))))

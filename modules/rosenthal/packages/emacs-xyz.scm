@@ -37,7 +37,8 @@
          ((#:lisp-directory _ #f) "lisp")))
       (propagated-inputs
        (modify-inputs propagated-inputs
-         (prepend emacs-consult))))))
+         (prepend emacs-consult)))
+      (properties '((disable-updater? . #t))))))
 
 (define-public emacs-caddyfile-mode
   (let ((commit "fc41148f5a7eb320f070666f046fb9d88cf17680")
@@ -105,7 +106,8 @@ minibuffer.  This allows editing the search string in arbitrary ways without any
 special maneuver.  Unlike standard @code{isearch}, cursor motion commands do not
 end the search.  Moreover, the search status information in the echo area and
 some keybindings are slightly simplified.")
-    (license license:gpl3+)))
+    (license license:gpl3+)
+    (properties '((disable-updater? . #t)))))
 
 (define-public emacs-kdl-mode
   (let ((commit "2d849e298199f490e4894c01764a8a83decd704a")
@@ -140,7 +142,8 @@ some keybindings are slightly simplified.")
                (sha256
                 (base32
                  "1ipqvrszh6fp9d9g3grk4mbh762knhn0zp3jhww0mkib73f3p0sy"))))))
-    (name "emacs-magit-delta-dolly")))
+    (name "emacs-magit-delta-dolly")
+    (properties '((disable-updater? . #t)))))
 
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
