@@ -15,6 +15,7 @@
   ;; Guix packages
   #:use-module (gnu packages base)
   #:use-module (gnu packages dns)
+  #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages golang-build)
   #:use-module (gnu packages linux))
@@ -261,7 +262,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.94.1")
+    (version "1.96.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -270,7 +271,7 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0n5k8adplcffjwlpiy35nrklc0sf9ms18zlilcis5g1s3kdh4klf"))
+                "0qqlj6cq43h0pr8jg9g956yz5xgg81959vq2kl7n9yqnixyh8w2n"))
               (patches
                (rosenthal-patches
                 "tailscale-set-guix-system-PATH-for-SSH.patch"))
@@ -284,7 +285,7 @@ a SOCKS5 proxy.")
     (arguments
      (list
       #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-      #:go go-1.25
+      #:go go-1.26
       #:install-source? #f
       #:import-path "."
       #:build-flags
@@ -311,6 +312,11 @@ a SOCKS5 proxy.")
                "vendor")))
           (replace 'install-license-files
             (assoc-ref gnu:%standard-phases 'install-license-files))
+          (add-after 'unpack 'patch-references
+            (lambda* (#:key inputs #:allow-other-keys)
+              (substitute* "client/systray/startup-creator.go"
+                (("desktop-file-(install|edit)" all)
+                 (search-input-file inputs (in-vicinity "bin" all))))))
           (replace 'build
             (lambda* (#:key build-flags parallel-build? #:allow-other-keys)
               (let* ((njobs (if parallel-build? (parallel-job-count) 1)))
@@ -370,17 +376,24 @@ a SOCKS5 proxy.")
     (native-inputs
      (append
       (list (origin
-              (method (go-mod-vendor #:go go-1.25))
+              (method (go-mod-vendor #:go go-1.26))
               (uri (package-source this-package))
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "04zzwizns5a5wvwpa1a82jg0l641fnk3schffrpqi3qi84x17qsr"))))
+                "1kj1q82n62x5dx4s9ivnnqi5c711pwyfic0kaykdn2ky8c89c6xf"))))
       (if (%current-target-system)
           (list this-package)
           '())))
     (inputs
-     (list findutils glibc iproute iptables-nft kmod openresolv procps))
+     (list desktop-file-utils
+           findutils
+           glibc
+           iproute
+           iptables-nft
+           kmod
+           openresolv
+           procps))
     (home-page "https://tailscale.com/")
     (synopsis "Mesh VPN service utilizing the WireGuard protocol and 2FA")
     (description
