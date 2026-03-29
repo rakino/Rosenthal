@@ -143,7 +143,7 @@ bypass network restrictions." )
 (define-public sing-box
   (package
     (name "sing-box")
-    (version "1.12.22")
+    (version "1.13.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -152,12 +152,12 @@ bypass network restrictions." )
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0wr97myxdskqlh1mrpn0rnnvdkifaqnm420j3y6hbk9rf4ijzf3l"))))
+                "0ihs7n4hnmn6karrwlp6j6aqirm56zpnfzf6mpl5m42ph204dvg2"))))
     (build-system go-build-system)
     (arguments
      (list
       #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-      #:go go-1.23
+      #:go go-1.26
       #:install-source? #f
       #:import-path "./cmd/sing-box"
       #:build-flags
@@ -215,12 +215,12 @@ bypass network restrictions." )
     (native-inputs
      (append
       (list (origin
-              (method (go-mod-vendor #:go go-1.23))
+              (method (go-mod-vendor #:go go-1.26))
               (uri (package-source this-package))
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "0h3m4rfkwdcm22f8vbdl3idki46nxfmynagvy7s00lycylz1f809"))))
+                "1j8f1b8sx5r7azniqypqz6sqm1hpadxlg1rrkgss8xzh6p0h5y4r"))))
       (if (%current-target-system)
           (list this-package)
           '())))
