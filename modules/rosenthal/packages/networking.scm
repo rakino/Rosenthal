@@ -73,7 +73,7 @@ origin can remain as closed as possible.")
 (define-public mihomo
   (package
     (name "mihomo")
-    (version "1.19.20")
+    (version "1.19.21")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -82,12 +82,12 @@ origin can remain as closed as possible.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1gkp2ssnyci5klk5q56p32kpbbamzk3y49nh24s7122s576bqmf3"))))
+                "1qa6fw3axnas39ri0qmy54rvyk3xbpnmv3iss21wrhjvnlcagmdw"))))
     (build-system go-build-system)
     (arguments
      (list
       #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-      #:go go-1.23
+      #:go go-1.26
       #:install-source? #f
       #:import-path "."
       #:build-flags
@@ -122,12 +122,12 @@ origin can remain as closed as possible.")
     (native-inputs
      (append
       (list (origin
-              (method (go-mod-vendor #:go go-1.23))
+              (method (go-mod-vendor #:go go-1.26))
               (uri (package-source this-package))
               (file-name "vendored-go-dependencies")
               (sha256
                (base32
-                "14vmch6l9carq395p269c5gg5hxbyv6i9my47s50j6ki029x9c9j"))))
+                "15452bapz7jwi9gawww9kyszbj2pfdy50xg5zcs2rjrjkh5aygya"))))
       (if (%current-target-system)
           (list this-package)
           '())))
