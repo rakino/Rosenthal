@@ -112,13 +112,13 @@
    "ZFS package to use.")
   (kernel-has-zfs-module?
    (boolean #f)
-   "Whether or not ZFS modules have already been built into the kernel.")
+   "Whether ZFS module has already been built into the kernel.")
   (volumes?
    (boolean #f)
-   "Wait for ZFS volumes.")
+   "Wait for ZFS volumes to show up.")
   (auto-mount?
    (boolean #t)
-   "Mount all available ZFS file systems."))
+   "Auto-mount ZFS datasets."))
 
 (define zfs-linux-loadable-module-service
   (match-record-lambda <zfs-configuration>
@@ -135,51 +135,53 @@
 (define zfs-shepherd-service
   (match-record-lambda <zfs-configuration>
       (zfs volumes? auto-mount?)
-    (append
-     (list
-      (shepherd-service
-        (provision '(file-system-zfs))
-        (requirement
-         `(zfs-import
-           ,@(if volumes? '(zfs-volumes) '())
-           ,@(if auto-mount? '(zfs-mount) '())))
-        (start #~(const #t))
-        (stop #~(const #f)))
-      (shepherd-service
-        (provision '(zfs-import))
-        (requirement '(kernel-module-loader))
-        (start
-         #~(make-system-constructor
-            (string-join
-             (list #$(file-append zfs "/sbin/zpool") "import" "-a" "-N"))))
-        (stop #~(const #f))))
-     (if volumes?
-         (list
-          (shepherd-service
-            (provision '(zfs-volumes))
-            (requirement '(zfs-import))
-            (start
-             #~(make-system-constructor
-                (string-join
-                 ;; TODO: Patch references within zfs package instead.
-                 (list "PATH=/run/current-system/profile/bin:/run/current-system/profile/sbin"
-                       #$(file-append zfs "/bin/zvol_wait")))))
-            (stop #~(const #f))))
-         '())
-     (if auto-mount?
-         (list
-          (shepherd-service
-            (provision '(zfs-mount))
-            (requirement '(zfs-import))
-            (start
-             #~(make-system-constructor
-                (string-join
-                 (list #$(file-append zfs "/sbin/zfs") "mount" "-a" "-l"))))
-            (stop
-             #~(make-system-destructor
-                (string-join
-                 (list #$(file-append zfs "/sbin/zfs") "unmount" "-a"))))))
-         '()))))
+    `(,(shepherd-service
+         (provision '(zfs-import))
+         (requirement '(udev))
+         (documentation "Import ZFS storage pools.")
+         (start
+          #~(make-system-constructor
+             (string-join
+              (list #$(file-append zfs "/sbin/zpool") "import" "-a" "-N"))))
+         (stop #~(const #f)))
+      ,@(if volumes?
+            (list
+             (shepherd-service
+               (provision '(zfs-volumes))
+               (requirement '(zfs-import))
+               (documentation "Wait for ZFS volume links to appear in /dev.")
+               (start
+                #~(make-system-constructor
+                   (string-join
+                    ;; TODO: Patch references within zfs package instead.
+                    (list "PATH=/run/current-system/profile/bin:/run/current-system/profile/sbin"
+                          #$(file-append zfs "/bin/zvol_wait")))))
+               (stop #~(const #f))))
+            '())
+      ,@(if auto-mount?
+            (list
+             (shepherd-service
+               (provision '(zfs-mount))
+               (requirement '(zfs-import))
+               (documentation "Mount all available ZFS file systems.")
+               (start
+                #~(make-system-constructor
+                   (string-join
+                    (list #$(file-append zfs "/sbin/zfs") "mount" "-a" "-l"))))
+               (stop
+                #~(make-system-destructor
+                   (string-join
+                    (list #$(file-append zfs "/sbin/zfs") "unmount" "-a"))))))
+            '())
+      ,(shepherd-service
+         (provision '(file-system-zfs))
+         (requirement
+          `(zfs-import
+            ,@(if volumes? '(zfs-volumes) '())
+            ,@(if auto-mount? '(zfs-mount) '())))
+         (documentation "Take care of ZFS file systems.")
+         (start #~(const #t))
+         (stop #~(const #f))))))
 
 (define zfs-service-type
   (service-type
@@ -189,13 +191,11 @@
                               zfs-linux-loadable-module-service)
            (service-extension udev-service-type
                               add-zfs-package)
-           (service-extension kernel-module-loader-service-type
-                              (const '("zfs")))
+           (service-extension profile-service-type
+                              add-zfs-package)
            (service-extension shepherd-root-service-type
                               zfs-shepherd-service)
            (service-extension user-processes-service-type
-                              (const '(file-system-zfs)))
-           (service-extension profile-service-type
-                              add-zfs-package)))
+                              (const '(file-system-zfs)))))
     (default-value (zfs-configuration))
     (description "")))
