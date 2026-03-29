@@ -400,7 +400,7 @@ observed.")
 (define-public mimir-bin
   (package
     (name "mimir-bin")
-    (version "2.17.1")
+    (version "3.0.4")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -408,10 +408,11 @@ observed.")
                     version "/mimir-linux-amd64"))
               (sha256
                (base32
-                "1vnrpzwyjz7plzdiih65853ndvg64a9n1x1i7jqr085byhpayp82"))))
+                "09bhfbax659p1svzk8gq37vckqd62xsr219ab8f4r36c74ml3vz8"))))
     (build-system copy-build-system)
     (arguments
-     (list #:phases
+     (list #:tests? (not (%current-target-system))
+           #:phases
            #~(modify-phases %standard-phases
                (replace 'install
                  (lambda* (#:key source #:allow-other-keys)
@@ -420,7 +421,12 @@ observed.")
                      (mkdir-p dest)
                      (with-directory-excursion dest
                        (copy-file source name)
-                       (chmod name #o555))))))))
+                       (chmod name #o555)))))
+               (add-after 'install 'check
+                 (lambda* (#:key tests? outputs #:allow-other-keys)
+                   (let ((cmd (search-input-file outputs "bin/mimir")))
+                     (when tests?
+                       (invoke cmd "-version"))))))))
     (synopsis "Scalable long-term storage for Prometheus")
     (description
      "Grafana Mimir provides horizontally scalable, highly available,
