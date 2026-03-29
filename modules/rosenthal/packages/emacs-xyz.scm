@@ -130,6 +130,18 @@ some keybindings are slightly simplified.")
       (license license:gpl3+)
       (properties '((disable-updater? . #t))))))
 
+(define-public emacs-magit-delta/dolly
+  (package
+    (inherit
+     (package-with-extra-patches emacs-magit-delta
+       (list (origin
+               (method url-fetch)
+               (uri "https://github.com/dandavison/magit-delta/pull/34.patch")
+               (sha256
+                (base32
+                 "1ipqvrszh6fp9d9g3grk4mbh762knhn0zp3jhww0mkib73f3p0sy"))))))
+    (name "emacs-magit-delta-dolly")))
+
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
         (revision "0"))
