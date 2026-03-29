@@ -427,7 +427,7 @@ multi-tenant, long-term storage for Prometheus.")
 (define-public loki-bin
   (package
     (name "loki-bin")
-    (version "3.6.7")
+    (version "3.7.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -435,7 +435,7 @@ multi-tenant, long-term storage for Prometheus.")
                     version "/loki-linux-amd64.zip"))
               (sha256
                (base32
-                "1b5ia3nhfphnh79nn4qvrz0hhnbsl6bs347dghgkii0vqwip0wz9"))))
+                "0w5aarm1vbyn2l2mzqbd90g1azqq5y1swwkvj57bgm95lrips0pg"))))
     (build-system copy-build-system)
     (arguments
      (list #:install-plan
