@@ -57,7 +57,7 @@ website owners block unwanted AI crawlers from accessing their sites.")
 (define-public anubis-anti-crawler
   (package
     (name "anubis-anti-crawler")
-    (version "1.21.1")
+    (version "1.25.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -65,11 +65,11 @@ website owners block unwanted AI crawlers from accessing their sites.")
                     version "/anubis-src-vendor-npm-" version ".tar.gz"))
               (sha256
                (base32
-                "1anjymg7mwjc8j0gn2gn1wb15iiljm68p15n77y5jg3av8wnky5g"))))
+                "0kqp5j0739lpdw55gx4bnnda1b90qlavcdlp8vh9bp014xx84yqj"))))
     (build-system go-build-system)
     (arguments
      (list #:tests? (not (%current-target-system)) ;FIXME
-           #:go go-1.24
+           #:go go-1.26
            #:install-source? #f
            #:import-path "./cmd/anubis"
            #:build-flags
@@ -102,8 +102,7 @@ website owners block unwanted AI crawlers from accessing their sites.")
      "Anubis checks incoming HTTP requests using one or more challenges in
 order to protect upstream resources from web crawlers.")
     (license license:expat)
-    (properties '((upstream-name . "anubis")
-                  (disable-updater? . #t)))))
+    (properties '((upstream-name . "anubis")))))
 
 (define-public caddy
   (package
