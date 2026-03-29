@@ -221,7 +221,7 @@ from serving static websites to running dynamic web applications.")
 (define-public forgejo
   (package
     (name "forgejo")
-    (version "12.0.3")
+    (version "14.0.3")
     ;; TODO: Address npm dependencies and fetch from git.
     (source (origin
               (method url-fetch)
@@ -230,11 +230,11 @@ from serving static websites to running dynamic web applications.")
                     version "/forgejo-src-" version ".tar.gz"))
               (sha256
                (base32
-                "0x09nwhps70n8rkvgp7mqzr7cyprdn274q7jhkljxna3r3w8qcb5"))))
+                "1j68clndn10gsv4v3xxrk5d8npriaj4af2gm4lg3nvd258zhyhcq"))))
     (build-system go-build-system)
     (arguments
      (list #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-           #:go go-1.25
+           #:go go-1.26
            #:install-source? #f
            #:import-path "."
            #:build-flags
