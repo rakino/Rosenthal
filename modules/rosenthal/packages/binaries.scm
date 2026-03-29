@@ -142,7 +142,7 @@ host Matrix for your family, friends or company.")
 (define-public tuwunel-bin
   (package
     (name "tuwunel-bin")
-    (version "1.5.0")
+    (version "1.5.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -152,10 +152,11 @@ host Matrix for your family, friends or company.")
               (file-name (string-append name "-" version ".zst"))
               (sha256
                (base32
-                "0d2fmpsisnzqgrx0sq6zrn31jvdisnm6jb2q6qcc39z4jdllwhrb"))))
+                "00kpapzd7alm3g34ijfhwszc1x1ddd4ykcyk8ah73gmyc2lq8gys"))))
     (build-system copy-build-system)
     (arguments
-     (list #:install-plan
+     (list #:tests? (not (%current-target-system))
+           #:install-plan
            #~'((#$(format #f "~a-~a"
                           (package-name this-package)
                           (package-version this-package))
@@ -164,7 +165,13 @@ host Matrix for your family, friends or company.")
            #~(modify-phases %standard-phases
                (add-after 'install 'fix-permission
                  (lambda _
-                   (chmod (string-append #$output "/bin/tuwunel") #o555))))))
+                   (chmod (string-append #$output "/bin/tuwunel") #o555)))
+               (add-after 'fix-permission 'check
+                 (lambda* (#:key tests? outputs #:allow-other-keys)
+                   (let ((tuwunel (search-input-file outputs "bin/tuwunel")))
+                     (when tests?
+                       (invoke tuwunel "--help")
+                       (invoke tuwunel "--version"))))))))
     (supported-systems '("x86_64-linux"))
     (synopsis "Matrix homeserver")
     (description
