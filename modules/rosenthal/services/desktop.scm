@@ -608,6 +608,8 @@ gtk-key-theme-name = ~a~%"
      ,(local-file "../examples/dot-config/autostart/shepherd.desktop"))
     (".config/fcitx5/config"
      ,(local-file "../examples/dot-config/fcitx5/config"))
+    (".config/htop/htoprc"
+     ,(local-file "../examples/dot-config/htop/htoprc"))
     (".config/niri/config.kdl"
      ,(local-file "../examples/dot-config/niri/config.kdl"))
     (".config/xfce4/helpers.rc"

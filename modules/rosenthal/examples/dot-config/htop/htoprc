@@ -1,0 +1,15 @@
+htop_version=3.4.1
+hide_kernel_threads=0
+show_thread_names=1
+show_program_path=0
+highlight_base_name=1
+highlight_changes=1
+show_merged_command=1
+show_cpu_frequency=1
+show_cpu_temperature=1
+column_meters_0=AllCPUs4 Memory Swap ZFSARC DiskIO NetworkIO
+column_meter_modes_0=1 2 2 2 2 2
+column_meters_1=System Hostname DateTime Uptime Tasks LoadAverage
+column_meter_modes_1=2 2 2 2 2 2
+tree_view=1
+all_branches_collapsed=1
