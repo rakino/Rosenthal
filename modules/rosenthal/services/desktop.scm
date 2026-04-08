@@ -110,8 +110,12 @@
             (documentation "Start blueman applet.")
             (provision '(blueman-applet))
             (start
-             #~(make-forkexec-constructor
-                (list #$(file-append blueman "/bin/blueman-applet"))))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append blueman "/bin/blueman-applet"))
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
             (stop #~(make-kill-destructor))))))
 
 (define home-blueman-applet-service-type
@@ -225,8 +229,12 @@
             (provision '(fcitx5))
             (requirement '(dbus))
             (start
-             #~(make-forkexec-constructor
-                (list #$(file-append fcitx5 "/bin/fcitx5"))))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append fcitx5 "/bin/fcitx5"))
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
             (stop #~(make-kill-destructor))))))
 
 (define home-fcitx5-service-type
@@ -276,8 +284,12 @@
             (documentation "Start mako.")
             (provision '(mako))
             (start
-             #~(make-forkexec-constructor
-                (list #$(file-append mako "/bin/mako"))))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append mako "/bin/mako"))
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
             (stop #~(make-kill-destructor))))))
 
 (define home-mako-service-type
@@ -308,8 +320,12 @@
             (documentation "Start network manager applet.")
             (provision '(network-manager-applet))
             (start
-             #~(make-forkexec-constructor
-                (list #$(file-append network-manager-applet "/bin/nm-applet"))))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append network-manager-applet "/bin/nm-applet"))
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
             (stop #~(make-kill-destructor))))))
 
 (define home-network-manager-applet-service-type
@@ -380,9 +396,13 @@ compositor.")))
             (provision '(noctalia-shell))
             (modules '((shepherd support)))
             (start
-             #~(make-forkexec-constructor
-                (list #$(file-append noctalia-shell "/bin/noctalia-shell"))
-                #:log-file (in-vicinity %user-log-dir "noctalia-shell.log")))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append noctalia-shell "/bin/noctalia-shell"))
+                   #:log-file (in-vicinity %user-log-dir "noctalia-shell.log")
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
             (stop #~(make-kill-destructor))))))
 
 (define home-noctalia-shell-service-type
@@ -407,8 +427,12 @@ compositor.")))
   (list (shepherd-service
           (provision '(bb-auth))
           (start
-           #~(make-forkexec-constructor
-              (list #$(file-append bb-auth "/libexec/bb-auth") "--daemon")))
+           #~(lambda args
+               ((make-forkexec-constructor
+                 (list #$(file-append bb-auth "/libexec/bb-auth") "--daemon")
+                 ;; Inherit graphical session environment.
+                 #:environment-variables (environ))
+                args)))
           (stop #~(make-kill-destructor)))))
 
 (define home-bb-auth-service-type
@@ -429,8 +453,12 @@ compositor.")))
   (list (shepherd-service
           (provision '(polkit-gnome))
           (start
-           #~(make-forkexec-constructor
-              (list #$(file-append polkit-gnome "/libexec/polkit-gnome-authentication-agent-1"))))
+           #~(lambda args
+               ((make-forkexec-constructor
+                 (list #$(file-append polkit-gnome "/libexec/polkit-gnome-authentication-agent-1"))
+                 ;; Inherit graphical session environment.
+                 #:environment-variables (environ))
+                args)))
           (stop #~(make-kill-destructor)))))
 
 (define home-polkit-gnome-service-type
@@ -489,9 +517,13 @@ compositor.")))
             (documentation "Start swaybg.")
             (provision '(swaybg))
             (start
-             #~(make-forkexec-constructor
-                (list #$(file-append swaybg "/bin/swaybg") "--mode" "fill"
-                      "--image" #$background)))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append swaybg "/bin/swaybg") "--mode" "fill"
+                         "--image" #$background)
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
             (stop #~(make-kill-destructor))))))
 
 (define home-swaybg-service-type
@@ -620,8 +652,12 @@ compositor.")))
             (documentation "Start waybar.")
             (provision '(waybar))
             (start
-             #~(make-forkexec-constructor
-                (list #$(file-append waybar "/bin/waybar"))))
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append waybar "/bin/waybar"))
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
             (stop #~(make-kill-destructor))))))
 
 (define home-waybar-service-type
