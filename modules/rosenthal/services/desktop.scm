@@ -34,6 +34,7 @@
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
+  #:use-module (rosenthal home services desktop)
   #:use-module (rosenthal home services gtk)
   ;; Guix packages
   #:use-module (gnu packages fcitx5)
@@ -109,6 +110,7 @@
     (list (shepherd-service
             (documentation "Start blueman applet.")
             (provision '(blueman-applet))
+            (requirement '(graphical-session))
             (start
              #~(lambda args
                  ((make-forkexec-constructor
@@ -227,7 +229,7 @@
     (list (shepherd-service
             (documentation "Start fcitx5.")
             (provision '(fcitx5))
-            (requirement '(dbus))
+            (requirement '(dbus graphical-session))
             (start
              #~(lambda args
                  ((make-forkexec-constructor
@@ -283,6 +285,7 @@
     (list (shepherd-service
             (documentation "Start mako.")
             (provision '(mako))
+            (requirement '(graphical-session))
             (start
              #~(lambda args
                  ((make-forkexec-constructor
@@ -299,7 +302,9 @@
      (list (service-extension home-xdg-configuration-files-service-type
                               %home-mako-xdg-config)
            (service-extension home-shepherd-service-type
-                              %home-mako-shepherd)))
+                              %home-mako-shepherd)
+           (service-extension home-graphical-session-service-type
+                              (const 'wayland))))
     (default-value (home-mako-configuration))
     (description "Run mako, a notification daemon.")))
 
@@ -319,6 +324,7 @@
     (list (shepherd-service
             (documentation "Start network manager applet.")
             (provision '(network-manager-applet))
+            (requirement '(graphical-session))
             (start
              #~(lambda args
                  ((make-forkexec-constructor
@@ -394,6 +400,7 @@ compositor.")))
     (list (shepherd-service
             (documentation "Start noctalia-shell.")
             (provision '(noctalia-shell))
+            (requirement '(graphical-session))
             (modules '((shepherd support)))
             (start
              #~(lambda args
@@ -414,7 +421,9 @@ compositor.")))
            (service-extension home-activation-service-type
                               %home-noctalia-shell-activation)
            (service-extension home-shepherd-service-type
-                              %home-noctalia-shell-shepherd)))
+                              %home-noctalia-shell-shepherd)
+           (service-extension home-graphical-session-service-type
+                              (const 'wayland))))
     (default-value (home-noctalia-shell-configuration))
     (description "")))
 
@@ -426,6 +435,7 @@ compositor.")))
 (define (%home-bb-auth-shepherd _)
   (list (shepherd-service
           (provision '(bb-auth))
+          (requirement '(graphical-session))
           (start
            #~(lambda args
                ((make-forkexec-constructor
@@ -452,6 +462,7 @@ compositor.")))
 (define (%home-polkit-gnome-shepherd _)
   (list (shepherd-service
           (provision '(polkit-gnome))
+          (requirement '(graphical-session))
           (start
            #~(lambda args
                ((make-forkexec-constructor
@@ -516,6 +527,7 @@ compositor.")))
     (list (shepherd-service
             (documentation "Start swaybg.")
             (provision '(swaybg))
+            (requirement '(graphical-session))
             (start
              #~(lambda args
                  ((make-forkexec-constructor
@@ -531,7 +543,9 @@ compositor.")))
     (name 'home-swaybg)
     (extensions
      (list (service-extension home-shepherd-service-type
-                              %home-swaybg-shepherd)))
+                              %home-swaybg-shepherd)
+           (service-extension home-graphical-session-service-type
+                              (const 'wayland))))
     (default-value (home-swaybg-configuration))
     (description
      "Run swaybg, a screen wallpaper utility for Wayland compositors.")))
@@ -651,6 +665,7 @@ compositor.")))
     (list (shepherd-service
             (documentation "Start waybar.")
             (provision '(waybar))
+            (requirement '(graphical-session))
             (start
              #~(lambda args
                  ((make-forkexec-constructor
@@ -667,7 +682,9 @@ compositor.")))
      (list (service-extension home-xdg-configuration-files-service-type
                               %home-waybar-xdg-config)
            (service-extension home-shepherd-service-type
-                              %home-waybar-shepherd)))
+                              %home-waybar-shepherd)
+           (service-extension home-graphical-session-service-type
+                              (const 'wayland))))
     (default-value (home-waybar-configuration))
     (description "Run waybar, a status bar for Wayland compositors.")))
 
@@ -795,23 +812,6 @@ compositor.")))
 (define-deprecated %rosenthal-desktop-services %rosenthal-desktop-services/tuigreet)
 
 (define %rosenthal-desktop-home-services
-  (cons* (service home-shepherd-service-type
-           (home-shepherd-configuration
-             ;; Start by WM to inherit environment variables for graphical session.
-             (auto-start? #f)
-             (daemonize? #f)))
-
-         ;; NOTE: The environment variable set by ‘home-dbus-service-type’ will
-         ;; prevent GNOME from starting when using above Shepherd configuration.
-         ;; Replace ‘home-dbus-service-type’, expecting the session bus will be
-         ;; started elsewhere.  See also:
-         ;; https://codeberg.org/guix/guix/issues/5899#issuecomment-10208485
-         (simple-service 'dbus home-shepherd-service-type
-           (list (shepherd-service
-                   (provision '(dbus))
-                   (start #~(const #t))
-                   (stop #~(const #f)))))
-
+  (cons* (service home-dbus-service-type)
          (service home-pipewire-service-type)
-
          %base-home-services))
