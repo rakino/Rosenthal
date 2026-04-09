@@ -604,8 +604,6 @@ gtk-key-theme-name = ~a~%"
     (".config/emacs/init-miscellaneous.el"
      ,(local-file "../examples/emacs/init-miscellaneous.el"))
 
-    (".config/autostart/shepherd.desktop"
-     ,(local-file "../examples/dot-config/autostart/shepherd.desktop"))
     (".config/fcitx5/config"
      ,(local-file "../examples/dot-config/fcitx5/config"))
     (".config/htop/htoprc"

@@ -1,5 +1,0 @@
-# Start user Shepherd in environments that support XDG Autostart.
-[Desktop Entry]
-Type=Application
-Name=Shepherd
-Exec=shepherd
