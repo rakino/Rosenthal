@@ -2,30 +2,42 @@
 ;;; Copyright © 2022 Cairn <cairn@pm.me>
 ;;; Copyright © 2025 Carmine Margiotta <accounts@cmargiotta.net>
 ;;; Copyright © 2025 Noah Evans <noah@nevans.me>
+;;; Copyright © 2026 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages games)
+  ;; Guile builtins
+  #:use-module (srfi srfi-26)
   ;; Utilities
+  #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
+  #:use-module (guix utils)
   ;; Guix origin methods
   #:use-module (guix git-download)
   ;; Guix build systems
   #:use-module (guix build-system cmake)
+  #:use-module (guix build-system qt)
   ;; Guix packages
   #:use-module (gnu packages aidc)
+  #:use-module (gnu packages audio)
   #:use-module (gnu packages backup)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpp)
+  #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gl)
   #:use-module (gnu packages java)
   #:use-module (gnu packages kde-frameworks)
+  #:use-module (gnu packages libusb)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages markup)
+  #:use-module (gnu packages pciutils)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages pulseaudio)
   #:use-module (gnu packages qt)
   #:use-module (gnu packages sdl)
+  #:use-module (gnu packages speech)
+  #:use-module (gnu packages vulkan)
   #:use-module (gnu packages xorg))
 
 ;; Copied from Guix Gaming Channels
@@ -37,57 +49,95 @@
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/PrismLauncher/PrismLauncher")
-                    (recursive? #t)
-                    (commit version)))
+                    (commit version)
+                    (recursive? #t)))
               (file-name (git-file-name name version))
               (sha256
                (base32
                 "0phmnc0fhzcw7dw35ldx3r387wxa3sjbcvq5yzy9dh9myg1ik6c6"))))
     (build-system cmake-build-system)
     (arguments
-     `(#:phases
-       (modify-phases %standard-phases
-         (add-after 'install 'patch-paths
-           (lambda* (#:key inputs outputs #:allow-other-keys)
-             (let* ((out            (assoc-ref outputs "out"))
-                    (bin            (string-append out "/bin/prismlauncher"))
-                    (xrandr         (assoc-ref inputs "xrandr"))
-                    (qtwayland      (assoc-ref inputs "qtwayland"))
-                    (qtsvg          (assoc-ref inputs "qtsvg")))
-               (wrap-program bin
-                 `("PATH" ":" prefix (,(string-append xrandr "/bin")))
-                 `("QT_PLUGIN_PATH" ":" prefix ,(map (lambda (package)
-                                                       (string-append package "/lib/qt6/plugins"))
-                                                     (list qtwayland qtsvg)))
-                 `("LD_LIBRARY_PATH" ":" prefix
-                   (,@(map (lambda (dep)
-                             (string-append (assoc-ref inputs dep)
-                                            "/lib"))
-                           '("libx11" "libxext" "libxcursor"
-                             "libxrandr" "libxxf86vm" "pulseaudio" "mesa")))))))))))
+     (list
+      #:imported-modules
+      (append %cmake-build-system-modules
+              %qt-build-system-modules)
+      #:modules
+      '((guix build utils)
+        (guix build cmake-build-system)
+        ((guix build qt-build-system) #:prefix qt:))
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'install 'qt-wrap
+            (lambda args
+              (apply (assoc-ref qt:%standard-phases 'qt-wrap)
+                     #:qtbase #$(this-package-input "qtbase")
+                     args)))
+          (add-after 'qt-wrap 'wrap-program
+            (lambda* (#:key inputs outputs #:allow-other-keys)
+              (wrap-program (search-input-file outputs "bin/prismlauncher")
+                `("PATH" ":" prefix
+                  ,(map (lambda (bin)
+                          (dirname (search-input-file
+                                    inputs (in-vicinity "bin" bin))))
+                        '("glxinfo"
+                          "lspci"
+                          "xrandr")))
+                `("LD_LIBRARY_PATH" ":" prefix
+                  ,(map (lambda (lib)
+                          (dirname (search-input-file
+                                    inputs (in-vicinity "lib" lib))))
+                        '("libflite.so"
+                          "libglfw.so"
+                          "libopenal.so"
+                          "libudev.so"
+                          "libusb-1.0.so"
+                          "libvulkan.so"
+                          ;; glfw
+                          "libGL.so"
+                          "libX11.so"
+                          "libXcursor.so"
+                          "libXext.so"
+                          "libXrandr.so"
+                          "libXxf86vm.so"
+                          ;; openal
+                          "libasound.so"
+                          "libjack.so"
+                          "libpipewire-0.3.so"
+                          "libpulse.so")))))))))
     (native-inputs
      (list extra-cmake-modules
            pkg-config))
     (inputs
-     (list bash-minimal ; for wrap-program
+     (list alsa-lib
+           bash-minimal
            cmark
+           eudev
+           flite
            gamemode
+           glfw-3.4
+           `(,icedtea-8 "jdk")
+           jack-2
            libarchive
+           libusb
            libx11
            libxcursor
            libxext
            libxrandr
            libxxf86vm
            mesa
-           `(,openjdk17 "jdk")
+           mesa-utils
+           openal
+           pciutils
+           pipewire
            pulseaudio
            qrencode
-           qt5compat
            qtbase
+           qtimageformats
            qtnetworkauth
            qtsvg
            qtwayland
            tomlplusplus
+           vulkan-loader
            xrandr
            zlib))
     (home-page "https://prismlauncher.org/")
