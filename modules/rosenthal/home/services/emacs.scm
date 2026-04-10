@@ -10,6 +10,7 @@
   #:use-module (guix packages)
   #:use-module (guix profiles)
   #:use-module (guix records)
+  #:use-module (guix search-paths)
   ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
@@ -41,19 +42,36 @@ of Emacs extensions."))
               (content (manifest
                         (cons (package->manifest-entry emacs)
                               (manifest-entries packages))))))
+           (home-emacs-search-paths
+            (map search-path-specification->sexp
+                 (manifest-search-paths
+                  (profile-content home-emacs-profile))))
            (home-emacs-program
             (program-file "home-emacs-program"
               (with-imported-modules
-                  ;; XXX: (guix profiles) imports (guix config).
                   (source-module-closure
-                   '((guix profiles)
+                   '((guix search-paths)
                      (guix build utils)))
                 #~(begin
                     (use-modules (ice-9 match)
-                                 (guix profiles)
+                                 (guix search-paths)
                                  (guix build utils))
                     (let ((profile #$home-emacs-profile))
-                      (load-profile profile)
+                      ;; See also (@ (guix profiles) load-profile).
+                      (for-each
+                       (match-lambda
+                         ((($ <search-path-specification> variable _ separator) . value)
+                          (let ((current (getenv variable)))
+                            (setenv variable
+                                    (if current
+                                        (if separator
+                                            (string-append value separator current)
+                                            value)
+                                        value)))))
+                       (evaluate-search-paths
+                        (map sexp->search-path-specification
+                             '#$home-emacs-search-paths)
+                        (list profile)))
                       (match (command-line)
                         ((cmd . args)
                          (apply system*
