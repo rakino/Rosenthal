@@ -40,7 +40,8 @@
                      (let ((full-path (in-vicinity candidate path)))
                        (if (file-exists? full-path)
                            full-path
-                           (loop rest)))))))))))))
+                           (loop rest))))))))))
+     #:options '(#:substitutable? #f))))
 
 (define (file-content file)
   (call-with-input-file (canonicalize-path file) get-string-all))
@@ -53,7 +54,8 @@
           (copy-file #$file #$output)
           (substitute* #$output
             (("^\\[Desktop Entry\\].*" all)
-             (string-append all "NoDisplay=true\n")))))))
+             (string-append all "NoDisplay=true\n")))))
+    #:options '(#:substitutable? #f)))
 
 
 ;;;
@@ -69,7 +71,8 @@ format."
       #~(begin
           (use-modules (srfi srfi-26) (ini))
           (call-with-output-file #$output
-            (cut scm->ini #$exp #:port <>))))))
+            (cut scm->ini #$exp #:port <>))))
+    #:options '(#:substitutable? #f)))
 
 ;; https://github.com/aconchillo/guile-json
 (define (json-file name exp)
@@ -80,7 +83,8 @@ format."
       #~(begin
           (use-modules (srfi srfi-26) (json))
           (call-with-output-file #$output
-            (cut scm->json #$exp <> #:pretty #t))))))
+            (cut scm->json #$exp <> #:pretty #t))))
+    #:options '(#:substitutable? #f)))
 
 ;; https://github.com/hylophile/guile-toml
 ;; TODO: TOML writing support is incomplete.
@@ -93,7 +97,8 @@ format."
       #~(begin
           (use-modules (srfi srfi-26) (toml))
           (call-with-output-file #$output
-            (cut scm->toml #$exp <>))))))
+            (cut scm->toml #$exp <>))))
+    #:options '(#:substitutable? #f)))
 
 ;; https://gitlab.com/yorgath/guile-yamlpp
 (define (yaml-file name exp)
@@ -107,4 +112,5 @@ format."
             (lambda (port)
               (let ((emitter (make-yaml-emitter)))
                 (yaml-emit! emitter #$exp)
-                (display (yaml-emitter-string emitter) port))))))))
+                (display (yaml-emitter-string emitter) port))))))
+    #:options '(#:substitutable? #f)))
