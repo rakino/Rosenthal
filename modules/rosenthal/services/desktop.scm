@@ -32,6 +32,7 @@
   #:use-module (gnu home services desktop)
   #:use-module (gnu home services shepherd)
   #:use-module (gnu home services sound)
+  #:use-module (rosenthal home services gtk)
   ;; Guix packages
   #:use-module (gnu packages fcitx5)
   #:use-module (gnu packages fonts)
@@ -506,18 +507,25 @@ compositor.")))
           #~'(("icon theme"
                ("Inherits" . #$icon-theme))))))))
 
-(define %home-theme-xdg-config
+(define home-theme-gtk2
   (match-record-lambda <home-theme-configuration>
       (icon-theme font cursor-theme cursor-size key-theme)
-    (let ((config
-           #~'(("Settings"
-                ("gtk-theme-name" . "Adwaita")
-                ("gtk-icon-theme-name" . #$icon-theme)
-                ("gtk-font-name" . #$font)
-                ("gtk-cursor-theme-name" . #$cursor-theme)
-                ("gtk-cursor-theme-size" . #$cursor-size)
-                ("gtk-key-theme-name" . #$key-theme)))))
-      `(("gtk-3.0/settings.ini" ,(ini-file "settings.ini" config))))))
+    `(("gtk-theme-name"        . ,(format #f "~s" "Adwaita"))
+      ("gtk-icon-theme-name"   . ,(format #f "~s" icon-theme))
+      ("gtk-font-name"         . ,(format #f "~s" font))
+      ("gtk-cursor-theme-name" . ,(format #f "~s" cursor-theme))
+      ("gtk-cursor-theme-size" . ,cursor-size)
+      ("gtk-key-theme-name"    . ,(format #f "~s" key-theme)))))
+
+(define home-theme-gtk3
+  (match-record-lambda <home-theme-configuration>
+      (icon-theme font cursor-theme cursor-size key-theme)
+    `(("gtk-theme-name"        . "Adwaita")
+      ("gtk-icon-theme-name"   . ,icon-theme)
+      ("gtk-font-name"         . ,font)
+      ("gtk-cursor-theme-name" . ,cursor-theme)
+      ("gtk-cursor-theme-size" . ,cursor-size)
+      ("gtk-key-theme-name"    . ,key-theme))))
 
 (define home-theme-service-type
   (service-type
@@ -529,8 +537,12 @@ compositor.")))
                               %home-theme-profile)
            (service-extension home-files-service-type
                               %home-theme-files)
-           (service-extension home-xdg-configuration-files-service-type
-                              %home-theme-xdg-config)))
+           (service-extension home-gtk2-service-type
+                              home-theme-gtk2)
+           (service-extension home-gtk3-service-type
+                              home-theme-gtk3)
+           (service-extension home-gtk4-service-type
+                              home-theme-gtk3)))
     (default-value (home-theme-configuration))
     (description "Set up desktop themes.")))
 
