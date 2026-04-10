@@ -31,7 +31,10 @@
   (packages
    (manifest (manifest '()))
    "A manifest (@pxref{Writing Manifests,,, guix, GNU Guix Reference Manual})
-of Emacs extensions."))
+of Emacs extensions.")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "List of services that should be started before this service."))
 
 (define home-emacs-package
   (match-record-lambda <home-emacs-configuration>
@@ -111,16 +114,24 @@ of Emacs extensions."))
         (propagated-inputs '())
         (outputs '("out"))))))
 
-(define home-emacs-shepherd
-  (list (shepherd-service
-          (documentation "Run Emacs daemon.")
-          (provision '(emacs-daemon))
-          (modules '((shepherd support)))
-          (start
-           #~(make-forkexec-constructor
-              '("emacs" "--fg-daemon")
-              #:log-file (in-vicinity %user-log-dir "emacs-daemon.log")))
-          (stop #~(make-kill-destructor)))))
+(define (home-emacs-shepherd config)
+  (match-record config <home-emacs-configuration>
+                (shepherd-requirement)
+    (let ((emacs (home-emacs-package config)))
+      (list (shepherd-service
+              (documentation "Run Emacs daemon.")
+              (provision '(emacs-daemon))
+              (requirement shepherd-requirement)
+              (modules '((shepherd support)))
+              (start
+               #~(lambda args
+                   ((make-forkexec-constructor
+                     (list #$(file-append emacs "/bin/emacs") "--fg-daemon")
+                     #:log-file (in-vicinity %user-log-dir "emacs-daemon.log")
+                     ;; Inherit graphical session environment.
+                     #:environment-variables (environ))
+                    args)))
+              (stop #~(make-kill-destructor)))))))
 
 (define home-emacs-service-type
   (service-type
@@ -129,6 +140,6 @@ of Emacs extensions."))
      (list (service-extension home-profile-service-type
                               (compose list home-emacs-package))
            (service-extension home-shepherd-service-type
-                              (const home-emacs-shepherd))))
+                              home-emacs-shepherd)))
     (default-value (home-emacs-configuration))
     (description "Install Emacs into home profile and run its daemon.")))
