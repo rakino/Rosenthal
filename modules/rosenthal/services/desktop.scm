@@ -503,26 +503,22 @@ compositor.")))
   (match-record-lambda <home-theme-configuration>
       (icon-theme)
     `((".icons/default/index.theme"
-       ,(plain-file "index.theme"
-          (format #f "\
-[icon theme]
-Inherits = ~a~%"
-                  icon-theme))))))
+       ,(ini-file "index.theme"
+          #~'(("icon theme"
+               ("Inherits" . #$icon-theme))))))))
 
 (define %home-theme-xdg-config
   (match-record-lambda <home-theme-configuration>
       (icon-theme font cursor-theme cursor-size key-theme)
-    `(("gtk-3.0/settings.ini"
-       ,(plain-file "settings.ini"
-          (format #f "\
-[Settings]
-gtk-theme-name = Adwaita
-gtk-icon-theme-name = ~a
-gtk-font-name = ~a
-gtk-cursor-theme-name = ~a
-gtk-cursor-theme-size = ~a
-gtk-key-theme-name = ~a~%"
-                  icon-theme font cursor-theme cursor-size key-theme))))))
+    (let ((config
+           #~'(("Settings"
+                ("gtk-theme-name" . "Adwaita")
+                ("gtk-icon-theme-name" . #$icon-theme)
+                ("gtk-font-name" . #$font)
+                ("gtk-cursor-theme-name" . #$cursor-theme)
+                ("gtk-cursor-theme-size" . #$cursor-size)
+                ("gtk-key-theme-name" . #$key-theme)))))
+      `(("gtk-3.0/settings.ini" ,(ini-file "settings.ini" config))))))
 
 (define home-theme-service-type
   (service-type
