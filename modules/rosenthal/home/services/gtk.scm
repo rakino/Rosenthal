@@ -52,8 +52,11 @@
      (lambda (config extension)
        (delete-duplicates
         ;; Allow overriding extensions via configuration.
-        (append config extension)
-        equal?)))
+        (append config
+                extension)
+        (lambda (a b)
+          (string=? (car a)
+                    (car b))))))
     (description "Set up GTK2 settings in @file{~/.config/gtk-2.0/gtkrc}")
     (default-value '())))
 
