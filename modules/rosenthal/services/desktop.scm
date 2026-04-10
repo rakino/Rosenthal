@@ -496,7 +496,6 @@ compositor.")))
       (packages)
     (cons* adwaita-icon-theme
            hicolor-icon-theme
-           qtwayland
            packages)))
 
 (define %home-theme-files
