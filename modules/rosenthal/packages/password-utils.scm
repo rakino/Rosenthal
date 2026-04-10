@@ -15,3 +15,58 @@
   #:use-module (guix build-system go)
   ;; Guix packages
   #:use-module (gnu packages golang))
+
+(define-public sops
+  (package
+    (name "sops")
+    (version "3.12.2")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/getsops/sops")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "01w67iv0v9hnxgaklixk871dwnhyhllm3zz36iiwqsd19d5rllfm"))))
+    (build-system go-build-system)
+    (arguments
+     (list #:go go-1.26
+           #:install-source? #f
+           #:import-path "./cmd/sops"
+           #:build-flags
+           #~(list (string-append
+                    "-ldflags="
+                    "-X github.com/getsops/sops/v3/version.Version="
+                    #$(package-version this-package)))
+           #:modules
+           '(((guix build gnu-build-system) #:prefix gnu:)
+             (guix build go-build-system)
+             (guix build utils))
+           #:phases
+           #~(modify-phases %standard-phases
+               (replace 'unpack
+                 (lambda args
+                   (unsetenv "GO111MODULE")
+                   (apply (assoc-ref gnu:%standard-phases 'unpack) args)
+                   (copy-recursively
+                    #+(this-package-native-input "vendored-go-dependencies")
+                    "vendor")))
+               (replace 'install-license-files
+                 (assoc-ref gnu:%standard-phases 'install-license-files)))))
+    (native-inputs
+     (list (origin
+             (method (go-mod-vendor #:go go-1.26))
+             (uri (package-source this-package))
+             (file-name "vendored-go-dependencies")
+             (sha256
+              (base32
+               "1gd5kpiqizrab7fbhzhwj5lm1b6wmpvwpvnrwwz0xkfn6hqwj1qy")))))
+    (home-page "https://getsops.io/")
+    (synopsis "Simple and flexible tool for managing secrets")
+    (description
+     "@acronym{SOPS, Secrets OPerationS} is an editor of encrypted files that
+supports YAML, JSON, ENV, INI and binary formats and encrypts with @acronym{AWS
+KMS, Amazon Web Services Key Management Service}, @acronym{GCP KMS, Google Cloud
+Platform Key Management Service}, Azure Key Vault, @code{age}, and OpenPGP.")
+    (license license:mpl2.0)))
