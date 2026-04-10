@@ -4,7 +4,9 @@
 (define-module (rosenthal services desktop)
   ;; Utilities
   #:use-module (guix deprecation)
+  #:use-module (guix diagnostics)
   #:use-module (guix gexp)
+  #:use-module (guix i18n)
   #:use-module (guix modules)
   #:use-module (guix packages)
   #:use-module (guix records)
@@ -131,6 +133,7 @@
 (define list-of-file-likes?
   (list-of file-like?))
 (define-maybe file-like)
+(define-maybe boolean)
 
 (define-configuration/no-serialization home-fcitx5-configuration
   (fcitx5
@@ -145,42 +148,74 @@
   (input-method-editors
    (list-of-file-likes '())
    "")
+  (wayland-frontend?
+   (boolean #f)
+   "")
+  ;; deprecated
   (gtk-im-module?
-   (boolean #f)
-   "")
+   maybe-boolean
+   ""
+   (sanitizer
+    (lambda (config)
+      (if (maybe-value-set? config)
+          (warning
+           (G_ "'~a': option '~a' is deprecated, please use '~a' instead.~%")
+           "home-fcitx5-configuration"
+           "gtk-im-module?"
+           "wayland-frontend?")))))
   (qt-im-module?
-   (boolean #f)
-   "")
+   maybe-boolean
+   ""
+   (sanitizer
+    (lambda (config)
+      (if (maybe-value-set? config)
+          (warning
+           (G_ "'~a': option '~a' is deprecated, please use '~a' instead.~%")
+           "home-fcitx5-configuration"
+           "qt-im-module?"
+           "wayland-frontend?")))))
   (xim?
-   (boolean #t)
-   ""))
+   maybe-boolean
+   ""
+   (sanitizer
+    (lambda (config)
+      (if (maybe-value-set? config)
+          (warning
+           (G_ "'~a': option '~a' is deprecated.~%")
+           "home-fcitx5-configuration"
+           "xim?"))))))
 
+;; https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
 (define %home-fcitx5-environment-variables
   (match-record-lambda <home-fcitx5-configuration>
-      (gtk-im-module? qt-im-module? xim?)
-    `(,@(if gtk-im-module?
-            '(("GTK_IM_MODULE" . "fcitx"))
-            '())
-      ,@(if qt-im-module?
-            '(("QT_IM_MODULE" . "fcitx"))
-            '())
-      ,@(if xim?
-            '(("XMODIFIERS" . "@im=fcitx"))
-            '()))))
+      (wayland-frontend?)
+    `(("XMODIFIERS" . "@im=fcitx")
+      ("QT_IM_MODULE" . "fcitx")
+      ,@(if wayland-frontend?
+            '(("QT_IM_MODULES" . "wayland;fcitx"))
+            '(("GTK_IM_MODULE" . "fcitx"))))))
+
+(define home-fcitx5-gtk2
+  (match-record-lambda <home-fcitx5-configuration>
+      (wayland-frontend?)
+    (if wayland-frontend?
+        `(("gtk-im-module" . ,(format #f "~s" "fcitx")))
+        '())))
+
+(define home-fcitx5-gtk3
+  (match-record-lambda <home-fcitx5-configuration>
+      (wayland-frontend?)
+    (if wayland-frontend?
+        `(("gtk-im-module" . "fcitx"))
+        '())))
 
 (define %home-fcitx5-profile
   (match-record-lambda <home-fcitx5-configuration>
-      (fcitx5 utilities themes input-method-editors gtk-im-module? qt-im-module?)
-    (append (list fcitx5)
+      (fcitx5 utilities themes input-method-editors wayland-frontend?)
+    (append (list fcitx5 fcitx5-gtk fcitx5-qt)
             utilities
             themes
-            input-method-editors
-            (if gtk-im-module?
-                (list fcitx5-gtk)
-                '())
-            (if qt-im-module?
-                (list fcitx5-qt)
-                '()))))
+            input-method-editors)))
 
 (define %home-fcitx5-shepherd
   (match-record-lambda <home-fcitx5-configuration>
@@ -200,6 +235,12 @@
     (extensions
      (list (service-extension home-environment-variables-service-type
                               %home-fcitx5-environment-variables)
+           (service-extension home-gtk2-service-type
+                              home-fcitx5-gtk2)
+           (service-extension home-gtk3-service-type
+                              home-fcitx5-gtk3)
+           (service-extension home-gtk4-service-type
+                              home-fcitx5-gtk3)
            (service-extension home-profile-service-type
                               %home-fcitx5-profile)
            (service-extension home-shepherd-service-type
