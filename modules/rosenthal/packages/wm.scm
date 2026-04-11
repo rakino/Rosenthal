@@ -108,7 +108,8 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
                             "bin/which"
                             "bin/wl-paste"
                             "bin/wlsunset"
-                            "bin/wtype"))))
+                            "bin/wtype"
+                            "bin/xdg-open"))))
                 (chmod script #o555)
                 (install-file script (in-vicinity #$output "bin")))))
           (add-after 'make-wrapper 'qt-wrap
@@ -142,7 +143,8 @@ exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
            which
            wl-clipboard
            wlsunset
-           wtype))
+           wtype
+           xdg-utils))
     (home-page "https://noctalia.dev/")
     (synopsis "Wayland desktop shell")
     (description
