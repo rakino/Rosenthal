@@ -105,10 +105,15 @@ of Emacs extensions.")
                       (let ((src (in-vicinity #$home-emacs-profile path))
                             (dst (in-vicinity #$output path)))
                         (mkdir-p (dirname dst))
-                        (symlink src dst)))
-                    '("share/icons"
+                        (copy-recursively src dst)))
+                    '("share/applications"
+                      "share/icons"
                       "share/info"
-                      "share/man")))))
+                      "share/man"))
+                   (let ((applications
+                          (in-vicinity #$output "share/applications")))
+                     (substitute* (find-files applications "\\.desktop$")
+                       ((#$emacs) #$output))))))
         (native-inputs '())
         (inputs '())
         (propagated-inputs '())
