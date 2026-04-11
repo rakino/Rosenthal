@@ -327,7 +327,7 @@
               (requirement '(loopback postgresql))
               (start
                #~(make-forkexec-constructor
-                  (list #$(file-append forgejo "/bin/forgejo")
+                  (list "/run/current-system/profile/bin/forgejo"
                         "--config" #$config-file)
                   #:user "forgejo"
                   #:group "forgejo"
