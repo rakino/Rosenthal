@@ -39,15 +39,15 @@
 (define-public limine
   (package
     (name "limine")
-    (version "11.1.0")
+    (version "11.3.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
-                    "https://codeberg.org/Limine/Limine/releases/download/v"
-                    version "/limine-" version ".tar.xz"))
+                    "https://github.com/Limine-Bootloader/Limine/releases"
+                    "/download/v" version "/limine-" version ".tar.xz"))
               (sha256
                (base32
-                "02940hw882h0hflvkkjaxbcf715kqa6rikx4i2d11vg2qy8i53mm"))))
+                "0d0221xc3374xq6bx26dkmidcf6slxc6dq6qnjdc3lrx3xda21jw"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? #f
@@ -79,7 +79,7 @@
            #:make-flags
            #~(list "SHELL=sh")))
     (native-inputs (list mtools nasm))
-    (home-page "https://codeberg.org/Limine/Limine")
+    (home-page "https://github.com/Limine-Bootloader/Limine")
     (synopsis "Multiprotocol bootloader and boot manager")
     (description
      "Limine is a multiprotocol bootloader and boot manager.  It's also used as
