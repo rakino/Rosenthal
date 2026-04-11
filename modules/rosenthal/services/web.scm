@@ -51,6 +51,9 @@
             navidrome-configuration
             navidrome-service-type
 
+            tuwunel-service-type
+            tuwunel-configuration
+
             vaultwarden-configuration
             vaultwarden-service-type))
 
@@ -792,6 +795,91 @@ test its configuration file."))
                              navidrome-shepherd-service)))
    (default-value (navidrome-configuration))
    (description "Run Navidrome.")))
+
+
+;;;
+;;; Tuwunel
+;;;
+
+(define-configuration/no-serialization tuwunel-configuration
+  (tuwunel
+   (file-like tuwunel-bin)
+   "Tuwunel package to use.")
+  (database-path
+   (string "/var/lib/tuwunel")
+   "Directory to create for @code{tuwunel} user.")
+  (config
+   gexp
+   "Configuration file in @code{toml-file} format.")
+  ;; Account
+  (group-id
+   (user-and-group-id #f)
+   "Group id for @code{tuwunel} group.")
+  (user-id
+   (user-and-group-id #f)
+   "User id for @code{tuwunel} user.")
+  ;; Shepherd
+  (auto-start?
+   (boolean #t)
+   "Whether or not to start the Shepherd service automatically.")
+  (shepherd-requirement
+   (list-of-symbols '())
+   "List of Shepherd services that should be started before this service."))
+
+(define tuwunel-account
+  (match-record-lambda <tuwunel-configuration>
+      (group-id user-id)
+    (list (user-group
+            (name "tuwunel")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "tuwunel")
+            (group "tuwunel")
+            (uid user-id)
+            (system? #t)
+            (comment "Tuwunel user")
+            (home-directory "/var/empty")
+            (create-home-directory? #f)))))
+
+(define tuwunel-activation
+  (match-record-lambda <tuwunel-configuration>
+      (database-path)
+    (with-imported-modules (source-module-closure '((gnu build activation)))
+      #~(begin
+          (use-modules (gnu build activation))
+          (mkdir-p/perms #$database-path (getpwnam "tuwunel") #o750)))))
+
+(define tuwunel-shepherd
+  (match-record-lambda <tuwunel-configuration>
+      (tuwunel config auto-start? shepherd-requirement)
+    (let ((config-file (toml-file "tuwunel.toml" config)))
+      (list (shepherd-service
+              (provision '(tuwunel))
+              (requirement `(networking user-processes ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append tuwunel "/bin/tuwunel"))
+                  #:user "tuwunel"
+                  #:group "tuwunel"
+                  #:log-file "/var/log/tuwunel.log"
+                  #:environment-variables
+                  (list (string-append "TUWUNEL_CONFIG=" #$config-file))))
+              (stop #~(make-kill-destructor))
+              (actions
+               (list (shepherd-configuration-action config-file))))))))
+
+(define tuwunel-service-type
+  (service-type
+    (name 'tuwunel)
+    (extensions
+     (list (service-extension account-service-type
+                              tuwunel-account)
+           (service-extension activation-service-type
+                              tuwunel-activation)
+           (service-extension shepherd-root-service-type
+                              tuwunel-shepherd)))
+    (description "Run Tuwunel.")))
 
 
 ;;;
