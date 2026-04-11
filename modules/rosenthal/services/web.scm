@@ -30,9 +30,6 @@
   #:export (caddy-configuration
             caddy-service-type
 
-            conduit-service-type
-            conduit-configuration
-
             forgejo-configuration
             forgejo-service-type
 
@@ -163,98 +160,6 @@
           (service-extension shepherd-root-service-type
                              caddy-shepherd-services)))
    (description "")))
-
-
-;;;
-;;; Conduit
-;;;
-
-(define-configuration/no-serialization conduit-configuration
-  (conduit
-   (file-like (file-append conduit-bin "/bin/conduit"))
-   "")
-  (database-path
-   (string "/var/lib/conduit")
-   "")
-  (config
-   gexp
-   "")
-  ;; Account
-  (group-id
-   (user-and-group-id #f)
-   "")
-  (user-id
-   (user-and-group-id #f)
-   "")
-  ;; Shepherd
-  (auto-start?
-   (boolean #t)
-   "")
-  (shepherd-provision
-   (list-of-symbols '(conduit))
-   "")
-  (shepherd-requirement
-   (list-of-symbols '())
-   ""))
-
-(define conduit-account
-  (match-record-lambda <conduit-configuration>
-      (group-id user-id)
-    (list (user-group
-            (name "conduit")
-            (id group-id)
-            (system? #t))
-          (user-account
-            (name "conduit")
-            (group "conduit")
-            (uid user-id)
-            (system? #t)
-            (comment "Conduit user")
-            (home-directory "/var/empty")))))
-
-(define conduit-activation
-  (match-record-lambda <conduit-configuration>
-      (database-path)
-    (with-imported-modules (source-module-closure '((guix build utils)))
-      #~(begin
-          (use-modules (guix build utils))
-          (let ((user (getpwnam "conduit"))
-                (directory #$database-path))
-            (mkdir-p directory)
-            (chown directory (passwd:uid user) (passwd:gid user))
-            (chmod directory #o750))))))
-
-(define conduit-shepherd
-  (match-record-lambda <conduit-configuration>
-      (conduit config auto-start? shepherd-provision shepherd-requirement)
-    (let ((config-file (toml-file "conduit.toml" config)))
-      (list (shepherd-service
-              (provision shepherd-provision)
-              (requirement `(networking user-processes ,@shepherd-requirement))
-              (start
-               #~(make-forkexec-constructor
-                  (list #$conduit)
-                  #:user "conduit"
-                  #:group "conduit"
-                  #:log-file "/var/log/conduit.log"
-                  #:environment-variables
-                  (list (string-append "CONDUIT_CONFIG=" #$config-file))))
-              (stop #~(make-kill-destructor))
-              (actions
-               (list (shepherd-configuration-action config-file))))))))
-
-(define conduit-service-type
-  (service-type
-    (name 'conduit)
-    (extensions
-     (list (service-extension account-service-type
-                              conduit-account)
-           (service-extension activation-service-type
-                              conduit-activation)
-           (service-extension shepherd-root-service-type
-                              conduit-shepherd)))
-    (description "Run Conduit.")))
-
 
 
 ;;;
