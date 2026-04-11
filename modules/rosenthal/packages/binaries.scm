@@ -161,7 +161,7 @@ host Matrix for your family, friends or company.")
 (define-public tuwunel-bin
   (package
     (name "tuwunel-bin")
-    (version "1.5.1")
+    (version "1.6.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -171,17 +171,31 @@ host Matrix for your family, friends or company.")
               (file-name (string-append name "-" version ".zst"))
               (sha256
                (base32
-                "00kpapzd7alm3g34ijfhwszc1x1ddd4ykcyk8ah73gmyc2lq8gys"))))
-    (build-system copy-build-system)
+                "052lp7iv9dpcryy9j1vgi9j6l6gd3n8971kmi46js79pxfwsa9x9"))))
+    (build-system gnu-build-system)
     (arguments
      (list #:tests? (not (%current-target-system))
-           #:install-plan
-           #~'((#$(format #f "~a-~a"
-                          (package-name this-package)
-                          (package-version this-package))
-                "bin/tuwunel"))
+           #:imported-modules
+           (append %default-gnu-imported-modules
+                   %copy-build-system-modules)
+           #:modules
+           '((guix build utils)
+             (guix build gnu-build-system)
+             ((guix build copy-build-system) #:prefix copy:))
            #:phases
            #~(modify-phases %standard-phases
+               (delete 'configure)
+               (delete 'build)
+               (delete 'check)
+               (replace 'install
+                 (lambda args
+                   (apply (assoc-ref copy:%standard-phases 'install)
+                          #:install-plan
+                          '((#$(format #f "~a-~a"
+                                       (package-name this-package)
+                                       (package-version this-package))
+                             "bin/tuwunel"))
+                          args)))
                (add-after 'install 'fix-permission
                  (lambda _
                    (chmod (string-append #$output "/bin/tuwunel") #o555)))
