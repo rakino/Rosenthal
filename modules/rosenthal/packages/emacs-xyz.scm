@@ -137,9 +137,6 @@ some keybindings are slightly simplified.")
                 (sha256
                  (base32
                   "0hhil3j9a8p9q7wivkd5vac6kwn1w6brw1zairfqa4r1nm23kx94"))))
-      (inputs
-       (modify-inputs inputs
-         (replace "jujutsu" jujutsu/dolly)))
       (properties '((disable-updater? . #t))))))
 
 (define-public emacs-pcmpl-tailscale
