@@ -3,13 +3,8 @@
 // Check the wiki for a full description of the configuration:
 // https://yalter.github.io/niri/Configuration:-Introduction
 
-environment {
-        // Workaround for screencasting.
-        XDG_CURRENT_DESKTOP "niri:GNOME"
-}
-
 // See also `import_environment' in niri source (src/main.rs).
-spawn-sh-at-startup "herd set-environment graphical-session XDG_CURRENT_DESKTOP=niri XDG_SESSION_TYPE=$XDG_SESSION_TYPE NIRI_SOCKET=$NIRI_SOCKET"
+spawn-sh-at-startup "herd set-environment graphical-session XDG_CURRENT_DESKTOP=$XDG_CURRENT_DESKTOP XDG_SESSION_TYPE=$XDG_SESSION_TYPE NIRI_SOCKET=$NIRI_SOCKET"
 
 // Input device configuration.
 // Find the full list of options on the wiki:
