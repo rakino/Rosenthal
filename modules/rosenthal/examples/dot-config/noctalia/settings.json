@@ -54,7 +54,6 @@
             },
             {
                 "action": "rebootToUefi",
-                "command": "loginctl reboot --firmware-setup",
                 "enabled": true
             }
         ],
