@@ -1,8 +1,9 @@
 # SPDX-License-Identifier: CC0-1.0
 # Copyright © 2022, 2024, 2025-2026 Hilton Chain <hako@ultrarare.space>
 #+TITLE: Rosenthal - A certain Guix channel
-#+html: <a href="https://ci.guix.moe/jobset/rosenthal"><img src="https://ci.guix.moe/jobset/rosenthal/badge.svg?type=1"></a>
 
+** Overview
+#+html: <a href="https://ci.guix.moe/jobset/rosenthal"><img src="https://ci.guix.moe/jobset/rosenthal/badge.svg?type=1"></a>
 Rosenthal is a [[https://guix.gnu.org/manual/devel/en/html_node/Channels.html][Guix channel]] created for experiments.  It currently holds some
 packages and services not ready for upstreaming.
 
@@ -31,3 +32,73 @@ and public symbols from Rosenthal and other Guix channels.
 
 [[https://guix.gnu.org/manual/devel/en/html_node/Substitutes.html][Substitutes]] (pre-built package binaries) for this channel are available via [[https://guix.moe/][Guix
 Moe]]'s infrastructure.
+
+** Content
+Outputed by the [[file:etc/scripts/index.scm][index.scm]] script.
+*** Packages
+- [[https://github.com/ai-robots-txt/ai.robots.txt][ai-robots-txt]]@1.50 :: List of AI agents and robots to block
+- [[https://grafana.com/oss/alloy-opentelemetry-collector/][alloy-bin]]@1.18.1 :: OpenTelemetry Collector distribution with programmable pipelines
+- [[https://github.com/anthonyhab/bb-auth][bb-auth]]@0.2.0 :: Unified polkit, keyring, and pinentry authentication daemon
+- [[https://bitwarden.com/][bitwarden-icecat]]@2026.3.0 :: Bitwarden client browser extension
+- [[https://www.busybox.net][busybox-static]]@1.37.0 :: Many common UNIX utilities in a single executable
+- [[https://caddyserver.com/][caddy]]@2.11.4 :: Extensible HTTP web server with automatic HTTPS
+- [[https://git.guix.moe/hako/caddy][caddy-dolly]]@2026.06.01 :: Extensible HTTP web server with automatic HTTPS
+- [[https://1.1.1.1/][cloudflare-warp-bin]]@2026.6.880.0 :: Cloudflare WARP client
+- [[https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/][cloudflared]]@2026.8.2 :: Cloudflare Tunnel client
+- [[https://guix.gnu.org/cuirass/][cuirass-dolly]]@1.3.6 :: Continuous integration system
+- [[https://davmac.org/projects/dinit/][dinit]]@0.22.1 :: Service manager with dependency management
+- [[https://github.com/felixonmars/dnsmasq-china-list][dnsmasq-china-list]]@0.0.0-21.7da1a5a :: Chinese-specific DNS server configurations
+- [[https://matt.ucc.asn.au/dropbear/dropbear.html][dropbear-static]]@2025.89 :: Small SSH server and client
+- [[https://github.com/Schnouki/caddyfile-mode][emacs-caddyfile-mode]]@0.2-0.fc41148 :: Emacs major mode for editing Caddy configuration files
+- [[https://github.com/dakra/ghostel][emacs-consult-ghostel]]@0.53.0 :: Consult integration for ghostel
+- [[https://codeberg.org/akib/emacs-eat][emacs-eat-dolly]]@0.9.4 :: Terminal emulator in Emacs
+- [[https://github.com/flycheck/flycheck-eglot][emacs-flycheck-eglot]]@1.0-0.cd1dd78 :: Flycheck support for eglot
+- [[https://github.com/astoff/isearch-mb][emacs-isearch-mb]]@0.8 :: Control `isearch' from the minibuffer
+- [[https://github.com/taquangtrung/emacs-kdl-mode][emacs-kdl-mode]]@0.0.1-0.2d849e2 :: Emacs major mode for editing files in the KDL document language
+- [[https://github.com/dandavison/magit-delta][emacs-magit-delta-dolly]]@0.1-0.5fc7dbd :: Integration of `delta' with `emacs-magit'
+- [[https://github.com/0WD0/majutsu][emacs-majutsu-dolly]]@0.6.0-5.56b6e26 :: Emacs interface for Jujutsu version control system
+- [[https://github.com/xuchunyang/msgpack.el][emacs-msgpack]]@0.1.1-0.5353a7b :: Read and write MessagePack object in Emacs
+- [[https://git.thanosapollo.org/pcmpl-tailscale][emacs-pcmpl-tailscale]]@0.0.1-0.acd6bce :: Enhanced shell completions for tailscale
+- [[https://codeberg.org/divyaranjan/emacs-reader][emacs-reader]]@0.3.2-2.a0e3615 :: Emacs document reader
+- [[https://github.com/ArthurHeymans/emacs-tramp-rpc][emacs-tramp-rpc]]@0.13.1 :: TRAMP backend using RPC
+- [[https://wakatime.com/emacs][emacs-wakatime-mode]]@1.0.2-60.1c5b225 :: Automatic time tracking extension for Emacs using WakaTime
+- [[https://forgejo.org/][forgejo]]@14.0.4 :: Lightweight software forge
+- [[https://grafana.com/][grafana-bin]]@12.4.2 :: Platform for monitoring and observability
+- [[https://github.com/hylophile/guile-toml][guile-toml]]@1.0 :: TOML module for Guile Scheme
+- [[https://www.gnu.org/software/guix/][guix-dolly]]@1.5.0-7.5ceffb6 :: Functional package manager for installed software packages and versions
+- [[https://github.com/hifi/heisenbridge][heisenbridge]]@1.15.4 :: Bouncer-style Matrix IRC bridge
+- [[https://komga.org/][komga-bin]]@1.26.3 :: Media server for comics/mangas/BDs/magazines/eBooks
+- [[https://sr.ht/~kennylevinsen/seatd][libseat-sans-logind]]@0.9.3 :: Seat management library
+- [[https://www.freedesktop.org/wiki/Software/vaapi/][libva-nox]]@2.22.0 :: Video acceleration library
+- [[https://github.com/Limine-Bootloader/Limine][limine]]@11.3.1 :: Multiprotocol bootloader and boot manager
+- [[https://grafana.com/oss/loki/][loki-bin]]@3.7.6 :: Log aggregation system
+- [[https://github.com/sot-tech/LottieConverter][lottie-converter]]@0.2-0.3ad34af :: Lottie animation converter
+- [[https://github.com/mautrix/telegram][mautrix-telegram]]@0.2608.0 :: Matrix-Telegram hybrid puppeting/relaybot bridge
+- [[https://wiki.metacubex.one/][mihomo]]@1.19.30 :: Rule-based proxy
+- [[https://grafana.com/oss/mimir/][mimir-bin]]@3.0.4 :: Scalable long-term storage for Prometheus
+- [[https://github.com/Sevichecc/miniflux-injector][miniflux-injector-icecat]]@2.3.3 :: Injects Miniflux search results into search page
+- [[https://codeberg.org/hako/mirror-substitutes][mirror-substitutes]]@0.0.2 :: Mirror Guix substitutes
+- [[https://www.navidrome.org/][navidrome-bin]]@0.63.2 :: Web-based music collection server and streamer
+- [[https://noctalia.dev/][noctalia]]@5.2.0 :: Wayland shell and bar
+- [[https://noctalia.dev/][noctalia-greeter]]@1.6.0 :: Login greeter for greetd
+- [[https://github.com/27justin/ohmyech][ohmyech-icecat]]@1.2 :: Visual indicator for Encrpted Client Hello
+- [[https://github.com/ifreund/dumb_runtime_dir][pam-dumb-runtime-dir]]@1.0.4 :: Create `XDG_RUNTIME_DIR' on login and never remove it
+- [[https://prismlauncher.org/][prismlauncher-dolly]]@11.0.3 :: Free, open source launcher for Minecraft
+- [[https://prometheus.io/][prometheus-bin]]@3.14.0 :: Monitoring system and time series database
+- [[https://pypi.org/project/coherent.licensed/][python-coherent-licensed]]@0.5.2 :: License management tooling
+- [[https://github.com/cher-nov/cryptg][python-cryptg]]@0.5.2 :: Cryptographic utilities for Telegram
+- [[https://github.com/jaraco/irc][python-irc]]@20.3.1 :: Python Internet Relay Chat protocol library
+- [[https://github.com/jaraco/jaraco.logging][python-jaraco-logging]]@3.4.0 :: Python logging facility
+- [[https://github.com/jaraco/jaraco.stream][python-jaraco-stream]]@3.0.4 :: Routines for dealing with data streams
+- [[https://github.com/mautrix/python][python-mautrix]]@0.20.8 :: Python 3 asyncio Matrix framework
+- [[https://github.com/tulir/Telethon][python-tulir-telethon]]@1.99.0a6 :: Python 3 MTProto API Telegram client library
+- [[https://sr.ht/~kennylevinsen/seatd][seatd-sans-logind]]@0.9.3 :: Seat management daemon
+- [[https://www.ihcblog.com/a-better-tls-obfs-proxy/][shadow-tls-bin]]@0.2.25 :: Proxy to expose real tls handshake to the firewall
+- [[https://sing-box.sagernet.org/][sing-box]]@1.14.0 :: Universal proxy platform
+- [[https://github.com/zenhack/socks2http][socks2http]]@0.0.0-20160712034938-bafa2cde8eb4 :: SOCKS5 to HTTP proxy
+- [[https://systemd.io/][systemd-stub]]@261.2 :: Unified kernel image UEFI stub
+- [[https://tailscale.com/][tailscale]]@1.102.3 :: Mesh VPN service utilizing the WireGuard protocol and 2FA
+- [[https://matrix-construct.github.io/tuwunel/][tuwunel-bin]]@1.8.2 :: Matrix homeserver
+- [[https://systemd.io][ukify]]@261.2 :: Unified kernel image UEFI tool
+- [[https://wakapi.dev/][wakapi-bin]]@2.17.6 :: WakaTime-compatible backend
+- [[https://wakatime.com/plugins][wakatime-cli-bin]]@2.24.4 :: Command line interface to WakaTime
