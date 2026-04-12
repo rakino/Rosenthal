@@ -14,37 +14,45 @@
             home-gtk3-service-type
             home-gtk4-service-type))
 
-(define home-gtk2-environment-variables
-  ;; https://wiki.archlinux.org/title/XDG_Base_Directory
-  '(("GTK2_RC_FILES" . "$XDG_CONFIG_HOME/gtk-2.0/gtkrc")))
+(define (home-gtk2-environment-variables config)
+  (if (null? config)
+      '()
+      ;; https://wiki.archlinux.org/title/XDG_Base_Directory
+      '(("GTK2_RC_FILES" . "$XDG_CONFIG_HOME/gtk-2.0/gtkrc"))))
 
 (define (home-gtk2-xdg-configuration-files config)
-  `(("gtk-2.0/gtkrc"
-     ,(computed-file "gtkrc"
-        #~(begin
-            (use-modules (ice-9 match))
-            (call-with-output-file #$output
-              (lambda (port)
-                (for-each (match-lambda
-                            ((key . val)
-                             (format port "~a = ~a~%" key val)))
-                          '#$config))))
-        #:options '(#:substitutable? #f)))))
+  (if (null? config)
+      '()
+      `(("gtk-2.0/gtkrc"
+         ,(computed-file "gtkrc"
+            #~(begin
+                (use-modules (ice-9 match))
+                (call-with-output-file #$output
+                  (lambda (port)
+                    (for-each (match-lambda
+                                ((key . val)
+                                 (format port "~a = ~a~%" key val)))
+                              '#$config))))
+            #:options '(#:substitutable? #f))))))
 
 (define (home-gtk3-xdg-configuration-files config)
-  `(("gtk-3.0/settings.ini"
-     ,(ini-file "settings.ini" #~'(("Settings" #$@config))))))
+  (if (null? config)
+      '()
+      `(("gtk-3.0/settings.ini"
+         ,(ini-file "settings.ini" #~'(("Settings" #$@config)))))))
 
 (define (home-gtk4-xdg-configuration-files config)
-  `(("gtk-4.0/settings.ini"
-     ,(ini-file "settings.ini" #~'(("Settings" #$@config))))))
+  (if (null? config)
+      '()
+      `(("gtk-4.0/settings.ini"
+         ,(ini-file "settings.ini" #~'(("Settings" #$@config)))))))
 
 (define home-gtk2-service-type
   (service-type
     (name 'home-gtk2)
     (extensions
      (list (service-extension home-environment-variables-service-type
-                              (const home-gtk2-environment-variables))
+                              home-gtk2-environment-variables)
            (service-extension home-xdg-configuration-files-service-type
                               home-gtk2-xdg-configuration-files)))
     (compose concatenate)
