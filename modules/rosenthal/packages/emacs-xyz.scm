@@ -13,7 +13,8 @@
   ;; Guix build systems
   #:use-module (guix build-system emacs)
   ;; Guix packages
-  #:use-module (gnu packages emacs-xyz))
+  #:use-module (gnu packages emacs-xyz)
+  #:use-module (rosenthal packages version-control))
 
 (define-public emacs-arei/dolly
   (let* ((commit "c348103a4562e183a3c094dc945fc2af8bf0b704")
@@ -144,6 +145,26 @@ some keybindings are slightly simplified.")
                  "1ipqvrszh6fp9d9g3grk4mbh762knhn0zp3jhww0mkib73f3p0sy"))))))
     (name "emacs-magit-delta-dolly")
     (properties '((disable-updater? . #t)))))
+
+(define-public emacs-majutsu/dolly
+  (let ((commit "07b51b1f7fdc7cc5a21911575d30c48ed13a6489")
+        (revision "0"))
+    (package
+      (inherit emacs-majutsu)
+      (name "emacs-majutsu-dolly")
+      (version (git-version "0.6.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/0WD0/majutsu")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "01bzh8cszi62b9pgskff9hls9aibxshr430mm2yc55ncksqmgw2b"))))
+      (inputs
+       (modify-inputs inputs
+         (replace "jujutsu" jujutsu/dolly))))))
 
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
