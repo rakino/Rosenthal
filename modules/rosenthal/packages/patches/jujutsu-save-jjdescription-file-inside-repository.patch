@@ -1,0 +1,86 @@
+From e72cfa6d925a3e2fa216e6e5e91cd8e737edc5fe Mon Sep 17 00:00:00 2001
+From: Hilton Chain <hako@ultrarare.space>
+Date: Sun, 12 Apr 2026 21:59:49 +0800
+Subject: [PATCH] Revert "cli: put editor-*.jjdescription file in /tmp instead
+ of .jj/repo/"
+
+This reverts commit 146900a071153a32ae2764a3380726c08f1e14f6.
+---
+ CHANGELOG.md                       | 3 ---
+ cli/src/cli_util.rs                | 4 +++-
+ cli/tests/test_describe_command.rs | 8 ++++----
+ 3 files changed, 7 insertions(+), 8 deletions(-)
+
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+index 76b291acf..27aa0226c 100644
+--- a/CHANGELOG.md
++++ b/CHANGELOG.md
+@@ -1608,9 +1608,6 @@ Thanks to the people who made this release happen!
+ 
+ * `jj git push -c`/`--change` no longer moves existing local bookmarks.
+ 
+-* The `editor-*.jjdescription` files passed to your editor by e.g. `jj describe`
+-  are now written to your system's temporary directory instead of `.jj/repo/`.
+-
+ ### Deprecations
+ 
+ * `git.subprocess = false` has been deprecated, and the old `libgit2`
+diff --git a/cli/src/cli_util.rs b/cli/src/cli_util.rs
+index 94681d0ee..8779fa31d 100644
+--- a/cli/src/cli_util.rs
++++ b/cli/src/cli_util.rs
+@@ -1687,8 +1687,10 @@ to the current parents may contain changes from multiple commits.
+     }
+ 
+     /// Loads text editor from the settings.
++    ///
++    /// Temporary files will be created in the repository directory.
+     pub fn text_editor(&self) -> Result<TextEditor, ConfigGetError> {
+-        TextEditor::from_settings(self.settings())
++        Ok(TextEditor::from_settings(self.settings())?.with_temp_dir(self.repo_path()))
+     }
+ 
+     pub fn resolve_single_op(&self, op_str: &str) -> Result<Operation, OpsetEvaluationError> {
+diff --git a/cli/tests/test_describe_command.rs b/cli/tests/test_describe_command.rs
+index d75d4fbab..195faafde 100644
+--- a/cli/tests/test_describe_command.rs
++++ b/cli/tests/test_describe_command.rs
+@@ -152,7 +152,7 @@ fn test_describe() -> TestResult {
+     insta::with_settings!({
+         filters => [
+             (r"\bEditor '[^']*'", "Editor '<redacted>'"),
+-            (r"in .*(editor-)[^.]*(\.jjdescription)\b", "in <redacted>$1<redacted>$2"),
++            (r"\b(editor-)[^.]*(\.jjdescription)\b", "$1<redacted>$2"),
+             ("exit code", "exit status"), // Windows
+         ],
+     }, {
+@@ -160,7 +160,7 @@ fn test_describe() -> TestResult {
+         ------- stderr -------
+         Error: Failed to edit description
+         Caused by: Editor '<redacted>' exited with exit status: 1
+-        Hint: Edited description is left in <redacted>editor-<redacted>.jjdescription
++        Hint: Edited description is left in $TEST_ENV/repo/.jj/repo/editor-<redacted>.jjdescription
+         [EOF]
+         [exit status: 1]
+         ");
+@@ -496,7 +496,7 @@ fn test_describe_multiple_commits() -> TestResult {
+     insta::with_settings!({
+         filters => [
+             (r"\bEditor '[^']*'", "Editor '<redacted>'"),
+-            (r"in .*(editor-)[^.]*(\.jjdescription)\b", "in <redacted>$1<redacted>$2"),
++            (r"\b(editor-)[^.]*(\.jjdescription)\b", "$1<redacted>$2"),
+             ("exit code", "exit status"), // Windows
+         ],
+     }, {
+@@ -504,7 +504,7 @@ fn test_describe_multiple_commits() -> TestResult {
+         ------- stderr -------
+         Error: Failed to edit description
+         Caused by: Editor '<redacted>' exited with exit status: 1
+-        Hint: Edited description is left in <redacted>editor-<redacted>.jjdescription
++        Hint: Edited description is left in $TEST_ENV/repo/.jj/repo/editor-<redacted>.jjdescription
+         [EOF]
+         [exit status: 1]
+         ");
+-- 
+2.52.0
+
