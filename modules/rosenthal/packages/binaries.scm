@@ -254,7 +254,7 @@ eBooks.")
 (define-public navidrome-bin
   (package
     (name "navidrome-bin")
-    (version "0.60.3")
+    (version "0.61.2")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -262,11 +262,33 @@ eBooks.")
                     version "/navidrome_" version "_linux_amd64.tar.gz"))
               (sha256
                (base32
-                "18gs30f4z5c1qz00m3sngp8jc7s9vf0v9c1ilql1dkghafk4csbn"))))
-    (build-system copy-build-system)
+                "0ygcbpivp7wmdk4xk1pi6y160scxvqw8dbnjnx092ldm14gakj36"))))
+    (build-system gnu-build-system)
     (arguments
-     (list #:install-plan
-           #~'(("navidrome" "bin/"))))
+     (list #:tests? (not (%current-target-system))
+           #:imported-modules
+           (append %default-gnu-imported-modules
+                   %copy-build-system-modules)
+           #:modules
+           '((guix build utils)
+             (guix build gnu-build-system)
+             ((guix build copy-build-system) #:prefix copy:))
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'configure)
+               (delete 'build)
+               (delete 'check)
+               (replace 'install
+                 (lambda args
+                   (apply (assoc-ref copy:%standard-phases 'install)
+                          #:install-plan '(("navidrome" "bin/"))
+                          args)))
+               (add-after 'install 'check
+                 (lambda* (#:key tests? outputs #:allow-other-keys)
+                   (let ((cmd (search-input-file outputs "bin/navidrome")))
+                     (when tests?
+                       (invoke cmd "--help")
+                       (invoke cmd "--version"))))))))
     (supported-systems '("x86_64-linux"))
     (home-page "https://www.navidrome.org/")
     (synopsis "Web-based music collection server and streamer")
