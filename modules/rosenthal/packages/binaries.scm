@@ -469,7 +469,7 @@ metrics no matter where they are stored.")
 (define-public prometheus-bin
   (package
     (name "prometheus-bin")
-    (version "3.10.0")
+    (version "3.11.2")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/prometheus/prometheus"
@@ -477,13 +477,36 @@ metrics no matter where they are stored.")
                                   "/prometheus-" version ".linux-amd64.tar.gz"))
               (sha256
                (base32
-                "08h1d7whb85vp28r1nlkrilyws6cs1hzxlw9zhiic63apfbhvia1"))))
-    (build-system copy-build-system)
+                "19j4l46k8vwsdzifk17sn5ajdrdj3zdvs9rd60lr640dx4gflhzn"))))
+    (build-system gnu-build-system)
     (arguments
-     (list #:install-plan
-           #~'(("prometheus" "bin/")
-               ("promtool" "bin/")
-               ("prometheus.yml" "etc/"))))
+     (list #:tests? (not (%current-target-system))
+           #:imported-modules
+           (append %default-gnu-imported-modules
+                   %copy-build-system-modules)
+           #:modules
+           '((guix build utils)
+             (guix build gnu-build-system)
+             ((guix build copy-build-system) #:prefix copy:))
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'configure)
+               (delete 'build)
+               (delete 'check)
+               (replace 'install
+                 (lambda args
+                   (apply (assoc-ref copy:%standard-phases 'install)
+                          #:install-plan
+                          '(("prometheus" "bin/")
+                            ("promtool" "bin/")
+                            ("prometheus.yml" "etc/"))
+                          args)))
+               (add-after 'install 'check
+                 (lambda* (#:key tests? outputs #:allow-other-keys)
+                   (let ((cmd (search-input-file outputs "bin/prometheus")))
+                     (when tests?
+                       (invoke cmd "--help")
+                       (invoke cmd "--version"))))))))
     (synopsis "Monitoring system and time series database")
     (description
      "Prometheus is a systems and service monitoring system.  It collects
