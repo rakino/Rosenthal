@@ -586,13 +586,20 @@ compositor.")))
            hicolor-icon-theme
            packages)))
 
-(define %home-theme-files
+(define home-theme-icons-config
   (match-record-lambda <home-theme-configuration>
       (icon-theme)
-    `((".icons/default/index.theme"
-       ,(ini-file "index.theme"
-          #~'(("icon theme"
-               ("Inherits" . #$icon-theme))))))))
+    (ini-file "index.theme"
+      #~'(("icon theme"
+           ("Inherits" . #$icon-theme))))))
+
+(define (home-theme-files config)
+  `((".icons/default/index.theme"
+     ,(home-theme-icons-config config))))
+
+(define (home-theme-xdg-data-files config)
+  `(("icons/default/index.theme"
+     ,(home-theme-icons-config config))))
 
 (define home-theme-gtk2
   (match-record-lambda <home-theme-configuration>
@@ -623,7 +630,9 @@ compositor.")))
            (service-extension home-profile-service-type
                               %home-theme-profile)
            (service-extension home-files-service-type
-                              %home-theme-files)
+                              home-theme-files)
+           (service-extension home-xdg-data-files-service-type
+                              home-theme-xdg-data-files)
            (service-extension home-gtk2-service-type
                               home-theme-gtk2)
            (service-extension home-gtk3-service-type
