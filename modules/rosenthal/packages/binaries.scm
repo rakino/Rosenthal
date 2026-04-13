@@ -334,7 +334,7 @@ monster-in-the-middle}.")
 (define-public wakapi-bin
   (package
     (name "wakapi-bin")
-    (version "2.17.2")
+    (version "2.17.3")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -342,9 +342,33 @@ monster-in-the-middle}.")
                     version "/wakapi_linux_amd64.zip"))
               (sha256
                (base32
-                "1x51a9jhnhzanbgb713f0j8rnj4sgcdpghzhifvncj8hz6w4i8sy"))))
-    (build-system copy-build-system)
-    (arguments (list #:install-plan #~'(("wakapi" "bin/wakapi"))))
+                "0lppf1wzx07kv4jh9mjhx9nbwl3kcb4swnhyydsi9llccf60pccn"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list #:tests? (not (%current-target-system))
+           #:imported-modules
+           (append %default-gnu-imported-modules
+                   %copy-build-system-modules)
+           #:modules
+           '((guix build utils)
+             (guix build gnu-build-system)
+             ((guix build copy-build-system) #:prefix copy:))
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'configure)
+               (delete 'build)
+               (delete 'check)
+               (replace 'install
+                 (lambda args
+                   (apply (assoc-ref copy:%standard-phases 'install)
+                          #:install-plan '(("wakapi" "bin/wakapi"))
+                          args)))
+               (add-after 'install 'check
+                 (lambda* (#:key tests? outputs #:allow-other-keys)
+                   (let ((cmd (search-input-file outputs "bin/wakapi")))
+                     (when tests?
+                       (invoke cmd "--help")
+                       (invoke cmd "--version"))))))))
     (supported-systems '("x86_64-linux"))
     (native-inputs (list unzip))
     (home-page "https://wakapi.dev/")
