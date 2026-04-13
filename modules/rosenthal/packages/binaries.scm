@@ -382,7 +382,7 @@ coding statistics.")
 (define-public wakatime-cli-bin
   (package
     (name "wakatime-cli-bin")
-    (version "2.0.0")
+    (version "2.2.5")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/wakatime/wakatime-cli"
@@ -390,11 +390,35 @@ coding statistics.")
                                   "/wakatime-cli-linux-amd64.zip"))
               (sha256
                (base32
-                "1ci4gjhxyn05amq0dx34ck2q0zpv43x1qq3rhkwx02wk3ny5mn0i"))))
-    (build-system copy-build-system)
+                "18c9ca4l9ny5sxk5cjnk3s5q3hwbgsjajmb0r1c327arhv53pz02"))))
+    (build-system gnu-build-system)
     (arguments
-     (list #:install-plan
-           #~'(("wakatime-cli-linux-amd64" "bin/wakatime-cli"))))
+     (list #:tests? (not (%current-target-system))
+           #:imported-modules
+           (append %default-gnu-imported-modules
+                   %copy-build-system-modules)
+           #:modules
+           '((guix build utils)
+             (guix build gnu-build-system)
+             ((guix build copy-build-system) #:prefix copy:))
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'configure)
+               (delete 'build)
+               (delete 'check)
+               (replace 'install
+                 (lambda args
+                   (apply (assoc-ref copy:%standard-phases 'install)
+                          #:install-plan
+                          '(("wakatime-cli-linux-amd64" "bin/wakatime-cli"))
+                          args)))
+               (add-after 'install 'check
+                 (lambda* (#:key tests? outputs #:allow-other-keys)
+                   (let ((cmd (search-input-file outputs "bin/wakatime-cli")))
+                     (when tests?
+                       (setenv "HOME" "/tmp")
+                       (invoke cmd "--help")
+                       (invoke cmd "--version"))))))))
     (supported-systems '("x86_64-linux"))
     (native-inputs (list unzip))
     (home-page "https://wakatime.com/plugins")
