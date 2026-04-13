@@ -164,7 +164,8 @@ some keybindings are slightly simplified.")
                   "01bzh8cszi62b9pgskff9hls9aibxshr430mm2yc55ncksqmgw2b"))))
       (inputs
        (modify-inputs inputs
-         (replace "jujutsu" jujutsu/dolly))))))
+         (replace "jujutsu" jujutsu/dolly)))
+      (properties '((disable-updater? . #t))))))
 
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")

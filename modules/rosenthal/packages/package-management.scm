@@ -90,4 +90,5 @@
       (description
        "This package provides commands to mirror substitutes for Guix and Nix
 without relying on the implementation of remote server.")
-      (license license:gpl3+))))
+      (license license:gpl3+)
+      (properties '((disable-updater? . #t))))))

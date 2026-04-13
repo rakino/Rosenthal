@@ -102,7 +102,8 @@ file at build time to reflect the license declared in the license expression.")
     (description
      "This is a small native extension for Python 3 to help libraries that want
 to work with the Telegram API, which uses the uncommon AES-IGE mode for it.")
-    (license license:cc0)))
+    (license license:cc0)
+    (properties '((disable-updater? . #t)))))
 
 (define-public python-irc
   (package
@@ -136,7 +137,8 @@ Internet Relay Chat} protocol for Python.  It provides an event-driven IRC
 client framework.  It has a fairly thorough support for the basic IRC protocol,
 @acronym{CTCP, Client-to-Client Protocol}, and @acronym{DCC, Direct
 Client-to-Client} connections.")
-    (license license:expat)))
+    (license license:expat)
+    (properties '((disable-updater? . #t)))))
 
 (define-public python-jaraco-logging
   (package
@@ -219,7 +221,8 @@ set of generators for loading gzip data on the fly.")
     (synopsis "Python 3 asyncio Matrix framework")
     (description
      "This package provides a Python 3.10+ asyncio Matrix framework.")
-    (license license:mpl2.0)))
+    (license license:mpl2.0)
+    (properties '((disable-updater? . #t)))))
 
 (define-public python-tulir-telethon
   (package
