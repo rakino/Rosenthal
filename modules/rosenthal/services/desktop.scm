@@ -400,7 +400,7 @@ compositor.")))
     (list (shepherd-service
             (documentation "Start noctalia-shell.")
             (provision '(noctalia-shell))
-            (requirement '(graphical-session))
+            (requirement '(dbus graphical-session))
             (modules '((shepherd support)))
             (start
              #~(lambda args
