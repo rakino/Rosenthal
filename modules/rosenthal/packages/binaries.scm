@@ -40,7 +40,7 @@
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
-    (version "2026.1.150.0")
+    (version "2026.3.846.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkg.cloudflareclient.com"
@@ -48,45 +48,64 @@
                                   "cloudflare-warp_" version "_amd64.deb"))
               (sha256
                (base32
-                "11xdsqww4s2ndqgzaz3d0w3r7557pjsdisw0m4lg9h0a2ilxd6h4"))))
-    (build-system copy-build-system)
+                "0yvdylcw916hz6wy1y9ah5ajkf4i0ndw7ck0ymqxma74z72101qz"))))
+    (build-system gnu-build-system)
     (arguments
-     (list #:install-plan
-           #~'(("bin" "bin" #:include ("warp-cli" "warp-svc")))
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'unpack 'unpack-deb
-                 (lambda* (#:key source #:allow-other-keys)
-                   (invoke "ar" "-x" source)
-                   (invoke "tar" "-xf" "data.tar.gz")))
-               (add-after 'install 'patch-elf
-                 (lambda _
-                   (let ((ld.so (string-append #$(this-package-input "glibc")
-                                               #$(glibc-dynamic-linker)))
-                         (rpath (string-join
-                                 (list
-                                  (string-append
-                                   (ungexp
-                                    (this-package-input "gcc") "lib") "/lib")
-                                  (string-append
-                                   #$(this-package-input "dbus") "/lib")
-                                  (string-append
-                                   #$(this-package-input "glibc") "/lib")
-                                  (string-append
-                                   #$(this-package-input "nspr") "/lib")
-                                  (string-append
-                                   #$(this-package-input "nss") "/lib/nss"))
-                                 ":")))
-                     (define (patch-elf file)
-                       (format #t "Patching ~a ..." file)
-                       (unless (string-contains file ".so")
-                         (invoke "patchelf" "--set-interpreter" ld.so file))
-                       (invoke "patchelf" "--set-rpath" rpath file)
-                       (display " done\n"))
-                     (for-each (lambda (file)
-                                 (patch-elf file))
-                               (find-files
-                                (string-append #$output "/bin")))))))))
+     (list
+      #:tests? (not (%current-target-system))
+      #:imported-modules
+      (append %default-gnu-imported-modules
+              %copy-build-system-modules)
+      #:modules
+      '((guix build utils)
+        (guix build gnu-build-system)
+        ((guix build copy-build-system) #:prefix copy:))
+      #:phases
+      #~(modify-phases %standard-phases
+          (delete 'configure)
+          (delete 'build)
+          (delete 'check)
+          (add-after 'unpack 'unpack-deb
+            (lambda* (#:key source #:allow-other-keys)
+              (invoke "ar" "-x" source)
+              (invoke "tar" "-xf" "data.tar.gz")))
+          (replace 'install
+            (lambda args
+              (apply (assoc-ref copy:%standard-phases 'install)
+                     #:install-plan
+                     '(("bin" "bin" #:include ("warp-cli" "warp-svc")))
+                     args)))
+          (add-after 'install 'patch-elf
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let* ((ld.so (search-input-file inputs #$(glibc-dynamic-linker)))
+                     (rpath
+                      (string-join
+                       (cons* (dirname ld.so)
+                              (dirname
+                               (search-input-file inputs "lib/nss/libnss3.so"))
+                              (map (lambda (lib)
+                                     (dirname (search-input-file
+                                               inputs (in-vicinity "lib" lib))))
+                                   '("libdbus-1.so"
+                                     "libgcc_s.so"
+                                     "libnspr4.so")))
+                       ":")))
+                (define (patch-elf file)
+                  (format #t "Patching ~a ..." file)
+                  (unless (string-contains file ".so")
+                    (invoke "patchelf" "--set-interpreter" ld.so file))
+                  (invoke "patchelf" "--set-rpath" rpath file)
+                  (display " done\n"))
+                (for-each (lambda (file)
+                            (patch-elf file))
+                          (find-files
+                           (string-append #$output "/bin"))))))
+          (add-after 'patch-elf 'check
+            (lambda* (#:key tests? outputs #:allow-other-keys)
+              (let ((cmd (search-input-file outputs "bin/warp-cli")))
+                (when tests?
+                  (invoke cmd "--help")
+                  (invoke cmd "--version"))))))))
     (supported-systems '("x86_64-linux"))
     (native-inputs (list patchelf-0.16))
     (inputs (list dbus `(,gcc "lib") glibc nspr nss))
