@@ -11,7 +11,6 @@
   ;; Guix build systems
   #:use-module (guix build-system cargo)
   #:use-module (guix build-system pyproject)
-  #:use-module (guix build-system python)
   ;; Guix origin methods
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -39,6 +38,7 @@
        (sha256
         (base32 "0va113rfa0i8sns2if8mnkzwliks0nvlzp1db71klbblrq1i81yq"))))
     (build-system pyproject-build-system)
+    (arguments (list #:tests? #f))      ;No tests.
     (native-inputs (list python-flit-core))
     (home-page "https://pypi.org/project/coherent.licensed/")
     (synopsis "License management tooling")
