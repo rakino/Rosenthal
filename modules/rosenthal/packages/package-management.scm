@@ -22,13 +22,12 @@
   (package
     (inherit
      (package-with-extra-patches guix
-       (rosenthal-patches "guix-change-publish-cache-storage.patch"
-                          "guix-allow-out-of-tree-modules-in-initrd.patch"
-                          "guix-wip-zfs-boot-support.patch")))
+       (rosenthal-patches "guix-change-publish-cache-storage.patch")))
     (name "guix-dolly")
     (arguments
      (substitute-keyword-arguments arguments
-       ((#:parallel-build? _ #f) #t)))
+       ((#:parallel-build? _ #f) #t)
+       ((#:tests? _ #t) #f)))
     (properties '((disable-updater? . #t)))))
 
 (define-public mirror-substitutes
