@@ -65,9 +65,6 @@
             home-niri-configuration
             home-niri-service-type
 
-            home-noctalia-shell-configuration
-            home-noctalia-shell-service-type
-
             home-bb-auth-service-type
             home-polkit-gnome-service-type
 
@@ -378,54 +375,11 @@ compositor.")))
 ;;; Noctalia
 ;;;
 
-(define-configuration/no-serialization home-noctalia-shell-configuration
-  (noctalia-shell
-   (file-like noctalia-shell)
-   "File-like object to provide @command{/bin/noctalia-shell}."))
+(define-deprecated/public-alias home-noctalia-shell-configuration
+  (@ (rosenthal home services desktop) home-noctalia-configuration))
 
-;; Create ~/.config/noctalia directory, otherwise Noctalia shell won't show up
-;; on initial startup.
-(define (%home-noctalia-shell-activation _)
-  (with-imported-modules (source-module-closure '((guix build utils)))
-    #~(begin
-        (use-modules (guix build utils))
-        (let ((xdg-config-home
-               (or (getenv "XDG_CONFIG_HOME")
-                   (in-vicinity (getenv "HOME") ".config"))))
-          (mkdir-p (in-vicinity xdg-config-home "noctalia"))))))
-
-(define %home-noctalia-shell-shepherd
-  (match-record-lambda <home-noctalia-shell-configuration>
-      (noctalia-shell)
-    (list (shepherd-service
-            (documentation "Start noctalia-shell.")
-            (provision '(noctalia-shell))
-            (requirement '(dbus graphical-session))
-            (modules '((shepherd support)))
-            (start
-             #~(lambda args
-                 ((make-forkexec-constructor
-                   (list #$(file-append noctalia-shell "/bin/noctalia-shell"))
-                   #:log-file (in-vicinity %user-log-dir "noctalia-shell.log")
-                   ;; Inherit graphical session environment.
-                   #:environment-variables (environ))
-                  args)))
-            (stop #~(make-kill-destructor))))))
-
-(define home-noctalia-shell-service-type
-  (service-type
-    (name 'home-noctalia-shell)
-    (extensions
-     (list (service-extension home-profile-service-type
-                              (compose list home-noctalia-shell-configuration-noctalia-shell))
-           (service-extension home-activation-service-type
-                              %home-noctalia-shell-activation)
-           (service-extension home-shepherd-service-type
-                              %home-noctalia-shell-shepherd)
-           (service-extension home-graphical-session-service-type
-                              (const 'wayland))))
-    (default-value (home-noctalia-shell-configuration))
-    (description "")))
+(define-deprecated/public-alias home-noctalia-shell-service-type
+  (@ (rosenthal home services desktop) home-noctalia-shell-service-type))
 
 
 ;;;

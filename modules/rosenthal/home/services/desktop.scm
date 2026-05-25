@@ -13,9 +13,20 @@
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
   ;; Guix Home - services
+  #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
+  ;; Guix packages
+  #:autoload   (rosenthal packages wm) (noctalia)
   #:export (home-graphical-session-service-type
-            home-graphical-session-configuration))
+            home-graphical-session-configuration
+
+            home-noctalia-configuration
+            home-noctalia-service-type))
+
+
+;;;
+;;; Graphical session.
+;;;
 
 (define-configuration/no-serialization home-graphical-session-configuration
   (timeout
@@ -175,3 +186,44 @@
                #f))))))
     (default-value (home-graphical-session-configuration))
     (description "")))
+
+
+;;;
+;;; Noctalia
+;;;
+
+(define-configuration/no-serialization home-noctalia-configuration
+  (noctalia
+   (file-like noctalia)
+   "File-like object to provide @command{/bin/noctalia}."))
+
+(define home-noctalia-shepherd-service
+  (match-record-lambda <home-noctalia-configuration>
+      (noctalia)
+    (list (shepherd-service
+            (documentation "Start noctalia.")
+            (provision '(noctalia))
+            (requirement '(dbus graphical-session))
+            (modules '((shepherd support)))
+            (start
+             #~(lambda args
+                 ((make-forkexec-constructor
+                   (list #$(file-append noctalia "/bin/noctalia"))
+                   #:log-file (in-vicinity %user-log-dir "noctalia.log")
+                   ;; Inherit graphical session environment.
+                   #:environment-variables (environ))
+                  args)))
+            (stop #~(make-kill-destructor))))))
+
+(define home-noctalia-service-type
+  (service-type
+    (name 'home-noctalia)
+    (extensions
+     (list (service-extension home-profile-service-type
+                              (compose list home-noctalia-configuration-noctalia))
+           (service-extension home-shepherd-service-type
+                              home-noctalia-shepherd-service)
+           (service-extension home-graphical-session-service-type
+                              (const 'wayland))))
+    (default-value (home-noctalia-configuration))
+    (description "Run Noctalia, a lightweight Wayland shell and bar.")))

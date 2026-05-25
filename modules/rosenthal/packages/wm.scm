@@ -1,8 +1,9 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
-;;; Copyright © 2025 Hilton Chain <hako@ultrarare.space>
+;;; Copyright © 2025-2026 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal packages wm)
   ;; Utilities
+  #:use-module (guix deprecation)
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
@@ -12,12 +13,14 @@
   ;; Guix build systems
   #:use-module (guix build-system cargo)
   #:use-module (guix build-system copy)
+  #:use-module (guix build-system meson)
   ;; Guix packages
   #:use-module (gnu packages admin)
   #:use-module (gnu packages audio)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages calendar)
+  #:use-module (gnu packages curl)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
   #:use-module (gnu packages gl)
@@ -26,7 +29,9 @@
   #:use-module (gnu packages gtk)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages hardware)
+  #:use-module (gnu packages image)
   #:use-module (gnu packages imagemagick)
+  #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages llvm)
   #:use-module (gnu packages pkg-config)
@@ -37,122 +42,72 @@
   #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg))
 
-(define-public noctalia-shell
-  (package
-    (name "noctalia-shell")
-    (version "4.7.7")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                     (url "https://github.com/noctalia-dev/noctalia-shell")
-                     (commit (string-append "v" version))))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "0pchvsd89js4q7k10q621w3jqndv6raw6zy0px2b43ygh2kcpk22"))))
-    (build-system copy-build-system)
-    (arguments
-     (list
-      #:install-plan
-      #~'(("." "etc/xdg/quickshell/noctalia-shell"))
-      #:imported-modules
-      `((guix build qt-utils)
-        ,@%copy-build-system-modules)
-      #:modules
-      '((srfi srfi-26)
-        (guix build copy-build-system)
-        (guix build qt-utils)
-        (guix build utils))
-      #:phases
-      #~(modify-phases %standard-phases
-          (add-after 'unpack 'patch-references
-            (lambda* (#:key inputs #:allow-other-keys)
-              (substitute* "Services/Power/IdleInhibitorService.qml"
-                (("systemd-inhibit")
-                 (search-input-file inputs "bin/elogind-inhibit")))))
-          (add-after 'unpack 'reduce-output-size
-            (lambda _
-              (delete-file-recursively "Assets/Screenshots")))
-          (add-after 'install 'make-wrapper
-            (lambda* (#:key inputs #:allow-other-keys)
-              (let ((script "noctalia-shell"))
-                (with-output-to-file script
-                  (lambda ()
-                    (format #t "~
-#!~a
-exec ~a --config ~a/etc/xdg/quickshell/noctalia-shell \"$@\"~%"
-                            (search-input-file inputs "bin/sh")
-                            (search-input-file inputs "bin/quickshell")
-                            #$output)))
-                (wrap-script script
-                  `("PATH"
-                    suffix
-                    ,(map (compose dirname
-                                   (cut search-input-file inputs <>))
-                          '("bin/bluetoothctl"
-                            "bin/brightnessctl"
-                            "bin/cliphist"
-                            "bin/convert"
-                            "bin/ddcutil"
-                            "bin/fastfetch"
-                            "bin/fc-list"
-                            "bin/find"
-                            "bin/getent"
-                            "bin/git"
-                            "bin/grep"
-                            "bin/khal"
-                            "bin/ls"
-                            "bin/nmcli"
-                            "bin/python3"
-                            "bin/sh"
-                            "bin/which"
-                            "bin/wl-paste"
-                            "bin/wlsunset"
-                            "bin/wtype"
-                            "bin/xdg-open"))))
-                (chmod script #o555)
-                (install-file script (in-vicinity #$output "bin")))))
-          (add-after 'make-wrapper 'qt-wrap
-            (lambda args
-              (apply wrap-all-qt-programs
-                     #:qtbase #$(this-package-input "qtbase")
-                     args))))))
-    (inputs
-     (list bash-minimal
-           bluez
-           brightnessctl
-           cliphist
-           coreutils-minimal
-           ddcutil
-           elogind
-           fastfetch-minimal
-           findutils
-           fontconfig
-           git-minimal
-           glibc
-           grep
-           guile-3.0
-           imagemagick
-           khal
-           network-manager
-           noctalia-qs
-           python-minimal
-           qtbase
-           qtmultimedia
-           qtwayland
-           which
-           wl-clipboard
-           wlsunset
-           wtype
-           xdg-utils))
-    (home-page "https://noctalia.dev/")
-    (synopsis "Wayland desktop shell")
-    (description
-     "Noctalia is a minimal desktop shell designed for Wayland, built on the
-@code{quickshell} framework.  It offers a customizable and clean user interface,
-supporting various Wayland compositors like @code{niri}, @code{hyprland}, and
-@code{sway}.")
-    (license license:expat)))
+;; TODO: Unbundle dependencies under the third_party directory.
+(define-public noctalia
+  (let ((commit "0e4bb96a8b42abb47af67286902a52eaa628c50a")
+        (revision "0"))
+    (package
+      (name "noctalia")
+      (version (git-version "5.0.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/noctalia-dev/noctalia-shell")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0ymv5i8dfd10ynfh1lrr7h8ydbi3h1xf4gp2j6313i7yghcymqy8"))))
+      (build-system meson-build-system)
+      (arguments
+       (list #:build-type "release"
+             ;; FIXME: process_test fails with:
+             ;; --8<---------------cut here---------------start------------->8---
+             ;; stderr:
+             ;; process_test: completion-only async command exit code was wrong
+             ;; process_test: completion-only async command stdout was wrong
+             ;; --8<---------------cut here---------------end--------------->8---
+             #:tests? #f
+             #:phases
+             #~(modify-phases %standard-phases
+                 (add-after 'unpack 'prepare-for-build
+                   (lambda _
+                     ;; For reproducibility.
+                     (substitute* "meson.build"
+                       (("'-march=native', '-mtune=native',") ""))
+                     ;; /bin/sh doesn't exist in the build environment.
+                     (substitute* "tests/process_test.cpp"
+                       (("/bin/(sh)" _ cmd)
+                        (which cmd))))))))
+      (native-inputs
+       (list pkg-config))
+      (inputs
+       (list cairo
+             curl
+             fontconfig
+             freetype
+             glib
+             harfbuzz
+             jemalloc
+             (librsvg-for-system)
+             libwebp
+             libxkbcommon
+             linux-pam
+             mesa
+             pango
+             pipewire
+             polkit
+             sdbus-c++
+             wayland
+             wayland-protocols))
+      (home-page "https://noctalia.dev/")
+      (synopsis "Wayland shell and bar")
+      (description
+       "Noctalia is a lightweight Wayland shell and bar built directly on
+Wayland and OpenGL ES, with no Qt or GTK dependency.")
+      (license license:expat))))
+
+(define-deprecated-package noctalia-shell noctalia)
 
 (define-public noctalia-qs
   (package
