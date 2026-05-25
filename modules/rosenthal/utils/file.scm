@@ -64,53 +64,72 @@
 
 ;; https://github.com/artyom-poptsov/guile-ini
 (define (ini-file name exp)
-  "Return file-like object NAME, serialized from G-expression EXP in INI
-format."
+  "Return a file-like object, outputing INI file serialized from EXP."
   (computed-file name
     (with-extensions (list guile-ini guile-lib guile-smc)
-      #~(begin
-          (use-modules (srfi srfi-26) (ini))
-          (call-with-output-file #$output
-            (cut scm->ini #$exp #:port <>))))
+      (if (gexp? exp)
+          #~(begin
+              (use-modules (srfi srfi-26) (ini))
+              (call-with-output-file #$output
+                (cut scm->ini #$exp #:port <>)))
+          #~(begin
+              (use-modules (srfi srfi-26) (ini))
+              (call-with-output-file #$output
+                (cut scm->ini '#$exp #:port <>)))))
     #:options '(#:substitutable? #f)))
 
 ;; https://github.com/aconchillo/guile-json
 (define (json-file name exp)
-  "Return file-like object NAME, serialized from G-expression EXP in JSON
-format."
+  "Return a file-like object, outputing JSON file serialized from EXP."
   (computed-file name
     (with-extensions (list guile-json-4)
-      #~(begin
-          (use-modules (srfi srfi-26) (json))
-          (call-with-output-file #$output
-            (cut scm->json #$exp <> #:pretty #t))))
+      (if (gexp? exp)
+          #~(begin
+              (use-modules (srfi srfi-26) (json))
+              (call-with-output-file #$output
+                (cut scm->json #$exp <> #:pretty #t)))
+          #~(begin
+              (use-modules (srfi srfi-26) (json))
+              (call-with-output-file #$output
+                (cut scm->json '#$exp <> #:pretty #t)))))
     #:options '(#:substitutable? #f)))
 
 ;; https://github.com/hylophile/guile-toml
 ;; TODO: TOML writing support is incomplete.
 ;; See https://github.com/hylophile/guile-toml/blob/main/toml/builder.scm.
 (define (toml-file name exp)
-  "Return file-like object NAME, serialized from G-expression EXP in TOML
-format."
+  "Return a file-like object, outputing TOML file serialized from EXP."
   (computed-file name
     (with-extensions (list guile-json-4 guile-toml)
-      #~(begin
-          (use-modules (srfi srfi-26) (toml))
-          (call-with-output-file #$output
-            (cut scm->toml #$exp <>))))
+      (if (gexp? exp)
+          #~(begin
+              (use-modules (srfi srfi-26) (toml))
+              (call-with-output-file #$output
+                (cut scm->toml #$exp <>)))
+          #~(begin
+              (use-modules (srfi srfi-26) (toml))
+              (call-with-output-file #$output
+                (cut scm->toml '#$exp <>)))))
     #:options '(#:substitutable? #f)))
 
 ;; https://gitlab.com/yorgath/guile-yamlpp
 (define (yaml-file name exp)
-  "Return file-like object NAME, serialized from G-expression EXP in YAML
-format."
+  "Return a file-like object, outputing YAML file serialized from EXP."
   (computed-file name
     (with-extensions (list guile-yamlpp)
-      #~(begin
-          (use-modules (yamlpp))
-          (call-with-output-file #$output
-            (lambda (port)
-              (let ((emitter (make-yaml-emitter)))
-                (yaml-emit! emitter #$exp)
-                (display (yaml-emitter-string emitter) port))))))
+      (if (gexp? exp)
+          #~(begin
+              (use-modules (yamlpp))
+              (call-with-output-file #$output
+                (lambda (port)
+                  (let ((emitter (make-yaml-emitter)))
+                    (yaml-emit! emitter #$exp)
+                    (display (yaml-emitter-string emitter) port)))))
+          #~(begin
+              (use-modules (yamlpp))
+              (call-with-output-file #$output
+                (lambda (port)
+                  (let ((emitter (make-yaml-emitter)))
+                    (yaml-emit! emitter '#$exp)
+                    (display (yaml-emitter-string emitter) port)))))))
     #:options '(#:substitutable? #f)))
