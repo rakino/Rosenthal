@@ -7,19 +7,11 @@
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
-  #:use-module (rosenthal utils cargo)
   ;; Guix origin methods
   #:use-module (guix git-download)
   ;; Guix build systems
-  #:use-module (guix build-system cargo)
-  #:use-module (guix build-system copy)
   #:use-module (guix build-system meson)
   ;; Guix packages
-  #:use-module (gnu packages admin)
-  #:use-module (gnu packages audio)
-  #:use-module (gnu packages base)
-  #:use-module (gnu packages bash)
-  #:use-module (gnu packages calendar)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
@@ -27,19 +19,11 @@
   #:use-module (gnu packages glib)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages gtk)
-  #:use-module (gnu packages guile)
-  #:use-module (gnu packages hardware)
   #:use-module (gnu packages image)
-  #:use-module (gnu packages imagemagick)
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages linux)
-  #:use-module (gnu packages llvm)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages polkit)
-  #:use-module (gnu packages python)
-  #:use-module (gnu packages qt)
-  #:use-module (gnu packages version-control)
-  #:use-module (gnu packages wm)
   #:use-module (gnu packages xdisorg))
 
 ;; TODO: Unbundle dependencies under the third_party directory.
@@ -108,23 +92,3 @@ Wayland and OpenGL ES, with no Qt or GTK dependency.")
       (license license:expat))))
 
 (define-deprecated-package noctalia-shell noctalia)
-
-(define-public noctalia-qs
-  (package
-    (inherit quickshell)
-    (name "noctalia-qs")
-    (version "0.0.12")
-    (source
-     (origin
-       (method git-fetch)
-       (uri (git-reference
-              (url "https://github.com/noctalia-dev/noctalia-qs")
-              (commit (string-append "v" version))))
-       (file-name (git-file-name name version))
-       (sha256
-        (base32 "0zbqq9qgdsk5r2y4hag5p6276f67pq2w9imihdirvgnx0kclzlpg"))))
-    (inputs
-     (modify-inputs inputs
-       (prepend glib polkit)))
-    (home-page "https://noctalia.dev/")
-    (synopsis "QtQuick-based desktop shell toolkit (Noctalia fork)")))
