@@ -26,7 +26,7 @@
 (define-public ai-robots-txt
   (package
     (name "ai-robots-txt")
-    (version "1.45")
+    (version "1.46")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -35,7 +35,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0j2nwf6i2fhlhkcqfqnzyiy2x6m974s59yrcy5y4nar5lij6q10z"))
+                "103z5i9lnma6gajvzn81cr6ywqkbrlzazbmxhsppm1m2b9hd2s0x"))
               (modules '((guix build utils)))
               (snippet '(delete-file-recursively "code"))))
     (build-system copy-build-system)
