@@ -146,7 +146,7 @@ Supports measured and/or verified boot environments.")
 (define-public ukify
   (package
     (name "ukify")
-    (version "260.1")
+    (version "260.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -155,7 +155,7 @@ Supports measured and/or verified boot environments.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1az9sswsyfyw7m4if1mmxyamw8xnb0i3gg1bng4c9kz3bgga6hhm"))))
+                "0jdcpk2cvhz5ygfwlrgvig5w5sk9n39qsc1gx0b65xgzbr4scy9m"))))
     (build-system pyproject-build-system)
     (arguments
      (list #:phases
