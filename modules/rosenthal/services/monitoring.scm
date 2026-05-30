@@ -98,7 +98,7 @@
    (file-like grafana-bin)
    "")
   (config
-   gexp
+   file-object-or-file-config
    "")
   (postgresql-password-file
    string
@@ -157,7 +157,10 @@
 (define grafana-shepherd
   (match-record-lambda <grafana-configuration>
       (grafana config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file (ini-file "grafana.ini" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (ini-file "grafana.ini" config)
+               config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback postgresql user-processes
@@ -197,7 +200,7 @@
    (file-like loki-bin)
    "")
   (config
-   gexp
+   file-object-or-file-config
    "")
   (group-id
    (user-and-group-id #f)
@@ -244,7 +247,10 @@
 (define loki-shepherd
   (match-record-lambda <loki-configuration>
       (loki config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file (yaml-file "loki.yaml" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "loki.yaml" config)
+               config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback user-processes ,@shepherd-requirement))
@@ -281,7 +287,7 @@
    (file-like mimir-bin)
    "")
   (config
-   gexp
+   file-object-or-file-config
    "")
   (group-id
    (user-and-group-id #f)
@@ -328,7 +334,10 @@
 (define mimir-shepherd
   (match-record-lambda <mimir-configuration>
       (mimir config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file (yaml-file "mimir.yaml" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "mimir.yaml" config)
+               config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback user-processes ,@shepherd-requirement))
@@ -368,7 +377,7 @@
    (string "0.0.0.0:9090")
    "")
   (config
-   gexp
+   file-object-or-file-config
    "")
   (group-id
    (user-and-group-id #f)
@@ -415,7 +424,10 @@
 (define prometheus-shepherd
   (match-record-lambda <prometheus-configuration>
       (prometheus listen-address config shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file (yaml-file "prometheus.yml" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "prometheus.yml" config)
+               config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement `(loopback user-processes ,@shepherd-requirement))

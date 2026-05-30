@@ -274,14 +274,17 @@ headers.  This can expose sensitive information in your logs.")
    (file-like wakapi-bin)
    "The wakapi package.")
   (config
-   gexp
+   file-object-or-file-config
    "Association list of Wakapi configurations.")
   (no-serialization))
 
 (define home-wakapi-shepherd-service
   (match-record-lambda <home-wakapi-configuration>
       (wakapi config)
-    (let ((config-file (yaml-file "wakapi.yaml" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "wakapi.yaml" config)
+               config)))
       (list (shepherd-service
              (documentation "Run wakapi.")
              (provision '(wakapi))

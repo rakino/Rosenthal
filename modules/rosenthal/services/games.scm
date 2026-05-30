@@ -7,6 +7,7 @@
   #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (rosenthal utils file)
+  #:use-module (rosenthal utils predicates)
   ;; Guix System
   #:use-module (gnu system accounts)
   #:use-module (gnu system shadow)
@@ -19,14 +20,14 @@
   #:export (gamemode-service-type
             gamemode-configuration))
 
-(define-maybe gexp)
+(define-maybe file-object-or-file-config)
 
 (define-configuration/no-serialization gamemode-configuration
   (gamemode
    (file-like gamemode)
    "@code{gamemode} package to use.")
   (config
-   maybe-gexp
+   maybe-file-object-or-file-config
    ""))
 
 (define (gamemode-account-service config)
@@ -39,7 +40,9 @@
       (gamemode config)
     `(("gamemode.ini"
        ,(if (maybe-value-set? config)
-            (ini-file "gamemode.ini" config)
+            (if (file-config? config)
+                (ini-file "gamemode.ini" config)
+                config)
             (file-append (package-source gamemode) "/example/gamemode.ini")))
       ("security/limits.d/10-gamemode.conf"
        ,(file-append gamemode "/etc/security/limits.d/10-gamemode.conf")))))

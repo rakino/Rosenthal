@@ -178,7 +178,7 @@
    (list-of-file-likes (list git git-lfs))
    "@code{git} and extension packages to install.")
   (config
-   gexp
+   file-object-or-file-config
    "")
   (postgresql-password-file
    string
@@ -228,7 +228,10 @@
 (define forgejo-shepherd-service
   (match-record-lambda <forgejo-configuration>
       (forgejo config)
-    (let ((config-file (ini-file "forgejo.ini" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (ini-file "forgejo.ini" config)
+               config)))
       (list (shepherd-service
               (documentation "Run Forgejo.")
               (provision '(forgejo))
@@ -282,7 +285,7 @@
    (file-like iocaine)
    "")
   (config
-   gexp
+   file-object-or-file-config
    "")
   (log-file
    (string "/var/log/iocaine.log")
@@ -323,7 +326,10 @@
 (define iocaine-etc
   (match-record-lambda <iocaine-configuration>
       (config)
-    `(("iocaine/iocaine.toml" ,(toml-file "iocaine.toml" config)))))
+    `(("iocaine/iocaine.toml"
+       ,(if (file-config? config)
+            (toml-file "iocaine.toml" config)
+            config)))))
 
 (define iocaine-shepherd-service
   (match-record-lambda <iocaine-configuration>
@@ -541,7 +547,7 @@ test its configuration file."))
    (string "misskey/misskey:latest")
    "Misskey docker image to use.")
   (config
-   gexp
+   file-object-or-file-config
    "Alist of Misskey configuration, to be serialized to YAML format.")
   (data-directory
    (string "/var/lib/misskey")
@@ -589,7 +595,10 @@ test its configuration file."))
 (define misskey-oci
   (match-record-lambda <misskey-configuration>
       (image config data-directory log-file )
-    (let ((config-file (yaml-file "misskey.yaml" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "misskey.yaml" config)
+               config)))
       (oci-extension
         (containers
          (list (oci-container-configuration
@@ -642,7 +651,7 @@ test its configuration file."))
    (boolean #t)
    "")
   (config
-   (gexp #~'())
+   (file-object-or-file-config #~'())
    "")
   (no-serialization))
 
@@ -665,11 +674,16 @@ test its configuration file."))
   (match-record-lambda <navidrome-configuration>
       (navidrome ffmpeg auto-start? config)
     (let ((config-file
-           (toml-file "navidrome.toml"
-             #~`(("DataFolder" . "/var/lib/navidrome")
-                 ("CacheFolder" . "/var/lib/navidrome/cache")
-                 ("EnableInsightsCollector" . #f)
-                 ,@#$config))))
+           (if (file-config? config)
+               (toml-file "navidrome.toml"
+                 (let ((default-settings
+                         '(("DataFolder" . "/var/lib/navidrome")
+                           ("CacheFolder" . "/var/lib/navidrome/cache")
+                           ("EnableInsightsCollector" . #f))))
+                   (if (gexp? config)
+                       #~(append #$default-settings #$config)
+                       (append default-settings config))))
+               config)))
       (list (shepherd-service
              (documentation "Run Navidrome.")
              (provision '(navidrome))
@@ -714,7 +728,7 @@ test its configuration file."))
    (string "/var/lib/tuwunel")
    "Directory to create for @code{tuwunel} user.")
   (config
-   gexp
+   file-object-or-file-config
    "Configuration file in @code{toml-file} format.")
   ;; Account
   (group-id
@@ -758,7 +772,10 @@ test its configuration file."))
 (define tuwunel-shepherd
   (match-record-lambda <tuwunel-configuration>
       (tuwunel config auto-start? shepherd-requirement)
-    (let ((config-file (toml-file "tuwunel.toml" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (toml-file "tuwunel.toml" config)
+               config)))
       (list (shepherd-service
               (provision '(tuwunel))
               (requirement `(networking user-processes ,@shepherd-requirement))

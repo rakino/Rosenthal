@@ -34,7 +34,7 @@
    (string "http://localhost:8008")
    "")
   (config
-   file-like
+   file-object-or-file-config
    "")
   (group-id
    (user-and-group-id #f)
@@ -69,22 +69,26 @@
 (define heisenbridge-shepherd
   (match-record-lambda <heisenbridge-configuration>
       (heisenbridge config homeserver shepherd-provision shepherd-requirement auto-start?)
-    (list (shepherd-service
-            (provision shepherd-provision)
-            (requirement `(user-processes networking ,@shepherd-requirement))
-            (start
-             #~(make-forkexec-constructor
-                (list #$(file-append heisenbridge "/bin/heisenbridge")
-                      "--config" #$config #$homeserver)
-                #:user "heisenbridge"
-                #:group "heisenbridge"
-                #:environment-variables
-                '("PATH=/run/current-system/profile/bin"
-                  "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
-                  "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")))
-            (stop #~(make-kill-destructor))
-            (auto-start? auto-start?)
-            (actions (list (shepherd-configuration-action config)))))))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "heisenbridge.yaml" config)
+               config)))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement `(user-processes networking ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append heisenbridge "/bin/heisenbridge")
+                        "--config" #$config-file #$homeserver)
+                  #:user "heisenbridge"
+                  #:group "heisenbridge"
+                  #:environment-variables
+                  '("PATH=/run/current-system/profile/bin"
+                    "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
+                    "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?)
+              (actions (list (shepherd-configuration-action config-file))))))))
 
 (define heisenbridge-service-type
   (service-type
@@ -106,7 +110,7 @@
    (file-like mautrix-telegram)
    "")
   (config
-   file-like
+   file-object-or-file-config
    "")
   (group-id
    (user-and-group-id #f)
@@ -153,20 +157,24 @@
 (define mautrix-telegram-shepherd
   (match-record-lambda <mautrix-telegram-configuration>
       (mautrix-telegram config shepherd-provision shepherd-requirement auto-start?)
-    (list (shepherd-service
-            (provision shepherd-provision)
-            (requirement
-             `(user-processes networking postgresql ,@shepherd-requirement))
-            (start
-             #~(make-forkexec-constructor
-                (list #$(file-append mautrix-telegram "/bin/mautrix-telegram")
-                      "--no-update" "--config" #$config)
-                #:user "mautrix-telegram"
-                #:group "mautrix-telegram"
-                #:directory "/var/lib/mautrix-telegram"))
-            (stop #~(make-kill-destructor))
-            (auto-start? auto-start?)
-            (actions (list (shepherd-configuration-action config)))))))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "mautrix-telegram.yaml" config)
+               config)))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement
+               `(user-processes networking postgresql ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append mautrix-telegram "/bin/mautrix-telegram")
+                        "--no-update" "--config" #$config-file)
+                  #:user "mautrix-telegram"
+                  #:group "mautrix-telegram"
+                  #:directory "/var/lib/mautrix-telegram"))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?)
+              (actions (list (shepherd-configuration-action config-file))))))))
 
 (define mautrix-telegram-service-type
   (service-type

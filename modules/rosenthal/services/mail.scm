@@ -8,6 +8,7 @@
   #:use-module (guix gexp)
   #:use-module (guix records)
   #:use-module (rosenthal utils file)
+  #:use-module (rosenthal utils predicates)
   ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services admin)
@@ -91,7 +92,7 @@
    (file-like goimapnotify)
    "")
   (config
-   gexp
+   file-object-or-file-config
    "")
   (wait
    (integer 1)
@@ -109,7 +110,10 @@
 (define home-goimapnotify-shepherd
   (match-record-lambda <home-goimapnotify-configuration>
       (goimapnotify config wait shepherd-provision shepherd-requirement auto-start?)
-    (let ((config-file (yaml-file "goimapnotify.yaml" config)))
+    (let ((config-file
+           (if (file-config? config)
+               (yaml-file "goimapnotify.yaml" config)
+               config)))
       (list (shepherd-service
               (provision shepherd-provision)
               (requirement shepherd-requirement)
