@@ -166,6 +166,7 @@
 ;;; Forgejo
 ;;;
 
+(define-maybe string)
 
 (define list-of-file-likes?
   (list-of file-like?))
@@ -181,7 +182,7 @@
    file-object-or-file-config
    "")
   (postgresql-password-file
-   string
+   maybe-string
    "")
   (group-id
    (user-and-group-id #f)
@@ -212,7 +213,10 @@
     (list (postgresql-role
             (name "forgejo")
             (create-database? #t)
-            (password-file postgresql-password-file)))))
+            (password-file
+             (if (maybe-value-set? postgresql-password-file)
+                 postgresql-password-file
+                 #f))))))
 
 (define forgejo-activation
   #~(begin
@@ -559,7 +563,7 @@ test its configuration file."))
    (string "/var/log/misskey.log")
    "Log file to use.")
   (postgresql-password-file
-   string
+   maybe-string
    "")
   (no-serialization))
 
@@ -580,7 +584,10 @@ test its configuration file."))
     (list (postgresql-role
             (name "misskey")
             (create-database? #t)
-            (password-file postgresql-password-file)))))
+            (password-file
+             (if (maybe-value-set? postgresql-password-file)
+                 postgresql-password-file
+                 #f))))))
 
 (define misskey-activation
   (match-record-lambda <misskey-configuration>
@@ -832,7 +839,7 @@ test its configuration file."))
    (alist '())
    "Extra options.")
   (postgresql-password-file
-   string
+   maybe-string
    "")
   (user-id
    (user-and-group-id #f)
@@ -856,7 +863,10 @@ test its configuration file."))
     (list (postgresql-role
             (name "vaultwarden")
             (create-database? #t)
-            (password-file postgresql-password-file)))))
+            (password-file
+             (if (maybe-value-set? postgresql-password-file)
+                 postgresql-password-file
+                 #f))))))
 
 (define vaultwarden-activation
   (match-record-lambda <vaultwarden-configuration>
