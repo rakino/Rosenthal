@@ -379,7 +379,7 @@ compositor.")))
   (@ (rosenthal home services desktop) home-noctalia-configuration))
 
 (define-deprecated/public-alias home-noctalia-shell-service-type
-  (@ (rosenthal home services desktop) home-noctalia-shell-service-type))
+  (@ (rosenthal home services desktop) home-noctalia-service-type))
 
 
 ;;;
