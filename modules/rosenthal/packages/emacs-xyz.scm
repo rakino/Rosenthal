@@ -122,8 +122,8 @@ some keybindings are slightly simplified.")
     (properties '((disable-updater? . #t)))))
 
 (define-public emacs-majutsu/dolly
-  (let ((commit "aebd5acdecd1fa6de249dabd274b963cd73d3bfc")
-        (revision "2"))
+  (let ((commit "f8dda203e8ce4ad4e6e21b925b1f1a9cfc3217c5")
+        (revision "3"))
     (package
       (inherit emacs-majutsu)
       (name "emacs-majutsu-dolly")
@@ -136,7 +136,7 @@ some keybindings are slightly simplified.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1m5w49j9z61lbcz1bdx03iamnb7pkg2zfmqf6dzm19zlhg5489mk"))))
+                  "1hzxag3p460fhl4gn05jylhbsmp8bri4qc9d6l3js84hgrn0yswm"))))
       (properties '((disable-updater? . #t))))))
 
 (define-public emacs-pcmpl-tailscale
