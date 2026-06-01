@@ -107,7 +107,7 @@ order to protect upstream resources from web crawlers.")
 (define-public caddy
   (package
     (name "caddy")
-    (version "2.11.2")
+    (version "2.11.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -116,7 +116,7 @@ order to protect upstream resources from web crawlers.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "12r6pm6kw23bqa4gkkb85mj7zhw77j0j2w2m1cp28sb1x7rsm0a2"))))
+                "1a0w7i99p277kwbxfd5zf8d55n24z27i377njzqdc3jxp6ijcy7c"))))
     (build-system go-build-system)
     (arguments
      (list #:go go-1.26
@@ -180,7 +180,7 @@ order to protect upstream resources from web crawlers.")
              (file-name "vendored-go-dependencies")
              (sha256
               (base32
-               "1raa53ry78zsxsp81psl60z5rbx9y36gdkayh7dmdlrb460iap6f")))))
+               "1vnqildhrrmicq9zazk8c2b3d7jqj197r4wxczg4j58qig2mj9j2")))))
     (home-page "https://caddyserver.com/")
     (synopsis "Extensible HTTP web server with automatic HTTPS")
     (description
