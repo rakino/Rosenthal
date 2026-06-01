@@ -195,7 +195,7 @@ from serving static websites to running dynamic web applications.")
   (package
     (inherit caddy)
     (name "caddy-dolly")
-    (version "2026.03.29-1")
+    (version "2026.06.01")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -204,7 +204,7 @@ from serving static websites to running dynamic web applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "04klhf0plnzldn894c8z5g8v3bmh342pgaq97cslvh6cjm3dwisd"))))
+                "1b8606rbg57ylxz2q88335s04q8yvg6b33qkq3hk9895vwd74mq0"))))
     (native-inputs
      (modify-inputs native-inputs
        (replace "vendored-go-dependencies"
@@ -214,7 +214,7 @@ from serving static websites to running dynamic web applications.")
            (file-name "vendored-go-dependencies")
            (sha256
             (base32
-             "0zjp5i2si8qkww8632rxhd4y1y39bycn111pydm70n02q3jwir27"))))))
+             "0bwpayz2yf18cycffy02iiq88cl0smljimsf0yrdzrn1l3flg37s"))))))
     (home-page "https://git.guix.moe/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
