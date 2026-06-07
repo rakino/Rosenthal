@@ -62,6 +62,29 @@ editing Caddyfiles, configuration files for @code{caddy}.")
                  "14d6nvagcri0r687y3m179ijmnad89m5d5dj2rn2p6rpfc5nssr0"))))))
     (name "emacs-eat-dolly")))
 
+(define-public emacs-flycheck-eglot
+  (let ((commit "cd1dd78cec0ae1f566c765d98bbff322cc7b67ef")
+        (revision "0"))
+    (package
+      (name "emacs-flycheck-eglot")
+      (version (git-version "1.0" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+                (url "https://github.com/flycheck/flycheck-eglot")
+                (commit commit)))
+         (sha256 (base32 "19i2a33mpddd64mnvjk247ayn325p66lknm9pqjb0ccjfwi54sml"))))
+      (build-system emacs-build-system)
+      (propagated-inputs (list emacs-flycheck))
+      (home-page "https://github.com/flycheck/flycheck-eglot")
+      (synopsis "Flycheck support for eglot")
+      (description
+       "This package provides a simple \"glue\" minor mode that allows Flycheck
+and Eglot to work together.  Thus, the Flycheck frontend can display the results
+of syntactic checks performed by the LSP server.")
+      (license (list license:gpl3+ license:expat)))))
+
 (define-public emacs-isearch-mb
   (package
     (name "emacs-isearch-mb")
