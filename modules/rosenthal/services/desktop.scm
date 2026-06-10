@@ -189,7 +189,7 @@
            "xim?"))))))
 
 ;; https://fcitx-im.org/wiki/Using_Fcitx_5_on_Wayland
-(define %home-fcitx5-environment-variables
+(define home-fcitx5-environment-variables-service
   (match-record-lambda <home-fcitx5-configuration>
       (wayland-frontend?)
     `(("XMODIFIERS" . "@im=fcitx")
@@ -198,29 +198,34 @@
             '(("QT_IM_MODULES" . "wayland;fcitx"))
             '(("GTK_IM_MODULE" . "fcitx"))))))
 
-(define home-fcitx5-gtk2
+(define home-fcitx5-gtk2-service
   (match-record-lambda <home-fcitx5-configuration>
       (wayland-frontend?)
     (if wayland-frontend?
         `(("gtk-im-module" . ,(format #f "~s" "fcitx")))
         '())))
 
-(define home-fcitx5-gtk3
+(define home-fcitx5-gtk3-service
   (match-record-lambda <home-fcitx5-configuration>
       (wayland-frontend?)
     (if wayland-frontend?
         `(("gtk-im-module" . "fcitx"))
         '())))
 
-(define %home-fcitx5-profile
+(define home-fcitx5-profile-service
   (match-record-lambda <home-fcitx5-configuration>
       (fcitx5 utilities themes input-method-editors wayland-frontend?)
     (append (list fcitx5 fcitx5-gtk fcitx5-qt)
+            (if wayland-frontend?
+                '()
+                (list `(,fcitx5-gtk "gtk2")
+                      `(,fcitx5-gtk "gtk3")
+                      fcitx5-gtk4))
             utilities
             themes
             input-method-editors)))
 
-(define %home-fcitx5-shepherd
+(define home-fcitx5-shepherd-service
   (match-record-lambda <home-fcitx5-configuration>
       (fcitx5)
     (list (shepherd-service
@@ -241,17 +246,17 @@
     (name 'home-fcitx5)
     (extensions
      (list (service-extension home-environment-variables-service-type
-                              %home-fcitx5-environment-variables)
+                              home-fcitx5-environment-variables-service)
            (service-extension home-gtk2-service-type
-                              home-fcitx5-gtk2)
+                              home-fcitx5-gtk2-service)
            (service-extension home-gtk3-service-type
-                              home-fcitx5-gtk3)
+                              home-fcitx5-gtk3-service)
            (service-extension home-gtk4-service-type
-                              home-fcitx5-gtk3)
+                              home-fcitx5-gtk3-service)
            (service-extension home-profile-service-type
-                              %home-fcitx5-profile)
+                              home-fcitx5-profile-service)
            (service-extension home-shepherd-service-type
-                              %home-fcitx5-shepherd)))
+                              home-fcitx5-shepherd-service)))
     (default-value (home-fcitx5-configuration))
     (description "Run fcitx5, an input method framework.")))
 
