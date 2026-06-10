@@ -22,14 +22,32 @@
   #:use-module (gnu packages image)
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages maths)
+  #:use-module (gnu packages multiprecision)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages polkit)
-  #:use-module (gnu packages xdisorg))
+  #:use-module (gnu packages xdisorg)
+  #:use-module (gnu packages xml))
+
+(define wayland-protocols-1.48
+  (package
+    (inherit wayland-protocols)
+    (name "wayland-protocols")
+    (version "1.48")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://gitlab.freedesktop.org/wayland/wayland-protocols")
+                     (commit version)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0zqnn7bwqzifchjhclrrcqnp39cpd3nnf6nbd9bav2hwhcx92mwy"))))))
 
 ;; TODO: Unbundle dependencies under the third_party directory.
 (define-public noctalia
-  (let ((commit "0e4bb96a8b42abb47af67286902a52eaa628c50a")
-        (revision "0"))
+  (let ((commit "2070b4b70cd78931cbf87439acc2cc6dbdff4174")
+        (revision "1"))
     (package
       (name "noctalia")
       (version (git-version "5.0.0" revision commit))
@@ -41,7 +59,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "0ymv5i8dfd10ynfh1lrr7h8ydbi3h1xf4gp2j6313i7yghcymqy8"))))
+                  "18j09sck1pm8p4npvrpykjzvb4613j4k795vd1j637pq37vw759a"))))
       (build-system meson-build-system)
       (arguments
        (list #:build-type "release"
@@ -71,11 +89,15 @@
              fontconfig
              freetype
              glib
+             gmp
+             mpfr
              harfbuzz
              jemalloc
              (librsvg-for-system)
+             libqalculate
              libwebp
              libxkbcommon
+             libxml2
              linux-pam
              mesa
              pango
@@ -83,7 +105,7 @@
              polkit
              sdbus-c++
              wayland
-             wayland-protocols))
+             wayland-protocols-1.48))
       (home-page "https://noctalia.dev/")
       (synopsis "Wayland shell and bar")
       (description
