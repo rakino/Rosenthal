@@ -664,15 +664,6 @@ compositor.")))
 (define %rosenthal-skeletons
   `((".config/emacs/init.el"
      ,(local-file "../examples/emacs/init.el"))
-    (".config/emacs/init-fonts.el"
-     ,(local-file "../examples/emacs/init-fonts.el"))
-    (".config/emacs/init-interface.el"
-     ,(local-file "../examples/emacs/init-interface.el"))
-    (".config/emacs/init-editing.el"
-     ,(local-file "../examples/emacs/init-editing.el"))
-    (".config/emacs/init-miscellaneous.el"
-     ,(local-file "../examples/emacs/init-miscellaneous.el"))
-
     (".config/fcitx5/config"
      ,(local-file "../examples/dot-config/fcitx5/config"))
     (".config/htop/htoprc"

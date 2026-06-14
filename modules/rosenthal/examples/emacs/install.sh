@@ -1,8 +1,18 @@
 #!/bin/sh
-dir="$(dirname "$(realpath "$0")")"
-if [[ ! -f ~/.config/emacs/init.el ]]
+TOP_DIR="$(dirname "$(realpath "$0")")"
+
+# Install packages.
+echo '
+(use-modules (guix packages)
+             (guix scripts install))
+
+(apply guix-install
+       (map package-name
+            (load "packages")))' |
+    guix repl --type=machine
+
+# Install configuration file.
+if [ ! -f ~/.config/emacs/init.el ]
 then
-    mkdir -p ~/.config/emacs
-    cp "$dir/init"* ~/.config/emacs
+    install -D -mode=0644 --target-directory="$HOME/.config/emacs" "$TOP_DIR/init.el"
 fi
-cat "$dir/packages.txt" | xargs guix package --install
