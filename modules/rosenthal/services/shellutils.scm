@@ -20,7 +20,6 @@
   ;; Guix packages
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages shellutils)
-  #:use-module (rosenthal packages rust-apps)
   #:export (home-fish-plugin-atuin-service-type
             home-atuin-configuration
 
