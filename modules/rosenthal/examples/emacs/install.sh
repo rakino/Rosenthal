@@ -2,13 +2,13 @@
 TOP_DIR="$(dirname "$(realpath "$0")")"
 
 # Install packages.
-echo '
+echo "
 (use-modules (guix packages)
              (guix scripts install))
 
 (apply guix-install
        (map package-name
-            (load "packages")))' |
+            (load \"$TOP_DIR/packages\")))" |
     guix repl --type=machine
 
 # Install configuration file.
