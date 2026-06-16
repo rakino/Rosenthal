@@ -31,8 +31,8 @@
     (properties '((disable-updater? . #t)))))
 
 (define-public mirror-substitutes
-  (let ((commit "c05952a9e8e002383b9bc1a30970c2af8c847105")
-        (revision "1"))
+  (let ((commit "cd6005b2b05ed2cb38a64e30886d387e679b361a")
+        (revision "2"))
     (package
       (name "mirror-substitutes")
       (version (git-version "0.0.0" revision commit))
@@ -44,7 +44,7 @@
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "1maj4a2wa4n8bikrj1d31mr28h3gy0iygbiy8livg0ykgvdxiai0"))))
+                  "0xrngcvi6xgbz0z99wkg7sl3yw3y92v3hijmbsrbx13bgzbak0yy"))))
       (build-system guile-build-system)
       (arguments
        (list
