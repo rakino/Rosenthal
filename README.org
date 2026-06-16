@@ -6,8 +6,12 @@
 Rosenthal is a [[https://guix.gnu.org/manual/devel/en/html_node/Channels.html][Guix channel]] created for experiments.  It currently holds some
 packages and services not ready for upstreaming.
 
-NOTE: everything in this channel is subject to change and may be deleted **at
-any time**, please [[https://codeberg.org/hako/Rosenthal/issues][report an issue]] if you are affected.
+Feel free to upstream things from this channel if you find them useful and
+suitable.  I can help with that but don't have the energy to finish all the
+process by myself.
+
+NOTE: everything in this channel is subject to change and may be deleted *at
+any time*, please [[https://codeberg.org/hako/Rosenthal/issues][report an issue]] if you are affected.
 
 Channel specification:
 #+begin_src scheme
