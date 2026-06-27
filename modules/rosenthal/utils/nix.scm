@@ -25,7 +25,7 @@ and spawns an one-off software environment when run.  Nix daemon is required to
 use the wrapper.
 
 INSTALLABLES (string / list of strings) specifies packages to be added into the
-environment.  If EXPRESSION? is set to #t (default: #f, boolean), It must
+environment.  If EXPRESSION? is set to #t (default: #f, boolean), it must
 contain exactly one Nix expression.
 
 RUN-COMMAND (default: '(), list of strings) specifies command to run in the
@@ -56,7 +56,7 @@ Examples:
             (error "no installables provided"))
           (when (and (not (= (length installables) 1))
                      expression?)
-            (error "more than one Nix expressions provided"))
+            (error "more than one Nix expression provided"))
           installables)
         (list installables)))
 
