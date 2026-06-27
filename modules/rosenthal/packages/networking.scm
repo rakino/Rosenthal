@@ -12,6 +12,7 @@
   #:use-module (rosenthal utils download)
   ;; Guix build systems
   #:use-module (guix build-system go)
+  #:use-module (rosenthal build-system go-vendored)
   ;; Guix packages
   #:use-module (gnu packages base)
   #:use-module (gnu packages dns)
@@ -36,12 +37,11 @@
               (sha256
                (base32
                 "092745jrmq6cqgad0cbkq9jiybq9s9by22y7fbr5y2rj7gw01cyy"))))
-    (build-system go-build-system)
+    (build-system go-vendored-build-system)
     (arguments
      (list #:go go-1.26
            #:install-source? #f
-           #:import-path "github.com/cloudflare/cloudflared/cmd/cloudflared"
-           #:unpack-path "github.com/cloudflare/cloudflared"
+           #:import-path "./cmd/cloudflared"
            #:build-flags
            #~(list (string-append
                     "-ldflags="
@@ -49,12 +49,9 @@
                     " -X github.com/cloudflare/cloudflared/cmd/cloudflared/updater.BuiltForPackageManager=Guix"))
            #:phases
            #~(modify-phases %standard-phases
-               (add-before 'build 'disable-cgo
-                 (lambda _
-                   (setenv "CGO_ENABLED" "0")))
                (add-after 'install 'install-documentation
                  (lambda _
-                   (let ((src "src/github.com/cloudflare/cloudflared/cloudflared_man_template")
+                   (let ((src "cloudflared_man_template")
                          (dst (string-append #$output "/share/man/man1/cloudflared.1")))
                      (substitute* src
                        (("\\$\\{VERSION\\}") #$(package-version this-package)))
@@ -84,35 +81,21 @@ origin can remain as closed as possible.")
               (sha256
                (base32
                 "16vhaq2h67al39k1757vvfgzav8bdkhsa5m5z6km3cw7h6l0rk82"))))
-    (build-system go-build-system)
+    (build-system go-vendored-build-system)
     (arguments
      (list
-      #:tests? (not (%current-target-system)) ;TODO: Run test suite.
       #:go go-1.26
+      #:vendor-hash (base32 "0kz38byz4q18234z8i9gbc6728dch8lfzw54spng736x3wql2an9")
+      #:tests? (not (%current-target-system)) ;TODO: Run test suite.
       #:install-source? #f
-      #:import-path "."
       #:build-flags
       #~(list "-tags" "with_gvisor"
               (string-append
                "-ldflags="
                " -X github.com/metacubex/mihomo/constant.Version="
                #$(package-version this-package)))
-      #:modules
-      '((ice-9 match)
-        ((guix build gnu-build-system) #:prefix gnu:)
-        (guix build go-build-system)
-        (guix build utils))
       #:phases
       #~(modify-phases %standard-phases
-          (replace 'unpack
-            (lambda args
-              (unsetenv "GO111MODULE")
-              (apply (assoc-ref gnu:%standard-phases 'unpack) args)
-              (copy-recursively
-               #+(this-package-native-input "vendored-go-dependencies")
-               "vendor")))
-          (replace 'install-license-files
-            (assoc-ref gnu:%standard-phases 'install-license-files))
           (delete 'check)
           (add-after 'install 'check
             (lambda* (#:key tests? #:allow-other-keys)
@@ -121,17 +104,9 @@ origin can remain as closed as possible.")
                   (invoke mihomo "--help")
                   (invoke mihomo "-v"))))))))
     (native-inputs
-     (append
-      (list (origin
-              (method (go-mod-vendor #:go go-1.26))
-              (uri (package-source this-package))
-              (file-name "vendored-go-dependencies")
-              (sha256
-               (base32
-                "0kz38byz4q18234z8i9gbc6728dch8lfzw54spng736x3wql2an9"))))
-      (if (%current-target-system)
-          (list this-package)
-          '())))
+     (if (%current-target-system)
+         (list this-package)
+         '()))
     (home-page "https://wiki.metacubex.one/")
     (synopsis "Rule-based proxy")
     (description
@@ -154,10 +129,11 @@ bypass network restrictions." )
               (sha256
                (base32
                 "0b5hp696dsh0sl1640726wg36cssdllpc903k7v3sn0q6p9zysq0"))))
-    (build-system go-build-system)
+    (build-system go-vendored-build-system)
     (arguments
      (list
       #:go go-1.26
+      #:vendor-hash (base32 "0gzjdjq94vkbsyr2m37wjpd37m4whksgsp4kcmh6j293vfwc83ll")
       #:install-source? #f
       #:import-path "./cmd/sing-box"
       #:build-flags
@@ -175,22 +151,11 @@ bypass network restrictions." )
                " -X github.com/sagernet/sing-box/constant.Version="
                #$(package-version this-package)))
       #:modules
-      '((ice-9 match)
-        ((guix build gnu-build-system) #:prefix gnu:)
-        (guix build go-build-system)
-        (guix build utils))
+      (cons '(ice-9 match)
+            %default-go-vendored-modules)
       #:phases
       #~(modify-phases %standard-phases
-          (replace 'unpack
-            (lambda args
-              (unsetenv "GO111MODULE")
-              (apply (assoc-ref gnu:%standard-phases 'unpack) args)
-              (copy-recursively
-               #+(this-package-native-input "vendored-go-dependencies")
-               "vendor")))
-          (replace 'install-license-files
-            (assoc-ref gnu:%standard-phases 'install-license-files))
-          (add-after 'unpack 'set-tailscale-default-wireguard-port
+          (add-after 'unpack-vendored-dependencies 'set-tailscale-default-wireguard-port
             (lambda _
               ;; See also: https://tailscale.com/kb/1082/firewall-ports
               ;; https://github.com/tailscale/tailscale/blob/51c11a864b1241d1cf1a736fbc94b0f8c76da563/cmd/tailscaled/tailscaled.go#L102
@@ -213,17 +178,9 @@ bypass network restrictions." )
                    ("fish" . "share/fish/vendor_completions.d/sing-box.fish")
                    ("zsh"  . "share/zsh/site-functions/_sing-box")))))))))
     (native-inputs
-     (append
-      (list (origin
-              (method (go-mod-vendor #:go go-1.26))
-              (uri (package-source this-package))
-              (file-name "vendored-go-dependencies")
-              (sha256
-               (base32
-                "0gzjdjq94vkbsyr2m37wjpd37m4whksgsp4kcmh6j293vfwc83ll"))))
-      (if (%current-target-system)
-          (list this-package)
-          '())))
+     (if (%current-target-system)
+         (list this-package)
+         '()))
     (home-page "https://sing-box.sagernet.org/")
     (synopsis "Universal proxy platform")
     (description
@@ -280,13 +237,13 @@ a SOCKS5 proxy.")
                   (delete-file-recursively "tool")
                   (substitute* "net/tstun/tun_linux.go"
                     (("/sbin/(modprobe)" _ cmd) cmd))))))
-    (build-system go-build-system)
+    (build-system go-vendored-build-system)
     (arguments
      (list
-      #:tests? (not (%current-target-system)) ;TODO: Run test suite.
       #:go go-1.26
+      #:vendor-hash (base32 "1ffhpdb5lyfgdb1n7sps8zxs85g725ijx7sir6q0h1lk3mflpg4r")
+      #:tests? (not (%current-target-system)) ;TODO: Run test suite.
       #:install-source? #f
-      #:import-path "."
       #:build-flags
       #~(list "-tags" "ts_include_cli"
               (string-append
@@ -296,21 +253,10 @@ a SOCKS5 proxy.")
                " -X tailscale.com/version.shortStamp="
                #$(package-version this-package)))
       #:modules
-      '((ice-9 match)
-        ((guix build gnu-build-system) #:prefix gnu:)
-        (guix build go-build-system)
-        (guix build utils))
+      (cons '(ice-9 match)
+            %default-go-vendored-modules)
       #:phases
       #~(modify-phases %standard-phases
-          (replace 'unpack
-            (lambda args
-              (unsetenv "GO111MODULE")
-              (apply (assoc-ref gnu:%standard-phases 'unpack) args)
-              (copy-recursively
-               #+(this-package-native-input "vendored-go-dependencies")
-               "vendor")))
-          (replace 'install-license-files
-            (assoc-ref gnu:%standard-phases 'install-license-files))
           (add-after 'unpack 'patch-references
             (lambda* (#:key inputs #:allow-other-keys)
               (substitute* "client/systray/startup-creator.go"
@@ -373,17 +319,9 @@ a SOCKS5 proxy.")
                    "tailscaled"
                    "tsidp"))))))))
     (native-inputs
-     (append
-      (list (origin
-              (method (go-mod-vendor #:go go-1.26))
-              (uri (package-source this-package))
-              (file-name "vendored-go-dependencies")
-              (sha256
-               (base32
-                "1ffhpdb5lyfgdb1n7sps8zxs85g725ijx7sir6q0h1lk3mflpg4r"))))
-      (if (%current-target-system)
-          (list this-package)
-          '())))
+     (if (%current-target-system)
+         (list this-package)
+         '()))
     (inputs
      (list desktop-file-utils
            findutils

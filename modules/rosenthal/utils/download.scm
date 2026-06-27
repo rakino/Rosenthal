@@ -15,6 +15,11 @@
 
 (define* (go-mod-vendor #:key go)
   (lambda* (src hash-algo hash #:optional name #:key (system (%current-system)))
+    "Return a fixed-output derivation to run \"go mod vendor\" against SRC and
+use the produced \"vendor\" directory as the result.  The derivation is expected
+to have HASH of type HASH-ALGO (a symbol).  File name of the derivation defaults
+to \"vendored-go-dependencies\" and can be specified by NAME."
+
     (define nss-certs
       (module-ref (resolve-interface '(gnu packages nss)) 'nss-certs))
 
@@ -26,7 +31,9 @@
                         (guix build utils))
            ;; Support Unicode in file name.
            (setlocale LC_ALL "C.UTF-8")
-           ;; For HTTPS support.
+           ;; Use our bundled Go toolchain.
+           (setenv "GOTOOLCHAIN" "local")
+           ;; HTTPS support.
            (setenv "SSL_CERT_DIR" #+(file-append nss-certs "/etc/ssl/certs"))
 
            ((assoc-ref %standard-phases 'unpack) #:source #+src)
@@ -37,11 +44,12 @@
      #:hash hash
      ;; Is a directory.
      #:recursive? #t
-     #:env-vars '(("GOCACHE" . "/tmp/go-cache")
-                  ("GOPATH" . "/tmp/go"))
+     #:env-vars
+     '(("GOCACHE" . "/tmp/go-cache")
+       ("GOPATH" . "/tmp/go"))
      ;; Honor the user's proxy and locale settings.
-     #:leaked-env-vars '("GOPROXY"
-                         "http_proxy" "https_proxy"
-                         "LC_ALL" "LC_MESSAGES" "LANG"
-                         "COLUMNS")
-     #:local-build? #t)))
+     #:leaked-env-vars
+     '("GOPROXY"
+       "http_proxy" "https_proxy"
+       "LC_ALL" "LC_MESSAGES" "LANG"
+       "COLUMNS"))))

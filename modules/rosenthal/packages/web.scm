@@ -16,6 +16,7 @@
   #:use-module (guix build-system cargo)
   #:use-module (guix build-system copy)
   #:use-module (guix build-system go)
+  #:use-module (rosenthal build-system go-vendored)
   ;; Guix packages
   #:use-module (gnu packages golang)
   #:use-module (gnu packages image)
@@ -66,7 +67,7 @@ website owners block unwanted AI crawlers from accessing their sites.")
               (sha256
                (base32
                 "0kqp5j0739lpdw55gx4bnnda1b90qlavcdlp8vh9bp014xx84yqj"))))
-    (build-system go-build-system)
+    (build-system go-vendored-build-system)
     (arguments
      (list #:tests? (not (%current-target-system)) ;FIXME
            #:go go-1.26
@@ -77,18 +78,8 @@ website owners block unwanted AI crawlers from accessing their sites.")
                     "-ldflags="
                     " -X github.com/TecharoHQ/anubis.Version="
                     #$(package-version this-package)))
-           #:modules
-           '(((guix build gnu-build-system) #:prefix gnu:)
-             (guix build go-build-system)
-             (guix build utils))
            #:phases
            #~(modify-phases %standard-phases
-               (replace 'unpack
-                 (lambda args
-                   (unsetenv "GO111MODULE")
-                   (apply (assoc-ref gnu:%standard-phases 'unpack) args)))
-               (replace 'install-license-files
-                 (assoc-ref gnu:%standard-phases 'install-license-files))
                (delete 'check)
                (add-after 'install 'check
                  (lambda* (#:key tests? #:allow-other-keys)
@@ -117,9 +108,10 @@ order to protect upstream resources from web crawlers.")
               (sha256
                (base32
                 "1a0w7i99p277kwbxfd5zf8d55n24z27i377njzqdc3jxp6ijcy7c"))))
-    (build-system go-build-system)
+    (build-system go-vendored-build-system)
     (arguments
      (list #:go go-1.26
+           #:vendor-hash (base32 "1vnqildhrrmicq9zazk8c2b3d7jqj197r4wxczg4j58qig2mj9j2")
            #:tests? (not (%current-target-system)) ;TODO: Run test suite.
            #:install-source? #f
            #:import-path
@@ -133,21 +125,10 @@ order to protect upstream resources from web crawlers.")
                     " -X github.com/caddyserver/caddy/v2.CustomVersion="
                     #$(package-version this-package)))
            #:modules
-           '((ice-9 match)
-             ((guix build gnu-build-system) #:prefix gnu:)
-             (guix build go-build-system)
-             (guix build utils))
+           (cons '(ice-9 match)
+                 %default-go-vendored-modules)
            #:phases
            #~(modify-phases %standard-phases
-               (replace 'unpack
-                 (lambda args
-                   (unsetenv "GO111MODULE")
-                   (apply (assoc-ref gnu:%standard-phases 'unpack) args)
-                   (copy-recursively
-                    #+(this-package-native-input "vendored-go-dependencies")
-                    "vendor")))
-               (replace 'install-license-files
-                 (assoc-ref gnu:%standard-phases 'install-license-files))
                (add-after 'install 'install-extras
                  (lambda _
                    (let ((caddy
@@ -173,14 +154,6 @@ order to protect upstream resources from web crawlers.")
                      (let ((caddy (in-vicinity #$output "bin/caddy")))
                        (invoke caddy "help")
                        (invoke caddy "version"))))))))
-    (native-inputs
-     (list (origin
-             (method (go-mod-vendor #:go go-1.26))
-             (uri (package-source this-package))
-             (file-name "vendored-go-dependencies")
-             (sha256
-              (base32
-               "1vnqildhrrmicq9zazk8c2b3d7jqj197r4wxczg4j58qig2mj9j2")))))
     (home-page "https://caddyserver.com/")
     (synopsis "Extensible HTTP web server with automatic HTTPS")
     (description
@@ -205,16 +178,10 @@ from serving static websites to running dynamic web applications.")
               (sha256
                (base32
                 "1b8606rbg57ylxz2q88335s04q8yvg6b33qkq3hk9895vwd74mq0"))))
-    (native-inputs
-     (modify-inputs native-inputs
-       (replace "vendored-go-dependencies"
-         (origin
-           (method (go-mod-vendor #:go go-1.26))
-           (uri (package-source this-package))
-           (file-name "vendored-go-dependencies")
-           (sha256
-            (base32
-             "0bwpayz2yf18cycffy02iiq88cl0smljimsf0yrdzrn1l3flg37s"))))))
+    (arguments
+     (substitute-keyword-arguments arguments
+       ((#:vendor-hash _ #f)
+        (base32 "0bwpayz2yf18cycffy02iiq88cl0smljimsf0yrdzrn1l3flg37s"))))
     (home-page "https://git.guix.moe/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
@@ -231,12 +198,11 @@ from serving static websites to running dynamic web applications.")
               (sha256
                (base32
                 "0mjmns7yqhhkqc3jcg8bffs64zj4b52hy2v1lvr14pq162r6wcil"))))
-    (build-system go-build-system)
+    (build-system go-vendored-build-system)
     (arguments
      (list #:tests? (not (%current-target-system)) ;TODO: Run test suite.
            #:go go-1.26
            #:install-source? #f
-           #:import-path "."
            #:build-flags
            #~(list (string-append
                     "-ldflags="
@@ -246,19 +212,8 @@ from serving static websites to running dynamic web applications.")
                     " -X forgejo.org/modules/setting.AppWorkPath=/var/lib/forgejo"
                     " -X forgejo.org/modules/setting.CustomPath=" #$output "/etc/forgejo"
                     " -X forgejo.org/modules/setting.CustomConf=/etc/forgejo/app.ini"))
-           #:modules
-           '(((guix build gnu-build-system) #:prefix gnu:)
-             (guix build go-build-system)
-             (guix build union)
-             (guix build utils))
            #:phases
            #~(modify-phases %standard-phases
-               (replace 'unpack
-                 (lambda args
-                   (unsetenv "GO111MODULE")
-                   (apply (assoc-ref gnu:%standard-phases 'unpack) args)))
-               (replace 'install-license-files
-                 (assoc-ref gnu:%standard-phases 'install-license-files))
                (add-after 'install 'rename-binary
                  (lambda _
                    (rename-file (in-vicinity #$output "bin/forgejo.org")
