@@ -5,9 +5,12 @@
   ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix modules)
+  #:use-module (guix packages)
   #:use-module (guix records)
   #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils predicates)
+  ;; Guix origin methods
+  #:use-module (guix download)
   ;; Guix System
   #:use-module (gnu system privilege)
   #:use-module (gnu system shadow)
@@ -19,9 +22,12 @@
   #:use-module (gnu services databases)
   #:use-module (gnu services docker)
   #:use-module (gnu services shepherd)
+  ;; Guix build systems
+  #:use-module (guix build-system copy)
   ;; Guix packages
   #:use-module (gnu packages admin)
   #:use-module (gnu packages guile-xyz)
+  #:use-module (gnu packages password-utils)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages video)
   #:use-module (gnu packages web)
@@ -815,8 +821,31 @@ test its configuration file."))
 ;;; Vaultwarden
 ;;;
 
+(define vaultwarden-web-vault
+  (package
+    (name "vaultwarden-web-vault")
+    (version "2026.4.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://github.com/dani-garcia/bw_web_builds/releases/download/v"
+             version "/bw_web_v" version ".tar.gz"))
+       (sha256
+        (base32 "0hi6mdazzqcyvjkyr779kjisygwab85afgkn2sl0531x4a0js8xw"))))
+    (build-system copy-build-system)
+    (home-page #f)
+    (synopsis #f)
+    (description #f)
+    (license #f)))
 
 (define-configuration vaultwarden-configuration
+  (vaultwarden
+   (file-like (file-append vaultwarden "/bin/vaultwarden"))
+   "")
+  (web-vault
+   (file-like vaultwarden-web-vault)
+   "")
   (admin-token
    maybe-string
    "Token for the admin interface, preferably an Argon2 PCH string.")
@@ -841,6 +870,9 @@ test its configuration file."))
   (postgresql-password-file
    maybe-string
    "")
+  (group-id
+   (user-and-group-id #f)
+   "")
   (user-id
    (user-and-group-id #f)
    "")
@@ -848,13 +880,17 @@ test its configuration file."))
 
 (define vaultwarden-account
   (match-record-lambda <vaultwarden-configuration>
-      (user-id)
-    (list (user-account
+      (group-id user-id data-directory)
+    (list (user-group
             (name "vaultwarden")
-            (group "docker")
+            (id group-id)
+            (system? #t))
+          (user-account
+            (name "vaultwarden")
+            (group "vaultwarden")
             (uid user-id)
             (system? #t)
-            (home-directory "/var/empty")
+            (home-directory data-directory)
             (shell (file-append shadow "/sbin/nologin"))))))
 
 (define vaultwarden-postgresql-role
@@ -870,54 +906,42 @@ test its configuration file."))
 
 (define vaultwarden-activation
   (match-record-lambda <vaultwarden-configuration>
-      (data-directory log-file)
-    #~(begin
-        (use-modules (guix build utils))
-        (let ((user (getpwnam "vaultwarden")))
-          (unless (file-exists? #$data-directory)
-            (mkdir-p #$data-directory)
-            (chown #$data-directory (passwd:uid user) (passwd:gid user)))
-          (unless (file-exists? #$log-file)
-            (mkdir-p (dirname #$log-file))
-            (call-with-output-file #$log-file
-              (lambda (port)
-                (write-char #\newline port)))
-            (chown #$log-file (passwd:uid user) (passwd:gid user)))))))
+      (data-directory)
+    (with-imported-modules '((gnu build activation))
+      #~(begin
+          (use-modules (gnu build activation))
+          (mkdir-p/perms #$data-directory (getpwnam "vaultwarden") #o700)))))
 
-(define vaultwarden-oci
+(define vaultwarden-shepherd-extension
   (match-record-lambda <vaultwarden-configuration>
-      (admin-token database-url port data-directory log-file proxy-url extra-options)
-    (oci-extension
-      (containers
-       (list (oci-container-configuration
-               (user "vaultwarden")
-               (group "docker")
-               (host-environment
-                `(,@(if (maybe-value-set? admin-token)
-                        `(("ADMIN_TOKEN" . ,admin-token))
-                        '())
-                  ("DATABASE_URL" . ,database-url)))
-               (environment
-                `(,@(if (maybe-value-set? proxy-url)
-                        `(("HTTP_PROXY" . ,proxy-url))
-                        '())
-                  ("LOG_FILE" . "vaultwarden.log")
-                  ("ROCKET_PORT" . ,(number->string port))
-                  ("USE_SYSLOG" . "True")
-                  ,@extra-options))
-               (image "vaultwarden/server:latest-alpine")
-               (provision "vaultwarden")
-               (requirement '(postgresql))
-               (respawn? #t)
-               (network "host")
-               (volumes
-                `((,data-directory . "/data")
-                  (,log-file . "/vaultwarden.log")))
-               (extra-arguments
-                `(,@(if (maybe-value-set? admin-token)
-                        '("--env" "ADMIN_TOKEN")
-                        '())
-                  "--env" "DATABASE_URL"))))))))
+      (vaultwarden web-vault admin-token database-url port data-directory log-file proxy-url extra-options)
+    (list (shepherd-service
+            (provision '(vaultwarden))
+            (requirement '(user-processes loopback postgresql))
+            (modules '((ice-9 match)))
+            (start
+             #~(make-forkexec-constructor
+                (list #$vaultwarden)
+                #:group "vaultwarden"
+                #:user "vaultwarden"
+                #:log-file #$log-file
+                #:environment-variables
+                (map (match-lambda
+                       ((variable . value)
+                        (string-append variable "=" value)))
+                     `(#$@(if (maybe-value-set? admin-token)
+                              `(("ADMIN_TOKEN" . ,admin-token))
+                              '())
+                       #$@(if (maybe-value-set? proxy-url)
+                              `(("HTTP_PROXY" . ,proxy-url))
+                              '())
+                       ("DATA_FOLDER" . #$data-directory)
+                       ("WEB_VAULT_FOLDER" . #$web-vault)
+                       ("DATABASE_URL" . #$database-url)
+                       ("ROCKET_PORT" . #$(number->string port))
+                       ("USE_SYSLOG" . "True")
+                       #$@extra-options))))
+            (stop #~(make-kill-destructor))))))
 
 (define vaultwarden-service-type
   (service-type
@@ -929,6 +953,6 @@ test its configuration file."))
                              vaultwarden-postgresql-role)
           (service-extension activation-service-type
                              vaultwarden-activation)
-          (service-extension oci-service-type
-                             vaultwarden-oci)))
+          (service-extension shepherd-root-service-type
+                             vaultwarden-shepherd-extension)))
    (description "Run Vaultwarden, a Bitwarden compatible server.")))
