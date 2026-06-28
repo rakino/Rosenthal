@@ -290,7 +290,7 @@
 
 (define go-vendored-build-system
   (build-system
-    (name 'go)
+    (name 'go-vendored)
     (description
      "Build system for Go programs")
     (lower lower)))
