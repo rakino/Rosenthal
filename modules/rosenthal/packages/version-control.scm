@@ -7,11 +7,3 @@
   #:use-module (rosenthal utils packages)
   ;; Guix packages
   #:use-module (gnu packages rust-apps))
-
-(define-public jujutsu/dolly
-  (package
-    (inherit
-     (package-with-extra-patches jujutsu
-       (rosenthal-patches
-        "jujutsu-save-jjdescription-file-inside-repository.patch")))
-    (name "jujutsu-dolly")))
