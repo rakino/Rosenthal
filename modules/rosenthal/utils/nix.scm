@@ -107,8 +107,8 @@ Examples:
                '("--ignore-env"))
               (else
                (cons "--ignore-env"
-                     (map (cut list "--keep-env-var" <>)
-                          environment-keep))))
+                     (append-map (cut list "--keep-env-var" <>)
+                                 environment-keep))))
             (append-map (match-lambda
                           ((name . value)
                            (list "--set-env-var" name value)))
