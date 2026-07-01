@@ -6,6 +6,7 @@
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
+  #:use-module (srfi srfi-71)
   ;; Utilities
   #:use-module (guix gexp)
   #:use-module (guix packages)
@@ -15,11 +16,14 @@
   #:autoload   (gnu packages package-management) (nix)
   #:export (%nix-shell-wrapper-default-unset-env-vars
 
+            installables->nix-expressions
+            nix-expressions->profile-build-wrapper
+
             nix-shell-wrapper
             nix-shell-wrapper->package))
 
-;; These search paths may contain incompatible libraries and may crash the
-;; program loading them.  See also GCD 004:
+;; These search paths may contain incompatible libraries crash programs
+;; loading them.  See also GCD 004:
 ;; https://consensus.guix.gnu.org/gcd/004-set-search-paths-without-program-wrappers.html
 (define %nix-shell-wrapper-default-unset-env-vars
   '("XDG_DATA_DIRS"
@@ -32,9 +36,167 @@
     "QML_IMPORT_PATH"
     "QT_PLUGIN_PATH"))
 
+;; Safe-to-use paths when extending search paths.
+(define %nix-build-profile-paths
+  '("/share/fonts"
+    "/share/icons"
+    "/share/info"
+    "/share/man"
+    ;; Completions.
+    "/share/bash-completion/completions"
+    "/share/fish/vendor_completions.d"
+    "/share/zsh/site-functions"))
+
+;; Additional outputs needed for %nix-build-profile-paths.
+(define %nix-build-profile-extra-outputs
+  '("man" "info"))
+
+
 ;;;
 ;;; Helper utilities to use packages from Nix.
 ;;;
+
+(define (ensure-list x)
+  (if (list? x)
+      x
+      (list x)))
+
+;; Flake output attribute -> Nix expression
+;; https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix.html#flake-output-attribute
+;; 1. flakeref
+;;    (import (builtins.getFlake "FLAKEREF") {})
+;; 2. flakeref#attrpath
+;;    (import (builtins.getFlake "FLAKEREF") {}).ATTRPATH
+;; 3. expression
+;;    (EXPRESSION)
+;; 4. expression + attrpath
+;;    (EXPRESSION).ATTRPATH
+;; 5. file
+;;    (import "FILE")
+;; 6. file + attrpath
+;;    (import "FILE").ATTRPATH
+
+(define* (installables->nix-expressions #:optional (installables ".")
+                                        #:key expression)
+  "Return a list of G-expressions to format Nix expressions from Flake output
+attributes.
+
+INSTALLABLES (string / list of strings) is specified as Flake output attribute.
+When EXPRESSION (string / file-like object) is set, INSTALLABLES will be
+optional and interpreted as attribute paths relative to the Nix expression."
+  (define (installable->flakeref+attrpath installable)
+    (if (string-contains installable "#")
+        (apply values (string-split installable #\#))
+        (if expression
+            (values #f installable)
+            (values installable #f))))
+
+  (map (lambda (installable)
+         (let* ((flakeref
+                 attrpath
+                 (installable->flakeref+attrpath installable))
+                (attrpath
+                 (if (and (string? attrpath)
+                          (string=? attrpath "."))
+                     #f
+                     attrpath)))
+           (match expression
+             ((? file-like?)
+              #~(format #f "(import ~s)~a"
+                        #$expression
+                        (if #$attrpath
+                            (string-append "." #$attrpath)
+                            "")))
+             ((? string?)
+              #~(format #f "(~a)~a"
+                        #$expression
+                        (if #$attrpath
+                            (string-append "." #$attrpath)
+                            "")))
+             (_
+              #~(format #f "(import (builtins.getFlake ~s) {})~a"
+                        #$flakeref
+                        (if #$attrpath
+                            (string-append "." #$attrpath)
+                            ""))))))
+       (ensure-list installables)))
+
+(define* (nix-expressions->profile-build-wrapper
+          expressions
+          #:key
+          link-to
+          (paths-to-link %nix-build-profile-paths)
+          (extra-outputs-to-install %nix-build-profile-extra-outputs)
+          (nixpkgs-commit "714a5f8c4ead6b31148d829288440ed033ccc041")
+          (nix (file-append nix "/bin/nix")))
+  "Return a file-like object that wraps the \"nix build\" command-line utility
+and builds a Nix profile if run.  Nix daemon is required to use the wrapper.
+
+EXPRESSIONS (list of strings / list of G-expressions) can be formatted from
+'installables->nix-expressions' and specifies packages to be added into the
+profile.
+
+If set, the resulted profile will be symlinked to LINK-TO (string).  This also
+prevents garbage collection of the profile.
+
+PATHS-TO-LINK (default: %nix-build-profile-paths, list of strings) limits
+subdirectories of packages to be included into the profile.  All subdirectories
+will be included if using '(\"/\").
+
+EXTRA-OUTPUTS-TO-INSTALL (default: %nix-build-profile-extra-outputs, list of
+strings) specifies additional outputs of packages to be included into the
+profile.
+
+NIXPKGS-COMMIT (default: 714a5f8c4ead6b31148d829288440ed033ccc041, string)
+specifies Nixpkgs revision to provide the buildEnv function.
+
+NIX (default: (file-append nix \"/bin/nix\"), string / file-like object)
+specifies the Nix binary to use."
+  (define profile.nix
+    (computed-file "profile.nix"
+      #~(begin
+          (use-modules (ice-9 format))
+          (call-with-output-file #$output
+            (lambda (port)
+              (format port "\
+let
+  pkgs = import (builtins.getFlake \"github:NixOS/nixpkgs/~a\") {};
+in
+  pkgs.buildEnv {
+    name = \"nix-profile-for-search-paths\";
+    paths = [
+~{\
+      ~a
+~}\
+    ];
+    pathsToLink = [
+~{\
+      ~s
+~}\
+    ];
+    extraOutputsToInstall = [
+~{\
+      ~s
+~}\
+    ];
+  }
+"
+                      #$nixpkgs-commit
+                      (list #$@expressions)
+                      '#$paths-to-link
+                      '#$extra-outputs-to-install))))
+      #:options '(#:substitutable? #f)))
+
+  (program-file "build-nix-profile"
+    (with-imported-modules '((guix build utils))
+      #~(begin
+          (use-modules (guix build utils))
+          (invoke #$nix "build"
+                  "--print-out-paths"
+                  #$@(if link-to
+                         (list "--out-link" link-to)
+                         (list "--no-link"))
+                  "--file" #$profile.nix)))))
 
 ;; See also https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix3-env-shell.html
 (define* (nix-shell-wrapper name
@@ -131,11 +293,9 @@ Examples:
                           (list "--impure" "--file" expression))
                          ((? string?)
                           (list "--impure" "--expr" expression))
-                         (else
+                         (_
                           '()))
-                    #$@(if (list? installables)
-                           installables
-                           (list installables))
+                    #$@(ensure-list installables)
                     "--command" #$@run-command args)))))))
 
 (define (nix-shell-wrapper->package wrapper)
