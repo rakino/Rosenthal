@@ -105,7 +105,7 @@ Examples:
                            environment-unset))
               (#f
                '("--ignore-env"))
-              (else
+              (_
                (cons "--ignore-env"
                      (append-map (cut list "--keep-env-var" <>)
                                  environment-keep))))
