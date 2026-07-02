@@ -15,6 +15,8 @@
   ;; Guix packages
   #:autoload   (gnu packages package-management) (nix)
   #:export (%nix-shell-wrapper-default-unset-env-vars
+            %nix-build-profile-paths
+            %nix-build-profile-extra-outputs
 
             installables->nix-expressions
             nix-expressions->profile-build-wrapper
@@ -141,7 +143,7 @@ prevents garbage collection of the profile.
 
 PATHS-TO-LINK (default: %nix-build-profile-paths, list of strings) limits
 subdirectories of packages to be included into the profile.  All subdirectories
-will be included if using '(\"/\").
+will be included if specifying '(\"/\").
 
 EXTRA-OUTPUTS-TO-INSTALL (default: %nix-build-profile-extra-outputs, list of
 strings) specifies additional outputs of packages to be included into the
