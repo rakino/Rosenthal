@@ -2,8 +2,6 @@
 ;;; Copyright © 2026 Hilton Chain <hako@ultrarare.space>
 
 (define-module (rosenthal services nix)
-  ;; Guile builtins
-  #:use-module (srfi srfi-26)
   ;; Utilities
   #:use-module (guix gexp)
   ;; Guix System - services
@@ -18,14 +16,23 @@
   #:export (nix-search-paths-service-type
             home-nix-search-paths-service-type))
 
-(define* (nix-search-paths-shepherd-extension config #:key home-service?)
+(define* (nix-search-paths-shepherd-root-extension config)
   (list (shepherd-service
           (documentation
            "Build Nix profile and symlink it to the specified path.")
-          (requirement
-           (if home-service?
-               '()
-               '(user-processes nix-daemon networking)))
+          (requirement '(user-processes nix-daemon networking))
+          (provision '(build-nix-profile))
+          (one-shot? #t)
+          (start
+           #~(make-forkexec-constructor
+              (list "/run/current-system/profile/bin/build-nix-profile"
+                    #$config))))))
+
+(define* (nix-search-paths-home-shepherd-extension config)
+  (list (shepherd-service
+          (documentation
+           "Build Nix profile and symlink it to the specified path.")
+          (requirement '())
           (provision '(build-nix-profile))
           (one-shot? #t)
           (start
@@ -48,7 +55,7 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix \
     (name 'nix-search-paths)
     (extensions
      (list (service-extension shepherd-root-service-type
-                              nix-search-paths-shepherd-extension)
+                              nix-search-paths-shepherd-root-extension)
            (service-extension etc-profile-d-service-type
                               nix-search-paths-etc-profile-d-extension)))
     (default-value "/nix/var/nix/profiles/guix-system-nix-profile")
@@ -60,7 +67,7 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix \
     (name 'home-nix-search-paths)
     (extensions
      (list (service-extension home-shepherd-service-type
-                              (cut nix-search-paths-shepherd-extension <> #:home-service? #t))
+                              nix-search-paths-home-shepherd-extension)
            (service-extension home-shell-profile-service-type
                               nix-search-paths-home-shell-profile-extension)))
     (default-value "/var/tmp/guix-home-nix-profile")))
