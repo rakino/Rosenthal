@@ -351,28 +351,12 @@ this macro.
 
 Example:
 
-    (with-nix-profile \"/tmp/test\"
-      (list hello
-
-            (nix-shell-wrapper \"cowsay-hello-coreutils-env\"
-              '(\"github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#coreutils\"
-                \"github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#cowsay\")
-              #:run-command '(\"env\" \"LANG=C.UTF-8\" \"cowsay\" \"hello\"))
-
-            (nix-shell-wrapper \"cowsay-hello\"
-              \"github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#cowsay\"
-              #:run-command '(\"cowsay\" \"hello\")
-              #:environment-set '((\"LANG\" . \"C.UTF-8\")))
-
-            (nix-shell-wrapper \"python-with-numpy\"
-              #:expression \"with (import (builtins.getFlake \\\"github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041\\\") {}); python3.withPackages (ps: [ps.numpy])\"
-              #:run-command '(\"python\"))
-
-            (nix-shell-wrapper \"coreutils-env\"
-              \"coreutils\"
-              #:expression (local-file \"/tmp/nixpkgs.nix\")
-              #:run-command '(\"env\")
-              #:environment-keep #f)))
+    (with-nix-profile \"/nix/var/nix/profiles/guix-system-nix-profile\"
+      (append (list (nix-shell-wrapper \"readest\"
+                      '(\"github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#readest\")
+                      #:run-command '(\"readest\")
+                      #:environment-set '((\"LANG\" . \"C.UTF-8\"))))
+              %base-packages))
 "
   (let ((wrappers
          others
