@@ -98,8 +98,7 @@ optional and interpreted as attribute paths relative to the Nix expression."
                  attrpath
                  (installable->flakeref+attrpath installable))
                 (attrpath
-                 (if (and (string? attrpath)
-                          (string=? attrpath "."))
+                 (if (and=> attrpath (cut string=? <> "."))
                      #f
                      attrpath)))
            (match expression
