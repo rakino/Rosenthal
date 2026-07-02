@@ -130,7 +130,6 @@ optional and interpreted as attribute paths relative to the Nix expression."
 (define* (nix-expressions->profile-build-wrapper
           expressions
           #:key
-          link-to
           (paths-to-link %nix-build-profile-paths)
           (extra-outputs-to-install %nix-build-profile-extra-outputs)
           (nixpkgs-commit "714a5f8c4ead6b31148d829288440ed033ccc041")
@@ -138,12 +137,12 @@ optional and interpreted as attribute paths relative to the Nix expression."
   "Return a file-like object that wraps the \"nix build\" command-line utility
 and builds a Nix profile if run.  Nix daemon is required to use the wrapper.
 
+The wrapper accepts an optional path argument and will symlink the resulted
+profile to the path.
+
 EXPRESSIONS (list of strings / list of G-expressions) can be formatted from
 'installables->nix-expressions' and specifies packages to be added into the
 profile.
-
-If set, the resulted profile will be symlinked to LINK-TO (string).  This also
-prevents garbage collection of the profile.
 
 PATHS-TO-LINK (default: %nix-build-profile-paths, list of strings) limits
 subdirectories of packages to be included into the profile.  All subdirectories
@@ -196,13 +195,16 @@ in
   (program-file "build-nix-profile-nix-wrapper"
     (with-imported-modules '((guix build utils))
       #~(begin
-          (use-modules (guix build utils))
-          (invoke #$nix "build"
-                  "--print-out-paths"
-                  #$@(if link-to
-                         (list "--out-link" link-to)
-                         (list "--no-link"))
-                  "--file" #$profile.nix)))))
+          (use-modules (ice-9 match)
+                       (guix build utils))
+          (match (command-line)
+            ((_ . args)
+             (apply invoke #$nix
+                    "build" "--print-out-paths"
+                    `(,@(if (null? args)
+                            (list "--no-link")
+                            (list "--out-link" (car args)))
+                      "--file" #$profile.nix))))))))
 
 ;; See also https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix3-env-shell.html
 (define* (nix-shell-wrapper name
@@ -337,13 +339,13 @@ practice."
       (description #f)
       (license #f))))
 
-(define-syntax-rule (with-nix-profile path packages)
+(define-syntax-rule (with-nix-profile packages)
   "Transform PACKAGES, turning wrappers created by 'nix-shell-wrapper' into
-packages, along with a package containing the build-nix-profile script created
-for them by 'nix-expressions->profile-build-wrapper'.
+packages, additionally adding a package containing the build-nix-profile script
+created for them by 'nix-expressions->profile-build-wrapper'.
 
-When invoking the build-nix-profile script, the resulted Nix profile will be
-linked to PATH.
+The build-nix-profile accepts an optional path argument and will symlink the
+resulted profile to the path.
 
 This macro is intended for use in Guix System and Guix Home package
 declarations.  Note that calls to 'nix-shell-wrapper' must be in the scope of
@@ -351,12 +353,12 @@ this macro.
 
 Example:
 
-    (with-nix-profile \"/nix/var/nix/profiles/guix-system-nix-profile\"
-      (append (list (nix-shell-wrapper \"readest\"
-                      '(\"github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#readest\")
-                      #:run-command '(\"readest\")
-                      #:environment-set '((\"LANG\" . \"C.UTF-8\"))))
-              %base-packages))
+    (with-nix-profile
+     (append (list (nix-shell-wrapper \"readest\"
+                     '(\"github:NixOS/nixpkgs/714a5f8c4ead6b31148d829288440ed033ccc041#readest\")
+                     #:run-command '(\"readest\")
+                     #:environment-set '((\"LANG\" . \"C.UTF-8\"))))
+             %base-packages))
 "
   (let ((wrappers
          others
@@ -371,8 +373,7 @@ Example:
                        ((_ _ installables expression)
                         (installables->nix-expressions
                          installables #:expression expression)))
-                     wrappers)
-         #:link-to path))
+                     wrappers)))
       ,@(map (match-lambda
                ((_ wrapper _ _)
                 (nix-shell-wrapper->package wrapper)))
