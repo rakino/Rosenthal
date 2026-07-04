@@ -5,6 +5,7 @@
   ;; Guile builtins
   #:use-module (ice-9 match)
   #:use-module (srfi srfi-1)
+  #:use-module (srfi srfi-9)
   #:use-module (srfi srfi-26)
   #:use-module (srfi srfi-71)
   ;; Utilities
@@ -14,12 +15,8 @@
   #:use-module (guix build-system trivial)
   ;; Guix packages
   #:autoload   (gnu packages package-management) (nix)
-  #:export (installables->nix-expressions
-            nix-expressions->profile-build-wrapper
-
-            nix-shell-wrapper
+  #:export (nix-shell-wrapper
             nix-shell-wrapper->package
-
             with-nix-profile))
 
 ;; These search paths may contain incompatible libraries and crash programs
@@ -30,6 +27,7 @@
 ;;   ENV_VAR
 ;;   '(ENV_VAR . PATH)
 ;;   '(ENV_VAR . (PATHS ...))
+
 (define %nix-wrapper-default-exclude-env-paths
   '((#f                     . ("/bin" "/sbin"))
     "XDG_DATA_DIRS"
@@ -61,8 +59,16 @@
                         (_ (list #f)))
                       %nix-wrapper-default-exclude-env-paths)))
 
-(define %nix-wrapper-for-profile?
-  (make-parameter #f))
+(define-record-type <nix-wrapper>
+  (nix-wrapper name command file expressions)
+  nix-wrapper?
+  (name        nix-wrapper-name)         ;string
+  (command     nix-wrapper-command)      ;string
+  (file        nix-wrapper-file)         ;file-like object
+  (expressions nix-wrapper-expressions)) ;list of file-like objects
+
+(define-gexp-compiler (nix-wrapper-compiler (wrapper <nix-wrapper>) system target)
+  (lower-object (nix-wrapper-file wrapper) system #:target target))
 
 
 ;;;
@@ -198,19 +204,25 @@ in
                       '#$paths-to-exclude))))
       #:options '(#:substitutable? #f)))
 
-  (program-file "build-nix-profile-nix-wrapper"
-    (with-imported-modules '((guix build utils))
-      #~(begin
-          (use-modules (ice-9 match)
-                       (guix build utils))
-          (match (command-line)
-            ((_ . args)
-             (apply invoke #$nix
-                    "build" "--print-out-paths"
-                    `(,@(if (null? args)
-                            (list "--no-link")
-                            (list "--out-link" (car args)))
-                      "--file" #$profile.nix))))))))
+  (define wrapper
+    (program-file "build-nix-profile-nix-wrapper"
+      (with-imported-modules '((guix build utils))
+        #~(begin
+            (use-modules (ice-9 match)
+                         (guix build utils))
+            (match (command-line)
+              ((_ . args)
+               (apply invoke #$nix
+                      "build" "--print-out-paths"
+                      `(,@(if (null? args)
+                              (list "--no-link")
+                              (list "--out-link" (car args)))
+                        "--file" #$profile.nix))))))))
+
+  (nix-wrapper "build-nix-profile-nix-wrapper"
+               "build-nix-profile"
+               wrapper
+               expressions))
 
 ;; See also https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix3-env-shell.html
 (define* (nix-shell-wrapper name
@@ -291,8 +303,11 @@ Examples:
                         environment-set)
             options))
 
+  (define wrapper-name
+    (string-append name "-nix-wrapper"))
+
   (define wrapper
-    (program-file (string-append name "-nix-wrapper")
+    (program-file wrapper-name
       (with-imported-modules '((guix build utils))
         #~(begin
             (use-modules (ice-9 match)
@@ -313,49 +328,50 @@ Examples:
                       #$@(ensure-list installables)
                       "--command" #$@run-command args)))))))
 
-  (if (%nix-wrapper-for-profile?)
-      (list 'nix-shell-wrapper wrapper installables expression)
-      wrapper))
+  (nix-wrapper wrapper-name
+               name
+               wrapper
+               (installables->nix-expressions
+                installables
+                #:expression expression)))
 
 (define (nix-shell-wrapper->package wrapper)
   "Return a package for WRAPPER, file-like object created by 'nix-shell-wrapper'
 or 'nix-expressions->profile-build-wrapper'.  The package will install a command
-under its /bin directory, with the same name as WRAPPER.
+under its /bin directory, with the command name of WRAPPER.
 
 Note that packages created by this procedure are not supposed to be used in the
 build environment and won't be able to interoperate with other packages in
 practice."
-  (let* ((wrapper-name (program-file-name wrapper))
-         (command (string-drop-right wrapper-name (string-length "-nix-wrapper"))))
-    (package
-      (name wrapper-name)
-      (version "0.0.0")
-      (source #f)
-      (build-system trivial-build-system)
-      (arguments
-       (list #:builder
-             (with-imported-modules '((guix build utils))
-               #~(begin
-                   (use-modules (guix build utils))
-                   (let ((dest (string-append #$output "/bin/" #$command)))
-                     (mkdir-p (dirname dest))
-                     (symlink #$wrapper dest))))))
-      (home-page #f)
-      (synopsis #f)
-      (description #f)
-      (license #f))))
+  (package
+    (name (nix-wrapper-name wrapper))
+    (version "0.0.0")
+    (source #f)
+    (build-system trivial-build-system)
+    (arguments
+     (list #:builder
+           (with-imported-modules '((guix build utils))
+             #~(begin
+                 (use-modules (guix build utils))
+                 (let ((dest (string-append #$output "/bin/"
+                                            #$(nix-wrapper-command wrapper))))
+                   (mkdir-p (dirname dest))
+                   (symlink #$wrapper dest))))))
+    (home-page #f)
+    (synopsis #f)
+    (description #f)
+    (license #f)))
 
-(define-syntax-rule (with-nix-profile packages)
-  "Transform PACKAGES, turning wrappers created by 'nix-shell-wrapper' into
-packages, additionally adding a package containing the build-nix-profile script
+(define (with-nix-profile packages)
+   "Transform PACKAGES, turning wrappers created by 'nix-shell-wrapper' into
+packages, additionally adding a package containing a build-nix-profile script
 created for them by 'nix-expressions->profile-build-wrapper'.
 
-The build-nix-profile accepts an optional path argument and will symlink the
-resulted profile to the path.
+The build-nix-profile script accepts an optional path argument and will symlink
+the resulted profile to the path.
 
-This macro is intended for use in Guix System and Guix Home package
-declarations.  Note that calls to 'nix-shell-wrapper' must be in the scope of
-this macro.
+This procedure is intended for use in Guix System and Guix Home package
+declarations.
 
 Example:
 
@@ -366,22 +382,9 @@ Example:
                      #:environment-set '((\"LANG\" . \"C.UTF-8\"))))
              %base-packages))
 "
-  (let ((wrappers
-         others
-         (partition (match-lambda
-                      (('nix-shell-wrapper _ _ _) #t)
-                      (_ #f))
-                    (parameterize ((%nix-wrapper-for-profile? #t))
-                      packages))))
-    `(,(nix-shell-wrapper->package
-        (nix-expressions->profile-build-wrapper
-         (append-map (match-lambda
-                       ((_ _ installables expression)
-                        (installables->nix-expressions
-                         installables #:expression expression)))
-                     wrappers)))
-      ,@(map (match-lambda
-               ((_ wrapper _ _)
-                (nix-shell-wrapper->package wrapper)))
-             wrappers)
-      ,@others)))
+  (let ((wrappers others (partition nix-wrapper? packages)))
+    (append (list (nix-shell-wrapper->package
+                   (nix-expressions->profile-build-wrapper
+                    (append-map nix-wrapper-expressions wrappers))))
+            (map nix-shell-wrapper->package wrappers)
+            others)))
