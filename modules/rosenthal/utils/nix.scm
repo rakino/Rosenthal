@@ -165,7 +165,8 @@ specifies the Nix binary to use."
   (define profile.nix
     (computed-file "profile.nix"
       #~(begin
-          (use-modules (ice-9 format))
+          (use-modules (ice-9 format)
+                       (srfi srfi-1))
           (call-with-output-file #$output
             (lambda (port)
               (format port "\
@@ -192,7 +193,7 @@ in
   }
 "
                       #$nixpkgs-commit
-                      (list #$@expressions)
+                      (delete-duplicates (list #$@expressions) string=?)
                       '#$extra-outputs-to-install
                       '#$paths-to-exclude))))
       #:options '(#:substitutable? #f)))
