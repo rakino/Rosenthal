@@ -16,7 +16,8 @@
   ;; Guix packages
   #:autoload   (gnu packages package-management) (nix)
   #:export (nix-shell-wrapper
-            nix-shell-wrapper->package
+            nix-wrapper->package
+            nix-shell-wrapper->package  ;alias to nix-wrapper->package
             with-nix-profile))
 
 ;; These search paths may contain incompatible libraries and crash programs
@@ -40,24 +41,34 @@
     ("QML_IMPORT_PATH"      . "/lib/qt6/qml")
     ("QT_PLUGIN_PATH"       . ("/lib/qt5/plugins" "/lib/qt6/plugins"))))
 
-;; Additional outputs added to the profile we build.
+;; Additional outputs to add when building the profile.
 (define %nix-profile-extra-outputs
   '("man" "info"))
 
-(define %nix-wrapper-default-unset-env-vars
-  (filter-map (match-lambda
-                ((? string? env) env)
-                (((? string? env) . _) env)
-                (_ #f))
-              %nix-wrapper-default-exclude-env-paths))
-
-(define %nix-wrapper-default-exclude-paths
+(define %nix-profile-default-exclude-paths
   (filter identity
           (append-map (match-lambda
                         ((_ . (? string? path)) (list path))
                         ((_ (? string? paths) ...) paths)
                         (_ (list #f)))
                       %nix-wrapper-default-exclude-env-paths)))
+
+(define %nix-shell-default-unset-env-vars
+  (filter-map (match-lambda
+                ((? string? env) env)
+                (((? string? env) . _) env)
+                (_ #f))
+              %nix-wrapper-default-exclude-env-paths))
+
+
+;;;
+;;; Helper utilities to use packages from Nix.
+;;;
+
+(define (ensure-list x)
+  (if (list? x)
+      x
+      (list x)))
 
 (define-record-type <nix-wrapper>
   (nix-wrapper name command file expressions)
@@ -70,15 +81,33 @@
 (define-gexp-compiler (nix-wrapper-compiler (wrapper <nix-wrapper>) system target)
   (lower-object (nix-wrapper-file wrapper) system #:target target))
 
-
-;;;
-;;; Helper utilities to use packages from Nix.
-;;;
+(define (nix-wrapper->package wrapper)
+  "Return a package for nix-wrapper WRAPPER.  The package will install a command
+under its /bin directory, with the command name of WRAPPER.
 
-(define (ensure-list x)
-  (if (list? x)
-      x
-      (list x)))
+Note that packages created by this procedure are not supposed to be used in the
+build environment and won't be able to interoperate with other packages in
+practice."
+  (package
+    (name (nix-wrapper-name wrapper))
+    (version "0.0.0")
+    (source #f)
+    (build-system trivial-build-system)
+    (arguments
+     (list #:builder
+           (with-imported-modules '((guix build utils))
+             #~(begin
+                 (use-modules (guix build utils))
+                 (let ((dest (string-append #$output "/bin/"
+                                            #$(nix-wrapper-command wrapper))))
+                   (mkdir-p (dirname dest))
+                   (symlink #$wrapper dest))))))
+    (home-page #f)
+    (synopsis #f)
+    (description #f)
+    (license #f)))
+
+(define nix-shell-wrapper->package nix-wrapper->package)
 
 ;; Flake output attribute -> Nix expression
 ;; https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix.html#flake-output-attribute
@@ -142,12 +171,12 @@ optional and interpreted as attribute paths relative to the Nix expression."
 (define* (nix-expressions->profile-build-wrapper
           expressions
           #:key
-          (paths-to-exclude %nix-wrapper-default-exclude-paths)
+          (paths-to-exclude %nix-profile-default-exclude-paths)
           (extra-outputs-to-install %nix-profile-extra-outputs)
           (nixpkgs-commit "714a5f8c4ead6b31148d829288440ed033ccc041")
           (nix (file-append nix "/bin/nix")))
-  "Return a file-like object that wraps the \"nix build\" command-line utility
-and builds a Nix profile if run.  Nix daemon is required to use the wrapper.
+  "Return a nix-wrapper that wraps the \"nix build\" command-line utility and
+builds a Nix profile if run.  Nix daemon is required to use the wrapper.
 
 The wrapper accepts an optional path argument and will symlink the resulted
 profile to the path.
@@ -156,7 +185,7 @@ EXPRESSIONS (list of strings / list of G-expressions) can be formatted from
 'installables->nix-expressions' and specifies packages to be added into the
 profile.
 
-PATHS-TO-EXCLUDE (default: %nix-wrapper-default-exclude-paths, list of strings)
+PATHS-TO-EXCLUDE (default: %nix-profile-default-exclude-paths, list of strings)
 excludes subdirectories from being added into the profile.
 
 EXTRA-OUTPUTS-TO-INSTALL (default: %nix-build-profile-extra-outputs, list of
@@ -231,12 +260,12 @@ in
                             (run-command '())
                             (options '())
                             (environment-keep #t)
-                            (environment-unset %nix-wrapper-default-unset-env-vars)
+                            (environment-unset %nix-shell-default-unset-env-vars)
                             (environment-set '())
                             (nix (file-append nix "/bin/nix")))
-  "Return a file-like object that wraps the \"nix shell\" command-line utility
-and spawns an one-off software environment if run.  Nix daemon is required to
-use the wrapper.
+  "Return a nix-wrapper that wraps the \"nix shell\" command-line utility and
+spawns an one-off software environment if run.  Nix daemon is required to use
+the wrapper.
 
 INSTALLABLES (string / list of strings) is specified as Flake output attribute
 and will be added into the environment.  When EXPRESSION (string / file-like
@@ -254,7 +283,7 @@ When ENVIRONMENT-KEEP (default: #t, boolean / list of strings) is set to a value
 other than #t, the environment will be cleared, keeping only specified
 environment variables.
 
-ENVIRONMENT-UNSET (default: %nix-wrapper-default-unset-env-vars, list of
+ENVIRONMENT-UNSET (default: %nix-shell-default-unset-env-vars, list of
 strings) unsets specified environment variables from the environment.  It's only
 usable when ENVIRONMENT-KEEP is #t.
 
@@ -335,43 +364,17 @@ Examples:
                 installables
                 #:expression expression)))
 
-(define (nix-shell-wrapper->package wrapper)
-  "Return a package for WRAPPER, file-like object created by 'nix-shell-wrapper'
-or 'nix-expressions->profile-build-wrapper'.  The package will install a command
-under its /bin directory, with the command name of WRAPPER.
-
-Note that packages created by this procedure are not supposed to be used in the
-build environment and won't be able to interoperate with other packages in
-practice."
-  (package
-    (name (nix-wrapper-name wrapper))
-    (version "0.0.0")
-    (source #f)
-    (build-system trivial-build-system)
-    (arguments
-     (list #:builder
-           (with-imported-modules '((guix build utils))
-             #~(begin
-                 (use-modules (guix build utils))
-                 (let ((dest (string-append #$output "/bin/"
-                                            #$(nix-wrapper-command wrapper))))
-                   (mkdir-p (dirname dest))
-                   (symlink #$wrapper dest))))))
-    (home-page #f)
-    (synopsis #f)
-    (description #f)
-    (license #f)))
-
 (define (with-nix-profile packages)
-   "Transform PACKAGES, turning wrappers created by 'nix-shell-wrapper' into
-packages, additionally adding a package containing a build-nix-profile script
-created for them by 'nix-expressions->profile-build-wrapper'.
+   "Transform PACKAGES, turning nix-wrapper into packages, additionally adding a
+new package containing a build-nix-profile script created for them by
+'nix-expressions->profile-build-wrapper'.
 
 The build-nix-profile script accepts an optional path argument and will symlink
 the resulted profile to the path.
 
 This procedure is intended for use in Guix System and Guix Home package
-declarations.
+declarations, to be used with services nix-search-paths-service-type and
+home-nix-search-paths-service-type.
 
 Example:
 
@@ -383,8 +386,8 @@ Example:
              %base-packages))
 "
   (let ((wrappers others (partition nix-wrapper? packages)))
-    (append (list (nix-shell-wrapper->package
+    (append (list (nix-wrapper->package
                    (nix-expressions->profile-build-wrapper
                     (append-map nix-wrapper-expressions wrappers))))
-            (map nix-shell-wrapper->package wrappers)
+            (map nix-wrapper->package wrappers)
             others)))
