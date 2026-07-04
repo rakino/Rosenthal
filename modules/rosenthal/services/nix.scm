@@ -16,7 +16,13 @@
   #:export (nix-search-paths-service-type
             home-nix-search-paths-service-type))
 
-(define* (nix-search-paths-shepherd-root-extension config)
+(define (nix-search-paths-activation config)
+  (with-imported-modules '((guix build utils))
+    #~(begin
+        (use-modules (guix build utils))
+        (mkdir-p (dirname #$config)))))
+
+(define (nix-search-paths-shepherd-root-extension config)
   (list (shepherd-service
           (documentation
            "Build Nix profile and symlink it to the specified path.")
@@ -28,7 +34,7 @@
               (list "/run/current-system/profile/bin/build-nix-profile"
                     #$config))))))
 
-(define* (nix-search-paths-home-shepherd-extension config)
+(define (nix-search-paths-home-shepherd-extension config)
   (list (shepherd-service
           (documentation
            "Build Nix profile and symlink it to the specified path.")
@@ -54,7 +60,9 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix \
   (service-type
     (name 'nix-search-paths)
     (extensions
-     (list (service-extension shepherd-root-service-type
+     (list (service-extension activation-service-type
+                              nix-search-paths-activation)
+           (service-extension shepherd-root-service-type
                               nix-search-paths-shepherd-root-extension)
            (service-extension etc-profile-d-service-type
                               nix-search-paths-etc-profile-d-extension)))
@@ -66,7 +74,9 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix \
     (inherit nix-search-paths-service-type)
     (name 'home-nix-search-paths)
     (extensions
-     (list (service-extension home-shepherd-service-type
+     (list (service-extension home-activation-service-type
+                              nix-search-paths-activation)
+           (service-extension home-shepherd-service-type
                               nix-search-paths-home-shepherd-extension)
            (service-extension home-shell-profile-service-type
                               nix-search-paths-home-shell-profile-extension)))
