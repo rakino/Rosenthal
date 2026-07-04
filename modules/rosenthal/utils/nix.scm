@@ -65,7 +65,7 @@
   (name        nix-wrapper-name)         ;string
   (command     nix-wrapper-command)      ;string
   (file        nix-wrapper-file)         ;file-like object
-  (expressions nix-wrapper-expressions)) ;list of file-like objects
+  (expressions nix-wrapper-expressions)) ;list of strings / list of G-expressions
 
 (define-gexp-compiler (nix-wrapper-compiler (wrapper <nix-wrapper>) system target)
   (lower-object (nix-wrapper-file wrapper) system #:target target))
