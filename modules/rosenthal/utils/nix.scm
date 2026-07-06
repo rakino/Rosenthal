@@ -15,50 +15,68 @@
   #:use-module (guix build-system trivial)
   ;; Guix packages
   #:autoload   (gnu packages package-management) (nix)
-  #:export (nix-shell-wrapper
-            nix-wrapper->package
-            nix-shell-wrapper->package  ;alias to nix-wrapper->package
+  #:export (%nix-wrapper-default-exclude-env-paths
+            %nix-wrapper-profile-nixpkgs-commit
+            %nix-wrapper-profile-extra-outputs
+
+            nix-shell-wrapper
+            nix-wrapper->package nix-shell-wrapper->package
             with-nix-profile))
 
-;; These search paths may contain incompatible libraries and crash programs
-;; loading them.  See also GCD 004:
+;; Environment variables and subdirectories to exclude in `nix-shell-wrapper'
+;; and `nix-expressions->profile-build-wrapper', respectively.
+;;
+;; This is to avoid adding search paths with incompatible libraries and crashing
+;; programs.  See also GCD 004:
 ;; https://consensus.guix.gnu.org/gcd/004-set-search-paths-without-program-wrappers.html
 ;;
-;; Valid items below, paths are started with "/":
+;; Valid item format below.  Paths are started with `/' and non-string values
+;; are ignored:
+;;
 ;;   ENV_VAR
-;;   '(ENV_VAR . PATH)
-;;   '(ENV_VAR . (PATHS ...))
-
+;;   (ENV_VAR . PATH)
+;;   (ENV_VAR . (PATHS ...))
 (define %nix-wrapper-default-exclude-env-paths
-  '((#f                     . ("/bin" "/sbin"))
-    "XDG_DATA_DIRS"
-    "XDG_CONFIG_DIRS"
-    ;; Glib
-    ("GIO_EXTRA_MODULES"    . "/lib/gio/modules")
-    ("GSETTINGS_SCHEMA_DIR" . "/share/glib-2.0/schemas")
-    ;; Qt
-    ("QML2_IMPORT_PATH"     . "/lib/qt5/qml")
-    ("QML_IMPORT_PATH"      . "/lib/qt6/qml")
-    ("QT_PLUGIN_PATH"       . ("/lib/qt5/plugins" "/lib/qt6/plugins"))))
+  (make-parameter
+   '((#f                     . ("/bin" "/sbin"))
+     "XDG_DATA_DIRS"
+     "XDG_CONFIG_DIRS"
+     ;; Glib
+     ("GIO_EXTRA_MODULES"    . "/lib/gio/modules")
+     ("GSETTINGS_SCHEMA_DIR" . "/share/glib-2.0/schemas")
+     ;; Qt
+     ("QML2_IMPORT_PATH"     . "/lib/qt5/qml")
+     ("QML_IMPORT_PATH"      . "/lib/qt6/qml")
+     ("QT_PLUGIN_PATH"       . ("/lib/qt5/plugins" "/lib/qt6/plugins")))))
 
-;; Additional outputs to add when building the profile.
-(define %nix-profile-extra-outputs
-  '("man" "info"))
+;; Nixpkgs revision to provide `buildEnv' function when building the profile,
+;; used by `nix-expressions->profile-build-wrapper'.
+(define %nix-wrapper-profile-nixpkgs-commit
+  (make-parameter "714a5f8c4ead6b31148d829288440ed033ccc041"))
 
-(define %nix-profile-default-exclude-paths
+;; Additional package outputs to include when building the profile, used by
+;; `nix-expressions->profile-build-wrapper'.
+(define %nix-wrapper-profile-extra-outputs
+  (make-parameter '("man" "info")))
+
+(define (%nix-wrapper-profile-default-exclude-paths)
+  "Subdirectories to exclude when building the profile, used by
+`nix-expressions->profile-build-wrapper'."
   (filter identity
           (append-map (match-lambda
                         ((_ . (? string? path)) (list path))
                         ((_ (? string? paths) ...) paths)
                         (_ (list #f)))
-                      %nix-wrapper-default-exclude-env-paths)))
+                      (%nix-wrapper-default-exclude-env-paths))))
 
-(define %nix-shell-default-unset-env-vars
+(define (%nix-wrapper-shell-default-unset-env-vars)
+  "Environment variables to unset in the `nix shell' environment, used by
+`nix-shell-wrapper' by default."
   (filter-map (match-lambda
                 ((? string? env) env)
                 (((? string? env) . _) env)
                 (_ #f))
-              %nix-wrapper-default-exclude-env-paths))
+              (%nix-wrapper-default-exclude-env-paths)))
 
 
 ;;;
@@ -73,9 +91,13 @@
 (define-record-type <nix-wrapper>
   (nix-wrapper name command file expressions)
   nix-wrapper?
+  ;; For `nix-wrapper->package', package name.
   (name        nix-wrapper-name)         ;string
+  ;; For `nix-wrapper->package', command name.
   (command     nix-wrapper-command)      ;string
+  ;; Wrapper script.
   (file        nix-wrapper-file)         ;file-like object
+  ;; Nix expression equivalents to Nix dependencies of the wrapper.
   (expressions nix-wrapper-expressions)) ;list of strings / list of G-expressions
 
 (define-gexp-compiler (nix-wrapper-compiler (wrapper <nix-wrapper>) system target)
@@ -107,7 +129,7 @@ practice."
     (description #f)
     (license #f)))
 
-(define nix-shell-wrapper->package nix-wrapper->package)
+(define nix-shell-wrapper->package nix-wrapper->package) ;alias
 
 ;; Flake output attribute -> Nix expression
 ;; https://nix.dev/manual/nix/2.34/command-ref/new-cli/nix.html#flake-output-attribute
@@ -123,7 +145,6 @@ practice."
 ;;    (import "FILE")
 ;; 6. file + attrpath
 ;;    (import "FILE").ATTRPATH
-
 (define* (installables->nix-expressions #:optional (installables ".")
                                         #:key expression)
   "Return a list of G-expressions to format Nix expressions from Flake output
@@ -131,7 +152,7 @@ attributes.
 
 INSTALLABLES (string / list of strings) is specified as Flake output attribute.
 When EXPRESSION (string / file-like object) is set, INSTALLABLES will be
-optional and interpreted as attribute paths relative to the Nix expression."
+optional and interpreted as attribute path relative to the Nix expression."
   (define (installable->flakeref+attrpath installable)
     (if (string-contains installable "#")
         (apply values (string-split installable #\#))
@@ -170,30 +191,16 @@ optional and interpreted as attribute paths relative to the Nix expression."
 
 (define* (nix-expressions->profile-build-wrapper
           expressions
-          #:key
-          (paths-to-exclude %nix-profile-default-exclude-paths)
-          (extra-outputs-to-install %nix-profile-extra-outputs)
-          (nixpkgs-commit "714a5f8c4ead6b31148d829288440ed033ccc041")
-          (nix (file-append nix "/bin/nix")))
-  "Return a nix-wrapper that wraps the \"nix build\" command-line utility and
+          #:key (nix (file-append nix "/bin/nix")))
+  "Return a nix-wrapper that wraps the `nix build' command-line utility and
 builds a Nix profile if run.  Nix daemon is required to use the wrapper.
 
 The wrapper accepts an optional path argument and will symlink the resulted
 profile to the path.
 
 EXPRESSIONS (list of strings / list of G-expressions) can be formatted from
-'installables->nix-expressions' and specifies packages to be added into the
+`installables->nix-expressions' and specifies packages to be added into the
 profile.
-
-PATHS-TO-EXCLUDE (default: %nix-profile-default-exclude-paths, list of strings)
-excludes subdirectories from being added into the profile.
-
-EXTRA-OUTPUTS-TO-INSTALL (default: %nix-build-profile-extra-outputs, list of
-strings) specifies additional outputs of packages to be included into the
-profile.
-
-NIXPKGS-COMMIT (default: 714a5f8c4ead6b31148d829288440ed033ccc041, string)
-specifies Nixpkgs revision to provide the buildEnv function.
 
 NIX (default: (file-append nix \"/bin/nix\"), string / file-like object)
 specifies the Nix binary to use."
@@ -227,10 +234,10 @@ in
     '';
   }
 "
-                      #$nixpkgs-commit
+                      #$(%nix-wrapper-profile-nixpkgs-commit)
                       (delete-duplicates (list #$@expressions) string=?)
-                      '#$extra-outputs-to-install
-                      '#$paths-to-exclude))))
+                      '#$(%nix-wrapper-profile-extra-outputs)
+                      '#$(%nix-wrapper-profile-default-exclude-paths)))))
       #:options '(#:substitutable? #f)))
 
   (define wrapper
@@ -260,10 +267,10 @@ in
                             (run-command '())
                             (options '())
                             (environment-keep #t)
-                            (environment-unset %nix-shell-default-unset-env-vars)
+                            (environment-unset (%nix-wrapper-shell-default-unset-env-vars))
                             (environment-set '())
                             (nix (file-append nix "/bin/nix")))
-  "Return a nix-wrapper that wraps the \"nix shell\" command-line utility and
+  "Return a nix-wrapper that wraps the `nix shell' command-line utility and
 spawns an one-off software environment if run.  Nix daemon is required to use
 the wrapper.
 
@@ -277,13 +284,13 @@ be executed in the environment.  Command-line arguments passed to the wrapper
 will be appended.
 
 OPTIONS (default: '(), list of strings) specifies extra options to pass to the
-\"nix shell\" command-line utility.
+`nix shell' command-line utility.
 
 When ENVIRONMENT-KEEP (default: #t, boolean / list of strings) is set to a value
 other than #t, the environment will be cleared, keeping only specified
 environment variables.
 
-ENVIRONMENT-UNSET (default: %nix-shell-default-unset-env-vars, list of
+ENVIRONMENT-UNSET (default: (%nix-wrapper-shell-default-unset-env-vars), list of
 strings) unsets specified environment variables from the environment.  It's only
 usable when ENVIRONMENT-KEEP is #t.
 
@@ -366,15 +373,15 @@ Examples:
 
 (define (with-nix-profile packages)
    "Transform PACKAGES, turning nix-wrapper into packages, additionally adding a
-new package containing a build-nix-profile script created for them by
-'nix-expressions->profile-build-wrapper'.
+new package containing a `build-nix-profile' script created for them by
+`nix-expressions->profile-build-wrapper'.
 
-The build-nix-profile script accepts an optional path argument and will symlink
-the resulted profile to the path.
+The `build-nix-profile' script accepts an optional path argument and will
+symlink the resulted profile to that path.
 
 This procedure is intended for use in Guix System and Guix Home package
-declarations, to be used with services nix-search-paths-service-type and
-home-nix-search-paths-service-type.
+declarations, along with services `nix-search-paths-service-type' and
+`home-nix-search-paths-service-type'.
 
 Example:
 
