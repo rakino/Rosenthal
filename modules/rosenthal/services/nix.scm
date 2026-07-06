@@ -22,39 +22,33 @@
         (use-modules (guix build utils))
         (mkdir-p (dirname #$config)))))
 
-(define (nix-search-paths-shepherd-root-extension config)
-  (list (shepherd-service
-          (documentation
-           "Build Nix profile and symlink it to the specified path.")
-          (requirement '(user-processes nix-daemon networking))
-          (provision '(build-nix-profile))
-          (one-shot? #t)
-          (start
-           #~(make-forkexec-constructor
-              (list "/run/current-system/profile/bin/build-nix-profile"
-                    #$config))))))
-
-(define (nix-search-paths-home-shepherd-extension config)
-  (list (shepherd-service
-          (documentation
-           "Build Nix profile and symlink it to the specified path.")
-          (requirement '())
-          (provision '(build-nix-profile))
-          (one-shot? #t)
-          (start
-           #~(make-forkexec-constructor
-              (list "build-nix-profile" #$config))))))
+(define* (nix-search-paths-shepherd-extension #:key home?)
+  (lambda (config)
+    (list (shepherd-service
+            (documentation
+             "Build Nix profile and symlink it to the specified path.")
+            (requirement
+             (if home?
+                 '()
+                 '(user-processes nix-daemon networking)))
+            (provision '(build-nix-profile))
+            (one-shot? #t)
+            (start
+             #~(make-forkexec-constructor
+                (list #$(if home?
+                            "build-nix-profile"
+                            "/run/current-system/profile/bin/build-nix-profile")
+                      #$config)))))))
 
 ;; TODO: Avoid duplicating search paths from the system profile.
-(define (nix-search-paths-etc-profile-d-extension config)
-  (list (mixed-text-file "nix-search-paths.sh" "\
-eval \"$(" guix "/bin/guix package --search-paths=suffix \
--p /run/current-system/profile -p" config ")\"")))
-
-(define (nix-search-paths-home-shell-profile-extension config)
-  (list (mixed-text-file "nix-search-paths.sh" "\
-eval \"$(" guix "/bin/guix package --search-paths=suffix \
--p ~/.guix-home/profile -p" config ")\"")))
+(define* (nix-search-paths-profile-extension #:key home?)
+  (lambda (config)
+    (list (mixed-text-file "nix-search-paths.sh" "\
+eval \"$(" guix "/bin/guix package --search-paths=suffix"
+" -p " (if home?
+         "~/.guix-home/profile"
+         "/run/current-system/profile")
+" -p " config ")\""))))
 
 (define nix-search-paths-service-type
   (service-type
@@ -63,9 +57,9 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix \
      (list (service-extension activation-service-type
                               nix-search-paths-activation)
            (service-extension shepherd-root-service-type
-                              nix-search-paths-shepherd-root-extension)
+                              (nix-search-paths-shepherd-extension))
            (service-extension etc-profile-d-service-type
-                              nix-search-paths-etc-profile-d-extension)))
+                              (nix-search-paths-profile-extension))))
     (default-value "/nix/var/nix/profiles/guix-system-nix-profile")
     (description "Set up search paths for @code{with-nix-profile}.")))
 
@@ -77,9 +71,9 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix \
      (list (service-extension home-activation-service-type
                               nix-search-paths-activation)
            (service-extension home-shepherd-service-type
-                              nix-search-paths-home-shepherd-extension)
+                              (nix-search-paths-shepherd-extension #:home? #t))
            (service-extension home-shell-profile-service-type
-                              nix-search-paths-home-shell-profile-extension)))
+                              (nix-search-paths-profile-extension #:home? #t))))
     (default-value "/var/tmp/guix-home-nix-profile")))
 
 (define-service-type-mapping
