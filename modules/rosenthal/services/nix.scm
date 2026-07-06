@@ -4,6 +4,8 @@
 (define-module (rosenthal services nix)
   ;; Utilities
   #:use-module (guix gexp)
+  ;; Guix System
+  #:use-module (gnu system pam)
   ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services shepherd)
@@ -21,6 +23,9 @@
     #~(begin
         (use-modules (guix build utils))
         (mkdir-p (dirname #$config)))))
+
+(define (nix-search-paths-environment-extension config)
+  `(("LOCALE_ARCHIVE" . ,(in-vicinity config "lib/locale/locale-archive"))))
 
 (define* (nix-search-paths-shepherd-extension #:key home?)
   (lambda (config)
@@ -54,7 +59,9 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix"
   (service-type
     (name 'nix-search-paths)
     (extensions
-     (list (service-extension activation-service-type
+     (list (service-extension session-environment-service-type
+                              nix-search-paths-environment-extension)
+           (service-extension activation-service-type
                               nix-search-paths-activation)
            (service-extension shepherd-root-service-type
                               (nix-search-paths-shepherd-extension))
@@ -68,7 +75,9 @@ eval \"$(" guix "/bin/guix package --search-paths=suffix"
     (inherit nix-search-paths-service-type)
     (name 'home-nix-search-paths)
     (extensions
-     (list (service-extension home-activation-service-type
+     (list (service-extension home-environment-variables-service-type
+                              nix-search-paths-environment-extension)
+           (service-extension home-activation-service-type
                               nix-search-paths-activation)
            (service-extension home-shepherd-service-type
                               (nix-search-paths-shepherd-extension #:home? #t))
