@@ -12,6 +12,7 @@
   ;; Guix build systems
   #:use-module (guix build-system meson)
   ;; Guix packages
+  #:use-module (gnu packages cpp)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
@@ -22,10 +23,12 @@
   #:use-module (gnu packages image)
   #:use-module (gnu packages jemalloc)
   #:use-module (gnu packages linux)
+  #:use-module (gnu packages markup)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages multiprecision)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages polkit)
+  #:use-module (gnu packages stb)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xml))
 
@@ -48,7 +51,7 @@
 (define-public noctalia
   (package
     (name "noctalia")
-    (version "5.0.0-beta1")
+    (version "5.0.0-beta2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -57,7 +60,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "194fhlxn79d8hg0qgczk51jrbnifnvhgikz6npqirzb0kfifxyz9"))))
+                "0lmshnybaiwb4s3lmp5jmbq589xlf9sy1bf9nirkk5s258ihgafa"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -71,7 +74,11 @@
                    ;; /bin/sh doesn't exist in the build environment.
                    (substitute* "tests/process_test.cpp"
                      (("/bin/(sh)" _ cmd)
-                      (which cmd))))))))
+                      (which cmd)))
+                   ;; Adjust stb import path for the Guix dependency.
+                   (substitute* (cons "meson.build"
+                                      (find-files "src" "\\.cpp$"))
+                     (("stb/stb") "stb")))))))
     (native-inputs
      (list pkg-config))
     (inputs
@@ -90,11 +97,16 @@
            libxkbcommon
            libxml2
            linux-pam
+           md4c
            mesa
+           nlohmann-json
            pango
            pipewire
            polkit
            sdbus-c++
+           stb-image-resize2
+           stb-image-write
+           tomlplusplus
            wayland
            wayland-protocols-1.48
            wireplumber))
