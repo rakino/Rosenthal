@@ -11,6 +11,7 @@
 (define* (unpack-vendored-dependencies #:key native-inputs inputs #:allow-other-keys)
   (let ((vendored-dependencies
          (assoc-ref (or native-inputs inputs) "vendored-go-dependencies")))
+    (setenv "GOTOOLCHAIN" "local")
     (unsetenv "GO111MODULE")
     (when vendored-dependencies
       (copy-recursively vendored-dependencies "vendor"))))
