@@ -11,9 +11,12 @@
   #:use-module (guix git-download)
   ;; Guix build systems
   #:use-module (guix build-system pyproject)
+  #:use-module (rosenthal build-system go-vendored)
   ;; Guix packages
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages crypto)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages golang)
   #:use-module (gnu packages monitoring)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-build)
@@ -62,7 +65,7 @@ users.")
 (define-public mautrix-telegram
   (package
     (name "mautrix-telegram")
-    (version "0.15.3")
+    (version "0.2606.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -71,58 +74,25 @@ users.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0ivhp827ypngq3p8m5bmiv1nk2x2c4y0z1c37rczjmq941dnlw63"))))
-    (build-system pyproject-build-system)
+                "08agcpd5na1l7j9ww03z9axwcayfidz4ac93zn9x0lm4c2s2maml"))))
+    (build-system go-vendored-build-system)
     (arguments
-     (list #:tests? #f                  ;No test suite.
+     (list #:go go-1.26
+           #:vendor-hash
+           (base32 "0jmmn2bh8spjcc39q9l7z220vlbdk2plhy8jlqmk6rsi1qkdsl7r")
+           #:install-source? #f
+           #:import-path "./cmd/mautrix-telegram"
            #:phases
            #~(modify-phases %standard-phases
-               (add-after 'install 'install-extras
+               (add-after 'install 'wrap-binary
                  (lambda* (#:key inputs #:allow-other-keys)
-                   (let* ((bindir (in-vicinity #$output "bin"))
-                          (etcdir (in-vicinity #$output "etc/mautrix-telegram"))
-                          (bin (in-vicinity bindir "mautrix-telegram"))
-                          (cfg (in-vicinity #$output "example-config.yaml")))
-                     (for-each mkdir-p (list bindir etcdir))
-                     (install-file cfg etcdir)
-                     (delete-file cfg)
-                     (call-with-output-file bin
-                       (lambda (port)
-                         (format port "~
-#!/bin/sh
-PATH=~a:~a:$PATH
-~a -m mautrix_telegram \"$@\"~%"
-                                 (dirname (dirname (search-input-file inputs "bin/ffmpeg")))
-                                 (dirname (dirname (search-input-file inputs "bin/lottieconverter")))
-                                 (search-input-file inputs "bin/python3"))))
-                     (chmod bin #o555)))))))
-
-    (native-inputs
-     (list python-setuptools))
-    (propagated-inputs
-     (list python-asyncpg
-           python-commonmark
-           python-aiosqlite
-           python-magic
-           python-mako
-           python-mautrix
-           python-ruamel.yaml
-           python-tulir-telethon))
-    (inputs
-     (list ffmpeg
-           lottie-converter
-           python
-           python-aiodns
-           python-aiosqlite
-           python-brotli
-           python-olm
-           python-phonenumbers
-           python-pillow
-           python-prometheus-client
-           python-pycryptodome
-           python-qrcode
-           python-socks
-           python-unpaddedbase64))
+                   (wrap-program (in-vicinity #$output "bin/mautrix-telegram")
+                     `("PATH" ":" prefix
+                       ,(map (lambda (cmd)
+                               (dirname (search-input-file inputs cmd)))
+                             '("bin/ffmpeg"
+                               "bin/lottieconverter")))))))))
+    (inputs (list bash-minimal ffmpeg lottie-converter olm))
     (synopsis "Matrix-Telegram hybrid puppeting/relaybot bridge")
     (description
      "This package provides a Matrix-Telegram hybrid puppeting/relaybot
