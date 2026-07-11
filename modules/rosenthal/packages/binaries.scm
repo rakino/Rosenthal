@@ -128,7 +128,7 @@ different needs.")
 (define-public tuwunel-bin
   (package
     (name "tuwunel-bin")
-    (version "1.7.0")
+    (version "1.8.2")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -138,7 +138,7 @@ different needs.")
               (file-name (string-append name "-" version ".zst"))
               (sha256
                (base32
-                "0rm95qpwpvki4vxhn1cm3617glr5pldhrdmjv9h7llrabm5nzbcr"))))
+                "0v6dlarsdr8rnj3gr7m3la0hv9xv18cyc4jx46qy0lljiwjrcdw2"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? (not (%current-target-system))
