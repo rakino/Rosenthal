@@ -51,7 +51,7 @@
 (define-public noctalia
   (package
     (name "noctalia")
-    (version "5.0.0-beta2")
+    (version "5.0.0-beta.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -60,7 +60,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0lmshnybaiwb4s3lmp5jmbq589xlf9sy1bf9nirkk5s258ihgafa"))))
+                "1h06kq40gcm40ldflc7l2n02apj74rknib8hn0gy7n7hi1c1w87j"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -75,10 +75,9 @@
                    (substitute* "tests/process_test.cpp"
                      (("/bin/(sh)" _ cmd)
                       (which cmd)))
-                   ;; Adjust stb import path for the Guix dependency.
-                   (substitute* (cons "meson.build"
-                                      (find-files "src" "\\.cpp$"))
-                     (("stb/stb") "stb")))))))
+                   ;; Adjust import paths for STB headers packaged in Guix.
+                   (substitute* (find-files "." "\\.cpp$|^meson\\.build$")
+                     (("\\bstb/stb_") "stb_")))))))
     (native-inputs
      (list pkg-config))
     (inputs
@@ -88,9 +87,9 @@
            freetype
            glib
            gmp
-           mpfr
            harfbuzz
            jemalloc
+           mpfr
            (librsvg-for-system)
            libqalculate
            libwebp
