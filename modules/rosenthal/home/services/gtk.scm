@@ -39,13 +39,15 @@
   (if (null? config)
       '()
       `(("gtk-3.0/settings.ini"
-         ,(ini-file "settings.ini" #~'(("Settings" #$@config)))))))
+         ,(ini-file "settings.ini"
+            #~'(("Settings" . #$config)))))))
 
 (define (home-gtk4-xdg-configuration-files config)
   (if (null? config)
       '()
       `(("gtk-4.0/settings.ini"
-         ,(ini-file "settings.ini" #~'(("Settings" #$@config)))))))
+         ,(ini-file "settings.ini"
+            #~'(("Settings" . #$config)))))))
 
 (define home-gtk2-service-type
   (service-type

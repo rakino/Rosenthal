@@ -550,7 +550,7 @@ compositor.")))
       (icon-theme)
     (ini-file "index.theme"
       #~'(("icon theme"
-           ("Inherits" . #$icon-theme))))))
+           . (("Inherits" . #$icon-theme)))))))
 
 (define (home-theme-files config)
   `((".icons/default/index.theme"
