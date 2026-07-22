@@ -46,7 +46,7 @@
   #:use-module (gnu packages networking)
   #:use-module (gnu packages polkit)
   #:use-module (gnu packages qt)
-  #:use-module (gnu packages wm)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu packages xorg)
   #:use-module (rosenthal packages authentication)
   #:use-module (rosenthal packages wm)
