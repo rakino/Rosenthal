@@ -26,7 +26,25 @@
     #~(list "--os-release" #$label
             "--linux" #$linux
             "--initrd" #$initrd
-            "--cmdline" (string-join (list #$@arguments))
+            "--cmdline"
+            (string-join
+             (map (lambda (arg)
+                    ;; Use absolute references to avoid stale system generation
+                    ;; status.
+                    (if (or (string-prefix? "gnu.system=" arg)
+                            (string-prefix? "gnu.load=" arg))
+                        (let* ((split-arg (string-split arg #\=))
+                               (option (car split-arg))
+                               (value (cadr split-arg)))
+                          (string-join
+                           (list option
+                                 (catch #t
+                                   (lambda ()
+                                     (readlink value))
+                                   (const value)))
+                           "="))
+                        arg))
+                  (list #$@arguments)))
             "--stub"
             #$(file-append systemd-stub "/libexec/" (systemd-stub-name)))))
 

@@ -36,10 +36,10 @@
           old-entries))
 
   (define labels
-    (map-in-order menu-entry-label menu-entries))
+    (map menu-entry-label menu-entries))
 
   (define ukify-args
-    (map-in-order menu-entry->ukify-args menu-entries))
+    (map menu-entry->ukify-args menu-entries))
 
   (program-file "install-limine"
     (with-imported-modules
