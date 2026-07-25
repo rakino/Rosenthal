@@ -405,60 +405,60 @@ test its configuration file."))
   ;; See also: https://jellyfin.org/docs/general/administration/configuration/#server-paths
   (data-directory
    jellyfin-configuration-data-directory
-   (contract string?)
    (default "/var/lib/jellyfin")
+   (contract string?)
    (documentation
     "Directory for all Jellyfin data."))
   (config-directory
    jellyfin-configuration-config-directory
    (thunked)
-   (contract string?)
    (default (in-vicinity
              (jellyfin-configuration-data-directory this-jellyfin-configuration)
              "config"))
+   (contract string?)
    (documentation
     "Directory for the server configuration files."))
   (cache-directory
    jellyfin-configuration-cache-directory
    (thunked)
-   (contract string?)
    (default (in-vicinity
              (jellyfin-configuration-data-directory this-jellyfin-configuration)
              "cache"))
+   (contract string?)
    (documentation
     "Directory for the server cache."))
   (log-directory
    jellyfin-configuration-log-directory
    (thunked)
-   (contract string?)
    (default (in-vicinity
              (jellyfin-configuration-data-directory this-jellyfin-configuration)
              "log"))
+   (contract string?)
    (documentation
     "Directory for Jellyfin logs."))
 
   (user
    jellyfin-configuration-user
-   (contract (or/c #f integer?))
    (default #f)
+   (contract (or/c #f integer?))
    (documentation
     "User account under which Jellyfin runs."))
   (group
    jellyfin-configuration-group
-   (contract (or/c #f integer?))
    (default #f)
+   (contract (or/c #f integer?))
    (documentation
     "Group under which Jellyfin runs."))
   (shepherd-requirement
    jellyfin-configuration-shepherd-requirement
-   (contract (listof/c symbol?))
    (default '())
+   (contract (listof/c symbol?))
    (documentation
     "Shepherd services that should be started before this service."))
   (extra-options
    jellyfin-configuration-extra-options
-   (contract (listof/c string?))
    (default '())
+   (contract (listof/c string?))
    (documentation
     "Extra command-line options.")))
 
