@@ -7,8 +7,10 @@
   #:use-module (guix modules)
   #:use-module (guix packages)
   #:use-module (guix records)
+  #:use-module (rosenthal utils contract combinators)
   #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils predicates)
+  #:use-module (rosenthal utils records)
   ;; Guix origin methods
   #:use-module (guix download)
   ;; Guix System
@@ -392,7 +394,7 @@ test its configuration file."))
 ;;; Jellyfin media system (Native, currently written for the Nix package).
 ;;;
 
-(define-record-type* <jellyfin-configuration>
+(define-record-type/dolly <jellyfin-configuration>
   jellyfin-configuration
   make-jellyfin-configuration
   jellyfin-configuration?
@@ -462,9 +464,9 @@ test its configuration file."))
    (documentation
     "Extra command-line options.")))
 
-(define (jellyfin-account-service config)
-  (match-record config <jellyfin-configuration>
-                (data-directory user group)
+(define jellyfin-account-service
+  (match-record-lambda/dolly <jellyfin-configuration>
+      (data-directory user group)
     (list (user-group
             (name "jellyfin")
             (id group)
@@ -478,9 +480,9 @@ test its configuration file."))
             (shell (file-append shadow "/sbin/nologin"))
             (system? #t)))))
 
-(define (jellyfin-activation-service config)
-  (match-record config <jellyfin-configuration>
-                (data-directory config-directory cache-directory log-directory)
+(define jellyfin-activation-service
+  (match-record-lambda/dolly <jellyfin-configuration>
+      (data-directory config-directory cache-directory log-directory)
     #~(let ((owner (getpwnam "jellyfin")))
         (for-each (lambda (dir)
                     (mkdir-p/perms dir owner #o755))
@@ -489,11 +491,11 @@ test its configuration file."))
                            cache-directory
                            log-directory)))))
 
-(define (jellyfin-shepherd-service config)
-  (match-record config <jellyfin-configuration>
-                (jellyfin
-                 data-directory config-directory cache-directory log-directory
-                 shepherd-requirement extra-options)
+(define jellyfin-shepherd-service
+  (match-record-lambda/dolly <jellyfin-configuration>
+      (jellyfin
+       data-directory config-directory cache-directory log-directory
+       shepherd-requirement extra-options)
     (list (shepherd-service
             (documentation "Run the Jellyfin media system.")
             (provision '(jellyfin))
