@@ -11,6 +11,7 @@
   #:use-module (ice-9 match)
   #:use-module (ice-9 rdelim)
   #:autoload   (system syntax) (syntax-local-binding)
+  #:autoload   (rosenthal utils contract) (apply-contract/guix-record-field)
   #:export (define-record-type/dolly
             this-record
 
@@ -127,6 +128,7 @@ of TYPE matches the expansion-time ABI."
         #:this-identifier this-identifier
         #:delayed delayed
         #:innate innate
+        #:contracts contracts
         #:sanitizers sanitizers
         #:defaults defaults)
      (define-syntax name
@@ -172,6 +174,15 @@ of TYPE matches the expansion-time ABI."
          (define (innate-field? f)
            (memq (syntax->datum f) 'innate))
 
+         (define field-contract
+           (let ((lst (map (match-lambda
+                             ((f p)
+                              (list (syntax->datum f) p)))
+                           #'contracts)))
+             (lambda (f)
+               (or (and=> (assoc-ref lst (syntax->datum f)) car)
+                   #'any/c))))
+
          (define field-sanitizer
            (let ((lst (map (match-lambda
                              ((f p)
@@ -179,7 +190,7 @@ of TYPE matches the expansion-time ABI."
                            #'sanitizers)))
              (lambda (f)
                (or (and=> (assoc-ref lst (syntax->datum f)) car)
-                   #'(lambda (x) x)))))
+                   #'identity))))
 
          (define (field-index f)
            ;; Return the index of F within the record.
@@ -217,8 +228,28 @@ record type '~a' shadows local variable~%"
            ;; called and its properties (thunked, delayed) honored.  When
            ;; PARENT is true, bind F to the value inherited from PARENT in the
            ;; lexical scope of VALUE.
-           (let* ((sanitizer (field-sanitizer f))
-                  (value     #`(#,sanitizer #,value)))
+           (let* ((contract   (field-contract f))
+                  (sanitizer  (field-sanitizer f))
+                  (contract?  (not (eq? (syntax->datum contract)  'any/c)))
+                  (sanitizer? (not (eq? (syntax->datum sanitizer) 'identity)))
+                  (value
+                   (cond
+                    ((and contract? sanitizer?)
+                     #`(#,sanitizer
+                        (apply-contract/guix-record-field
+                         #,contract
+                         #,value
+                         #,(symbol->string (syntax->datum (record-type-name type)))
+                         #,(symbol->string (syntax->datum #'f)))))
+                    (contract?
+                     #`(apply-contract/guix-record-field
+                        #,contract
+                        #,value
+                        #,(symbol->string (syntax->datum (record-type-name type)))
+                        #,(symbol->string (syntax->datum f))))
+                    (sanitizer?
+                     #`(#,sanitizer #,value))
+                    (else value))))
              (cond ((thunked-field? f)
                     (if parent
                         ;; Compute the value being inherited by calling the
@@ -408,6 +439,14 @@ inherited."
          (field-default-value #'(field properties ...)))
         (_ #f)))
 
+    (define (field-contract s)
+      (syntax-case s (contract)
+        ((field (contract ctc) _ ...)
+         (list #'field #'ctc))
+        ((field _ properties ...)
+         (field-contract #'(field properties ...)))
+        (_ #f)))
+
     (define (field-sanitizer s)
       (syntax-case s (sanitize)
         ((field (sanitize proc) _ ...)
@@ -492,6 +531,8 @@ inherited."
               (delayed    (filter-map delayed-field? field-spec))
               (innate     (filter-map innate-field? field-spec))
               (defaults   (filter-map field-default-value
+                                      #'((field properties ...) ...)))
+              (contracts  (filter-map field-contract
                                       #'((field properties ...) ...)))
               (sanitizers (filter-map field-sanitizer
                                       #'((field properties ...) ...)))
@@ -605,6 +646,7 @@ of a record instantiation"
                                            #:this-identifier #'this-identifier
                                            #:delayed #,delayed
                                            #:innate #,innate
+                                           #:contracts #,contracts
                                            #:sanitizers #,sanitizers
                                            #:defaults #,defaults)))))
       ((_ type syntactic-ctor ctor pred

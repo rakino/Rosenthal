@@ -10,7 +10,8 @@
   #:use-module (rosenthal utils contract impl)
   #:use-module (rosenthal utils contract blame)
   #:use-module (rosenthal utils contract combinators)
-  #:export (contract
+  #:export (apply-contract/guix-record-field
+            contract
             define/contract))
 
 #|
@@ -53,6 +54,16 @@ See (rosenthal utils contract impl) for more information.
            `(expected: "~a" got: "~s") ctc-name value)))
      (else
       (((contract-enforcer ctc) blame) value negative)))))
+
+(define-syntax apply-contract/guix-record-field
+  (lambda (stx)
+    (syntax-case stx ()
+      ((_ ctc value record-name field-name)
+       (with-syntax ((field-name #'(format #f "(field: ~a)" field-name))
+                     (location (src->location-str (syntax-source stx))))
+         ;; Use field-name for both positive and negative parties, to ensure the
+         ;; error message is always "contract violation".
+         #'(apply-contract ctc value field-name field-name record-name location))))))
 
 (define-syntax contract
   (lambda (stx)
