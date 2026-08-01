@@ -12,7 +12,9 @@
   ;; Guix build systems
   #:use-module (guix build-system meson)
   ;; Guix packages
+  #:use-module (gnu packages calendar)
   #:use-module (gnu packages cpp)
+  #:use-module (gnu packages crypto)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages fontutils)
   #:use-module (gnu packages freedesktop)
@@ -28,6 +30,7 @@
   #:use-module (gnu packages multiprecision)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages polkit)
+  #:use-module (gnu packages pulseaudio)
   #:use-module (gnu packages stb)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xml))
@@ -51,7 +54,7 @@
 (define-public noctalia
   (package
     (name "noctalia")
-    (version "5.0.0-beta.3")
+    (version "5.0.0-beta.7")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -60,7 +63,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1h06kq40gcm40ldflc7l2n02apj74rknib8hn0gy7n7hi1c1w87j"))))
+                "06knh7g9vzp65dz80x7pb9rwgih6hh0vyxi0ymk5a35nihs4j6gm"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -68,9 +71,6 @@
            #~(modify-phases %standard-phases
                (add-after 'unpack 'prepare-for-build
                  (lambda _
-                   ;; For reproducibility.
-                   (substitute* "meson.build"
-                     (("'-march=native', '-mtune=native',") ""))
                    ;; /bin/sh doesn't exist in the build environment.
                    (substitute* "tests/process_test.cpp"
                      (("/bin/(sh)" _ cmd)
@@ -91,7 +91,12 @@
            jemalloc
            mpfr
            (librsvg-for-system)
+           libjxl
+           libical
            libqalculate
+           libsecret
+           libsndfile
+           libsodium
            libwebp
            libxkbcommon
            libxml2
