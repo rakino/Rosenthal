@@ -40,7 +40,9 @@
                      (fill-column . 72)))
  (scheme-mode
   .
-  ((eval . (put 'computed-substitution-with-inputs 'scheme-indent-function 1))
+  ((geiser-repl-add-project-paths . ("modules"))
+
+   (eval . (put 'computed-substitution-with-inputs 'scheme-indent-function 1))
    (eval . (put 'hidden-desktop-entry 'scheme-indent-function 1))
    (eval . (put 'modify-services/by-name 'scheme-indent-function 1))
 
