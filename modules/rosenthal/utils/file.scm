@@ -16,6 +16,8 @@
 
             ini-file
             json-file
+            kdl-file
+            kdlv1-file
             toml-file
             yaml-file))
 
@@ -92,6 +94,34 @@
               (use-modules (srfi srfi-26) (json))
               (call-with-output-file #$output
                 (cut scm->json '#$exp <> #:pretty #t)))))
+    #:options '(#:substitutable? #f)))
+
+(define (kdl-file name exp)
+  (computed-file name
+    (with-imported-modules '((rosenthal utils kdl))
+      (if (gexp? exp)
+          #~(begin
+              (use-modules (srfi srfi-26) (rosenthal utils kdl))
+              (call-with-output-file #$output
+                (cut display (scm->kdl-string #$exp) <>)))
+          #~(begin
+              (use-modules (srfi srfi-26) (rosenthal utils kdl))
+              (call-with-output-file #$output
+                (cut display (scm->kdl-string '#$exp) <>)))))
+    #:options '(#:substitutable? #f)))
+
+(define (kdlv1-file name exp)
+  (computed-file name
+    (with-imported-modules '((rosenthal utils kdl))
+      (if (gexp? exp)
+          #~(begin
+              (use-modules (srfi srfi-26) (rosenthal utils kdl))
+              (call-with-output-file #$output
+                (cut display (scm->kdlv1-string #$exp) <>)))
+          #~(begin
+              (use-modules (srfi srfi-26) (rosenthal utils kdl))
+              (call-with-output-file #$output
+                (cut display (scm->kdlv1-string '#$exp) <>)))))
     #:options '(#:substitutable? #f)))
 
 ;; https://github.com/hylophile/guile-toml
