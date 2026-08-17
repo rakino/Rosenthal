@@ -315,7 +315,7 @@ monster-in-the-middle}.")
 (define-public wakapi-bin
   (package
     (name "wakapi-bin")
-    (version "2.17.4")
+    (version "2.17.5")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -323,7 +323,7 @@ monster-in-the-middle}.")
                     version "/wakapi_linux_amd64.zip"))
               (sha256
                (base32
-                "02qfds7k8md0wc8wplbsw7i15sihcy31jh2i2ahrbw4j00zc4cfc"))))
+                "09cm35kg5zpw6b882ws1j6nrvb3pdg23ndklr60li7nzsddh6ggf"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? (not (%current-target-system))
