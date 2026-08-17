@@ -14,6 +14,8 @@
   #:use-module (guix build-system emacs)
   ;; Guix packages
   #:use-module (gnu packages emacs-xyz)
+  #:use-module (gnu packages gcc)
+  #:use-module (gnu packages pdf)
   #:use-module (rosenthal packages version-control))
 
 (define-public emacs-caddyfile-mode
@@ -186,6 +188,41 @@ and it's subcommands.")
       (license license:gpl3+)
       (properties
        '((disable-updater? . #t))))))
+
+(define-public emacs-reader
+  (let ((commit "87b193d6996093530ab01cb0314c4d23b9777057")
+        (revision "1"))
+    (package
+      (name "emacs-reader")
+      (version (git-version "0.3.2" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+                (url "https://codeberg.org/divyaranjan/emacs-reader")
+                (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "0s9hs1rmgqa68mpjv8lq754sfbl04wrmpkkclwl4ljy8xra9r6by"))))
+      (build-system emacs-build-system)
+      (arguments
+       (list
+        #:tests? #f ;no tests
+        #:phases
+        #~(modify-phases %standard-phases
+            (add-after 'install 'build-module
+              (lambda _
+                (invoke "make" "USE_PKGCONFIG=no")))
+            (add-after 'build-module 'install-module
+              (lambda _
+                (install-file "render-core.so" (elpa-directory #$output)))))))
+      (inputs (list mupdf))
+      (home-page "https://codeberg.org/divyaranjan/emacs-reader")
+      (synopsis "Emacs document reader")
+      (description
+       "GNU Emacs document reader that supports all major document formats.")
+      (license license:gpl3+)
+      (properties '((disable-updater? . #t))))))
 
 ;; https://issues.guix.gnu.org/59552
 (define-public emacs-wakatime-mode
