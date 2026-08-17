@@ -450,7 +450,7 @@ metrics no matter where they are stored.")
 (define-public prometheus-bin
   (package
     (name "prometheus-bin")
-    (version "3.12.0")
+    (version "3.13.2")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://github.com/prometheus/prometheus"
@@ -458,7 +458,7 @@ metrics no matter where they are stored.")
                                   "/prometheus-" version ".linux-amd64.tar.gz"))
               (sha256
                (base32
-                "0rw8mq0akmzgfnx9v4y4ib0dlhchwgvxgvbqrfp78grhwpw4gni0"))))
+                "0vxy87m6knrpgwv1rgn1ix47zidbrb97gqv5hbm2bl0v2134v30f"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? (not (%current-target-system))
