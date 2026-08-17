@@ -27,6 +27,7 @@
   #:use-module (gnu packages elf)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages glib)
+  #:use-module (gnu packages hardware)
   #:use-module (gnu packages java)
   #:use-module (gnu packages nss)
   #:use-module (gnu packages sync)
@@ -40,7 +41,7 @@
 (define-public cloudflare-warp-bin
   (package
     (name "cloudflare-warp-bin")
-    (version "2026.4.1390.0")
+    (version "2026.6.880.0")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://pkg.cloudflareclient.com"
@@ -48,7 +49,7 @@
                                   "cloudflare-warp_" version "_amd64.deb"))
               (sha256
                (base32
-                "1wi380a5lg9lwkhiafj639d0wf6rygzlmqm2vhp207nnljh4fsnr"))))
+                "1wf2p09c1ak4mnnpl5pgnwlfy1x4nmhvsfnapyj1gdys93w4v7iy"))))
     (build-system gnu-build-system)
     (arguments
      (list
@@ -88,7 +89,8 @@
                                                inputs (in-vicinity "lib" lib))))
                                    '("libdbus-1.so"
                                      "libgcc_s.so"
-                                     "libnspr4.so")))
+                                     "libnspr4.so"
+                                     "libtss2-esys.so")))
                        ":")))
                 (define (patch-elf file)
                   (format #t "Patching ~a ..." file)
@@ -108,7 +110,7 @@
                   (invoke cmd "--version"))))))))
     (supported-systems '("x86_64-linux"))
     (native-inputs (list patchelf-0.16))
-    (inputs (list dbus `(,gcc "lib") glibc nspr nss))
+    (inputs (list dbus `(,gcc "lib") glibc nspr nss tpm2-tss))
     (home-page "https://1.1.1.1/")
     (synopsis "Cloudflare WARP client")
     (description
