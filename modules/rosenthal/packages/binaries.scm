@@ -578,7 +578,7 @@ rather a set of labels for each log stream.")
   (package
     (inherit %binary-source)
     (name "alloy")
-    (version "1.16.1")
+    (version "1.18.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -586,13 +586,13 @@ rather a set of labels for each log stream.")
                     version "/alloy-linux-amd64.zip"))
               (sha256
                (base32
-                "0fzxzc06h8kkzklvg4z4xlwgalnv7l2cwhjjvidiyw6wflf7pyk8"))))))
+                "0g28gg013a8i3d35aqfxhsp94hzp65dni6lg6si50flqqg5m7j7s"))))))
 
 (define-public %alloy-source-aarch64-linux
   (package
     (inherit %binary-source)
     (name "alloy")
-    (version "1.16.1")
+    (version "1.18.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -600,7 +600,7 @@ rather a set of labels for each log stream.")
                     version "/alloy-linux-arm64.zip"))
               (sha256
                (base32
-                "19f4f3aywq0lp3qgynm7xksk15yqagwc3sgi0aqsmsckpv5zpmim"))))))
+                "1mknhvxbppcg5x2lwk7832l6wlk2h7cm7y8ay34xc515wb7ld529"))))))
 
 (define-public alloy-bin
   (binary-package
@@ -637,6 +637,7 @@ rather a set of labels for each log stream.")
                      (name "alloy"))
                  (with-directory-excursion dest
                    (invoke "patchelf" "--set-interpreter" ld.so name)
+                   (invoke "patchelf" "--set-rpath" (dirname ld.so) name)
                    (chmod name #o555)))))
            (add-after 'patch-elf 'install-extras
              (lambda* (#:key native-inputs inputs outputs #:allow-other-keys)
@@ -660,7 +661,7 @@ rather a set of labels for each log stream.")
       (append (if (%current-target-system)
                   (list this-package)
                   '())
-              (list patchelf unzip)))
+              (list patchelf-0.16 unzip)))
      (supported-systems '("x86_64-linux" "aarch64-linux"))
      (home-page "https://grafana.com/oss/alloy-opentelemetry-collector/")
      (synopsis
