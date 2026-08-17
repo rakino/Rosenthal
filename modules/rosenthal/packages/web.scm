@@ -98,7 +98,7 @@ order to protect upstream resources from web crawlers.")
 (define-public caddy
   (package
     (name "caddy")
-    (version "2.11.3")
+    (version "2.11.4")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -107,11 +107,11 @@ order to protect upstream resources from web crawlers.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1a0w7i99p277kwbxfd5zf8d55n24z27i377njzqdc3jxp6ijcy7c"))))
+                "04ypcnmplbkmp7r5vi3q2lx270q2195c4h8ripdjc32z2qlkqff3"))))
     (build-system go-vendored-build-system)
     (arguments
      (list #:go go-1.26
-           #:vendor-hash (base32 "1vnqildhrrmicq9zazk8c2b3d7jqj197r4wxczg4j58qig2mj9j2")
+           #:vendor-hash (base32 "0vjdmwp4qdxvkrn1h7pk9ckwi5cjksq7nbd96yqd2dqan4ri4v6q")
            #:tests? (not (%current-target-system)) ;TODO: Run test suite.
            #:install-source? #f
            #:import-path
