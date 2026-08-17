@@ -24,7 +24,7 @@
 (define-public dinit
   (package
     (name "dinit")
-    (version "0.22.0")
+    (version "0.22.1")
     (source
      (origin
        (method git-fetch)
@@ -33,7 +33,7 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1dprcig7na46kmcf3l7qf4w2l9bi199bypr3abc2svgzcyaiabx0"))))
+        (base32 "009y71cyrwr5l5a28jfir5iyh54snd1jfv52gs2c1qfzinvdv1v2"))))
     (build-system gnu-build-system)
     (arguments
      (list #:configure-flags
