@@ -58,7 +58,7 @@ website owners block unwanted AI crawlers from accessing their sites.")
 (define-public anubis-anti-crawler
   (package
     (name "anubis-anti-crawler")
-    (version "1.25.0")
+    (version "1.27.0")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -66,7 +66,7 @@ website owners block unwanted AI crawlers from accessing their sites.")
                     version "/anubis-src-vendor-npm-" version ".tar.gz"))
               (sha256
                (base32
-                "0kqp5j0739lpdw55gx4bnnda1b90qlavcdlp8vh9bp014xx84yqj"))))
+                "14c04mkgxrv8jmyl0i048mqgrrw9ibw7jzm9l64pch9hmssy4i7z"))))
     (build-system go-vendored-build-system)
     (arguments
      (list #:tests? (not (%current-target-system)) ;FIXME
