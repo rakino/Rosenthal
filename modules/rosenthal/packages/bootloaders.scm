@@ -103,7 +103,7 @@ the reference implementation for the Limine boot protocol.")
 (define-public systemd-stub
   (package
     (name "systemd-stub")
-    (version "260.2")
+    (version "261.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -112,7 +112,7 @@ the reference implementation for the Limine boot protocol.")
               (file-name (git-file-name "name" version))
               (sha256
                (base32
-                "0jdcpk2cvhz5ygfwlrgvig5w5sk9n39qsc1gx0b65xgzbr4scy9m"))))
+                "014mjygixfh9j1p1f09xgy114v5lfah6hwh8xcscy1nqxk3p2hf3"))))
     (build-system meson-build-system)
     (arguments
      (list #:tests? #f
