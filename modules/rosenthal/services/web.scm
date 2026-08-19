@@ -824,7 +824,7 @@ test its configuration file."))
 (define vaultwarden-web-vault
   (package
     (name "vaultwarden-web-vault")
-    (version "2026.4.1")
+    (version "2026.6.4")
     (source
      (origin
        (method url-fetch)
@@ -832,7 +832,7 @@ test its configuration file."))
              "https://github.com/dani-garcia/bw_web_builds/releases/download/v"
              version "/bw_web_v" version ".tar.gz"))
        (sha256
-        (base32 "0hi6mdazzqcyvjkyr779kjisygwab85afgkn2sl0531x4a0js8xw"))))
+        (base32 "14lmg7kdm2jcs86vznc0nrpil7w8z20p4123h7476v3m9vniczyl"))))
     (build-system copy-build-system)
     (home-page #f)
     (synopsis #f)
