@@ -5,6 +5,8 @@
     (make-empty-file custom-file)
   (load custom-file))
 
+;; Keep ~/.config/emacs clean by setting default storage locations for various
+;; packages.  Set this up first.
 (use-package no-littering
   :config
   (no-littering-theme-backups))
@@ -12,44 +14,101 @@
 (use-package emacs
   :custom
   (fill-column 80)
-  (indent-tabs-mode nil)                ;disable tab indentation
   (shell-file-name "/bin/sh")           ;use POSIX-compatible shell
   (word-wrap-by-category t)             ;improve CJK word-wrapping
+  (pixel-scroll-precision-interpolate-page t)
+  (show-paren-context-when-offscreen 'overlay)
   :config
   (setopt electric-indent-inhibit t)    ;disable automatic re-indentation
   :hook
+  (after-init . show-paren-mode)
   (before-save . delete-trailing-whitespace)
-  (prog-mode . display-line-numbers-mode)
   (prog-mode . display-fill-column-indicator-mode))
 
 
 ;;;
-;;; Enhancements to the default interface.
+;;; Guile & Guix hacking.
 ;;;
 
-(use-package helpful
-  :bind
-  ([remap describe-function] . helpful-callable)
-  ([remap describe-variable] . helpful-variable)
-  ([remap describe-key]      . helpful-key)
-  ([remap describe-command]  . helpful-command)
-  ([remap describe-symbol]   . helpful-symbol)
-  ("C-c C-d" . helpful-at-point))
-
-(use-package isearch
-  :custom
-  (isearch-wrap-pause 'no-ding))
-
-(use-package mwim
-  :bind
-  ([remap move-beginning-of-line] . mwim-beginning)
-  ([remap move-end-of-line] . mwim-end))
-
-(use-package which-key
-  :config
-  (which-key-setup-side-window-right-bottom)
+(use-package flycheck
   :hook
-  (after-init . which-key-mode))
+  (after-init . global-flycheck-mode))
+
+(use-package flycheck-guile
+  :after flycheck geiser-guile)
+
+(use-package geiser
+  :custom
+  (geiser-active-implementation '(guile))
+  (geiser-default-implementation 'guile)
+  (geiser-autodoc-identifier-format "%s → %s")
+  (geiser-mode-smart-tab-p t)
+  (geiser-mode-start-repl-p t)
+  (geiser-repl-query-on-kill-p nil))
+
+(use-package geiser-guile
+  :after geiser
+  :config
+  (setopt geiser-guile-load-path
+          (let* ((cmd "echo '(write %load-path)' | guix repl -q --type=machine")
+                 (out (nth 1 (split-string (shell-command-to-string cmd) "\n"))))
+            (read out))))
+
+(use-package guix
+  :hook
+  (scheme-mode . guix-devel-mode))
+
+(use-package info-look
+  :config
+  (info-lookup-add-help
+   :mode 'scheme-mode
+   :regexp "[^()`',\"        \n]+"
+   :ignore-case nil
+   :doc-spec
+   (mapcar (lambda (node-name)
+             (list node-name nil "^[       ]+-+ [^:]+:[    ]*" "\\b"))
+           '("(guile)R5RS Index"
+             "(guix)Programming Index"
+             "(guile)Procedure Index"
+             "(guile)Variable Index"
+             "(r5rs)Index"
+             "(guile)Concept Index"
+             "(guix)Concept Index"))))
+
+(use-package macrostep
+  :bind
+  ((:map emacs-lisp-mode-map)
+   ("C-c e" . macrostep-expand)))
+
+(use-package macrostep-geiser
+  :after geiser
+  :hook
+  ((geiser-mode geiser-repl-mode) . macrostep-geiser-setup)
+  :bind
+  ((:map geiser-mode-map)
+   ("C-c e" . macrostep-expand))
+  ((:map geiser-repl-mode-map)
+   ("C-c e" . macrostep-expand)))
+
+(use-package parinfer-rust-mode
+  :config
+  ;; Disable parenthesis pairing in `electric-pair-mode' when
+  ;; `parinfer-rust-mode' is active.
+  (setopt electric-pair-inhibit-predicate
+          (lambda (char)
+            (or (and (bound-and-true-p parinfer-rust-mode)
+                     (memql char '(?\( ?\[ ?\{)))
+                (electric-pair-default-inhibit char))))
+  (setopt parinfer-rust-troublesome-modes
+          (delq 'electric-pair-mode parinfer-rust-troublesome-modes))
+  ;; These customizations are managed by Guix but will be overridden if using
+  ;; `no-littering'.  Reset them to standard values.
+  (custom-reevaluate-setting 'parinfer-rust-library-directory)
+  (custom-reevaluate-setting 'parinfer-rust-library)
+  :hook
+  ;; XXX: Enable mode first, workaround to support `menu-find-file-existing'.
+  ((emacs-lisp-mode lisp-mode scheme-mode) . parinfer-rust-mode-enable)
+  ((emacs-lisp-mode lisp-mode scheme-mode) . parinfer-rust-mode))
 
 
 ;;;
@@ -76,11 +135,10 @@
   (read-buffer-completion-ignore-case t)
   (read-file-name-completion-ignore-case t)
   :hook
-  (after-init . savehist-mode)          ;save minibuffer history
   (after-init . vertico-mode))
 
 (use-package vertico-directory
-  :after (vertico)
+  :after vertico
   :hook
   ;; Tidy shadowed file names.
   (rfn-eshadow-update-overlay . vertico-directory-tidy)
@@ -92,64 +150,80 @@
 
 
 ;;;
-;;; Guile hacking.
+;;; Vim-like editing experience.
 ;;;
 
+(use-package evil
+  :custom
+  (evil-undo-system 'undo-redo)
+  (evil-want-integration t)
+  (evil-want-keybinding nil))
+
+(use-package evil-collection
+  :after evil
+  :config
+  (evil-collection-init))
+
+
+;;;
+;;; Enhancements to the default interface.
+;;;
+
+(use-package eldoc-box
+  :hook
+  (eldoc-mode . eldoc-box-hover-mode))
+
+;; ElDoc integration for flycheck:
+;; https://www.masteringemacs.org/article/seamlessly-merge-multiple-documentation-sources-eldoc
 (use-package flycheck
+  :init
+  (defun mp/flycheck-eldoc (callback &rest _ignored)
+    "Print flycheck messages at point by calling CALLBACK."
+    (when-let ((flycheck-errors (and flycheck-mode (flycheck-overlay-errors-at (point)))))
+      (mapc (lambda (err)
+              (funcall callback
+                       (format "%s: %s"
+                               (let ((level (flycheck-error-level err)))
+                                 (pcase level
+                                   ('info (propertize "I" 'face 'flycheck-error-list-info))
+                                   ('error (propertize "E" 'face 'flycheck-error-list-error))
+                                   ('warning (propertize "W" 'face 'flycheck-error-list-warning))
+                                   (_ level)))
+                               (flycheck-error-message err))
+                       :thing (or (flycheck-error-id err)
+                                  (flycheck-error-group err))
+                       :face 'font-lock-doc-face))
+            flycheck-errors)))
+  (defun mp/flycheck-prefer-eldoc ()
+    (add-hook 'eldoc-documentation-functions #'mp/flycheck-eldoc nil t)
+    (setq eldoc-documentation-strategy 'eldoc-documentation-compose-eagerly)
+    (setq flycheck-display-errors-function nil)
+    (setq flycheck-help-echo-function nil))
   :hook
-  (after-init . global-flycheck-mode))
+  (flycheck-mode . mp/flycheck-prefer-eldoc))
 
-(use-package flycheck-guile
-  :after (flycheck geiser-guile))
+(use-package helpful
+  :bind
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-key]      . helpful-key)
+  ([remap describe-command]  . helpful-command)
+  ([remap describe-symbol]   . helpful-symbol)
+  ("C-c C-d" . helpful-at-point))
 
-(use-package geiser
+(use-package isearch
   :custom
-  (geiser-autodoc-identifier-format "%s → %s")
-  (geiser-mode-smart-tab-p t)
-  (geiser-mode-start-repl-p t)
-  (geiser-repl-query-on-kill-p nil))
+  (isearch-lazy-count t)
+  (isearch-wrap-pause 'no-ding))
 
-(use-package geiser-guile
-  :after (geiser)
-  :custom
-  (geiser-active-implementation '(guile))
-  (geiser-default-implementation 'guile)
-  :config
-  ;; TODO: Add guix repl support to `flycheck-guile'.
-  (dolist (path
-           (mapcar
-            #'expand-file-name
-            '("~/.config/guix/current/share/guile/site/3.0"
-              "~/.guix-profile/share/guile/site/3.0"
-              "~/.guix-home/profile/share/guile/site/3.0"
-              "/run/current-system/profile/share/guile/site/3.0")))
-    (add-to-list 'geiser-guile-load-path path t)))
+(use-package mwim
+  :bind
+  ([remap move-beginning-of-line] . mwim-beginning)
+  ([remap move-end-of-line] . mwim-end))
 
-(use-package info-look
+(use-package which-key
   :config
-  (info-lookup-add-help
-   :mode 'scheme-mode
-   :regexp "[^()`',\"        \n]+"
-   :ignore-case nil
-   :doc-spec
-   (mapcar (lambda (node-name)
-             (list node-name nil "^[       ]+-+ [^:]+:[    ]*" "\\b"))
-           '("(guile)R5RS Index"
-             "(guix)Programming Index"
-             "(guile)Procedure Index"
-             "(guile)Variable Index"
-             "(r5rs)Index"
-             "(guile)Concept Index"
-             "(guix)Concept Index"))))
-
-(use-package parinfer-rust-mode
-  :config
-  ;; These customizations are managed by Guix but will be overridden if using
-  ;; `no-littering'.  Reset them to standard values.
-  (custom-reevaluate-setting 'parinfer-rust-library-directory)
-  (custom-reevaluate-setting 'parinfer-rust-library)
-  :hook
-  ((emacs-lisp-mode lisp-mode scheme-mode) . parinfer-rust-mode))
+  (which-key-setup-side-window-right-bottom))
 
 
 ;;;
@@ -169,87 +243,129 @@
 
 
 ;;;
+;;; User options for newcomers.
+;;; https://cgit.git.savannah.gnu.org/cgit/emacs.git/tree/etc/themes/newcomers-presets-theme.el
+;;; https://github.com/emacs-mirror/emacs/blob/master/etc/themes/newcomers-presets-theme.el
+;;;
+
+(use-package emacs
+  :custom
+  ;; Appearance-related options
+  (font-use-system-font t)
+  (frame-resize-pixelwise t)
+  (window-resize-pixelwise t)
+  (mode-line-compact 'long)
+  ;; Mouse-related options
+  (context-menu-mode t)
+  (save-interprogram-paste-before-kill t)
+  (mouse-yank-at-point t)
+  (pixel-scroll-mode t)
+  (pixel-scroll-precision-mode t) ;; see bug#69972
+  (mouse-drag-and-drop-region t)
+  (mouse-drag-and-drop-region-cross-program t)
+  (mouse-drag-mode-line-buffer t)
+  (global-xref-mouse-mode t)
+  ;; Persistence-related options
+  (savehist-mode t)
+  (save-place-mode t)
+  (recentf-mode t)
+  ;; Editing-related options
+  (electric-pair-mode t)
+  (repeat-mode t)
+  (delete-selection-mode t)
+  (editorconfig-mode t)
+  (indent-tabs-mode nil)
+  (imenu-auto-rescan t)
+  (view-read-only t)
+  (column-number-mode t)
+  ;; Directory managment-related options
+  (dired-auto-revert-buffer t)
+  (dired-mouse-drag-files t)
+  (shell-command-prompt-show-cwd t)
+  ;; File-related options
+  ;; (etags-regen-mode t)
+  (vc-auto-revert-mode t)
+  (vc-deduce-backend-nonvc-modes t)
+  (vc-dir-save-some-buffers-on-revert t)
+  (vc-find-revision-no-save t)
+  (vc-follow-symlinks t)
+  (vc-use-incoming-outgoing-prefixes t)
+  ;; Completion-related options
+  (minibuffer-visible-completions t)
+  (completions-detailed t)
+  (completions-group t)
+  (completion-auto-select 'second-tab)
+  (completion-eager-update t)
+  ;; (completion-styles '(basic emacs22 flex))
+  ;; (global-completion-preview-mode t)
+  (tab-always-indent 'complete)
+  (which-key-mode t)
+  ;; Package-related options
+  (package-autosuggest-mode t)
+  (package-menu-use-current-if-no-marks nil)
+  ;; Frame- and window-related options
+  (frame-inhibit-implied-resize t)
+  (tab-bar-history-mode t)
+  (tab-bar-show t)
+  ;; Programming-related options
+  (compilation-scroll-output 'first-error)
+  :hook
+  (prog-mode . display-line-numbers-mode)
+  ;; (prog-mode . flymake-mode)
+  ;; (prog-mode . flyspell-prog-mode)
+  (text-mode . display-line-numbers-mode))
+  ;; (text-mode . flyspell-mode))
+
+
+;;;
 ;;; Font configuration with proper CJK support.  Based on
 ;;; https://github.com/nykma/nema/blob/develop/my-sample/font.el
 ;;;
 
 (use-package emacs
   :config
-  (defvar nema--font-size 12 "Font size")
-  (defvar nema-fonts '((sans     . "sans")
-                       (serif    . "serif")
-                       (mono     . "Victor Mono")
-                       (cjk      . "Sarasa Mono CL")
-                       (symbol   . "Noto Color Emoji")
-                       (modeline . "Source Serif 4"))
-    "Fonts to use.")
-
-  (defun nema//get-font-family (key)
-    (alist-get key nema-fonts))
-
-  (defun nema//generate-font-spec (key)
-    (format "%s-%d"
-            (nema//get-font-family key)
-            nema--font-size))
-
-  (defun nema//load-base-font ()
-    "Load the default font for ascii characters."
-    (let* ((font-spec (nema//generate-font-spec 'mono)))
-      (set-frame-parameter nil 'font font-spec)
-      (add-to-list 'default-frame-alist (cons 'font font-spec))))
-
-  (defun nema//load-face-font ()
-    "Load fonts used in faces.
-
-This function must be called after frame creation."
-    (let ((mono (nema//generate-font-spec 'mono))
-          (sans (nema//generate-font-spec 'sans))
-          (serif (nema//generate-font-spec 'sans-serif))
-          (modeline (nema//generate-font-spec 'modeline)))
-      (set-face-attribute 'variable-pitch nil :font sans)
-      (set-face-attribute 'variable-pitch-text nil :font serif)
-      (set-face-attribute 'fixed-pitch nil :font mono)
-      (set-face-attribute 'fixed-pitch-serif nil :font mono)
-      (set-face-attribute 'mode-line nil :font modeline)
-      (set-face-attribute 'mode-line-inactive nil :font modeline)))
-
-  (defun nema//load-ext-font ()
-    "Load fonts used for non-ascii characters.
-
-This function must be called after frame creation."
-    (let ((font (frame-parameter nil 'font))
-          (font-spec-cjk (font-spec :family (nema//get-font-family 'cjk)))
-          (font-spec-symbol (font-spec :family (nema//get-font-family 'symbol))))
-      (dolist (charset '(kana han hangul cjk-misc bopomofo))
-        (set-fontset-font font charset font-spec-cjk))
-      (set-fontset-font font 'symbol font-spec-symbol)))
-
-  (defun nema/load-font ()
-    "Load all font configuration."
-    (interactive)
-    (when (display-graphic-p)
-      (nema//load-base-font)
-      (nema//load-ext-font)
-      (nema//load-face-font)))
+  (defun hako/load-font ()
+    (let* ((size     16)
+           (mono     (font-spec :family "Victor Mono"      :size size))
+           (modeline (font-spec :family "Source Serif 4"   :size size))
+           (cjk      (font-spec :family "Sarasa Mono CL"   :size size))
+           (symbol   (font-spec :family "Noto Color Emoji" :size size))
+           (emoji    (font-spec :family "Noto Color Emoji" :size size)))
+      (when (display-graphic-p)
+        (set-face-attribute 'default            nil :font mono)
+        (set-face-attribute 'mode-line          nil :font modeline)
+        (set-face-attribute 'mode-line-active   nil :font modeline)
+        (set-face-attribute 'mode-line-inactive nil :font modeline)
+        (let ((font (frame-parameter nil 'font)))
+          (dolist (charset '(kana han hangul cjk-misc bopomofo))
+            (set-fontset-font font charset cjk))
+          (set-fontset-font font 'symbol symbol nil 'append)
+          (set-fontset-font font 'emoji  emoji  nil 'append)))))
 
   (if (daemonp)
-      (add-hook 'server-after-make-frame-hook #'nema/load-font)
-    ;; Else: not in daemon
-    (add-hook 'after-init-hook #'nema/load-font)))
+      (add-hook 'server-after-make-frame-hook #'hako/load-font)
+    (add-hook 'after-init-hook #'hako/load-font)))
 
 
 ;;;
-;;; Scratch buffer.
+;;; Set up a ready-to-use geiser REPL.
 ;;;
 
 (progn
-  (setopt initial-scratch-message
-          "\
-;;; Type your Guile program here and evaluate it.
-;;; `M-x cua-mode' to use Ctrl-C/X/Z for copy, cut, paste.
-;;; `M-x evil-mode' for Vim-like experience.
-\n")
   (scheme-mode)
-  (geiser-repl-import-module "(gnu)")
-  (geiser-repl-import-module "(guix)")
+  (dolist (module
+           '("(guix)"
+             "(gnu)"
+             "(gnu services cups)"
+             "(gnu services desktop)"
+             "(gnu services guix)"
+             "(gnu services networking)"
+             "(gnu services shepherd)"
+             "(gnu services ssh)"
+             "(gnu services xorg)"
+             "(gnu home)"
+             "(gnu home services)"
+             "(gnu home services desktop)"
+             "(gnu home services shepherd)"))
+    (geiser-repl-import-module module))
   (delete-window))

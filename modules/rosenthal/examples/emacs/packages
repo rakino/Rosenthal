@@ -1,35 +1,53 @@
-;; -*- mode: scheme -*-
-(use-modules (gnu packages))
+(use-modules (ice-9 match)
+             (guix packages)
+             (guix scripts install)
+             (gnu packages))
 
-(map specification->package
-     (list (if (getenv "WAYLAND_DISPLAY")
-               "emacs-pgtk"
-               "emacs")
-           "emacs-no-littering"
-           ;; Enhancements to the default interface.
-           "emacs-helpful"
-           "emacs-mwim"
-           ;; Completion.
-           "emacs-corfu"
-           "emacs-orderless"
-           "emacs-vertico"
-           ;; Guile hacking.
-           "emacs-flycheck"
-           "emacs-flycheck-guile"
-           "emacs-geiser"
-           "emacs-geiser-guile"
-           "emacs-parinfer-rust-mode"
-           ;; Theming.
-           "emacs-doom-modeline"
-           ;; Fonts.
-           "font-adobe-source-serif"
-           "font-google-noto-emoji"
-           "font-sarasa-gothic"
-           "font-victor-mono"
-           "fontconfig"
-           ;; Other useful packages.
-           "emacs-edit-indirect"
-           "emacs-evil"
-           "emacs-guix"
-           "emacs-magit"
-           "emacs-markdown-mode"))
+(define emacs-packages
+  (map specification->package
+       (list "bash"            ;Required when using in `guix shell --container'.
+             (if (getenv "WAYLAND_DISPLAY")
+                 "emacs-pgtk"
+                 "emacs")
+             "emacs-no-littering"
+             ;; Guile & Guix hacking.
+             "emacs-flycheck"
+             "emacs-flycheck-guile"
+             "emacs-geiser"
+             "emacs-geiser-guile"
+             "emacs-guix"
+             "emacs-macrostep"
+             "emacs-macrostep-geiser"
+             "emacs-parinfer-rust-mode"
+             ;; Completion.
+             "emacs-corfu"
+             "emacs-orderless"
+             "emacs-vertico"
+             ;; Vim-like editing experience.
+             "emacs-evil"
+             "emacs-evil-collection"
+             "emacs-goto-chg"           ;dependency of emacs-evil
+             ;; Enhancements to the default interface.
+             "emacs-eldoc-box"
+             "emacs-helpful"
+             "emacs-mwim"
+             ;; Theming.
+             "emacs-doom-modeline"
+             ;; Fonts.
+             "font-adobe-source-serif"
+             "font-google-noto-emoji"
+             "font-sarasa-gothic"
+             "font-victor-mono"
+             "fontconfig"
+             ;; Other useful packages.
+             "emacs-magit")))
+
+(match (command-line)
+  ;; guix repl -- <this-file>
+  ((_this-file)
+   (apply guix-install
+          (map package-name
+               emacs-packages)))
+  ;; guix shell -f <this-file>, or other use cases.
+  (_
+   emacs-packages))
