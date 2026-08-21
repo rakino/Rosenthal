@@ -85,7 +85,8 @@ editing Caddyfiles, configuration files for @code{caddy}.")
        "This package provides a simple \"glue\" minor mode that allows Flycheck
 and Eglot to work together.  Thus, the Flycheck frontend can display the results
 of syntactic checks performed by the LSP server.")
-      (license (list license:gpl3+ license:expat)))))
+      (license (list license:gpl3+ license:expat))
+      (properties '((disable-updater? . #t))))))
 
 (define-public emacs-isearch-mb
   (package
