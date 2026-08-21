@@ -130,7 +130,7 @@
 (define (toml-file name exp)
   "Return a file-like object, outputing TOML file serialized from EXP."
   (computed-file name
-    (with-extensions (list guile-json-4 guile-toml)
+    (with-extensions (list guile-json-4 guile-toml/dolly)
       (if (gexp? exp)
           #~(begin
               (use-modules (srfi srfi-26) (toml))
