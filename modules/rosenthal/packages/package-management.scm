@@ -30,10 +30,31 @@
        ((#:tests? _ #t) #f)))
     (properties '((disable-updater? . #t)))))
 
+(define guix-for-mirror-substitutes
+  (let ((commit "64d4de2a920445e5992f020e56490f5fcbdbba7c")
+        (revision "6"))
+    (package
+      (inherit guix)
+      (name "guix")
+      (version (git-version "1.5.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://git.guix.gnu.org/guix.git")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "1j3gz77rrlg62ffxqacg1r0rhibmhbhkh0ygh27ambj495i0mi0b"))))
+      (arguments
+       (substitute-keyword-arguments arguments
+         ((#:parallel-build? _ #f) #t)
+         ((#:tests? _ #t) #f))))))
+
 (define-public mirror-substitutes
   (package
     (name "mirror-substitutes")
-    (version "0.0.1")
+    (version "0.0.2")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -42,7 +63,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0jqlipzwxml91rypdjipfzvplq605hjiy6d3avkfpwasal2ajjh1"))))
+                "1fbv24n12p83gp9l8nnjmymgqbwyvmy086fnfwxdg8c9c6rfbl4j"))))
     (build-system guile-build-system)
     (arguments
      (list
@@ -76,11 +97,11 @@
     (native-inputs
      (list bash-minimal
            guile-3.0-latest
-           guix))
+           guix-for-mirror-substitutes))
     (inputs
      (list bash-minimal
            coreutils-minimal
-           guix))
+           guix-for-mirror-substitutes))
     (home-page "https://codeberg.org/hako/mirror-substitutes")
     (synopsis "Mirror Guix substitutes")
     (description
