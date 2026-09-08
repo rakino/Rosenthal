@@ -7,7 +7,9 @@
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-26)
   ;; Utilities
+  #:use-module (guix diagnostics)
   #:use-module (guix gexp)
+  #:use-module (guix i18n)
   #:use-module (guix records)
   #:use-module (rosenthal utils predicates)
   ;; Guix System
@@ -91,12 +93,18 @@
 ;;; sing-box
 ;;;
 
+(define-maybe file-object)
+(define-maybe string)
+
 (define-configuration/no-serialization sing-box-configuration
   (sing-box
    (file-like sing-box)
    "")
   (config-file
-   file-object
+   maybe-file-object
+   "")
+  (config-directory
+   maybe-string
    "")
   (data-directory
    (string "/var/lib/sing-box")
@@ -136,21 +144,33 @@
 
 (define sing-box-shepherd-service
   (match-record-lambda <sing-box-configuration>
-      (sing-box data-directory config-file
+      (sing-box data-directory config-file config-directory
        shepherd-provision shepherd-requirement log-file auto-start?)
-    (list (shepherd-service
-            (provision shepherd-provision)
-            (requirement `(user-processes ,@shepherd-requirement))
-            (start
-             #~(make-forkexec-constructor
-                (list #$(file-append sing-box "/bin/sing-box")
-                      "--config" #$config-file
-                      "--directory" #$data-directory
-                      "--disable-color"
-                      "run")
-                #:log-file #$log-file))
-            (stop #~(make-kill-destructor))
-            (auto-start? auto-start?)))))
+    (let ((config-file-set? (maybe-value-set? config-file))
+          (config-dir-set?  (maybe-value-set? config-directory)))
+      (when (eqv? config-file-set? config-dir-set?)
+        (leave (G_ "'~a': exactly one of '~a' or '~a' must be set~%")
+               "sing-box-configuration"
+               "config-file"
+               "config-directory"))
+      (list (shepherd-service
+              (provision shepherd-provision)
+              (requirement `(user-processes ,@shepherd-requirement))
+              (start
+               #~(make-forkexec-constructor
+                  (list #$(file-append sing-box "/bin/sing-box")
+                        #$@(if config-file-set?
+                               (list "--config" config-file)
+                               '())
+                        #$@(if config-dir-set?
+                               (list "--config-directory" config-directory)
+                               '())
+                        "--directory" #$data-directory
+                        "--disable-color"
+                        "run")
+                  #:log-file #$log-file))
+              (stop #~(make-kill-destructor))
+              (auto-start? auto-start?))))))
 
 (define sing-box-service-type
   (service-type
