@@ -326,7 +326,13 @@ Examples:
     (append (match environment-keep
               (#t
                (append-map (cut list "--unset-env-var" <>)
-                           environment-unset))
+                           (lset-difference string=?
+                                            environment-unset
+                                            (append
+                                             (if (boolean? environment-keep)
+                                                 '()
+                                                 environment-keep)
+                                             (map car environment-set)))))
               (#f
                '("--ignore-env"))
               (_
