@@ -42,8 +42,8 @@
             iocaine-service-type
             iocaine-configuration
 
-            jellyfin-configuration
-            jellyfin-service-type
+            jellyfin-oci-configuration
+            jellyfin-oci-service-type
 
             komga-configuration
             komga-service-type
@@ -386,13 +386,12 @@ test its configuration file."))
 
 
 ;;;
-;;; Jellyfin
+;;; Jellyfin media system (OCI)
 ;;;
-
 
 (define-maybe string)
 
-(define-configuration jellyfin-configuration
+(define-configuration jellyfin-oci-configuration
   (cache-directory
    (string "/var/cache/jellyfin")
    "Path to cache directory.")
@@ -416,8 +415,8 @@ test its configuration file."))
    "List of extra options.")
   (no-serialization))
 
-(define jellyfin-account
-  (match-record-lambda <jellyfin-configuration>
+(define jellyfin-oci-account-service
+  (match-record-lambda <jellyfin-oci-configuration>
       (user-id)
     (list (user-account
             (name "jellyfin")
@@ -427,8 +426,8 @@ test its configuration file."))
             (home-directory "/var/empty")
             (shell (file-append shadow "/sbin/nologin"))))))
 
-(define jellyfin-activation
-  (match-record-lambda <jellyfin-configuration>
+(define jellyfin-oci-activation-service
+  (match-record-lambda <jellyfin-oci-configuration>
       (cache-directory config-directory)
     #~(let ((user (getpwnam "jellyfin")))
         (for-each
@@ -438,8 +437,8 @@ test its configuration file."))
              (chown directory (passwd:uid user) (passwd:gid user))))
          '#$(list cache-directory config-directory)))))
 
-(define jellyfin-oci
-  (match-record-lambda <jellyfin-configuration>
+(define jellyfin-oci-oci-service
+  (match-record-lambda <jellyfin-oci-configuration>
       (cache-directory config-directory
                        proxy-url log-file auto-start? extra-options)
     (oci-extension
@@ -463,17 +462,17 @@ test its configuration file."))
                   (,config-directory . "/config")))
                (extra-arguments extra-options)))))))
 
-(define jellyfin-service-type
+(define jellyfin-oci-service-type
   (service-type
-   (name 'jellyfin)
+   (name 'jellyfin-oci)
    (extensions
     (list (service-extension account-service-type
-                             jellyfin-account)
+                             jellyfin-oci-account-service)
           (service-extension activation-service-type
-                             jellyfin-activation)
+                             jellyfin-oci-activation-service)
           (service-extension oci-service-type
-                             jellyfin-oci)))
-   (default-value (jellyfin-configuration))
+                             jellyfin-oci-oci-service)))
+   (default-value (jellyfin-oci-configuration))
    (description "Run Jellyfin, a media system.")))
 
 
