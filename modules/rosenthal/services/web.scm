@@ -42,6 +42,9 @@
             iocaine-service-type
             iocaine-configuration
 
+            jellyfin-configuration
+            jellyfin-service-type
+
             jellyfin-oci-configuration
             jellyfin-oci-service-type
 
@@ -383,6 +386,142 @@ test its configuration file."))
           (service-extension shepherd-root-service-type
                              iocaine-shepherd-service)))
    (description "")))
+
+
+;;;
+;;; Jellyfin media system (Native, currently written for the Nix package).
+;;;
+
+(define-record-type* <jellyfin-configuration>
+  jellyfin-configuration
+  make-jellyfin-configuration
+  jellyfin-configuration?
+  this-jellyfin-configuration
+  (jellyfin
+   jellyfin-configuration-jellyfin
+   (contract (or/c file-like? string?))
+   (documentation
+    "Jellyfin executable file."))
+  ;; See also: https://jellyfin.org/docs/general/administration/configuration/#server-paths
+  (data-directory
+   jellyfin-configuration-data-directory
+   (contract string?)
+   (default "/var/lib/jellyfin")
+   (documentation
+    "Directory for all Jellyfin data."))
+  (config-directory
+   jellyfin-configuration-config-directory
+   (thunked)
+   (contract string?)
+   (default (in-vicinity
+             (jellyfin-configuration-data-directory this-jellyfin-configuration)
+             "config"))
+   (documentation
+    "Directory for the server configuration files."))
+  (cache-directory
+   jellyfin-configuration-cache-directory
+   (thunked)
+   (contract string?)
+   (default (in-vicinity
+             (jellyfin-configuration-data-directory this-jellyfin-configuration)
+             "cache"))
+   (documentation
+    "Directory for the server cache."))
+  (log-directory
+   jellyfin-configuration-log-directory
+   (thunked)
+   (contract string?)
+   (default (in-vicinity
+             (jellyfin-configuration-data-directory this-jellyfin-configuration)
+             "log"))
+   (documentation
+    "Directory for Jellyfin logs."))
+
+  (user
+   jellyfin-configuration-user
+   (contract (or/c #f integer?))
+   (default #f)
+   (documentation
+    "User account under which Jellyfin runs."))
+  (group
+   jellyfin-configuration-group
+   (contract (or/c #f integer?))
+   (default #f)
+   (documentation
+    "Group under which Jellyfin runs."))
+  (shepherd-requirement
+   jellyfin-configuration-shepherd-requirement
+   (contract (listof/c symbol?))
+   (default '())
+   (documentation
+    "Shepherd services that should be started before this service."))
+  (extra-options
+   jellyfin-configuration-extra-options
+   (contract (listof/c string?))
+   (default '())
+   (documentation
+    "Extra command-line options.")))
+
+(define (jellyfin-account-service config)
+  (match-record config <jellyfin-configuration>
+                (data-directory user group)
+    (list (user-group
+            (name "jellyfin")
+            (id group)
+            (system? #t))
+          (user-account
+            (name "jellyfin")
+            (group "jellyfin")
+            (uid user)
+            (comment "Account for Jellyfin media system")
+            (home-directory data-directory)
+            (shell (file-append shadow "/sbin/nologin"))
+            (system? #t)))))
+
+(define (jellyfin-activation-service config)
+  (match-record config <jellyfin-configuration>
+                (data-directory config-directory cache-directory log-directory)
+    #~(let ((owner (getpwnam "jellyfin")))
+        (for-each (lambda (dir)
+                    (mkdir-p/perms dir owner #o755))
+                  '#$(list data-directory
+                           config-directory
+                           cache-directory
+                           log-directory)))))
+
+(define (jellyfin-shepherd-service config)
+  (match-record config <jellyfin-configuration>
+                (jellyfin
+                 data-directory config-directory cache-directory log-directory
+                 shepherd-requirement extra-options)
+    (list (shepherd-service
+            (documentation "Run the Jellyfin media system.")
+            (provision '(jellyfin))
+            (requirement `(networking ,@shepherd-requirement))
+            (start
+             #~(make-forkexec-constructor
+                (list #$jellyfin
+                      "--datadir" #$data-directory
+                      "--configdir" #$config-directory
+                      "--cachedir" #$cache-directory
+                      "--logdir" #$log-directory
+                      #$@extra-options)
+                #:user "jellyfin"
+                #:group "jellyfin"
+                #:log-file "/var/log/jellyfin.log"))
+            (stop #~(make-kill-destructor))))))
+
+(define jellyfin-service-type
+  (service-type
+    (name 'jellyfin)
+    (extensions
+     (list (service-extension account-service-type
+                              jellyfin-account-service)
+           (service-extension activation-service-type
+                              jellyfin-activation-service)
+           (service-extension shepherd-root-service-type
+                              jellyfin-shepherd-service)))
+    (description "Run the Jellyfin media system.")))
 
 
 ;;;
