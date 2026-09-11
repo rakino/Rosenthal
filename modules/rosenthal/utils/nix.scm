@@ -218,6 +218,8 @@ in
   pkgs.buildEnv {
     name = \"nix-profile-for-search-paths\";
     paths = [
+      pkgs.shared-mime-info
+      pkgs.desktop-file-utils
 ~{\
       ~a
 ~}\
@@ -228,6 +230,12 @@ in
 ~}\
     ];
     postBuild = ''
+      if [[ -w $out/share/mime ]] && [[ -d $out/share/mime/packages ]]; then
+        XDG_DATA_DIRS=$out/share ${pkgs.shared-mime-info}/bin/update-mime-database -V $out/share/mime
+      fi
+      if [[ -w $out/share/applications ]]; then
+        ${pkgs.desktop-file-utils}/bin/update-desktop-database $out/share/applications
+      fi
 ~{\
       rm -rf $out~a
 ~}\
