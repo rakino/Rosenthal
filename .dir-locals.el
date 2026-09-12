@@ -42,6 +42,9 @@
   .
   ((geiser-repl-add-project-paths . ("modules"))
 
+   (eval . (put 'match-record/dolly 'scheme-indent-function 3))
+   (eval . (put 'match-record-lambda/dolly 'scheme-indent-function 2))
+
    (eval . (put 'computed-substitution-with-inputs 'scheme-indent-function 1))
    (eval . (put 'hidden-desktop-entry 'scheme-indent-function 1))
    (eval . (put 'modify-services/by-name 'scheme-indent-function 1))
