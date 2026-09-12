@@ -13,6 +13,7 @@
   ;; Guix build systems
   #:use-module (guix build-system emacs)
   ;; Guix packages
+  #:use-module (gnu packages emacs-build)
   #:use-module (gnu packages emacs-xyz)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages pdf)
@@ -45,6 +46,32 @@ editing Caddyfiles, configuration files for @code{caddy}.")
       (license license:gpl3+)
       (properties
        '((disable-updater? . #t))))))
+
+(define-public emacs-consult-ghostel
+  (package
+    (name "emacs-consult-ghostel")
+    (version "0.53.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/dakra/ghostel")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0ph1gjl3915wgf7qz2c389gnm64yn07q9jb69dyqy6r8fkzmyd37"))))
+    (build-system emacs-build-system)
+    (arguments
+     (list #:tests? #f                  ;no tests
+           #:lisp-directory "extensions/consult-ghostel"
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'build))))       ;ghostel isn't packaged
+    (propagated-inputs (list emacs-compat emacs-consult))
+    (home-page "https://github.com/dakra/ghostel")
+    (synopsis "Consult integration for ghostel")
+    (description "This package provides consult integration for ghostel.")
+    (license license:gpl3+)))
 
 (define-public emacs-eat/dolly
   (package
