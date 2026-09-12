@@ -198,6 +198,32 @@ some keybindings are slightly simplified.")
          (prepend emacs-consult emacs-plz)))
       (properties '((disable-updater? . #t))))))
 
+(define-public emacs-msgpack
+  (let ((commit "5353a7b2da854c843cbec4536996242001f63471")
+        (revision "0"))
+    (package
+      (name "emacs-msgpack")
+      (version (git-version "0.1.1" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                       (url "https://github.com/xuchunyang/msgpack.el")
+                       (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "08pr8ijvfpnzx4bxbj8cjmibk2mlx0ksjwm3dv3lzp3i6cg5mhsw"))))
+      (build-system emacs-build-system)
+      (arguments
+       (list #:test-command ''("ert-runner" "msgpack-tests.el")))
+      (native-inputs (list emacs-ert-runner))
+      (home-page "https://github.com/xuchunyang/msgpack.el")
+      (synopsis "Read and write MessagePack object in Emacs")
+      (description
+       "This package provides an Emacs Lisp library for MessagePack.")
+      (license license:gpl3+)
+      (properties '((disable-updater? . #t))))))
+
 (define-public emacs-pcmpl-tailscale
   (let ((commit "acd6bce54af506b0450cf6aa1068f63d4e25c8ce")
         (revision "0"))
