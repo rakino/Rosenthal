@@ -1,5 +1,6 @@
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2022, 2025 Hilton Chain <hako@ultrarare.space>
+;;; Copyright © 2026 Maxim Cournoyer <maxim@guixotic.coop>
 
 (define-module (rosenthal packages web)
   ;; Utilities
@@ -16,12 +17,19 @@
   ;; Guix build systems
   #:use-module (guix build-system cargo)
   #:use-module (guix build-system copy)
+  #:use-module (guix build-system gnu)
   #:use-module (guix build-system go)
   #:use-module (rosenthal build-system go-vendored)
   ;; Guix packages
+  #:use-module (gnu packages base)
+  #:use-module (gnu packages bash)
+  #:use-module (gnu packages compression)
   #:use-module (gnu packages golang)
   #:use-module (gnu packages image)
   #:use-module (gnu packages jemalloc)
+  #:use-module (gnu packages node)
+  #:use-module (gnu packages sqlite)
+  #:use-module (gnu packages ssh)
   #:use-module (gnu packages version-control)
   #:use-module (gnu packages web))
 
@@ -148,64 +156,92 @@ from serving static websites to running dynamic web applications.")
     (home-page "https://git.guix.moe/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
+;; https://codeberg.org/guix/guix/pulls/9006
 (define-public forgejo
   (package
     (name "forgejo")
-    (version "14.0.4")
-    ;; TODO: Address npm dependencies and fetch from git.
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://codeberg.org/forgejo/forgejo/releases/download/v"
-                    version "/forgejo-src-" version ".tar.gz"))
-              (sha256
-               (base32
-                "0mjmns7yqhhkqc3jcg8bffs64zj4b52hy2v1lvr14pq162r6wcil"))))
-    (build-system go-vendored-build-system)
+    (version "16.0.6")
+    (source
+     (origin
+       (method url-fetch)
+       ;; XXX: We build from the release tarball for now, which includes all
+       ;; of the needed Go dependencies.
+       ;; TODO: "Unbundle" the index.js and index.css by building them with
+       ;; webpack.  This cannot currently be done because of missing Node
+       ;; modules.
+       (uri (string-append "https://codeberg.org/forgejo/forgejo/"
+                           "releases/download/v" version
+                           "/forgejo-src-" version ".tar.gz"))
+       (sha256
+        (base32
+         "0c56zxadj8rpn9xj7i3l97z2xh0w318vwrbxmb1nw071qh5krs8g"))))
+    (build-system gnu-build-system)
+    (outputs (list "out" "data"))
     (arguments
-     (list #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-           #:go go-1.26
-           #:install-source? #f
-           #:build-flags
-           #~(list (string-append
-                    "-ldflags="
-                    " -X main.ReleaseVersion=" #$(package-version this-package)
-                    " -X main.Version=" #$(package-version this-package)
-                    " -X main.ForgejoVersion=" #$(package-version this-package)
-                    " -X forgejo.org/modules/setting.AppWorkPath=/var/lib/forgejo"
-                    " -X forgejo.org/modules/setting.CustomPath=" #$output "/etc/forgejo"
-                    " -X forgejo.org/modules/setting.CustomConf=/etc/forgejo/app.ini"))
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'install 'rename-binary
-                 (lambda _
-                   (rename-file (in-vicinity #$output "bin/forgejo.org")
-                                (in-vicinity #$output "bin/forgejo"))))
-               (add-after 'install 'install-extras
-                 (lambda _
-                   (mkdir-p (in-vicinity #$output "/etc/forgejo"))
-                   (copy-file "custom/conf/app.example.ini"
-                              (in-vicinity #$output "etc/forgejo/app.ini"))
-                   (for-each
-                    (lambda (dir)
-                      (copy-recursively
-                       dir (string-append #$output "/etc/forgejo/" dir)))
-                    '("options" "public" "templates"))))
-               (delete 'check)
-               (add-after 'rename-binary 'check
-                 (lambda* (#:key tests? #:allow-other-keys)
-                   (when tests?
-                     (let ((forgejo (in-vicinity #$output "bin/forgejo")))
-                       (invoke forgejo "--help")
-                       (invoke forgejo "--version"))))))))
-    (native-inputs (list git-minimal))
+     (list
+      #:test-target "test-backend"      ;test-frontend requires npm modules
+      #:make-flags #~(list "TAGS=sqlite sqlite_unlock_notify") ;sqlite support
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'patch-paths
+            (lambda* (#:key inputs #:allow-other-keys)
+              (substitute* "modules/git/hook_generate.go"
+                (("/usr/bin/env")
+                 (search-input-file inputs "bin/env")))))
+          (add-after 'unpack 'set-static-root-path
+            (lambda _
+              (substitute* "modules/setting/server.go"
+                (("StaticRootPath = AppWorkPath")
+                 (format #f "StaticRootPath = ~s" #$output:data)))))
+          (add-after 'unpack 'disable-problematic-tests
+            (lambda _
+              (for-each
+               delete-file
+               ;; Theses tests require internet.
+               '("modules/hcaptcha/hcaptcha_test.go"
+                 "modules/updatechecker/update_checker_test.go"
+                 "services/migrations/migrate_test.go"
+                 "services/migrations/allowlist/is_migrate_allowed_test.go"
+                 ;; The 'TestGetDirectorySize' test expects 8037
+                 ;; entries, finds 7597 for unknown reasons.
+                 "modules/repository/create_test.go"))))
+          (replace 'configure
+            (lambda _
+              (setenv "CC" "gcc")
+              (setenv "CGO_ENABLED" "1")
+              (setenv "GOTOOLCHAIN" "local") ;use 'go' from Guix
+              (setenv "HOME" (getcwd))
+              (invoke "git" "init")))   ;for tests
+          (add-after 'install 'post-install
+            (lambda* (#:key inputs #:allow-other-keys)
+              (rename-file "go/bin/forgejo.org" "go/bin/forgejo")
+              (let ((forgejo (string-append #$output "/bin/forgejo")))
+                (install-file "go/bin/forgejo" (dirname forgejo))
+                (wrap-program forgejo
+                  `("PATH" prefix
+                    ,(map (lambda (c)
+                            (dirname
+                             (search-input-file inputs
+                                                (string-append "bin/" c))))
+                          '("git" "gzip" "sh" "ssh"))))
+                (substitute* forgejo    ;avoid stripping argv[0] in wrapper
+                  (("exec -a \"\\$\\{0##\\*/\\}\" ")
+                   "exec ")))
+              ;; Install data files.
+              (copy-recursively "options"
+                                (string-append #$output:data "/options"))
+              (copy-recursively "public"
+                                (string-append #$output:data "/public"))
+              (copy-recursively "templates"
+                                (string-append #$output:data "/templates")))))))
+    (native-inputs (list git go-1.26 openssh node sqlite))
+    (inputs (list bash coreutils git gzip openssh))
     (home-page "https://forgejo.org/")
-    (synopsis "Lightweight software forge")
+    (synopsis "Self-hosted, lightweight software forge")
     (description
-     "Forgejo is a self-hosted, lightweight software forge designed to
-facilitate collaborative software development.  It is built to be easy to
-install and maintain, making it an ideal choice for teams and organizations
-looking for a reliable platform to manage their software projects.")
-    (license license:gpl3+)
-    (properties
-     '((disable-updater? . #t)))))
+     "Forgejo is a lightweight software forge that aims to be easy to self-host
+and maintain.  It offers a rich web API for accessing its data.  ALong the usual
+forge features such as issues and pull requests tracking, it also includes
+simple software project management features like roles, scopes, and time
+tracking to ease collaboration.")
+    (license license:expat)))

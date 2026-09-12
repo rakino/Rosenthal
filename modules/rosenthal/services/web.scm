@@ -231,14 +231,9 @@
 
 (define forgejo-activation
   #~(begin
-      (use-modules (guix build utils))
-      (let ((user (getpwnam "forgejo")))
-        (for-each
-         (lambda (dir)
-           (mkdir-p dir)
-           (chown dir (passwd:uid user) (passwd:gid user))
-           (chmod dir #o750))
-         '("/var/lib/forgejo" "/var/log/forgejo")))))
+      (use-modules (srfi srfi-26))
+      (for-each (cute mkdir-p/perms <> (getpwnam "forgejo") #o750)
+                '("/var/lib/forgejo" "/var/log/forgejo"))))
 
 (define forgejo-shepherd-service
   (match-record-lambda <forgejo-configuration>
@@ -248,9 +243,41 @@
                (ini-file "forgejo.ini" config)
                config)))
       (list (shepherd-service
+              (documentation "")
+              (provision '(forgejo-init))
+              (requirement '(user-processes))
+              (one-shot? #t)
+              (start
+               #~(lambda _
+                   (define (forgejo-exec . options)
+                     (let* ((command
+                             (cons* "/run/current-system/profile/bin/forgejo"
+                                    "--config" #$config-file
+                                    options))
+                            (pid
+                             (fork+exec-command
+                              command
+                              #:user "forgejo"
+                              #:group "forgejo"
+                              #:log-file "/var/log/forgejo-init.log"
+                              #:environment-variables
+                              '("GIT_EXEC_PATH=/run/current-system/profile/libexec/git-core"
+                                "GIT_SSL_CAINFO=/run/current-system/profile/etc/ssl/certs/ca-certificates.crt"
+                                "HOME=/var/lib/forgejo"
+                                "PATH=/run/current-system/profile/bin"
+                                "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
+                                "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")
+                              #:resource-limits '((nofile 524288 524288)))))
+                       (unless (zero? (cdr (waitpid pid)))
+                         (error "failed to run forgejo command" command))))
+                   (forgejo-exec "migrate")
+                   (forgejo-exec "admin" "regenerate" "hooks")
+                   (forgejo-exec "admin" "regenerate" "keys")
+                   (forgejo-exec "doctor" "check" "--all"))))
+            (shepherd-service
               (documentation "Run Forgejo.")
               (provision '(forgejo))
-              (requirement '(loopback postgresql))
+              (requirement '(forgejo-init loopback postgresql))
               (start
                #~(make-forkexec-constructor
                   (list "/run/current-system/profile/bin/forgejo"
