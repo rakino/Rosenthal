@@ -284,6 +284,36 @@ and it's subcommands.")
       (license license:gpl3+)
       (properties '((disable-updater? . #t))))))
 
+(define-public emacs-tramp-rpc
+  (package
+    (name "emacs-tramp-rpc")
+    (version "0.13.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/ArthurHeymans/emacs-tramp-rpc")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1991b8vc3k3kkm77ad5c9z8jx9nxpxbmv26vv1y5v7z3cdp12wzj"))))
+    (build-system emacs-build-system)
+    (arguments
+     (list #:lisp-directory "lisp"
+           #:test-command ''("bash" "../test/run-tests.sh" "--protocol")
+           #:phases
+           #~(modify-phases %standard-phases
+               (delete 'patch-el-files))))
+    (native-inputs (list emacs-tramp))
+    (propagated-inputs (list emacs-msgpack))
+    (home-page "https://github.com/ArthurHeymans/emacs-tramp-rpc")
+    (synopsis "TRAMP backend using RPC")
+    (description
+     "This package provides a TRAMP backend that uses a custom RPC server
+instead of parsing shell command output.  This significantly improves
+performance for remote file operations.")
+    (license license:gpl3+)))
+
 ;; https://issues.guix.gnu.org/59552
 (define-public emacs-wakatime-mode
   ;; No release since May 5, 2015.
