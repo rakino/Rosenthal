@@ -3,6 +3,7 @@
 
 (define-module (rosenthal packages web)
   ;; Utilities
+  #:use-module (guix deprecation)
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
@@ -55,45 +56,7 @@
 website owners block unwanted AI crawlers from accessing their sites.")
     (license license:expat)))
 
-(define-public anubis-anti-crawler
-  (package
-    (name "anubis-anti-crawler")
-    (version "1.27.0")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/TecharoHQ/anubis/releases/download/v"
-                    version "/anubis-src-vendor-npm-" version ".tar.gz"))
-              (sha256
-               (base32
-                "14c04mkgxrv8jmyl0i048mqgrrw9ibw7jzm9l64pch9hmssy4i7z"))))
-    (build-system go-vendored-build-system)
-    (arguments
-     (list #:tests? (not (%current-target-system)) ;FIXME
-           #:go go-1.26
-           #:install-source? #f
-           #:import-path "./cmd/anubis"
-           #:build-flags
-           #~(list (string-append
-                    "-ldflags="
-                    " -X github.com/TecharoHQ/anubis.Version="
-                    #$(package-version this-package)))
-           #:phases
-           #~(modify-phases %standard-phases
-               (delete 'check)
-               (add-after 'install 'check
-                 (lambda* (#:key tests? #:allow-other-keys)
-                   (when tests?
-                     (let ((cmd (in-vicinity #$output "bin/anubis")))
-                       (invoke cmd "--help")
-                       (invoke cmd "--version"))))))))
-    (home-page "https://anubis.techaro.lol/")
-    (synopsis "Proof-of-work check to stop crawlers")
-    (description
-     "Anubis checks incoming HTTP requests using one or more challenges in
-order to protect upstream resources from web crawlers.")
-    (license license:expat)
-    (properties '((upstream-name . "anubis")))))
+(define-deprecated/public-alias anubis-anti-crawler anubis-ai-firewall)
 
 (define-public caddy
   (package
