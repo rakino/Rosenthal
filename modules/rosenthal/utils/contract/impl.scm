@@ -36,7 +36,7 @@ Enforcers are "late neg projections" in Racket, which look like the following:
   (lambda (val neg-party)
     ...))
 
-This allows a contract to be partially evaluated when it's constructed and
+This allows a contract to be partially applied when it's constructed and
 attached, before the value is actually checked.
 
 See also (rosenthal utils contract combinators) for more examples, and
