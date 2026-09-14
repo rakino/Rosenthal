@@ -32,6 +32,7 @@
   #:use-module (gnu packages polkit)
   #:use-module (gnu packages pulseaudio)
   #:use-module (gnu packages stb)
+  #:use-module (gnu packages window-management)
   #:use-module (gnu packages xdisorg)
   #:use-module (gnu packages xml))
 
@@ -122,3 +123,56 @@ Wayland and OpenGL ES, with no Qt or GTK dependency.")
     (license license:expat)))
 
 (define-deprecated-package noctalia-shell noctalia)
+
+(define-public noctalia-greeter
+  (package
+    (name "noctalia-greeter")
+    (version "1.5.0")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                     (url "https://github.com/noctalia-dev/noctalia-greeter")
+                     (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0d8nkabqfid2fnfb0hryrl7lhgzv8ps0vjkz15hajf2ld5pf00r6"))))
+    (build-system meson-build-system)
+    (arguments
+     (list #:build-type "release"
+           #:phases
+           #~(modify-phases %standard-phases
+               (add-after 'unpack 'prepare-for-build
+                 (lambda _
+                   ;; Adjust import paths for STB headers packaged in Guix.
+                   (substitute* (find-files "." "\\.cpp$|^meson\\.build$")
+                     (("\\bstb/stb_") "stb_"))
+                   ;; Reproducibility.
+                   (substitute* "meson.build"
+                     (("'-march=native', '-mtune=native',") "")))))))
+    (native-inputs (list pkg-config wayland))
+    (inputs
+     (list cairo
+           fontconfig
+           freetype
+           glib
+           harfbuzz
+           jemalloc
+           (librsvg-for-system)
+           libwebp
+           libxkbcommon
+           libxml2
+           mesa
+           nlohmann-json
+           pango
+           stb-image-resize2
+           tomlplusplus
+           wayland
+           wayland-protocols
+           wlroots))
+    (home-page "https://noctalia.dev/")
+    (synopsis "Login greeter for greetd")
+    (description
+     "Noctalia Greeter is a minimal login greeter for greetd that matches the
+look and feel of Noctalia Shell")
+    (license license:expat)))
