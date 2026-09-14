@@ -241,8 +241,9 @@ b3
 (define* (make-blame source value build-name positive negative original?
                      #:key (context-limit #f))
   (define build/memo-name
-    (lambda ()
-      (build-name)))
+    (let ((name (delay (build-name))))
+      (lambda ()
+        (force name))))
 
   (define all-the-info
     (make-all-the-info
