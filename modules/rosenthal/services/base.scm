@@ -99,7 +99,7 @@
    (documentation
     "@command{noctalia-greeter-session} executable file.")))
 
-(define-gexp-compiler (greetd-tuigreet-session-compiler
+(define-gexp-compiler (greetd-noctalia-greeter-session-compiler
                        (session <greetd-noctalia-greeter-session>)
                        system target)
   (match-record/dolly session <greetd-noctalia-greeter-session> (noctalia-greeter-session)
