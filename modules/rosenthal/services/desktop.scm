@@ -39,6 +39,7 @@
   ;; Guix packages
   #:use-module (gnu packages fcitx5)
   #:use-module (gnu packages fonts)
+  #:autoload   (gnu packages glib) (glib)
   #:use-module (gnu packages gnome)
   #:use-module (gnu packages guile)
   #:use-module (gnu packages hardware)
@@ -522,7 +523,7 @@ compositor.")))
    (string "Adwaita")
    "")
   (font
-   (string "Sans")
+   (string "sans-serif")
    "")
   (cursor-theme
    (string "Adwaita")
@@ -534,6 +535,14 @@ compositor.")))
    (string "Default")
    ""))
 
+(define home-theme-activation-service
+  (match-record-lambda <home-theme-configuration>
+      (icon-theme cursor-theme font)
+    #~(let ((gsettings #$(file-append (gexp-input glib "bin") "/bin/gsettings")))
+        (system* gsettings "set" "org.gnome.desktop.interface" "icon-theme" icon-theme)
+        (system* gsettings "set" "org.gnome.desktop.interface" "cursor-theme" cursor-theme)
+        (system* gsettings "set" "org.gnome.desktop.interface" "font-name" font))))
+
 (define (%home-theme-environment-variables _)
   '(("QT_QPA_PLATFORMTHEME" . "gtk3")
     ("QT_WAYLAND_DECORATION" . "adwaita")))
@@ -542,7 +551,6 @@ compositor.")))
   (match-record-lambda <home-theme-configuration>
       (packages)
     (cons* adwaita-icon-theme
-           hicolor-icon-theme
            packages)))
 
 (define home-theme-icons-config
@@ -580,11 +588,22 @@ compositor.")))
       ("gtk-cursor-theme-size" . ,cursor-size)
       ("gtk-key-theme-name"    . ,key-theme))))
 
+(define home-theme-gtk4
+  (match-record-lambda <home-theme-configuration>
+      (icon-theme font cursor-theme cursor-size key-theme)
+    `(("gtk-theme-name"        . "Adwaita")
+      ("gtk-icon-theme-name"   . ,icon-theme)
+      ("gtk-font-name"         . ,font)
+      ("gtk-cursor-theme-name" . ,cursor-theme)
+      ("gtk-cursor-theme-size" . ,cursor-size))))
+
 (define home-theme-service-type
   (service-type
     (name 'home-theme)
     (extensions
-     (list (service-extension home-environment-variables-service-type
+     (list (service-extension home-activation-service-type
+                              home-theme-activation-service)
+           (service-extension home-environment-variables-service-type
                               %home-theme-environment-variables)
            (service-extension home-profile-service-type
                               %home-theme-profile)
@@ -597,7 +616,7 @@ compositor.")))
            (service-extension home-gtk3-service-type
                               home-theme-gtk3)
            (service-extension home-gtk4-service-type
-                              home-theme-gtk3)))
+                              home-theme-gtk4)))
     (default-value (home-theme-configuration))
     (description "Set up desktop themes.")))
 
