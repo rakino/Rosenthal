@@ -523,7 +523,7 @@ compositor.")))
    (string "Adwaita")
    "")
   (font
-   (string "sans-serif")
+   (string "sans-serif 11")
    "")
   (cursor-theme
    (string "Adwaita")
