@@ -539,9 +539,9 @@ compositor.")))
   (match-record-lambda <home-theme-configuration>
       (icon-theme cursor-theme font)
     #~(let ((gsettings #$(file-append (gexp-input glib "bin") "/bin/gsettings")))
-        (system* gsettings "set" "org.gnome.desktop.interface" "icon-theme" icon-theme)
-        (system* gsettings "set" "org.gnome.desktop.interface" "cursor-theme" cursor-theme)
-        (system* gsettings "set" "org.gnome.desktop.interface" "font-name" font))))
+        (system* gsettings "set" "org.gnome.desktop.interface" "icon-theme" #$icon-theme)
+        (system* gsettings "set" "org.gnome.desktop.interface" "cursor-theme" #$cursor-theme)
+        (system* gsettings "set" "org.gnome.desktop.interface" "font-name" #$font))))
 
 (define (%home-theme-environment-variables _)
   '(("QT_QPA_PLATFORMTHEME" . "gtk3")
