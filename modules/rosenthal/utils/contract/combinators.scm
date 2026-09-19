@@ -109,15 +109,18 @@ combinator names have a ‘/c’ suffix.
             (unless (procedure? val)
               (raise-blame-error blame #:missing-party neg-party
                                  '(expected: "a procedure" got: "~s") val))
+            (match (procedure-minimum-arity val)
+              ((required optional rest?)
+               (unless (= required contract-arity)
+                 (raise-blame-error
+                  blame #:missing-party neg-party
+                  `(expected: "a procedure that accepts ~a non-keyword argument(s)"
+                    got: "~a~%"
+                    "which accepts ~a argument(s)")
+                  contract-arity
+                  val
+                  required))))
             (lambda args
-              ;; XXX: Can't check procedure arity in Guile.
-              (let ((arity (length args)))
-                (unless (= arity contract-arity)
-                  (raise-blame-error
-                   (blame-swap blame) #:missing-party neg-party
-                   `("assuming arity of the contract is always correct"
-                     expected: "~a argument(s)" got: "~a argument(s)")
-                   contract-arity arity)))
               (define args*
                 (map (lambda (arg blame enforcer)
                        ((enforcer blame) arg neg-party))
