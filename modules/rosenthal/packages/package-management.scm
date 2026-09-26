@@ -31,8 +31,8 @@
     (properties '((disable-updater? . #t)))))
 
 (define guix-for-mirror-substitutes
-  (let ((commit "64d4de2a920445e5992f020e56490f5fcbdbba7c")
-        (revision "6"))
+  (let ((commit "5ceffb60e55b86920fd720817dd24b0e1f900ac1")
+        (revision "7"))
     (package
       (inherit guix)
       (name "guix")
@@ -42,14 +42,10 @@
                 (uri (git-reference
                        (url "https://git.guix.gnu.org/guix.git")
                        (commit commit)))
-                (file-name (git-file-name name version))
+                (file-name (string-append "guix-" version "-checkout"))
                 (sha256
                  (base32
-                  "1j3gz77rrlg62ffxqacg1r0rhibmhbhkh0ygh27ambj495i0mi0b"))))
-      (arguments
-       (substitute-keyword-arguments arguments
-         ((#:parallel-build? _ #f) #t)
-         ((#:tests? _ #t) #f))))))
+                  "0nb0xhd2jlg613d3z3br6yl3xj75b4vlyw9y45pwg8zrq02kjajd")))))))
 
 (define-public mirror-substitutes
   (package
