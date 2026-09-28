@@ -127,7 +127,7 @@ Wayland and OpenGL ES, with no Qt or GTK dependency.")
 (define-public noctalia-greeter
   (package
     (name "noctalia-greeter")
-    (version "1.5.0")
+    (version "1.6.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -136,7 +136,7 @@ Wayland and OpenGL ES, with no Qt or GTK dependency.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0d8nkabqfid2fnfb0hryrl7lhgzv8ps0vjkz15hajf2ld5pf00r6"))))
+                "1ml2wssydhlvsm16njrlqzyq4a0rlpc0h7jv6hcvwl3cd134f2ka"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
