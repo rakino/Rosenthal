@@ -6,6 +6,7 @@
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix records)
+  #:use-module (rosenthal utils file)
   #:use-module (rosenthal utils predicates)
   ;; Guix System
   #:use-module (gnu system shadow)
