@@ -295,74 +295,76 @@
     (file-append source path)))
 
 (define-public linux-cachyos-lts-server
-  (let* ((version "6.18.52-1")
-         (kernel
-          (customize-linux
-           #:name "linux-cachyos-lts-server"
-           #:source
-           (origin
-             (method url-fetch)
-             (uri (string-append
-                   "https://github.com/CachyOS/linux/releases/download/cachyos-"
-                   version "/cachyos-" version ".tar.gz"))
-             (sha256
-              (base32 "0m3rp34gfddjki662jv0mirig5rfa1chy5vfrvyzcsvvs26qpyrn")))
-           #:defconfig (%kernel-config "/defconfig_server")
-           #:configs
-           (string-join
-            (append (cachyos-configs
-                     #:major-version (version-major version)
-                     #:cachy-config? #f
-                     #:cpusched 'eevdf
-                     #:cc-harder? #t
-                     #:per-gov? #f
-                     #:tcp-bbr3? #t
-                     #:HZ-ticks 300
-                     #:tickrate 'full
-                     #:preempt 'none
-                     #:hugepage 'always
-                     #:processor-opt 'generic)
-                    (default-initrd-configs))
-            "\n"))))
-    (hidden-package
-     (package
-       (inherit kernel)
-       (version version)
-       (supported-systems '("x86_64-linux"))))))
+  (let ((version "6.18.52-1"))
+    (linux-with-zfs
+     (customize-linux
+      #:name "linux-cachyos-lts-server"
+      #:linux
+      (hidden-package
+       (package
+         (inherit linux-libre)
+         (version version)
+         (supported-systems '("x86_64-linux"))))
+      #:source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+              "https://github.com/CachyOS/linux/releases/download/cachyos-"
+              version "/cachyos-" version ".tar.gz"))
+        (sha256
+         (base32 "0m3rp34gfddjki662jv0mirig5rfa1chy5vfrvyzcsvvs26qpyrn")))
+      #:defconfig (%kernel-config "/defconfig_server")
+      #:configs
+      (string-join
+       (append (cachyos-configs
+                #:major-version (version-major version)
+                #:cachy-config? #f
+                #:cpusched 'eevdf
+                #:cc-harder? #t
+                #:per-gov? #f
+                #:tcp-bbr3? #t
+                #:HZ-ticks 300
+                #:tickrate 'full
+                #:preempt 'none
+                #:hugepage 'always
+                #:processor-opt 'generic)
+               (default-initrd-configs))
+       "\n")))))
 
 (define-public linux-cachyos-bore-zen4
-  (let* ((version "7.2.8-1")
-         (kernel
-          (customize-linux
-           #:name "linux-cachyos-bore-zen4"
-           #:source
-           (origin
-             (method url-fetch)
-             (uri (string-append
-                   "https://github.com/CachyOS/linux/releases/download/cachyos-"
-                   version "/cachyos-" version ".tar.gz"))
-             (sha256
-              (base32 "0a7kxhivrp13j50scqqvb7bnsg0dcqing30q314imhsapm1dyj7q"))
-             (patches (map %kernel-config '("/patches/bore-cachy-7.2.patch"))))
-           #:defconfig (%kernel-config "/defconfig_desktop")
-           #:configs
-           (string-join
-            (append (cachyos-configs
-                     #:major-version (version-major version)
-                     #:cachy-config? #t
-                     #:cpusched 'bore
-                     #:cc-harder? #t
-                     #:per-gov? #f
-                     #:tcp-bbr3? #t
-                     #:HZ-ticks 1000
-                     #:tickrate 'full
-                     #:preempt 'full
-                     #:hugepage 'always
-                     #:processor-opt 'zen4)
-                    (default-initrd-configs))
-            "\n"))))
-    (hidden-package
-     (package
-       (inherit kernel)
-       (version version)
-       (supported-systems '("x86_64-linux"))))))
+  (let ((version "7.2.8-1"))
+    (linux-with-zfs
+     (customize-linux
+      #:name "linux-cachyos-bore-zen4"
+      #:linux
+      (hidden-package
+       (package
+         (inherit linux-libre)
+         (version version)
+         (supported-systems '("x86_64-linux"))))
+      #:source
+      (origin
+        (method url-fetch)
+        (uri (string-append
+              "https://github.com/CachyOS/linux/releases/download/cachyos-"
+              version "/cachyos-" version ".tar.gz"))
+        (sha256
+         (base32 "0a7kxhivrp13j50scqqvb7bnsg0dcqing30q314imhsapm1dyj7q"))
+        (patches (map %kernel-config '("/patches/bore-cachy-7.2.patch"))))
+      #:defconfig (%kernel-config "/defconfig_desktop")
+      #:configs
+      (string-join
+       (append (cachyos-configs
+                #:major-version (version-major version)
+                #:cachy-config? #t
+                #:cpusched 'bore
+                #:cc-harder? #t
+                #:per-gov? #f
+                #:tcp-bbr3? #t
+                #:HZ-ticks 1000
+                #:tickrate 'full
+                #:preempt 'full
+                #:hugepage 'always
+                #:processor-opt 'zen4)
+               (default-initrd-configs))
+       "\n")))))
