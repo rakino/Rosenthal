@@ -332,7 +332,7 @@
        "\n")))))
 
 (define-public linux-cachyos-bore-zen4
-  (let ((version "7.2.8-1"))
+  (let ((version "7.2.9-2"))
     (linux-with-zfs
      (customize-linux
       #:name "linux-cachyos-bore-zen4"
@@ -349,7 +349,7 @@
               "https://github.com/CachyOS/linux/releases/download/cachyos-"
               version "/cachyos-" version ".tar.gz"))
         (sha256
-         (base32 "0a7kxhivrp13j50scqqvb7bnsg0dcqing30q314imhsapm1dyj7q"))
+         (base32 "1fpwmihnv9j9bvhcviia5k1dlilr0mcv17ch8rznadhlwgzyda9d"))
         (patches (map %kernel-config '("/patches/bore-cachy-7.2.patch"))))
       #:defconfig (%kernel-config "/defconfig_desktop")
       #:configs
