@@ -295,7 +295,7 @@
     (file-append source path)))
 
 (define-public linux-cachyos-lts-server
-  (let ((version "6.18.52-1"))
+  (let ((version "6.18.55-1"))
     (linux-with-zfs
      (customize-linux
       #:name "linux-cachyos-lts-server"
@@ -312,7 +312,7 @@
               "https://github.com/CachyOS/linux/releases/download/cachyos-"
               version "/cachyos-" version ".tar.gz"))
         (sha256
-         (base32 "0m3rp34gfddjki662jv0mirig5rfa1chy5vfrvyzcsvvs26qpyrn")))
+         (base32 "1x9hymblmpj90dhwlz7lsfkdw8fjjpnghhg0yk3qmf9x16v8nrd3")))
       #:defconfig (%kernel-config "/defconfig_server")
       #:configs
       (string-join
