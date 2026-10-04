@@ -304,6 +304,9 @@
        (package
          (inherit linux-libre)
          (version version)
+         (arguments
+          (substitute-keyword-arguments arguments
+            ((#:substitutable? _ #f) #t)))
          (supported-systems '("x86_64-linux"))))
       #:source
       (origin
@@ -341,6 +344,9 @@
        (package
          (inherit linux-libre)
          (version version)
+         (arguments
+          (substitute-keyword-arguments arguments
+            ((#:substitutable? _ #f) #t)))
          (supported-systems '("x86_64-linux"))))
       #:source
       (origin
