@@ -1,11 +1,12 @@
-#!/usr/bin/env -S guix repl
+#!/bin/sh
+# -*- mode: scheme; -*-
+exec guix repl -- "$0" "$@"
 !#
-
 ;;; SPDX-License-Identifier: GPL-3.0-or-later
 ;;; Copyright © 2020, 2021, 2022, 2023 Ricardo Wurmus <rekado@elephly.net>
 ;;; Copyright © 2021 Sarah Morgensen <iskarian@mgsn.dev>
 ;;; Copyright © 2021 Xinglu Chen <public@yoctocell.xyz>
-;;; Copyright © 2022 Maxim Cournoyer <maxim@guixotic.coop>
+;;; Copyright © 2022, 2026 Maxim Cournoyer <maxim@guixotic.coop>
 
 ;;; Commentary:
 
@@ -25,7 +26,9 @@
              (ice-9 rdelim)
              (ice-9 regex)
              (ice-9 textual-ports)
-             (guix gexp))
+             (guix gexp)
+             (guix modules)
+             (guix packages))
 
 (define* (break-string str #:optional (max-line-length 70))
   "Break the string STR into lines that are no longer than MAX-LINE-LENGTH.
@@ -380,6 +383,30 @@ modifying."
           (cons* new (old-sexp (first hunks)) hunks)))
        (group-hunks-by-sexp hunks)))
 
+(define (new+old+hunks->package new+old+hunks)
+  "Return the package object whose source is referenced in a new+old+hunks
+tuple, which describes modifications to the package in a tuple containing the
+new sexp, the old sexp as well as a tail of <hunk> objects."
+  (match new+old+hunks
+    ((new-sexp old-sexp . hunks)
+     (let* ((hunk-file-name (hunk-file-name (first hunks)))
+            (variable-name (second new-sexp))
+            (module-name
+             (match (file-name->module-name hunk-file-name)
+               (('modules 'rosenthal symbols ...)
+                (cons 'rosenthal symbols))
+               (x x))))
+       (module-ref (resolve-module module-name) variable-name)))))
+
+(define (sort-new+old+hunks-by-closure new+old+hunks)
+  "Sort new+old+hunks by their package closure size."
+  (sort new+old+hunks
+        (match-lambda*
+          (((= new+old+hunks->package x-package)
+            (= new+old+hunks->package y-package))
+           (< (length (package-closure (list x-package)))
+              (length (package-closure (list y-package))))))))
+
 (define %delay 1000)
 
 (define (main . args)
@@ -441,7 +468,7 @@ modifying."
                      hunks)
            (define copyright-line
              (any (lambda (line) (and=> (string-prefix? "+;;; Copyright ©" line)
-                                   (const line)))
+                                        (const line)))
                   (hunk-diff-lines (first hunks))))
            (cond
             (copyright-line
@@ -456,13 +483,14 @@ modifying."
                (usleep %delay)
                (unless (eqv? 0 (status:exit-val (close-pipe port)))
                  (error "Cannot commit")))))))
-        (new+old+hunks (match definitions
-                         ('() changes) ;reuse
-                         (_
-                          ;; XXX: we recompute the hunks here because previous
-                          ;; insertions lead to offsets.
-                          (let-values (((definitions changes)
-                                        (partition hunk-type (diff-info))))
-                            changes)))))))))
+        (sort-new+old+hunks-by-closure
+         (new+old+hunks (match definitions
+                          ('() changes) ;reuse
+                          (_
+                           ;; XXX: we recompute the hunks here because previous
+                           ;; insertions lead to offsets.
+                           (let-values (((definitions changes)
+                                         (partition hunk-type (diff-info))))
+                             changes))))))))))
 
 (apply main (cdr (command-line)))
