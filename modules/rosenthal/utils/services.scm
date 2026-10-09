@@ -7,11 +7,44 @@
   #:use-module (srfi srfi-1)
   #:use-module (srfi srfi-35)
   ;; Utilities
-  #:use-module (guix diagnostics)
-  #:use-module (guix i18n)
+  #:use-module (guix discovery)
+  #:use-module (guix ui)
   ;; Guix System - services
   #:use-module (gnu services)
-  #:export (modify-services/by-name))
+  #:export (%rosenthal-service-module-path
+            all-rosenthal-services
+
+            modify-services/by-name))
+
+(define %rosenthal-root-directory
+  ;; This is like %distro-root-directory from (gnu packages), with adjusted
+  ;; paths.
+  (letrec-syntax ((dirname* (syntax-rules ()
+                              ((_ file)
+                               (dirname file))
+                              ((_ file head tail ...)
+                               (dirname (dirname* file tail ...)))))
+                  (try      (syntax-rules ()
+                              ((_ (file things ...) rest ...)
+                               (match (search-path %load-path file)
+                                 (#f
+                                  (try rest ...))
+                                 (absolute
+                                  (dirname* absolute things ...))))
+                              ((_)
+                               #f))))
+    (try ("rosenthal/packages/binaries.scm" rosenthal/ packages/)
+         ("rosenthal/packages.scm" rosenthal/))))
+
+(define %rosenthal-service-module-path
+  `((,%rosenthal-root-directory . "rosenthal/services")
+    (,%rosenthal-root-directory . "rosenthal/home/services")))
+
+(define (all-rosenthal-services)
+  (fold-service-types cons
+                      '()
+                      (all-modules %rosenthal-service-module-path
+                                   #:warn warn-about-load-error)))
 
 
 ;;;

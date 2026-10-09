@@ -36,69 +36,138 @@ Moe]]'s infrastructure.
 ** Content
 Outputed by the [[file:etc/scripts/index.scm][index.scm]] script.
 *** Packages
-- [[https://github.com/ai-robots-txt/ai.robots.txt][ai-robots-txt]]@1.50 :: List of AI agents and robots to block
-- [[https://grafana.com/oss/alloy-opentelemetry-collector/][alloy-bin]]@1.18.1 :: OpenTelemetry Collector distribution with programmable pipelines
-- [[https://github.com/anthonyhab/bb-auth][bb-auth]]@0.2.0 :: Unified polkit, keyring, and pinentry authentication daemon
-- [[https://bitwarden.com/][bitwarden-icecat]]@2026.3.0 :: Bitwarden client browser extension
-- [[https://www.busybox.net][busybox-static]]@1.37.0 :: Many common UNIX utilities in a single executable
-- [[https://caddyserver.com/][caddy]]@2.11.4 :: Extensible HTTP web server with automatic HTTPS
-- [[https://git.guix.moe/hako/caddy][caddy-dolly]]@2026.06.01 :: Extensible HTTP web server with automatic HTTPS
-- [[https://1.1.1.1/][cloudflare-warp-bin]]@2026.6.880.0 :: Cloudflare WARP client
-- [[https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/][cloudflared]]@2026.8.2 :: Cloudflare Tunnel client
-- [[https://guix.gnu.org/cuirass/][cuirass-dolly]]@1.3.6 :: Continuous integration system
-- [[https://davmac.org/projects/dinit/][dinit]]@0.22.1 :: Service manager with dependency management
-- [[https://github.com/felixonmars/dnsmasq-china-list][dnsmasq-china-list]]@0.0.0-21.7da1a5a :: Chinese-specific DNS server configurations
-- [[https://matt.ucc.asn.au/dropbear/dropbear.html][dropbear-static]]@2025.89 :: Small SSH server and client
-- [[https://github.com/Schnouki/caddyfile-mode][emacs-caddyfile-mode]]@0.2-0.fc41148 :: Emacs major mode for editing Caddy configuration files
-- [[https://github.com/dakra/ghostel][emacs-consult-ghostel]]@0.53.0 :: Consult integration for ghostel
-- [[https://codeberg.org/akib/emacs-eat][emacs-eat-dolly]]@0.9.4 :: Terminal emulator in Emacs
-- [[https://github.com/flycheck/flycheck-eglot][emacs-flycheck-eglot]]@1.0-0.cd1dd78 :: Flycheck support for eglot
-- [[https://github.com/astoff/isearch-mb][emacs-isearch-mb]]@0.8 :: Control `isearch' from the minibuffer
-- [[https://github.com/taquangtrung/emacs-kdl-mode][emacs-kdl-mode]]@0.0.1-0.2d849e2 :: Emacs major mode for editing files in the KDL document language
-- [[https://github.com/dandavison/magit-delta][emacs-magit-delta-dolly]]@0.1-0.5fc7dbd :: Integration of `delta' with `emacs-magit'
-- [[https://github.com/0WD0/majutsu][emacs-majutsu-dolly]]@0.6.0-5.56b6e26 :: Emacs interface for Jujutsu version control system
-- [[https://github.com/xuchunyang/msgpack.el][emacs-msgpack]]@0.1.1-0.5353a7b :: Read and write MessagePack object in Emacs
-- [[https://git.thanosapollo.org/pcmpl-tailscale][emacs-pcmpl-tailscale]]@0.0.1-0.acd6bce :: Enhanced shell completions for tailscale
-- [[https://codeberg.org/divyaranjan/emacs-reader][emacs-reader]]@0.3.2-2.a0e3615 :: Emacs document reader
-- [[https://github.com/ArthurHeymans/emacs-tramp-rpc][emacs-tramp-rpc]]@0.13.1 :: TRAMP backend using RPC
-- [[https://wakatime.com/emacs][emacs-wakatime-mode]]@1.0.2-60.1c5b225 :: Automatic time tracking extension for Emacs using WakaTime
-- [[https://forgejo.org/][forgejo]]@14.0.4 :: Lightweight software forge
-- [[https://grafana.com/][grafana-bin]]@12.4.2 :: Platform for monitoring and observability
-- [[https://github.com/hylophile/guile-toml][guile-toml]]@1.0 :: TOML module for Guile Scheme
-- [[https://www.gnu.org/software/guix/][guix-dolly]]@1.5.0-7.5ceffb6 :: Functional package manager for installed software packages and versions
-- [[https://github.com/hifi/heisenbridge][heisenbridge]]@1.15.4 :: Bouncer-style Matrix IRC bridge
-- [[https://komga.org/][komga-bin]]@1.26.3 :: Media server for comics/mangas/BDs/magazines/eBooks
-- [[https://sr.ht/~kennylevinsen/seatd][libseat-sans-logind]]@0.9.3 :: Seat management library
-- [[https://www.freedesktop.org/wiki/Software/vaapi/][libva-nox]]@2.22.0 :: Video acceleration library
-- [[https://github.com/Limine-Bootloader/Limine][limine]]@11.3.1 :: Multiprotocol bootloader and boot manager
-- [[https://grafana.com/oss/loki/][loki-bin]]@3.7.6 :: Log aggregation system
-- [[https://github.com/sot-tech/LottieConverter][lottie-converter]]@0.2-0.3ad34af :: Lottie animation converter
-- [[https://github.com/mautrix/telegram][mautrix-telegram]]@0.2608.0 :: Matrix-Telegram hybrid puppeting/relaybot bridge
-- [[https://wiki.metacubex.one/][mihomo]]@1.19.30 :: Rule-based proxy
-- [[https://grafana.com/oss/mimir/][mimir-bin]]@3.0.4 :: Scalable long-term storage for Prometheus
-- [[https://github.com/Sevichecc/miniflux-injector][miniflux-injector-icecat]]@2.3.3 :: Injects Miniflux search results into search page
-- [[https://codeberg.org/hako/mirror-substitutes][mirror-substitutes]]@0.0.2 :: Mirror Guix substitutes
-- [[https://www.navidrome.org/][navidrome-bin]]@0.63.2 :: Web-based music collection server and streamer
-- [[https://noctalia.dev/][noctalia]]@5.2.0 :: Wayland shell and bar
-- [[https://noctalia.dev/][noctalia-greeter]]@1.6.0 :: Login greeter for greetd
-- [[https://github.com/27justin/ohmyech][ohmyech-icecat]]@1.2 :: Visual indicator for Encrpted Client Hello
-- [[https://github.com/ifreund/dumb_runtime_dir][pam-dumb-runtime-dir]]@1.0.4 :: Create `XDG_RUNTIME_DIR' on login and never remove it
-- [[https://prismlauncher.org/][prismlauncher-dolly]]@11.0.3 :: Free, open source launcher for Minecraft
-- [[https://prometheus.io/][prometheus-bin]]@3.14.0 :: Monitoring system and time series database
-- [[https://pypi.org/project/coherent.licensed/][python-coherent-licensed]]@0.5.2 :: License management tooling
-- [[https://github.com/cher-nov/cryptg][python-cryptg]]@0.5.2 :: Cryptographic utilities for Telegram
-- [[https://github.com/jaraco/irc][python-irc]]@20.3.1 :: Python Internet Relay Chat protocol library
-- [[https://github.com/jaraco/jaraco.logging][python-jaraco-logging]]@3.4.0 :: Python logging facility
-- [[https://github.com/jaraco/jaraco.stream][python-jaraco-stream]]@3.0.4 :: Routines for dealing with data streams
-- [[https://github.com/mautrix/python][python-mautrix]]@0.20.8 :: Python 3 asyncio Matrix framework
-- [[https://github.com/tulir/Telethon][python-tulir-telethon]]@1.99.0a6 :: Python 3 MTProto API Telegram client library
-- [[https://sr.ht/~kennylevinsen/seatd][seatd-sans-logind]]@0.9.3 :: Seat management daemon
-- [[https://www.ihcblog.com/a-better-tls-obfs-proxy/][shadow-tls-bin]]@0.2.25 :: Proxy to expose real tls handshake to the firewall
-- [[https://sing-box.sagernet.org/][sing-box]]@1.14.0 :: Universal proxy platform
-- [[https://github.com/zenhack/socks2http][socks2http]]@0.0.0-20160712034938-bafa2cde8eb4 :: SOCKS5 to HTTP proxy
-- [[https://systemd.io/][systemd-stub]]@261.2 :: Unified kernel image UEFI stub
-- [[https://tailscale.com/][tailscale]]@1.102.3 :: Mesh VPN service utilizing the WireGuard protocol and 2FA
-- [[https://matrix-construct.github.io/tuwunel/][tuwunel-bin]]@1.8.2 :: Matrix homeserver
-- [[https://systemd.io][ukify]]@261.2 :: Unified kernel image UEFI tool
-- [[https://wakapi.dev/][wakapi-bin]]@2.17.6 :: WakaTime-compatible backend
-- [[https://wakatime.com/plugins][wakatime-cli-bin]]@2.24.4 :: Command line interface to WakaTime
+| PACKAGE | SYNOPSIS | LOCATION |
+|-+-+-|
+|[[https://github.com/ai-robots-txt/ai.robots.txt][=ai-robots-txt=]]@1.50|List of AI agents and robots to block|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/web.scm#L29][web.scm]]|
+|[[https://grafana.com/oss/alloy-opentelemetry-collector/][=alloy-bin=]]@1.18.1|OpenTelemetry Collector distribution with programmable pipelines|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/utils/packages.scm#L167][packages.scm]]|
+|[[https://github.com/anthonyhab/bb-auth][=bb-auth=]]@0.2.0|Unified polkit, keyring, and pinentry authentication daemon|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/authentication.scm#L22][authentication.scm]]|
+|[[https://bitwarden.com/][=bitwarden-icecat=]]@2026.3.0|Bitwarden client browser extension|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/browser-extensions.scm#L48][browser-extensions.scm]]|
+|[[https://www.busybox.net][=busybox-static=]]@1.37.0|Many common UNIX utilities in a single executable|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/busybox.scm#L14][busybox.scm]]|
+|[[https://caddyserver.com/][=caddy=]]@2.11.4|Extensible HTTP web server with automatic HTTPS|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/web.scm#L62][web.scm]]|
+|[[https://git.guix.moe/hako/caddy][=caddy-dolly=]]@2026.06.01|Extensible HTTP web server with automatic HTTPS|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/web.scm#L131][web.scm]]|
+|[[https://1.1.1.1/][=cloudflare-warp-bin=]]@2026.6.880.0|Cloudflare WARP client|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L42][binaries.scm]]|
+|[[https://developers.cloudflare.com/cloudflare-one/connections/connect-apps/][=cloudflared=]]@2026.8.2|Cloudflare Tunnel client|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/networking.scm#L25][networking.scm]]|
+|[[https://guix.gnu.org/cuirass/][=cuirass-dolly=]]@1.3.6|Continuous integration system|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/ci.scm#L16][ci.scm]]|
+|[[https://davmac.org/projects/dinit/][=dinit=]]@0.22.1|Service manager with dependency management|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/admin.scm#L25][admin.scm]]|
+|[[https://github.com/felixonmars/dnsmasq-china-list][=dnsmasq-china-list=]]@0.0.0-21.7da1a5a|Chinese-specific DNS server configurations|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/dns.scm#L18][dns.scm]]|
+|[[https://matt.ucc.asn.au/dropbear/dropbear.html][=dropbear-static=]]@2025.89|Small SSH server and client|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/ssh.scm#L16][ssh.scm]]|
+|[[https://github.com/Schnouki/caddyfile-mode][=emacs-caddyfile-mode=]]@0.2-0.fc41148|Emacs major mode for editing Caddy configuration files|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L25][emacs-xyz.scm]]|
+|[[https://github.com/dakra/ghostel][=emacs-consult-ghostel=]]@0.53.0|Consult integration for ghostel|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L51][emacs-xyz.scm]]|
+|[[https://codeberg.org/akib/emacs-eat][=emacs-eat-dolly=]]@0.9.4|Terminal emulator in Emacs|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L77][emacs-xyz.scm]]|
+|[[https://github.com/flycheck/flycheck-eglot][=emacs-flycheck-eglot=]]@1.0-0.cd1dd78|Flycheck support for eglot|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L97][emacs-xyz.scm]]|
+|[[https://github.com/astoff/isearch-mb][=emacs-isearch-mb=]]@0.8|Control `isearch' from the minibuffer|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L119][emacs-xyz.scm]]|
+|[[https://github.com/taquangtrung/emacs-kdl-mode][=emacs-kdl-mode=]]@0.0.1-0.2d849e2|Emacs major mode for editing files in the KDL document language|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L144][emacs-xyz.scm]]|
+|[[https://github.com/dandavison/magit-delta][=emacs-magit-delta-dolly=]]@0.1-0.5fc7dbd|Integration of `delta' with `emacs-magit'|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L165][emacs-xyz.scm]]|
+|[[https://github.com/0WD0/majutsu][=emacs-majutsu-dolly=]]@0.6.0-5.56b6e26|Emacs interface for Jujutsu version control system|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L180][emacs-xyz.scm]]|
+|[[https://github.com/xuchunyang/msgpack.el][=emacs-msgpack=]]@0.1.1-0.5353a7b|Read and write MessagePack object in Emacs|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L204][emacs-xyz.scm]]|
+|[[https://git.thanosapollo.org/pcmpl-tailscale][=emacs-pcmpl-tailscale=]]@0.0.1-0.acd6bce|Enhanced shell completions for tailscale|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L230][emacs-xyz.scm]]|
+|[[https://codeberg.org/divyaranjan/emacs-reader][=emacs-reader=]]@0.3.2-2.a0e3615|Emacs document reader|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L255][emacs-xyz.scm]]|
+|[[https://github.com/ArthurHeymans/emacs-tramp-rpc][=emacs-tramp-rpc=]]@0.13.1|TRAMP backend using RPC|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L288][emacs-xyz.scm]]|
+|[[https://wakatime.com/emacs][=emacs-wakatime-mode=]]@1.0.2-60.1c5b225|Automatic time tracking extension for Emacs using WakaTime|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/emacs-xyz.scm#L322][emacs-xyz.scm]]|
+|[[https://forgejo.org/][=forgejo=]]@14.0.4|Lightweight software forge|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/web.scm#L152][web.scm]]|
+|[[https://grafana.com/][=grafana-bin=]]@12.4.2|Platform for monitoring and observability|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L416][binaries.scm]]|
+|[[https://github.com/hylophile/guile-toml][=guile-toml=]]@1.0|TOML module for Guile Scheme|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/guile-xyz.scm#L19][guile-xyz.scm]]|
+|[[https://www.gnu.org/software/guix/][=guix-dolly=]]@1.5.0-7.5ceffb6|Functional package manager for installed software packages and versions|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/package-management.scm#L22][package-management.scm]]|
+|[[https://github.com/hifi/heisenbridge][=heisenbridge=]]@1.15.4|Bouncer-style Matrix IRC bridge|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/messaging.scm#L33][messaging.scm]]|
+|[[https://komga.org/][=komga-bin=]]@1.26.3|Media server for comics/mangas/BDs/magazines/eBooks|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L190][binaries.scm]]|
+|[[https://sr.ht/~kennylevinsen/seatd][=libseat-sans-logind=]]@0.9.3|Seat management library|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/admin.scm#L62][admin.scm]]|
+|[[https://www.freedesktop.org/wiki/Software/vaapi/][=libva-nox=]]@2.22.0|Video acceleration library|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/video.scm#L14][video.scm]]|
+|[[https://github.com/Limine-Bootloader/Limine][=limine=]]@11.3.1|Multiprotocol bootloader and boot manager|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/bootloaders.scm#L40][bootloaders.scm]]|
+|[[https://grafana.com/oss/loki/][=loki-bin=]]@3.7.6|Log aggregation system|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L545][binaries.scm]]|
+|[[https://github.com/sot-tech/LottieConverter][=lottie-converter=]]@0.2-0.3ad34af|Lottie animation converter|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/animation.scm#L22][animation.scm]]|
+|[[https://github.com/mautrix/telegram][=mautrix-telegram=]]@0.2608.0|Matrix-Telegram hybrid puppeting/relaybot bridge|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/messaging.scm#L66][messaging.scm]]|
+|[[https://wiki.metacubex.one/][=mihomo=]]@1.19.30|Rule-based proxy|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/networking.scm#L72][networking.scm]]|
+|[[https://grafana.com/oss/mimir/][=mimir-bin=]]@3.0.4|Scalable long-term storage for Prometheus|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L505][binaries.scm]]|
+|[[https://github.com/Sevichecc/miniflux-injector][=miniflux-injector-icecat=]]@2.3.3|Injects Miniflux search results into search page|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/browser-extensions.scm#L97][browser-extensions.scm]]|
+|[[https://codeberg.org/hako/mirror-substitutes][=mirror-substitutes=]]@0.0.2|Mirror Guix substitutes|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/package-management.scm#L51][package-management.scm]]|
+|[[https://www.navidrome.org/][=navidrome-bin=]]@0.63.2|Web-based music collection server and streamer|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L238][binaries.scm]]|
+|[[https://noctalia.dev/][=noctalia=]]@5.2.0|Wayland shell and bar|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/wm.scm#L56][wm.scm]]|
+|[[https://noctalia.dev/][=noctalia-greeter=]]@1.6.0|Login greeter for greetd|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/wm.scm#L128][wm.scm]]|
+|[[https://github.com/27justin/ohmyech][=ohmyech-icecat=]]@1.2|Visual indicator for Encrpted Client Hello|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/browser-extensions.scm#L147][browser-extensions.scm]]|
+|[[https://github.com/ifreund/dumb_runtime_dir][=pam-dumb-runtime-dir=]]@1.0.4|Create `XDG_RUNTIME_DIR' on login and never remove it|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/admin.scm#L74][admin.scm]]|
+|[[https://prismlauncher.org/][=prismlauncher-dolly=]]@11.0.3|Free, open source launcher for Minecraft|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/games.scm#L45][games.scm]]|
+|[[https://prometheus.io/][=prometheus-bin=]]@3.14.0|Monitoring system and time series database|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L453][binaries.scm]]|
+|[[https://pypi.org/project/coherent.licensed/][=python-coherent-licensed=]]@0.5.2|License management tooling|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/python-xyz.scm#L31][python-xyz.scm]]|
+|[[https://github.com/cher-nov/cryptg][=python-cryptg=]]@0.5.2|Cryptographic utilities for Telegram|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/python-xyz.scm#L53][python-xyz.scm]]|
+|[[https://github.com/jaraco/irc][=python-irc=]]@20.3.1|Python Internet Relay Chat protocol library|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/python-xyz.scm#L109][python-xyz.scm]]|
+|[[https://github.com/jaraco/jaraco.logging][=python-jaraco-logging=]]@3.4.0|Python logging facility|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/python-xyz.scm#L144][python-xyz.scm]]|
+|[[https://github.com/jaraco/jaraco.stream][=python-jaraco-stream=]]@3.0.4|Routines for dealing with data streams|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/python-xyz.scm#L170][python-xyz.scm]]|
+|[[https://github.com/mautrix/python][=python-mautrix=]]@0.20.8|Python 3 asyncio Matrix framework|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/python-xyz.scm#L195][python-xyz.scm]]|
+|[[https://github.com/tulir/Telethon][=python-tulir-telethon=]]@1.99.0a6|Python 3 MTProto API Telegram client library|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/python-xyz.scm#L228][python-xyz.scm]]|
+|[[https://sr.ht/~kennylevinsen/seatd][=seatd-sans-logind=]]@0.9.3|Seat management daemon|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/admin.scm#L111][admin.scm]]|
+|[[https://www.ihcblog.com/a-better-tls-obfs-proxy/][=shadow-tls-bin=]]@0.2.25|Proxy to expose real tls handshake to the firewall|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L288][binaries.scm]]|
+|[[https://sing-box.sagernet.org/][=sing-box=]]@1.14.0|Universal proxy platform|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/networking.scm#L120][networking.scm]]|
+|[[https://github.com/zenhack/socks2http][=socks2http=]]@0.0.0-20160712034938-bafa2cde8eb4|SOCKS5 to HTTP proxy|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/networking.scm#L192][networking.scm]]|
+|[[https://systemd.io/][=systemd-stub=]]@261.2|Unified kernel image UEFI stub|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/bootloaders.scm#L104][bootloaders.scm]]|
+|[[https://tailscale.com/][=tailscale=]]@1.102.3|Mesh VPN service utilizing the WireGuard protocol and 2FA|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/networking.scm#L219][networking.scm]]|
+|[[https://matrix-construct.github.io/tuwunel/][=tuwunel-bin=]]@1.8.2|Matrix homeserver|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L131][binaries.scm]]|
+|[[https://systemd.io][=ukify=]]@261.2|Unified kernel image UEFI tool|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/bootloaders.scm#L147][bootloaders.scm]]|
+|[[https://wakapi.dev/][=wakapi-bin=]]@2.17.6|WakaTime-compatible backend|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L318][binaries.scm]]|
+|[[https://wakatime.com/plugins][=wakatime-cli-bin=]]@2.24.4|Command line interface to WakaTime|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/packages/binaries.scm#L366][binaries.scm]]|
+*** Services
+| SERVICE | DESCRIPTION | LOCATION |
+|-+-+-|
+|=alloy=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/monitoring.scm#L82][monitoring.scm]]|
+|=btrbk=|Configure and run btrbk hourly.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/file-systems.scm#L53][file-systems.scm]]|
+|=caddy=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L160][web.scm]]|
+|=clash=|Run Clash.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/child-error.scm#L121][child-error.scm]]|
+|=cloudflare-tunnel=|Run cloudflared, the Cloudflare Tunnel daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/child-error.scm#L219][child-error.scm]]|
+|=cloudflare-warp=|Run warp-svc, the Cloudflare Warp daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/child-error.scm#L255][child-error.scm]]|
+|=cuirass=|Run the Cuirass continuous integration service.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/cuirass.scm#L68][cuirass.scm]]|
+|=cuirass-worker-container=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/cuirass.scm#L208][cuirass.scm]]|
+|=docker-mailserver=|Run Docker Mailserver.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/mail.scm#L77][mail.scm]]|
+|=dumb-runtime-dir=|Create `XDG_RUNTIME_DIR' on login and never remove it.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/file-systems.scm#L94][file-systems.scm]]|
+|=forgejo=|Run Forgejo.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L275][web.scm]]|
+|=gamemode=|Set up Guix System environment for gamemode.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/games.scm#L51][games.scm]]|
+|=grafana=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/monitoring.scm#L180][monitoring.scm]]|
+|=heisenbridge=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/messaging.scm#L95][messaging.scm]]|
+|=iocaine=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L381][web.scm]]|
+|=jellyfin=|Run the Jellyfin media system.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L517][web.scm]]|
+|=jellyfin-oci=|Run Jellyfin, a media system.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L607][web.scm]]|
+|=komga=|Run Komga.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L679][web.scm]]|
+|=loki=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/monitoring.scm#L269][monitoring.scm]]|
+|=mautrix-telegram=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/messaging.scm#L181][messaging.scm]]|
+|=mimir=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/monitoring.scm#L356][monitoring.scm]]|
+|=misskey=|Run Misskey, an interplanetary microblogging platform.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L771][web.scm]]|
+|=navidrome=|Run Navidrome.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L861][web.scm]]|
+|=network-online=|Wait for the network to come up.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/networking.scm#L72][networking.scm]]|
+|=nix-search-paths=|Set up search paths for `with-nix-profile'.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/nix.scm#L59][nix.scm]]|
+|=noctalia-greeter=|Set up environment for `noctalia-greeter-session'.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/base.scm#L76][base.scm]]|
+|=prometheus=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/monitoring.scm#L447][monitoring.scm]]|
+|=qbittorrent=|Run qBittorrent daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/bittorrent.scm#L120][bittorrent.scm]]|
+|=shadow-tls=|Run shadow-tls.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/child-error.scm#L451][child-error.scm]]|
+|=sing-box=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/networking.scm#L176][networking.scm]]|
+|=smartdns=|Run Smartdns daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/dns.scm#L44][dns.scm]]|
+|=tailscaled=|Run tailscaled.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/networking.scm#L249][networking.scm]]|
+|=tuwunel=|Run Tuwunel.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L948][web.scm]]|
+|=vaultwarden=|Run Vaultwarden, a Bitwarden compatible server.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/web.scm#L1087][web.scm]]|
+|=zfs=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/file-systems.scm#L187][file-systems.scm]]|
+|=home-atuin=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/shellutils.scm#L63][shellutils.scm]]|
+|=home-bb-auth=|Run `bb-auth' daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L409][desktop.scm]]|
+|=home-blueman-applet=|Run blueman applet, a tray applet for managing bluetooth.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L122][desktop.scm]]|
+|=home-direnv=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/shellutils.scm#L100][shellutils.scm]]|
+|=home-emacs=|Install Emacs into home profile and run its daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/home/services/emacs.scm#L142][emacs.scm]]|
+|=home-fcitx5=|Run fcitx5, an input method framework.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L246][desktop.scm]]|
+|=home-goimapnotify=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/mail.scm#L129][mail.scm]]|
+|=home-graphical-session=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/home/services/desktop.scm#L165][desktop.scm]]|
+|=home-gtk2=|Set up GTK2 settings in `~/.config/gtk-2.0/gtkrc'|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/home/services/gtk.scm#L53][gtk.scm]]|
+|=home-gtk3=|Set up GTK3 settings in `~/.config/gtk-3.0/settings.ini'|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/home/services/gtk.scm#L74][gtk.scm]]|
+|=home-gtk4=|Set up GTK4 settings in `~/.config/gtk-4.0/settings.ini'|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/home/services/gtk.scm#L84][gtk.scm]]|
+|=home-keyboard=|Set layouts by configuring XKB_* environment variables.  Service accepts an instance of `keyboard-layout' from `(gnu system keyboard)'.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/keyboard.scm#L21][keyboard.scm]]|
+|=home-mako=|Run mako, a notification daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L302][desktop.scm]]|
+|=home-network-manager-applet=|Run nm-applet, a tray applet for managing networks.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L341][desktop.scm]]|
+|=home-network-online=|Wait for the network to come up.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/networking.scm#L81][networking.scm]]|
+|=home-niri=|Set up configuration file for niri, a scrollable-tiling Wayland compositor.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L369][desktop.scm]]|
+|=home-nix-search-paths=|Set up search paths for `with-nix-profile'.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/nix.scm#L74][nix.scm]]|
+|=home-noctalia=|Run Noctalia, a lightweight Wayland shell and bar.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/home/services/desktop.scm#L219][desktop.scm]]|
+|=home-polkit-gnome=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L436][desktop.scm]]|
+|=home-qbittorrent=|Run qBittorrent daemon.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/bittorrent.scm#L158][bittorrent.scm]]|
+|=home-rofi=|Set up configuration file for rofi, an application launcher.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L462][desktop.scm]]|
+|=home-shadow-tls=|Run shadow-tls.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/child-error.scm#L460][child-error.scm]]|
+|=home-socks2http=|Run socks2http.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/child-error.scm#L495][child-error.scm]]|
+|=home-swaybg=|Run swaybg, a screen wallpaper utility for Wayland compositors.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L502][desktop.scm]]|
+|=home-theme=|Set up desktop themes.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L601][desktop.scm]]|
+|=home-wakapi=|Run Wakapi, a self-hosted WakaTime-compatible backend.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/child-error.scm#L298][child-error.scm]]|
+|=home-waybar=|Run waybar, a status bar for Wayland compositors.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/desktop.scm#L666][desktop.scm]]|
+|=home-writable-files-manager=|Provide an `update-writable-files' script, which copies files to configuration files, makes them writable and creates symlinks to directories on every activation.  If an existing file would be overwritten, backs up that file first.|[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/home/services/writable-files-manager.scm#L264][writable-files-manager.scm]]|
+|=home-zoxide=| |[[https://codeberg.org/hako/Rosenthal/src/branch/trunk/modules/rosenthal/services/shellutils.scm#L137][shellutils.scm]]|
