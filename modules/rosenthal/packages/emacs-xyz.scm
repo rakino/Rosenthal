@@ -287,7 +287,7 @@ and it's subcommands.")
 (define-public emacs-tramp-rpc
   (package
     (name "emacs-tramp-rpc")
-    (version "0.13.1")
+    (version "0.15.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -296,7 +296,7 @@ and it's subcommands.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1991b8vc3k3kkm77ad5c9z8jx9nxpxbmv26vv1y5v7z3cdp12wzj"))))
+                "168v9hfawrb496da3mhy1a4pignbfa5109q3x5rlk7pjaf1z7836"))))
     (build-system emacs-build-system)
     (arguments
      (list #:lisp-directory "lisp"
