@@ -18,18 +18,6 @@
   #:use-module (gnu packages guile)
   #:use-module (gnu packages package-management))
 
-(define-public guix/dolly
-  (package
-    (inherit
-     (package-with-extra-patches guix
-       (rosenthal-patches "guix-change-publish-cache-storage.patch")))
-    (name "guix-dolly")
-    (arguments
-     (substitute-keyword-arguments arguments
-       ((#:parallel-build? _ #f) #t)
-       ((#:tests? _ #t) #f)))
-    (properties '((disable-updater? . #t)))))
-
 (define guix-for-mirror-substitutes
   (let ((commit "5ceffb60e55b86920fd720817dd24b0e1f900ac1")
         (revision "7"))
