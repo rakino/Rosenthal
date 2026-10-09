@@ -65,7 +65,7 @@ users.")
 (define-public mautrix-telegram
   (package
     (name "mautrix-telegram")
-    (version "0.2608.0")
+    (version "0.2609.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -74,12 +74,12 @@ users.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1h9nl6ba1lxdy7fxk36asigpxmgav6bw8ydif267cscfq7vxq3hi"))))
+                "0pc0vnmh5x6vrs7g0qq9vfq6ahiff6r7p3jsnrvihcbqkmm11j9k"))))
     (build-system go-vendored-build-system)
     (arguments
-     (list #:go go-1.26
+     (list #:go go-1.27
            #:vendor-hash
-           (base32 "0vz2ziaps5l19zzpw2mkxhbnl33pn3srs6ayvblj51ap6dxc47dj")
+           (base32 "0qvwxahl959527h4s3by99a4dxcr6rqka50391v12hd117yyyvx9")
            #:install-source? #f
            #:import-path "./cmd/mautrix-telegram"
            #:phases
