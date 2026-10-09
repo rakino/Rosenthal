@@ -24,22 +24,20 @@
 (define-public cloudflared
   (package
     (name "cloudflared")
-    (version "2026.8.2")
+    (version "2026.10.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/cloudflare/cloudflared")
                     (commit version)))
               (file-name (git-file-name name version))
-              ;; TODO: Unbundle vendored dependencies.
-              ;; (modules '((guix build utils)))
-              ;; (snippet '(delete-file-recursively "vendor"))
               (sha256
                (base32
-                "050xr8yjzrcyj53grvvafpi5d5dl7hjiiv4zjjzb2bcf65rak5za"))))
+                "0an9pvfp9cc1b71dvq005yghi93pcidlp7s96pbjsr2payi25vva"))))
     (build-system go-vendored-build-system)
     (arguments
-     (list #:go go-1.26
+     (list #:go go-1.27
+           #:vendor-hash (base32 "173ywqpd927q24fza5wr5qx7yfgd59njf1n6mmyq82d4xzp4ycwr")
            #:install-source? #f
            #:import-path "./cmd/cloudflared"
            #:build-flags
