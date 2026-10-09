@@ -44,7 +44,7 @@
 (define-public prismlauncher/dolly
   (package
     (name "prismlauncher-dolly")
-    (version "11.0.3")
+    (version "11.1.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -54,7 +54,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "04dv4c849lghhqq25p58l5aq37r2kvx9297w1139x9ajab97xhhf"))
+                "1dm1fdb2z6jyb04ml2jxdqgaxr14a6a4i41r89fdpg22ngx12kkk"))
               (modules '((guix build utils)))
               (snippet
                '(substitute* "launcher/CMakeLists.txt"
