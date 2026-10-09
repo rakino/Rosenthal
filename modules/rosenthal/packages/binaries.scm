@@ -592,7 +592,7 @@ rather a set of labels for each log stream.")
   (package
     (inherit %binary-source)
     (name "alloy")
-    (version "1.18.1")
+    (version "1.20.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -600,7 +600,7 @@ rather a set of labels for each log stream.")
                     version "/alloy-linux-arm64.zip"))
               (sha256
                (base32
-                "1mknhvxbppcg5x2lwk7832l6wlk2h7cm7y8ay34xc515wb7ld529"))))))
+                "00wjrc7xlbsgapks260xkw4v8f4b6h4cjxjpip4q3waqh7ajfs1r"))))))
 
 (define-public alloy-bin
   (binary-package
