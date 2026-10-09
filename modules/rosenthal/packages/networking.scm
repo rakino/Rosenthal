@@ -69,7 +69,7 @@ origin can remain as closed as possible.")
 (define-public mihomo
   (package
     (name "mihomo")
-    (version "1.19.30")
+    (version "1.19.32")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -78,12 +78,12 @@ origin can remain as closed as possible.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "07zxbng654wjy3qj776px1ds6kzr30hp832r3pcvjchiabqcab23"))))
+                "10da821li2q5j2z5k4kadhl9a959n7bqxsf2gxq5kzxx44kbdwxm"))))
     (build-system go-vendored-build-system)
     (arguments
      (list
-      #:go go-1.26
-      #:vendor-hash (base32 "0vw4xcqmmpq4mkskwlwszb6la1qjyiwy5bbhpji6zsmixwzaxr70")
+      #:go go-1.27
+      #:vendor-hash (base32 "0a3nz0q3xn36yi31si28200xj0njwrwhsvwiijrmf11ypl84vqpj")
       #:tests? (not (%current-target-system)) ;TODO: Run test suite.
       #:install-source? #f
       #:build-flags
