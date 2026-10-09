@@ -61,7 +61,7 @@ website owners block unwanted AI crawlers from accessing their sites.")
 (define-public caddy
   (package
     (name "caddy")
-    (version "2.11.4")
+    (version "2.11.7")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -70,11 +70,11 @@ website owners block unwanted AI crawlers from accessing their sites.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "04ypcnmplbkmp7r5vi3q2lx270q2195c4h8ripdjc32z2qlkqff3"))))
+                "0gv0gjwdqd5azw5ws95am7jb653klyyl9k9sabb30bvs04zi5rgb"))))
     (build-system go-vendored-build-system)
     (arguments
-     (list #:go go-1.26
-           #:vendor-hash (base32 "0vjdmwp4qdxvkrn1h7pk9ckwi5cjksq7nbd96yqd2dqan4ri4v6q")
+     (list #:go go-1.27
+           #:vendor-hash (base32 "06bcd41snksncmdijd32r3l2n5ch1v3gr4qkx45g2jb03zkab4wh")
            #:tests? (not (%current-target-system)) ;TODO: Run test suite.
            #:install-source? #f
            #:import-path
