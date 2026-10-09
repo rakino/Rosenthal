@@ -216,7 +216,7 @@ a SOCKS5 proxy.")
 (define-public tailscale
   (package
     (name "tailscale")
-    (version "1.102.3")
+    (version "1.104.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -225,7 +225,7 @@ a SOCKS5 proxy.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0pqnc5bxl01nzpg2alb6njwq9k0g9psckw7v3wjfraf228rawd9p"))
+                "1f7cxhs1y3sz1jn4hq4h1yaxz4i2m33nxxfk23yblhid3dbhdkbz"))
               (patches
                (rosenthal-patches
                 "tailscale-set-guix-system-PATH-for-SSH.patch"))
@@ -238,8 +238,8 @@ a SOCKS5 proxy.")
     (build-system go-vendored-build-system)
     (arguments
      (list
-      #:go go-1.26
-      #:vendor-hash (base32 "01wvidvld4749f9bdsmvi84l005k6lfsqvcn6yw13jikzd8a8qka")
+      #:go go-1.27
+      #:vendor-hash (base32 "19fmb8v1m1qr92smjzmwzx9pzanbv9hpxsf3x1mzbaim56xrpmkz")
       #:tests? (not (%current-target-system)) ;TODO: Run test suite.
       #:install-source? #f
       #:build-flags
