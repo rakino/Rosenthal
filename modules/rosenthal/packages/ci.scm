@@ -11,11 +11,3 @@
   #:use-module (guix git-download)
   ;; Guix packages
   #:use-module (gnu packages ci))
-
-(define-public cuirass/dolly
-  (package
-    (inherit
-     (package-with-extra-patches cuirass
-       (rosenthal-patches "cuirass-templates-Add-more-forges.patch")))
-    (name "cuirass-dolly")
-    (properties '((disable-updater? . #t)))))
