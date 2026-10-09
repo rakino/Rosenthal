@@ -578,7 +578,7 @@ rather a set of labels for each log stream.")
   (package
     (inherit %binary-source)
     (name "alloy")
-    (version "1.18.1")
+    (version "1.20.1")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -586,7 +586,7 @@ rather a set of labels for each log stream.")
                     version "/alloy-linux-amd64.zip"))
               (sha256
                (base32
-                "0g28gg013a8i3d35aqfxhsp94hzp65dni6lg6si50flqqg5m7j7s"))))))
+                "1sbv8n2z2zh2wkyagjyyg3z83x89m2xm1nxqkkb24z97x18fc7s5"))))))
 
 (define-public %alloy-source-aarch64-linux
   (package
