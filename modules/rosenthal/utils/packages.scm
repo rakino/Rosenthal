@@ -166,6 +166,7 @@ packages, excluding superseded packages."
 (define* (binary-package source-mapping p #:optional (default-system "x86_64-linux"))
   (package
     (inherit p)
+    (location (package-location p))
     (version (package-version (assoc-ref source-mapping default-system)))
     (source #f)
     (arguments
