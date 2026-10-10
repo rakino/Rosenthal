@@ -54,34 +54,18 @@
                        (sha256 vendor-hash)))))
              '())
        ,@(bag-build-inputs go-bag)))
+    (build (bag-build go-bag))
     (arguments
-     (strip-keyword-arguments private-keywords (bag-arguments go-bag)))
-    (build
-     (lambda args
-       (apply (bag-build go-bag)
-              (let loop ((positional '())
-                         (keyword '())
-                         (args args))
-                (match args
-                  (((? keyword? key) (? (negate keyword?) val) rest ...)
-                   (loop positional
-                         (cons* key val keyword)
-                         rest))
-                  ((arg rest ...)
-                   (loop (cons arg positional)
-                         keyword
-                         rest))
-                  (()
-                   (append (reverse positional)
-                           (substitute-keyword-arguments keyword
-                             ((#:imported-modules imported-modules '())
-                              (if (null? imported-modules)
-                                  %default-go-vendored-imported-modules
-                                  imported-modules))
-                             ((#:modules modules '())
-                              (if (null? modules)
-                                  %default-go-vendored-modules
-                                  modules))))))))))))
+     (substitute-keyword-arguments
+         (strip-keyword-arguments private-keywords (bag-arguments go-bag))
+       ((#:imported-modules imported-modules '())
+        (if (null? imported-modules)
+            %default-go-vendored-imported-modules
+            imported-modules))
+       ((#:modules modules '())
+        (if (null? modules)
+            %default-go-vendored-modules
+            modules))))))
 
 (define go-vendored-build-system
   (build-system
