@@ -6,7 +6,7 @@
   #:use-module ((guix build gnu-build-system) #:prefix gnu:)
   #:use-module ((guix build go-build-system) #:prefix go:)
   #:export (%standard-phases
-            go-vendored-build))
+            go-build))
 
 (define* (unpack-vendored-dependencies #:key native-inputs inputs #:allow-other-keys)
   (let ((vendored-dependencies
@@ -24,6 +24,6 @@
     (replace 'install-license-files
       (assoc-ref gnu:%standard-phases 'install-license-files))))
 
-(define* (go-vendored-build #:key inputs (phases %standard-phases)
-                            #:allow-other-keys #:rest args)
+(define* (go-build #:key inputs (phases %standard-phases)
+                   #:allow-other-keys #:rest args)
   (apply gnu:gnu-build #:inputs inputs #:phases phases args))
