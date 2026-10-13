@@ -250,8 +250,8 @@ and it's subcommands.")
        '((disable-updater? . #t))))))
 
 (define-public emacs-reader
-  (let ((commit "a0e3615adbf520a5743bbbfd7da6d2bb8478b30b")
-        (revision "2"))
+  (let ((commit "b8c886346b9fea5492a21f6d94e8830fcea7359e")
+        (revision "3"))
     (package
       (name "emacs-reader")
       (version (git-version "0.3.2" revision commit))
@@ -263,7 +263,7 @@ and it's subcommands.")
                 (commit commit)))
          (file-name (git-file-name name version))
          (sha256
-          (base32 "012i36l5wgzw4mbxr2knb96f7x95qfg0pqa7dfam23fmsfw57fy0"))))
+          (base32 "0fk79x1r9vkjzb68a7ks08d8ra50dgdgxz04msqjca7ijygzvqa0"))))
       (build-system emacs-build-system)
       (arguments
        (list
