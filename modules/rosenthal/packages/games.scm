@@ -101,6 +101,7 @@
                           "libX11.so"
                           "libXcursor.so"
                           "libXext.so"
+                          "libXi.so"
                           "libXrandr.so"
                           "libXxf86vm.so"
                           ;; openal
@@ -124,6 +125,7 @@
            libarchive
            libusb
            libx11
+           libxi
            libxcursor
            libxext
            libxrandr
