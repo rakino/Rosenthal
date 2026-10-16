@@ -240,7 +240,7 @@
                      #:HZ-ticks 300
                      #:tickrate 'full
                      #:preempt 'none
-                     #:hugepage 'always
+                     #:hugepage 'madvise
                      #:processor-opt 'generic)
                     (default-initrd-configs))
             "\n"))))
