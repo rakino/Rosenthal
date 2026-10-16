@@ -16,7 +16,7 @@
   #:use-module (gnu home services)
   #:use-module (gnu home services shepherd)
   ;; Guix packages
-  #:autoload   (rosenthal packages wm) (noctalia)
+  #:autoload   (gnu packages window-management) (noctalia-shell)
   #:export (home-graphical-session-service-type
             home-graphical-session-configuration
 
@@ -194,7 +194,7 @@
 
 (define-configuration/no-serialization home-noctalia-configuration
   (noctalia
-   (file-like noctalia)
+   (file-like noctalia-shell)
    "File-like object to provide @command{/bin/noctalia}."))
 
 (define home-noctalia-shepherd-service

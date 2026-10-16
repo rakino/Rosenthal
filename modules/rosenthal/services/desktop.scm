@@ -699,14 +699,6 @@ compositor.")))
      ,(local-file "../examples/dot-config/noctalia/settings.json"))
     (".config/wezterm/wezterm.lua"
      ,(local-file "../examples/dot-config/wezterm/wezterm.lua"))
-    ;; Prevent Noctalia shell initial screen.
-    (".cache/noctalia/shell-state.json"
-     ,(json-file "noctalia-shell-state.json"
-        #~'(("changelogState"
-             ("lastSeenVersion"
-              . #$(string-append "v" (package-version noctalia-shell))))
-            ("telemetry"
-             ("instanceId" . "")))))
     ,@%rosenthal-skeletons))
 
 
