@@ -43,15 +43,14 @@
     (build-inputs
      `(,@(if (and source vendor-hash)
              `(("vendored-go-dependencies"
-                ,(if (content-hash? vendor-hash)
-                     (origin
-                       (method (go-mod-vendor #:go go))
-                       (uri source)
-                       (hash vendor-hash))
-                     (origin
-                       (method (go-mod-vendor #:go go))
-                       (uri source)
-                       (sha256 vendor-hash)))))
+                ,(origin
+                   (method (go-mod-vendor #:go go))
+                   (uri source)
+                   (file-name (string-append name "-vendored-go-dependencies"))
+                   (hash
+                    (if (content-hash? vendor-hash)
+                        vendor-hash
+                        (content-hash vendor-hash))))))
              '())
        ,@(bag-build-inputs go-bag)))
     (build (bag-build go-bag))
