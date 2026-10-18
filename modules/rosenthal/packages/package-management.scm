@@ -38,7 +38,7 @@
 (define-public mirror-substitutes
   (package
     (name "mirror-substitutes")
-    (version "0.0.2")
+    (version "0.0.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -47,7 +47,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1fbv24n12p83gp9l8nnjmymgqbwyvmy086fnfwxdg8c9c6rfbl4j"))))
+                "1qf2180bj36py05wz031m5fk2xmzwyf2cl8nhcnny63ghkm27m7j"))))
     (build-system guile-build-system)
     (arguments
      (list
