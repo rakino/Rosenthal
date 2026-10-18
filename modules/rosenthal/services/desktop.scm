@@ -354,22 +354,36 @@
 ;;;
 
 (define-configuration/no-serialization home-niri-configuration
+  (niri
+   (file-like niri)
+   "")
   (config
    maybe-file-like
    ""))
 
+(define (validated-niri-config niri file)
+  (computed-file "niri.kdl"
+    (with-imported-modules '((guix build utils))
+      #~(begin
+          (use-modules (guix build utils))
+          (invoke #+(file-append niri "/bin/niri") "validate"
+                  "--config" #$file)
+          (copy-file #$file #$output)))))
+
 (define %home-niri-xdg-config
   (match-record-lambda <home-niri-configuration>
-      (config)
+      (niri config)
     (if (maybe-value-set? config)
-        `(("niri/config.kdl" ,config))
+        `(("niri/config.kdl" ,(validated-niri-config niri config)))
         '())))
 
 (define home-niri-service-type
   (service-type
     (name 'home-niri)
     (extensions
-     (list (service-extension home-xdg-configuration-files-service-type
+     (list (service-extension home-profile-service-type
+                              (compose list home-niri-configuration-niri))
+           (service-extension home-xdg-configuration-files-service-type
                               %home-niri-xdg-config)))
     (default-value (home-niri-configuration))
     (description
