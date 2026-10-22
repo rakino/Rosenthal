@@ -103,7 +103,7 @@ results are added in a sidebar next to search engine results.")
 (define ohmyech
   (package
     (name "ohmyech")
-    (version "1.2")
+    (version "1.5")
     (properties
      '((addon-id . "{46b8ab0b-8adf-4e43-ad67-acef5a8d45c9}")
        (hidden? . #t)
@@ -112,11 +112,11 @@ results are added in a sidebar next to search engine results.")
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/27justin/ohmyech")
-                    (commit "aa0cf4cc5c4bcb6ce508d8a4e7ee4c95c2e63cbe")))
+                    (commit "1faea936f6507580c6b2bd04dc57449398c799f4")))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1cqgfv2q7shisi9ijac5s85xy9q2rz9f9hxwq3q41vfgrcvd8zng"))
+                "0r1kipfy3afgc0jabav7q7h90d153nly1iakn4pfrwf8401n4qsi"))
               (modules '((guix build utils)))
               (snippet
                #~(substitute* "manifest.json"
