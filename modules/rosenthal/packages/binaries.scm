@@ -504,7 +504,7 @@ observed.")
 (define-public mimir-bin
   (package
     (name "mimir-bin")
-    (version "3.0.4")
+    (version "3.2.3")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -512,7 +512,7 @@ observed.")
                     version "/mimir-linux-amd64"))
               (sha256
                (base32
-                "09bhfbax659p1svzk8gq37vckqd62xsr219ab8f4r36c74ml3vz8"))))
+                "17rhn69z3vvkxhfjr14gv7zx22x1spgf1cyj8gc0zidwy09d8wzj"))))
     (build-system copy-build-system)
     (arguments
      (list #:tests? (not (%current-target-system))
