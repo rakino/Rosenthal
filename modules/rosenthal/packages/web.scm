@@ -139,7 +139,7 @@ from serving static websites to running dynamic web applications.")
   (package
     (inherit caddy)
     (name "caddy-dolly")
-    (version "2026.06.01")
+    (version "2026.10.23")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -148,11 +148,11 @@ from serving static websites to running dynamic web applications.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1b8606rbg57ylxz2q88335s04q8yvg6b33qkq3hk9895vwd74mq0"))))
+                "1amgxdy9598jpm1zkp7yvrxhj3zyzlc8rzp64mivlhhv58gmnfmz"))))
     (arguments
      (substitute-keyword-arguments arguments
        ((#:vendor-hash _ #f)
-        (base32 "0bwpayz2yf18cycffy02iiq88cl0smljimsf0yrdzrn1l3flg37s"))))
+        (base32 "1k45xgbay9fyahh7ng8y6n58m9nnv2wyjqwzyjf3via08mlh1cjm"))))
     (home-page "https://git.guix.moe/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
