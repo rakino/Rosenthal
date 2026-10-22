@@ -39,7 +39,7 @@
 (define-public noctalia-greeter
   (package
     (name "noctalia-greeter")
-    (version "1.6.0")
+    (version "1.7.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -48,7 +48,7 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1ml2wssydhlvsm16njrlqzyq4a0rlpc0h7jv6hcvwl3cd134f2ka"))))
+                "1wsrmjh8mmnbsfsspn0hvpd6di9mlm20qiigxcniq5s6za74ic90"))))
     (build-system meson-build-system)
     (arguments
      (list #:build-type "release"
@@ -70,6 +70,7 @@
            glib
            harfbuzz
            jemalloc
+           libjxl
            (librsvg-for-system)
            libwebp
            libxkbcommon
