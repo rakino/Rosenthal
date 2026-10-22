@@ -115,8 +115,8 @@ some keybindings are slightly simplified.")
     (properties '((disable-updater? . #t)))))
 
 (define-public emacs-kdl-mode
-  (let ((commit "2d849e298199f490e4894c01764a8a83decd704a")
-        (revision "0"))
+  (let ((commit "e966ed4b53f8a72b88a016e61bcadec42f317e39")
+        (revision "1"))
     (package
       (name "emacs-kdl-mode")
       (version (git-version "0.0.1" revision commit))
@@ -128,7 +128,7 @@ some keybindings are slightly simplified.")
                 (file-name (git-file-name name version))
                 (sha256
                  (base32
-                  "18va5ipay9grbv84kwq9ji4dn1sabnzydj4hb1mjd9mbbibw1wg4"))))
+                  "070ngannx77m39hwvsdr4pk17ki1l4nzsi746w21q5mfbp8gl9w1"))))
       (build-system emacs-build-system)
       (arguments (list #:tests? #f))    ;No tests.
       (home-page "https://github.com/taquangtrung/emacs-kdl-mode")
