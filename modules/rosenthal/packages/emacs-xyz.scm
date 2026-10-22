@@ -50,7 +50,7 @@ editing Caddyfiles, configuration files for @code{caddy}.")
 (define-public emacs-consult-ghostel
   (package
     (name "emacs-consult-ghostel")
-    (version "0.57.0")
+    (version "0.59.0")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -59,7 +59,7 @@ editing Caddyfiles, configuration files for @code{caddy}.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0zi763b72algb8w41rx8ppqkmvfjlmazbap74df5v7zryiwa1xxw"))))
+                "1rfs5jd2xgpilh9xv9mpjpqn7b71iixkgbnpmqi3nwzb8dz0rqnm"))))
     (build-system emacs-build-system)
     (arguments
      (list #:tests? #f                  ;no tests
