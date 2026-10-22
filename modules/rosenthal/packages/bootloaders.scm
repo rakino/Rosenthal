@@ -39,7 +39,7 @@
 (define-public limine
   (package
     (name "limine")
-    (version "11.3.1")
+    (version "12.9.4")
     (source (origin
               (method url-fetch)
               (uri (string-append
@@ -47,7 +47,7 @@
                     "/download/v" version "/limine-" version ".tar.xz"))
               (sha256
                (base32
-                "0d0221xc3374xq6bx26dkmidcf6slxc6dq6qnjdc3lrx3xda21jw"))))
+                "1hzl8701h26cadq004jvv55yb2q2ydnd09zxbpghk3c1xiin8mqb"))))
     (build-system gnu-build-system)
     (arguments
      (list #:tests? #f
@@ -84,8 +84,7 @@
     (description
      "Limine is a multiprotocol bootloader and boot manager.  It's also used as
 the reference implementation for the Limine boot protocol.")
-    (license license:bsd-2)
-    (properties '((disable-updater? . #t)))))
+    (license license:bsd-2)))
 
 
 ;;;
