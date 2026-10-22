@@ -250,7 +250,10 @@
       (home-page "https://cachyos.org/")
       (synopsis "CachyOS Linux kernel (lts + server)")
       (description "")
-      (supported-systems '("x86_64-linux")))))
+      (supported-systems '("x86_64-linux"))
+      (properties
+       (cons '(disable-updater? . #t)
+             (package-properties kernel))))))
 
 (define-public linux-cachyos-bore-zen4
   (let* ((version "7.2.11-1")
@@ -289,4 +292,7 @@
       (home-page "https://cachyos.org/")
       (synopsis "CachyOS Linux kernel (bore + znver4)")
       (description "")
-      (supported-systems '("x86_64-linux")))))
+      (supported-systems '("x86_64-linux"))
+      (properties
+       (cons '(disable-updater? . #t)
+             (package-properties kernel))))))
