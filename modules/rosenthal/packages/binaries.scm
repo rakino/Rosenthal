@@ -415,15 +415,15 @@ to WakaTime, which is used by all WakaTime text editor plugins.")
 (define-public grafana-bin
   (package
     (name "grafana-bin")
-    (version "12.4.2")
+    (version "13.2.4")
     (source (origin
               (method url-fetch)
               (uri (string-append "https://dl.grafana.com/grafana/release/"
                                   version "/grafana_" version "_"
-                                  "23531306697_linux_amd64.tar.gz"))
+                                  "38252365904_linux_amd64.tar.gz"))
               (sha256
                (base32
-                "07sr78wi5nqlsx1nfj87bzgq29hcflqm6r5f5xcn9gq3m00b4h7j"))))
+                "1awjgdcg79k7rzrx0q73nd5fda7q38jp19jfgrh751fqiyc6b1y4"))))
     (build-system copy-build-system)
     (arguments
      (list #:tests? (not (%current-target-system))
