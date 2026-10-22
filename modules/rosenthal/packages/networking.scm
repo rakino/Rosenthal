@@ -24,7 +24,7 @@
 (define-public cloudflared
   (package
     (name "cloudflared")
-    (version "2026.10.0")
+    (version "2026.10.3")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -33,11 +33,11 @@
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0an9pvfp9cc1b71dvq005yghi93pcidlp7s96pbjsr2payi25vva"))))
+                "1f5hvvzwkwa2idchpds4492byf9qph0all3qakwy9d68f688qlwk"))))
     (build-system go-vendored-build-system)
     (arguments
      (list #:go go-1.27
-           #:vendor-hash (base32 "173ywqpd927q24fza5wr5qx7yfgd59njf1n6mmyq82d4xzp4ycwr")
+           #:vendor-hash (base32 "13abls96kzzw813i09r04agbriv0608cz66c9rsi53xl95fcp91a")
            #:install-source? #f
            #:import-path "./cmd/cloudflared"
            #:build-flags
