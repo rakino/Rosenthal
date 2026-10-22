@@ -244,4 +244,5 @@ and maintain.  It offers a rich web API for accessing its data.  ALong the usual
 forge features such as issues and pull requests tracking, it also includes
 simple software project management features like roles, scopes, and time
 tracking to ease collaboration.")
-    (license license:expat)))
+    (license license:expat)
+    (properties '((disable-updater? . #t)))))
