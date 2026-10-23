@@ -12,6 +12,7 @@
   #:use-module (guix i18n)
   #:use-module (guix records)
   #:use-module (rosenthal utils packages)
+  #:use-module (rosenthal utils records)
   ;; Guix System - services
   #:use-module (gnu services)
   #:use-module (gnu services configuration)
@@ -20,11 +21,15 @@
   ;; Guix packages
   #:use-module (gnu packages rust-apps)
   #:use-module (gnu packages shellutils)
+  #:use-module (rosenthal packages shellutils)
   #:export (home-fish-plugin-atuin-service-type
             home-atuin-configuration
 
             home-fish-plugin-direnv-service-type
             home-direnv-configuration
+
+            home-fish-plugin-stinkpot-service-type
+            home-stinkpot-configuration
 
             home-fish-plugin-zoxide-service-type
             home-zoxide-configuration))
@@ -107,6 +112,41 @@ end\n"))))))
 
 (define-deprecated/public-alias home-direnv-service-type
   home-fish-plugin-direnv-service-type)
+
+
+;;;
+;;; stinkpot
+;;;
+
+(define-record-type/dolly <home-stinkpot-configuration>
+  home-stinkpot-configuration
+  make-home-stinkpot-configuration
+  home-stinkpot-configuration?
+  this-home-stinkpot-configuration
+  (stinkpot
+   home-stinkpot-configuration-stinkpot
+   (default stinkpot)
+   (contract file-like?)))
+
+(define home-stinkpot-fish-service
+  (match-record-lambda/dolly <home-stinkpot-configuration>
+      (stinkpot)
+    (home-fish-extension
+      (config
+       (list (mixed-text-file "stinkpot.fish" "\
+status is-interactive
+and begin
+    " stinkpot "/bin/stinkpot init fish | source
+end\n"))))))
+
+(define home-fish-plugin-stinkpot-service-type
+  (service-type
+    (name 'home-stinkpot)
+    (extensions
+     (list (service-extension home-fish-service-type
+                              home-stinkpot-fish-service)))
+    (default-value (home-stinkpot-configuration))
+    (description "Set up @command{stinkpot} for Fish shell.")))
 
 
 ;;;
