@@ -245,7 +245,7 @@
       (list (shepherd-service
               (documentation "")
               (provision '(forgejo-init))
-              (requirement '(user-processes))
+              (requirement '(user-processes postgresql loopback))
               (one-shot? #t)
               (start
                #~(lambda _
@@ -277,7 +277,7 @@
             (shepherd-service
               (documentation "Run Forgejo.")
               (provision '(forgejo))
-              (requirement '(forgejo-init loopback postgresql))
+              (requirement '(forgejo-init))
               (start
                #~(make-forkexec-constructor
                   (list "/run/current-system/profile/bin/forgejo"
