@@ -6,6 +6,7 @@
   #:use-module (guix gexp)
   #:use-module (guix modules)
   #:use-module (guix packages)
+  #:use-module (guix profiles)
   #:use-module (guix records)
   #:use-module (rosenthal utils contract combinators)
   #:use-module (rosenthal utils file)
@@ -237,66 +238,53 @@
 
 (define forgejo-shepherd-service
   (match-record-lambda <forgejo-configuration>
-      (forgejo config)
+      (forgejo git-packages config)
     (let ((config-file
            (if (file-config? config)
                (ini-file "forgejo.ini" config)
-               config)))
-      (list (shepherd-service
-              (documentation "")
-              (provision '(forgejo-init))
-              (requirement '(user-processes postgresql loopback))
-              (one-shot? #t)
-              (start
-               #~(lambda _
-                   (define (forgejo-exec . options)
-                     (let* ((command
-                             (cons* "/run/current-system/profile/bin/forgejo"
-                                    "--config" #$config-file
-                                    options))
-                            (pid
-                             (fork+exec-command
-                              command
-                              #:user "forgejo"
-                              #:group "forgejo"
-                              #:log-file "/var/log/forgejo-init.log"
-                              #:environment-variables
-                              '("GIT_EXEC_PATH=/run/current-system/profile/libexec/git-core"
-                                "GIT_SSL_CAINFO=/run/current-system/profile/etc/ssl/certs/ca-certificates.crt"
-                                "HOME=/var/lib/forgejo"
-                                "PATH=/run/current-system/profile/bin"
-                                "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
-                                "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")
-                              #:resource-limits '((nofile 524288 524288)))))
-                       (unless (zero? (cdr (waitpid pid)))
-                         (error "failed to run forgejo command" command))))
-                   (forgejo-exec "migrate")
-                   (forgejo-exec "admin" "regenerate" "hooks")
-                   (forgejo-exec "admin" "regenerate" "keys")
-                   (forgejo-exec "doctor" "check" "--all"))))
-            (shepherd-service
-              (documentation "Run Forgejo.")
-              (provision '(forgejo))
-              (requirement '(forgejo-init))
-              (start
-               #~(make-forkexec-constructor
-                  (list "/run/current-system/profile/bin/forgejo"
-                        "--config" #$config-file)
-                  #:user "forgejo"
-                  #:group "forgejo"
-                  #:log-file "/var/log/forgejo.log"
-                  #:environment-variables
-                  '("GIT_EXEC_PATH=/run/current-system/profile/libexec/git-core"
-                    "GIT_SSL_CAINFO=/run/current-system/profile/etc/ssl/certs/ca-certificates.crt"
-                    "HOME=/var/lib/forgejo"
-                    "PATH=/run/current-system/profile/bin"
-                    "SSL_CERT_DIR=/run/current-system/profile/etc/ssl/certs"
-                    "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt")
-                  #:resource-limits '((nofile 524288 524288))))
-              (stop
-               #~(make-kill-destructor))
-              (actions
-               (list (shepherd-configuration-action config-file))))))))
+               config))
+          (git-profile
+           (profile
+             (name "forgejo-git-profile")
+             (content (packages->manifest git-packages)))))
+      (list
+       (shepherd-service
+         (documentation "Run Forgejo.")
+         (provision '(forgejo))
+         (requirement '(user-processes postgresql loopback))
+         (start
+          #~(lambda _
+              (define (forgejo-run . options)
+                (let ((command
+                       (cons* #$(file-append forgejo "/bin/forgejo")
+                              "--config" #$config-file
+                              options))
+                      (args
+                       (list #:user "forgejo"
+                             #:group "forgejo"
+                             #:log-file
+                             (if (null? options)
+                                 "/var/log/forgejo.log"
+                                 "/var/log/forgejo-init.log")
+                             #:environment-variables
+                             (list "HOME=/var/lib/forgejo"
+                                   "SSL_CERT_DIR=/etc/ssl/certs"
+                                   "SSL_CERT_FILE=/etc/ssl/certs/ca-certificates.crt"
+                                   "GIT_SSL_CAINFO=/etc/ssl/certs/ca-certificates.crt"
+                                   (format #f "GIT_EXEC_PATH=~a/libexec/git-core" #$git-profile)
+                                   (format #f "PATH=/run/current-system/profile/bin:~a/bin" #$git-profile))
+                             #:resource-limits '((nofile 524288 524288)))))
+                  (if (null? options)
+                      (apply fork+exec-command command args)
+                      (unless (zero? (apply spawn-command command args))
+                        (error "failed to run forgejo command" command)))))
+              (forgejo-run "migrate")
+              (forgejo-run "admin" "regenerate" "hooks")
+              (forgejo-run "admin" "regenerate" "keys")
+              (forgejo-run "doctor" "check" "--all")
+              (forgejo-run)))
+         (stop #~(make-kill-destructor))
+         (actions (list (shepherd-configuration-action config-file))))))))
 
 (define forgejo-service-type
   (service-type
@@ -306,10 +294,6 @@
                              forgejo-account)
           (service-extension postgresql-role-service-type
                              forgejo-postgresql-role)
-          (service-extension profile-service-type
-                             (lambda (config)
-                               (cons (forgejo-configuration-forgejo config)
-                                     (forgejo-configuration-git-packages config))))
           (service-extension activation-service-type
                              (const forgejo-activation))
           (service-extension shepherd-root-service-type
