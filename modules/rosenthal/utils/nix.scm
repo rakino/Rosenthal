@@ -15,9 +15,12 @@
   #:use-module (guix build-system trivial)
   ;; Guix packages
   #:autoload   (gnu packages package-management) (nix)
-  #:export (%nix-wrapper-default-exclude-env-paths
+  #:export (;; Paramaters.
+            %nix-wrapper-default-exclude-env-paths
             %nix-wrapper-profile-nixpkgs-commit
             %nix-wrapper-profile-extra-outputs
+
+            %nix-wrapper-shell-default-unset-env-vars
 
             nix-shell-wrapper
             nix-wrapper->package nix-shell-wrapper->package
@@ -69,14 +72,15 @@
                         (_ (list #f)))
                       (%nix-wrapper-default-exclude-env-paths))))
 
-(define (%nix-wrapper-shell-default-unset-env-vars)
-  "Environment variables to unset in the `nix shell' environment, used by
-`nix-shell-wrapper' by default."
-  (filter-map (match-lambda
-                ((? string? env) env)
-                (((? string? env) . _) env)
-                (_ #f))
-              (%nix-wrapper-default-exclude-env-paths)))
+;; Environment variables to unset in the `nix shell' environment, used by
+;; `nix-shell-wrapper' by default.
+(define-syntax %nix-wrapper-shell-default-unset-env-vars
+  (identifier-syntax
+   (filter-map (match-lambda
+                 ((? string? env) env)
+                 (((? string? env) . _) env)
+                 (_ #f))
+               (%nix-wrapper-default-exclude-env-paths))))
 
 
 ;;;
@@ -275,7 +279,7 @@ in
                             (run-command '())
                             (options '())
                             (environment-keep #t)
-                            (environment-unset (%nix-wrapper-shell-default-unset-env-vars))
+                            (environment-unset %nix-wrapper-shell-default-unset-env-vars)
                             (environment-set '())
                             (nix (file-append nix "/bin/nix")))
   "Return a nix-wrapper that wraps the `nix shell' command-line utility and
@@ -298,7 +302,7 @@ When ENVIRONMENT-KEEP (default: #t, boolean / list of strings) is set to a value
 other than #t, the environment will be cleared, keeping only specified
 environment variables.
 
-ENVIRONMENT-UNSET (default: (%nix-wrapper-shell-default-unset-env-vars), list of
+ENVIRONMENT-UNSET (default: %nix-wrapper-shell-default-unset-env-vars, list of
 strings) unsets specified environment variables from the environment.  It's only
 usable when ENVIRONMENT-KEEP is #t.
 
