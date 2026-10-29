@@ -23,7 +23,9 @@
   #:use-module (gnu packages base)
   #:replace (%patch-path
              search-patch)
-  #:export (rosenthal-patches
+  #:export (sri-hash
+
+            rosenthal-patches
             %rosenthal-package-module-path
             all-rosenthal-packages
 
@@ -38,6 +40,20 @@
             %binary-source
             binary-package
             mapping-for-system))
+
+(define-syntax sri-hash
+  (lambda (stx)
+    (syntax-case stx ()
+      ((_ str)
+       (let ((str (syntax->datum #'str)))
+         (and (string? str)
+              (string-index str #\-)))
+       (let* ((str  (syntax->datum #'str))
+              (dash (string-index str #\-))
+              (algo (substring str 0 dash))
+              (hash (substring str (1+ dash))))
+         (with-syntax ((algorithm (datum->syntax #'stx (string->symbol algo))))
+           #`(content-hash (base64 #,hash) algorithm)))))))
 
 (define %rosenthal-root-directory
   ;; This is like %distro-root-directory from (gnu packages), with adjusted
