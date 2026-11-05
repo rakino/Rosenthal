@@ -53,8 +53,9 @@
                    (let ((name (in-vicinity directory name)))
                      (and (string-match pattern name)
                           (access? name O_RDWR)))))
-                (or (reverse (scandir directory))
-                    '())))
+                (reverse
+                 (or (scandir directory)
+                     '()))))
 
         (if socket
             (let ((display
