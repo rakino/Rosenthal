@@ -201,21 +201,27 @@
           '()
           '("CONFIG_USER_NS=y"))))
 
-(define (%kernel-config path)
-  (let* ((commit "343874d509a9ff74729281fd297d8961dcedd342")
-         (source
-          (origin
-            (method git-fetch)
-            (uri (git-reference
-                   (url "https://codeberg.org/hako/kernel-config.git")
-                   (commit commit)))
-            (file-name (string-append "kernel-config." (string-take commit 7)))
-            (sha256
-             (base32 "150nms11b9cdp051i7xn4x8vfj4izhhnmj0h5bj9gqk4fzxqz9n7")))))
-    (file-append source path)))
+(define (%kernel-config commit hash)
+  (let ((source
+         (origin
+           (method git-fetch)
+           (uri (git-reference
+                  (url "https://codeberg.org/hako/kernel-config.git")
+                  (commit commit)))
+           (file-name (string-append "kernel-config." (string-take commit 7)))
+           (hash
+            (if (content-hash? hash)
+                hash
+                (content-hash hash))))))
+    (lambda (path)
+      (file-append source path))))
 
 (define-public linux-cachyos-lts-server
-  (let* ((version "6.18.55-1")
+  (let* ((version "6.18.65-1")
+         (config
+          (%kernel-config
+           "30ca31f1a4b05d9c42f1b9482f6a7419b12453be"
+           (base32 "1d3y2i5dmkic657rdpxmn7skapf5nhgd3ahw8fpw9797lvwncr00")))
          (kernel
           (customize-linux
            #:name "linux-cachyos-lts-server"
@@ -226,8 +232,8 @@
                    "https://github.com/CachyOS/linux/releases/download/cachyos-"
                    version "/cachyos-" version ".tar.gz"))
              (sha256
-              (base32 "1x9hymblmpj90dhwlz7lsfkdw8fjjpnghhg0yk3qmf9x16v8nrd3")))
-           #:defconfig (%kernel-config "/defconfig_server")
+              (base32 "102ad9k412166b6kdaiql15dynanqm11gppagpi1zx4cz80lwkm0")))
+           #:defconfig (local-file "/home/hako/Projects/kernel-config/defconfig_server")
            #:configs
            (string-join
             (append (cachyos-configs
@@ -257,6 +263,10 @@
 
 (define-public linux-cachyos-bore-zen4
   (let* ((version "7.2.11-1")
+         (config
+          (%kernel-config
+           "343874d509a9ff74729281fd297d8961dcedd342"
+           (base32 "150nms11b9cdp051i7xn4x8vfj4izhhnmj0h5bj9gqk4fzxqz9n7")))
          (kernel
           (customize-linux
            #:name "linux-cachyos-bore-zen4"
@@ -268,8 +278,8 @@
                    version "/cachyos-" version ".tar.gz"))
              (sha256
               (base32 "0kc4x7smkfycs1k2giwbi2a02s8npwxz5p2wv48qljcjj1ijn8by"))
-             (patches (map %kernel-config '("/patches/bore-cachy-7.2.patch"))))
-           #:defconfig (%kernel-config "/defconfig_desktop")
+             (patches (map config '("/patches/bore-cachy-7.2.patch"))))
+           #:defconfig (config "/defconfig_desktop")
            #:configs
            (string-join
             (append (cachyos-configs
