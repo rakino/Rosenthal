@@ -3,6 +3,7 @@
 
 (define-module (rosenthal packages emacs-xyz)
   ;; Utilities
+  #:use-module (guix deprecation)
   #:use-module (guix gexp)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
@@ -225,40 +226,7 @@ and it's subcommands.")
       (properties
        '((disable-updater? . #t))))))
 
-(define-public emacs-reader
-  (let ((commit "4fca3aaedddeea7f672ee97e5a91ef3002240260")
-        (revision "4"))
-    (package
-      (name "emacs-reader")
-      (version (git-version "0.3.2" revision commit))
-      (source
-       (origin
-         (method git-fetch)
-         (uri (git-reference
-                (url "https://codeberg.org/divyaranjan/emacs-reader")
-                (commit commit)))
-         (file-name (git-file-name name version))
-         (sha256
-          (base32 "07fyvdmkhcj9v3p9b2ll3qzgdjjms60bw31m7yp1x8i2v874amrz"))))
-      (build-system emacs-build-system)
-      (arguments
-       (list
-        #:tests? #f ;no tests
-        #:phases
-        #~(modify-phases %standard-phases
-            (add-after 'install 'build-module
-              (lambda _
-                (invoke "make" "USE_PKGCONFIG=no")))
-            (add-after 'build-module 'install-module
-              (lambda _
-                (install-file "render-core.so" (elpa-directory #$output)))))))
-      (inputs (list mupdf))
-      (home-page "https://codeberg.org/divyaranjan/emacs-reader")
-      (synopsis "Emacs document reader")
-      (description
-       "GNU Emacs document reader that supports all major document formats.")
-      (license license:gpl3+)
-      (properties '((disable-updater? . #t))))))
+(define-deprecated-package emacs-reader emacs-emureader)
 
 (define-public emacs-tramp-rpc
   (package
