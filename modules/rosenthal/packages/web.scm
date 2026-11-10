@@ -66,75 +66,6 @@ website owners block unwanted AI crawlers from accessing their sites.")
 
 (define-deprecated/public-alias anubis-anti-crawler anubis-ai-firewall)
 
-(define-public caddy
-  (package
-    (name "caddy")
-    (version "2.11.7")
-    (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/caddyserver/caddy")
-                    (commit (string-append "v" version))))
-              (file-name (git-file-name name version))
-              (sha256
-               (base32
-                "0gv0gjwdqd5azw5ws95am7jb653klyyl9k9sabb30bvs04zi5rgb"))))
-    (build-system go-vendored-build-system)
-    (arguments
-     (list #:go go-1.27
-           #:vendor-hash (base32 "06bcd41snksncmdijd32r3l2n5ch1v3gr4qkx45g2jb03zkab4wh")
-           #:tests? (not (%current-target-system)) ;TODO: Run test suite.
-           #:install-source? #f
-           #:import-path
-           (if (string=? "caddy" (package-name this-package))
-               "./cmd/caddy"
-               ".")
-           #:build-flags
-           #~(list "-tags" "nobadger nomysql nopgx"
-                   (string-append
-                    "-ldflags="
-                    " -X github.com/caddyserver/caddy/v2.CustomVersion="
-                    #$(package-version this-package)))
-           #:modules
-           (cons '(ice-9 match)
-                 %default-go-vendored-modules)
-           #:phases
-           #~(modify-phases %standard-phases
-               (add-after 'install 'install-extras
-                 (lambda _
-                   (let ((caddy
-                          (or (which "caddy")
-                              (in-vicinity #$output "bin/caddy"))))
-                     (invoke caddy "manpage" "--directory"
-                             (in-vicinity #$output "share/man/man8"))
-                     (map
-                      (match-lambda
-                        ((shell . path)
-                         (let ((file (in-vicinity #$output path)))
-                           (mkdir-p (dirname file))
-                           (with-output-to-file file
-                             (lambda ()
-                               (invoke caddy "completion" shell))))))
-                      '(("bash" . "etc/bash_completion.d/caddy")
-                        ("fish" . "share/fish/vendor_completions.d/caddy.fish")
-                        ("zsh"  . "share/zsh/site-functions/_caddy"))))))
-               (delete 'check)
-               (add-after 'install 'check
-                 (lambda* (#:key tests? #:allow-other-keys)
-                   (when tests?
-                     (let ((caddy (in-vicinity #$output "bin/caddy")))
-                       (invoke caddy "help")
-                       (invoke caddy "version"))))))))
-    (home-page "https://caddyserver.com/")
-    (synopsis "Extensible HTTP web server with automatic HTTPS")
-    (description
-     "Caddy is a web server designed for simplicity and ease of use.  It is
-notable for its automatic HTTPS feature, which enables secure connections
-without requiring complex configuration.  Caddy is built with a focus on
-performance and flexibility, making it suitable for a variety of applications,
-from serving static websites to running dynamic web applications.")
-    (license license:asl2.0)))
-
 (define-public caddy/dolly
   (package
     (inherit caddy)
@@ -149,10 +80,16 @@ from serving static websites to running dynamic web applications.")
               (sha256
                (base32
                 "1amgxdy9598jpm1zkp7yvrxhj3zyzlc8rzp64mivlhhv58gmnfmz"))))
+    (build-system go-vendored-build-system)
     (arguments
      (substitute-keyword-arguments arguments
+       ((#:go _ #f) go-1.27)
+       ((#:import-path _ #f) ".")
        ((#:vendor-hash _ #f)
         (base32 "1k45xgbay9fyahh7ng8y6n58m9nnv2wyjqwzyjf3via08mlh1cjm"))))
+    (native-inputs '())
+    (inputs '())
+    (propagated-inputs '())
     (home-page "https://git.guix.moe/hako/caddy")
     (properties '((disable-updater? . #t)))))
 
