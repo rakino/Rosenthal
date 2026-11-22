@@ -709,8 +709,10 @@ compositor.")))
     ,@(default-skeletons)))
 
 (define %rosenthal-skeletons-installer
-  `((".config/noctalia/settings.json"
-     ,(local-file "../examples/dot-config/noctalia/settings.json"))
+  `((".local/state/noctalia/.setup-complete"
+      ,(plain-file "empty" ""))
+    (".local/state/noctalia/settings.toml"
+     ,(local-file "../examples/dot-config/noctalia/settings.toml"))
     (".config/wezterm/wezterm.lua"
      ,(local-file "../examples/dot-config/wezterm/wezterm.lua"))
     ,@%rosenthal-skeletons))

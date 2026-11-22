@@ -1,0 +1,30 @@
+[bar.default]
+capsule = true
+concave_edge_corners = false
+margin_ends = 0
+radius = 0
+
+[dock]
+concave_edge_corners = false
+enabled = true
+launcher_position = "start"
+position = "left"
+show_dots = true
+
+[shell]
+polkit_agent = true
+
+[[shell.session.actions]]
+action = "reboot"
+variant = "default"
+
+[[shell.session.actions]]
+action = "shutdown"
+variant = "destructive"
+
+[theme]
+builtin = "Nord"
+mode = "light"
+
+[wallpaper]
+enabled = false
