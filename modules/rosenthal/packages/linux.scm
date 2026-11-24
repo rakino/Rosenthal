@@ -221,7 +221,7 @@
          (config
           (%kernel-config
            "30ca31f1a4b05d9c42f1b9482f6a7419b12453be"
-           (base32 "1d3y2i5dmkic657rdpxmn7skapf5nhgd3ahw8fpw9797lvwncr00")))
+           (base32 "0qb8mgrj458xxjp3m050lf03wf4j2nz4jpxix068cv0pnvlj3y3k")))
          (kernel
           (customize-linux
            #:name "linux-cachyos-lts-server"
