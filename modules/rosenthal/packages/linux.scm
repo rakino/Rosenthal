@@ -262,11 +262,11 @@
              (package-properties kernel))))))
 
 (define-public linux-cachyos-bore-zen4
-  (let* ((version "7.2.11-1")
+  (let* ((version "7.3.6-1")
          (config
           (%kernel-config
-           "343874d509a9ff74729281fd297d8961dcedd342"
-           (base32 "150nms11b9cdp051i7xn4x8vfj4izhhnmj0h5bj9gqk4fzxqz9n7")))
+           "f45de89952cd52542e3a3cbf4fcedaa75d817e89"
+           (base32 "12xhs53ihg4k1vgx042acfri174mblbfrcp0199i3fbl0vy0xpaz")))
          (kernel
           (customize-linux
            #:name "linux-cachyos-bore-zen4"
@@ -277,8 +277,8 @@
                    "https://github.com/CachyOS/linux/releases/download/cachyos-"
                    version "/cachyos-" version ".tar.gz"))
              (sha256
-              (base32 "0kc4x7smkfycs1k2giwbi2a02s8npwxz5p2wv48qljcjj1ijn8by"))
-             (patches (map config '("/patches/bore-cachy-7.2.patch"))))
+              (base32 "0gvgp0hwnrdgxs07wlz474c40g15z1r3aq7dq1yi4nn5p09yhp7v"))
+             (patches (map config '("/patches/bore-cachy-7.3.patch"))))
            #:defconfig (config "/defconfig_desktop")
            #:configs
            (string-join
