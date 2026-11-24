@@ -151,29 +151,7 @@ some keybindings are slightly simplified.")
     (name "emacs-magit-delta-dolly")
     (properties '((disable-updater? . #t)))))
 
-(define-public emacs-majutsu/dolly
-  (let ((commit "19856a9c06f7a03b743c5556987202117783365c")
-        (revision "7"))
-    (package
-      (inherit emacs-majutsu)
-      (name "emacs-majutsu-dolly")
-      (version (git-version "0.6.0" revision commit))
-      (source (origin
-                (method git-fetch)
-                (uri (git-reference
-                       (url "https://github.com/0WD0/majutsu")
-                       (commit commit)))
-                (file-name (git-file-name name version))
-                (sha256
-                 (base32
-                  "024ypczrsgqxapmky6kvbslfbkyzz26zjlx8hf93xdnmdj3dsgz9"))))
-      (arguments
-       (substitute-keyword-arguments arguments
-         ((#:tests? _ #t) #f)))
-      (propagated-inputs
-       (modify-inputs propagated-inputs
-         (prepend emacs-consult emacs-plz)))
-      (properties '((disable-updater? . #t))))))
+(define-deprecated-package emacs-majutsu/dolly "emacs-majutsu-dolly" emacs-majutsu)
 
 (define-public emacs-msgpack
   (let ((commit "5353a7b2da854c843cbec4536996242001f63471")
