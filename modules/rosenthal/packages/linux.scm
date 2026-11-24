@@ -233,7 +233,7 @@
                    version "/cachyos-" version ".tar.gz"))
              (sha256
               (base32 "102ad9k412166b6kdaiql15dynanqm11gppagpi1zx4cz80lwkm0")))
-           #:defconfig (local-file "/home/hako/Projects/kernel-config/defconfig_server")
+           #:defconfig (config "/defconfig_server")
            #:configs
            (string-join
             (append (cachyos-configs
